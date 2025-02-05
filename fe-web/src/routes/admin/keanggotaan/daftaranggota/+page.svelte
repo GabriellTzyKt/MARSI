@@ -1,32 +1,73 @@
 <script lang="ts">
+	import Table from '$lib/table/Table.svelte';
+	import { geoGnomonic } from 'd3';
+	import { dummydata } from '$lib/dummy';
+	import DropDown from './DropDown.svelte';
+	import { get, writable } from 'svelte/store';
+	// import {dropId} from './DropDown.svelte'
 
+	// const {data} = $props()
+	// console.log(data.tabel)
 </script>
 
-
-<a href="/admin/keanggotaan/daftaranggota/tambahanggota"><button class="test custom-button bg-customKrem"> +Tambah Data </button></a>
-
-<table>
-
-</table>
+<div class="flex flex-col">
+	<div class="mx-20 flex justify-between">
+		<div class=" col-start-1 flex items-center justify-center">
+			<a href="/admin/keanggotaan/daftaranggota/tambahanggota"
+				><button class=" custom-button bg-customKrem px-6 py-2"> +Tambah Data </button></a
+			>
+		</div>
+		<div class="col-span-2 col-end-5 flex flex-row items-center justify-center">
+			<div>
+				<input type="text" name="" id="" placeholder="search.." class="rounded-md shadow-inner" />
+			</div>
+			<div class="me-4 ms-2">
+				<p>Show</p>
+			</div>
+			<div class="text-center">
+				<input
+					type="text"
+					name=""
+					id=""
+					value="8"
+					class="flex w-10 rounded-md text-center shadow-inner"
+				/>
+			</div>
+			<div class="mx-2">
+				<p>entries</p>
+			</div>
+		</div>
+	</div>
+	<Table
+		table_header={[
+			['nama', 'Nama Anggota'],
+			['email', 'Email'],
+			['telepon', 'Nomer Telepon'],
+			['kerajaan', 'Nama Kerajaan'],
+			['jenis_kerajaan', 'Jenis Kerajaan'],
+			['gelar', 'Gelar'],
+			['children', 'Aksi']
+		]}
+		table_data={dummydata}
+	>
+		{#snippet children({ header, data, index })}
+			{#if header === 'Aksi'}
+				<DropDown id={`id-${index}`} {data}></DropDown>
+			{/if}
+		{/snippet}
+	</Table>
+</div>
 
 <style>
-.custom-button { 
-  border: none; 
-  padding: 15px 20px; 
-  margin-left: 20px; 
-  text-align: center;
-  color: black; 
-  font-weight: bold;
-  font-size: 16px;
-  border-radius: 10px; 
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); 
-  cursor: pointer; 
-}
-@media (max-width: 768px) {
+	.custom-button {
+		border: none;
 
-		.test{
-			margin-top: 90px;
-		}
-  }
-
+		text-align: center;
+		color: black;
+		font-weight: bold;
+		font-size: 16px;
+		border-radius: 10px;
+		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+		cursor: pointer;
+	}
 </style>

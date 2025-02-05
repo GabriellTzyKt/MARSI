@@ -1,0 +1,227 @@
+<script lang="ts">
+	import image from '../../asset/Logo_MARSI_login.png';
+	let email = $state('Masukkan Email Anda');
+	let tipe = $state('password');
+	let password = $state('password');
+
+	let notelp = $state('08963333333333');
+
+	let tipelogin = $state('email');
+	let txtlogin = $state('Email');
+	let trans = $state(false);
+</script>
+
+<div class="bg-login flex items-center justify-center">
+	<div class="rounded-lg border bg-white px-2 py-3 sm:px-10 sm:py-8 md:px-16 md:py-8">
+		<div class="flex flex-col gap-4">
+			<div class="flex justify-center text-center">
+				<img src={image} alt="" class="w-26 h-auto" />
+			</div>
+			<div class="sm:px-10 md:px-32">
+				<p class="text-center text-4xl font-[600]">Selamat Datang!</p>
+				<p class="text-md mt-4 text-center">Silahkan Sign in dibawah Untuk Melanjutkan</p>
+			</div>
+			<form action="">
+				<div class="mt-3">
+					<div class="flex flex-col">
+						<p class="mb-2">{txtlogin}</p>
+						{#if tipelogin === 'email'}
+							<input
+								type={tipelogin}
+								name=""
+								id=""
+								class="bg-input border-none py-2"
+								bind:value={email}
+								onfocus={() => {
+									if (email === 'Masukkan Email Anda' && tipelogin === 'email') {
+										email = '';
+									}
+								}}
+								onblur={() => {
+									if (email === '') {
+										email = 'Masukkan Email Anda';
+									}
+								}}
+							/>
+						{:else}
+							<input
+								type={tipelogin}
+								name=""
+								id=""
+								class="bg-input border-none py-2"
+								bind:value={notelp}
+								onfocus={() => {
+									if (notelp === '08963333333333' && tipelogin === 'phone') {
+										notelp = '';
+									}
+								}}
+								onblur={() => {
+									if (notelp === '') {
+										notelp = '08963333333333';
+									}
+								}}
+							/>
+						{/if}
+					</div>
+					<div class="mt-4 flex flex-col">
+						<div>
+							<p class="mb-2">Password</p>
+						</div>
+						<div class="bg-input flex items-center justify-between">
+							<div class="flex-grow">
+								<input
+									type={tipe}
+									name=""
+									id=""
+									bind:value={password}
+									class="bg-input w-full border-none focus:outline-none"
+									onfocus={() => {
+										if (password === 'password') {
+											password = '';
+										}
+									}}
+									onblur={() => {
+										if (password === '') {
+											password = 'password';
+										}
+									}}
+								/>
+							</div>
+							<!-- svelte-ignore a11y_click_events_have_key_events -->
+							<!-- svelte-ignore a11y_no_static_element_interactions -->
+							<div
+								class="p-2"
+								onclick={() => {
+									if (!trans) {
+										trans = true;
+										tipe = 'text';
+									} else {
+										trans = false;
+										tipe = 'password';
+									}
+								}}
+							>
+								{#if trans}
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke-width="1.5"
+										stroke="currentColor"
+										class="size-6"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+										/>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+										/>
+									</svg>
+								{:else}
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke-width="1.5"
+										stroke="currentColor"
+										class="size-6"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
+										/>
+									</svg>
+								{/if}
+							</div>
+						</div>
+						<div>
+							<p class="text-xs">
+								It must be a combination of minimum 8 letters, numbers & symbols
+							</p>
+						</div>
+						<div class="mb-3 flex items-center justify-between">
+							<div class="mb-2 mt-2 flex items-center gap-2">
+								<input type="checkbox" id="rm" />
+								<label for="rm">Remember Me</label>
+							</div>
+							<div>
+								<a href="/login" class="txt-pass">Forgot Password?</a>
+							</div>
+						</div>
+						<div class="flex items-center justify-center text-center">
+							<a href="" class="bg-bt w-full py-3 font-[650] text-white">Log In</a>
+						</div>
+						<div class="batas mb-3 mt-3"></div>
+						<div class="flex items-center justify-center text-center">Or Login With:</div>
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<div
+							class="mt-3 flex items-center justify-center text-center"
+							onclick={() => {
+								if (txtlogin === 'Email') {
+									txtlogin = 'Nomer Telepon';
+									tipelogin = 'phone';
+								} else {
+									txtlogin = 'Email';
+									tipelogin = 'email';
+								}
+							}}
+						>
+							<a href="" class="bg-sc w-full py-3 font-[650] text-white">
+								{#if txtlogin === 'Email'}
+									Nomer Telepon
+								{:else}
+									Email
+								{/if}
+							</a>
+						</div>
+						<div class="batas mb-3 mt-3"></div>
+						<div class="flex flex-row items-center justify-center text-center">
+							<div>
+								<p class="txt-pm text-sm font-[600]">Belum ada akun?</p>
+							</div>
+							<div class="ms-2">
+								<a href="/signup" class="txt-pass text-sm font-[600]">Sign Up disini</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<style>
+	.bg-login {
+		background-attachment: fixed;
+		background-image: url('../../asset/gambar-login.png');
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: cover;
+		min-height: 100vh;
+	}
+	.bg-input {
+		background-color: #f2f4f8;
+	}
+	.txt-pass {
+		color: #0000ff;
+	}
+	.bg-bt {
+		background-color: #c1a411;
+	}
+	.batas {
+		background-color: #dde1e6;
+		padding-top: 0.25%;
+	}
+	.bg-sc {
+		background-color: #f9d48b;
+	}
+	.txt-pm {
+		color: #c1a411;
+	}
+</style>

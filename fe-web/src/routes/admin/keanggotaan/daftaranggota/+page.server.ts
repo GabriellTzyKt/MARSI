@@ -1,0 +1,20 @@
+import { env } from "$env/dynamic/private";
+import Table from "$lib/table/Table.svelte";
+import type { PageServerLoad } from "./$types";
+
+export const load: PageServerLoad = async () => {
+    try{
+        // const data = await fetch(env.URL_BASE,{
+        //     method: 'GET',
+        //     headers: {
+        //         'x-rapidapi-key': 'Sign Up for Key',
+        //         'x-rapidapi-host': 'covid-19-data.p.rapidapi.com'
+        //     }
+        // }).then((r)=>r.json())
+        // console.log(data)
+        // return {tabel: data}
+    }
+   catch (e){
+    if(e instanceof Error) return console.log(e.message)
+   }
+};
