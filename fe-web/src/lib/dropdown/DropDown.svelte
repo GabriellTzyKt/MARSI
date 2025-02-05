@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import menu from '../../../../asset/icons/threedot.png';
+	import menu from '../../asset/icons/threedot.png';
 	import { stopPropagation } from 'svelte/legacy';
 	import { get, writable } from 'svelte/store';
 	import { openDropdown } from '$lib/store';
@@ -37,7 +37,7 @@
 <div class="relative">
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<div
-		class="me-3 flex items-center justify-center rounded-xl p-3 text-center hover:cursor-pointer hover:bg-slate-300"
+		class="mx-4 me-4 flex items-center justify-center rounded-xl py-3 text-center hover:cursor-pointer hover:bg-slate-300"
 		onclick={toggleDropdown}
 	>
 		<img src={menu} alt="" class="h-4" />

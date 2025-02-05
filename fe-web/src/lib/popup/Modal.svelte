@@ -18,7 +18,7 @@
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<!-- svelte-ignore event_directive_deprecated -->
 	<div
-		class="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black bg-opacity-65"
+		class="fixed left-0 top-0 flex min-h-full min-w-full items-center justify-center bg-black bg-opacity-65"
 	>
 		<div
 			class="relative flex flex-col items-center rounded-3xl border bg-white"
@@ -28,7 +28,12 @@
 		>
 			<div class="absolute right-0 top-0 me-8 mt-8">
 				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-				<img src={xbutton} alt="x-button" class="h-6 w-auto" on:click={close} />
+				<img
+					src={xbutton}
+					alt="x-button"
+					class="h-6 w-auto hover:cursor-pointer"
+					on:click={close}
+				/>
 			</div>
 
 			<div class="mt-8 p-4">

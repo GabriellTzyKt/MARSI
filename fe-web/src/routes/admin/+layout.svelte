@@ -38,28 +38,34 @@
 </script>
 
 <header class="min-w-screen flex">
-	<div class="test2 width_head1 flex items-center bg-customGold text-center w-[16.7%] justify-between">
-		<button type="button" class="ri--menu-line ml-2" onclick={toggleSidebar} aria-label="Toggle sidebar"></button>
+	<div
+		class="test2 width_head1 bg-customGold flex w-[16.7%] items-center justify-between text-center"
+	>
+		<button
+			type="button"
+			class="ri--menu-line ml-2"
+			onclick={toggleSidebar}
+			aria-label="Toggle sidebar"
+		></button>
 		<div class="flex items-center">
 			<img src={image} alt="Deskripsi Gambar" class="ml-2" />
 			<h1 class="font-edit mb-3 ml-2 mt-3">MARSI</h1>
 		</div>
 	</div>
-	<div class="width_head2 w-[83.3%] flex items-center justify-between">
-		<p class="ml-5 p-5 text-3xl md:w-16,7% lg:w-16,7% font-bold text-black">
+	<div class="width_head2 flex w-[83.3%] items-center justify-between">
+		<p class="md:w-16,7% lg:w-16,7% ml-5 p-5 text-3xl font-bold text-black">
 			{$pageTitle}
 		</p>
-		<div class="mr-5 flex items-center rounded-md bg-customYellow p-2">
+		<div class="bg-customYellow mr-5 flex items-center rounded-md p-2">
 			<span class="ml-5 text-black">Admin MARSI</span>
 			<img src={imageprofile} alt="duar" class="ml-5 mr-5 h-10 w-10 rounded-full" />
 		</div>
 	</div>
 </header>
 
-
 <div class=" flex min-h-screen">
 	<!-- Sidebar for Small Screens -->
-	<div class=" test lg:w=[16.7%] w-[16.7%] bg-customYellow lg:block" class:active={$sidebarActive}>
+	<div class=" test lg:w=[16.7%] bg-customYellow w-[16.7%] lg:block" class:active={$sidebarActive}>
 		<Sidebar>
 			<SidebarMenu
 				href="/admin/beranda"
@@ -126,12 +132,12 @@
 		margin-right: 15px;
 	}
 
-	.test{
+	.test {
 		min-width: 250px;
 		flex-shrink: 0;
 	}
 
-	.test2{
+	.test2 {
 		min-width: 250px;
 		flex-shrink: 0;
 	}
@@ -167,7 +173,7 @@
 		.width_head2 {
 			width: 0;
 			display: none;
-			flex-shrink: 0; 
+			flex-shrink: 0;
 		}
 		.test {
 			margin-top: 90px;

@@ -2,8 +2,10 @@
 	import Table from '$lib/table/Table.svelte';
 	import { geoGnomonic } from 'd3';
 	import { dummydata } from '$lib/dummy';
-	import DropDown from './DropDown.svelte';
+	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { get, writable } from 'svelte/store';
+	import Pagination from '$lib/table/Pagination.svelte';
+	import Search from '$lib/table/Search.svelte';
 	// import {dropId} from './DropDown.svelte'
 
 	// const {data} = $props()
@@ -11,7 +13,7 @@
 </script>
 
 <div class="flex flex-col">
-	<div class="mx-20 flex justify-between">
+	<div class="mx-6 mt-20 flex justify-between md:mx-20 md:mt-0">
 		<div class=" col-start-1 flex items-center justify-center">
 			<a href="/admin/keanggotaan/daftaranggota/tambahanggota"
 				><button class=" custom-button bg-customKrem px-6 py-2"> +Tambah Data </button></a
@@ -19,19 +21,13 @@
 		</div>
 		<div class="col-span-2 col-end-5 flex flex-row items-center justify-center">
 			<div>
-				<input type="text" name="" id="" placeholder="search.." class="rounded-md shadow-inner" />
+				<Search></Search>
 			</div>
 			<div class="me-4 ms-2">
 				<p>Show</p>
 			</div>
 			<div class="text-center">
-				<input
-					type="text"
-					name=""
-					id=""
-					value="8"
-					class="flex w-10 rounded-md text-center shadow-inner"
-				/>
+				<Pagination></Pagination>
 			</div>
 			<div class="mx-2">
 				<p>entries</p>

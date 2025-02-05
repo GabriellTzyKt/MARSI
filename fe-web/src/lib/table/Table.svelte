@@ -12,7 +12,7 @@
 </script>
 
 <div class="mt-4 flex items-center justify-center rounded-xl">
-	<table class="mx-20 w-full table-auto border-separate border-spacing-0 rounded-xl border">
+	<table class="mx-6 w-full table-auto border-separate border-spacing-0 rounded-xl border md:mx-20">
 		<thead class="marsi rounded-xl">
 			<tr class=" rounded-xl">
 				<th class="rounded-tl-xl px-2 py-3 text-left">No</th>
