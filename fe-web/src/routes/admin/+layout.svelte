@@ -63,7 +63,7 @@
 	</div>
 </header>
 
-<div class=" flex min-h-screen">
+<div class=" flex h-screen min-h-screen">
 	<!-- Sidebar for Small Screens -->
 	<div class=" test lg:w=[16.7%] bg-customYellow w-[16.7%] lg:block" class:active={$sidebarActive}>
 		<Sidebar>
@@ -103,7 +103,7 @@
 	</div>
 
 	<!-- Main Content -->
-	<main class="flex-1 bg-gray-100 p-5">
+	<main class="flex h-full min-h-screen flex-1 overflow-auto bg-gray-100 p-5">
 		{@render children()}
 	</main>
 </div>
