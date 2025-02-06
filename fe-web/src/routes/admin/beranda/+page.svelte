@@ -33,13 +33,13 @@
 <!-- Main container that holds both charts -->
 <div class="form-container1 flex justify-between w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4" style="background: {hex};">
 	<!-- Pie chart section -->
-	<div class="flex flex-col items-center">
+	<div class="flex flex-col mt-10 items-center">
 		<p class="mb-3 text-xl font-bold">Data BlaBla</p>
 		<PieChart />
 	</div>
 
 	<!-- Barplot chart section -->
-	<div class="flex flex-col items-center">
+	<div class="flex flex-col mt-10 items-center">
 		<p class="mb-3 text-xl font-bold mr-10">Data BlaBla</p>
 		<Barplot />
 	</div>
@@ -48,13 +48,13 @@
 <!-- Responsive layout when screen width is less than 768px -->
 <div class="form-container1 flex justify-between w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4" style="background: {hex};">
 	<!-- Pie chart section -->
-	<div class="flex flex-col items-center">
+	<div class="flex flex-col mt-10 items-center">
 		<p class="mb-3 text-xl font-bold">Data BlaBla</p>
 		<PieChart />
 	</div>
 
 	<!-- Barplot chart section -->
-	<div class="flex flex-col items-center">
+	<div class="flex flex-col mt-10 items-center">
 		<p class="mb-3 text-xl font-bold mr-10">Data BlaBla</p>
 		<Barplot />
 	</div>
@@ -63,14 +63,14 @@
 <!-- Another container for the same layout (repeat as needed) -->
 <div class="form-container1 flex justify-between w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4" style="background: {hex};">
 	<!-- Pie chart section -->
-	<div class="flex flex-col items-center">
-		<p class="mb-3 text-xl font-bold">Data BlaBla</p>
+	<div class="flex flex-col mt-10 items-center">
+		<p class="mb-3  text-xl font-bold">Data BlaBla</p>
 		<PieChart />
 	</div>
 
 	<!-- Barplot chart section -->
-	<div class="flex flex-col items-center">
-		<p class="mb-3 text-xl font-bold mr-10">Data BlaBla</p>
+	<div class="flex flex-col mt-10 items-center">
+		<p class="mb-3  text-xl font-bold mr-10">Data BlaBla</p>
 		<Barplot />
 	</div>
 </div>
@@ -99,7 +99,8 @@
 			width: 100%;
 			margin-top: 10px;
 			padding: 15px;
-			margin-right: 30px;
+			flex-direction: column;
+			align-items: center;
 		}
 
 		.test{
@@ -110,7 +111,7 @@
 		.form-container1 .flex {
 			flex-direction: column;
 			align-items: center;
-			width: 50%;
+			width: 100%;
 		}
 
 		/* Ensure the text is readable on smaller screens */
