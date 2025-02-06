@@ -6,14 +6,14 @@
 	import Icon from '@iconify/svelte';
 	import '@fontsource/lato';
 
-	let hex = '#878272ed';
+		let hex = '#878272ed';
 
-	let rgb = {
-		r: 135,
-		g: 130,
-		b: 114,
-		a: 0.93
-	};
+		let rgb = {
+			r: 135,
+			g: 130,
+			b: 114,
+			a: 0.93
+		};
 
 	let hsv = {
 		h: 46,
@@ -66,3 +66,4 @@
 		height: 3rem;
 	}
 </style>
+

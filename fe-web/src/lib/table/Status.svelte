@@ -10,7 +10,7 @@
 	class:bg-selesai={status === 'Selesai'}
 	class:bg-pending={status === 'Pending'}
 >
-	<p>{status}</p>
+	<p class="text-xs">{status}</p>
 </div>
 
 <style>
