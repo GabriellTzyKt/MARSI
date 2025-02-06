@@ -66,7 +66,7 @@
     </div>
 </section>
 <section>
-    <div class="grid grid-cols-2 justify-center mt-10 bg-white items-center">
+    <div class="grid grid-cols-2 -mb-1 justify-center mt-10 bg-umum items-center">
         <div class="m-4 text-center">
             <img src={candi} alt="">
         </div>
@@ -113,10 +113,12 @@
     fill: #FFEEC5;
 }
 .wave2 {
+    position: relative;
     width: 100%;
     overflow: hidden;
     line-height: 0;
     transform: rotate(180deg);
+    margin-top: -5px;
 }
 
 .wave2 svg {
@@ -129,5 +131,9 @@
 
 .wave2 .shape-fill {
     fill: #FFEEC5;
+}
+section {
+    margin-top: 0;
+    padding-top: 0;
 }
 </style>
