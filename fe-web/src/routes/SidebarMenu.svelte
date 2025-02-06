@@ -1,35 +1,59 @@
 <script lang="ts">
+	import { writable } from 'svelte/store';
+	import { createEventDispatcher } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import Icon from '@iconify/svelte';
-	import { createEventDispatcher } from 'svelte'; // Import event dispatcher
 
-	const dispatch = createEventDispatcher(); // Buat instance event dispatcher
+	const dispatch = createEventDispatcher();
 
 	let { children = null, anchor, hasChildren = false, href, icon, active = false } = $props();
 
-	let display = $state('hidden');
-	let isOpen = $state(false);
+	let elapsed = writable(0);
+	let duration = 1000;
+	let timer: number | null = null;
+	let isOpen = writable(false);
+	let display = writable('hidden');
+
+	const startTimer = () => {
+		elapsed.set(0);
+
+		if (timer) clearInterval(timer);
+
+		timer = setInterval(() => {
+			elapsed.update((n) => {
+				if (n >= duration) {
+					elapsed.set(0); // Reset timer
+					hide(); // Hide submenu after 1 second
+					return 0;
+				}
+				return n + 1000; // Add 1 second on each interval
+			});
+		}, 1000);
+	};
+
+	// const click = () => {
+	//     startTimer();
+	// };
 
 	function handleClick() {
 		reveal();
-		dispatch('menuClick', anchor); // Dispatch event dengan anchor sebagai data
+		dispatch('menuClick', anchor);
 	}
 
 	function reveal() {
-		isOpen = true;
-		display = isOpen ? ' ' : 'hidden';
+		isOpen.set(true);
+		display.set(' '); // Show submenu
+		startTimer(); // Start timer when submenu is revealed
 	}
 
 	function hide() {
-		display = 'hidden';
-		isOpen = false;
+		display.set('hidden');
+		isOpen.set(false);
 	}
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- SidebarMenu Layout -->
 <div class="group relative">
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<div
 		transition:fly={{ y: 20, duration: 300 }}
 		class="ml-7 mr-5 mt-2 flex items-center justify-between rounded-md p-3 transition-all duration-300 hover:cursor-pointer hover:bg-gray-100 hover:bg-gray-200 {active
@@ -45,26 +69,25 @@
 			<span class="font-semibold text-gray-800">{anchor}</span>
 		</a>
 		{#if hasChildren}
-			<span class="mr-2 text-gray-600 transition-all hover:text-blue-600"
-				>{isOpen ? '⬆️' : '⬇️'}</span
-			>
+			<span class="mr-2 text-gray-600 transition-all hover:text-blue-600">
+				{#if $isOpen}⬆️{/if}
+				{#if !$isOpen}⬇️{/if}
+			</span>
 		{/if}
 	</div>
 
-	<!-- Bagian Child -->
-	{#if hasChildren}
-		{#if display === ' '}
-			<div
-				transition:fly={{ x: -20, duration: 300 }}
-				class="ml-7 mt-2 flex-col p-2 text-black"
-				onclick={reveal}
-				onmouseleave={hide}
-			>
-				<div class="space-y-2">
-					{@render children()}
-				</div>
+	<!-- Child elements -->
+	{#if hasChildren && $display === ' '}
+		<div
+			transition:fly={{ x: -20, duration: 300 }}
+			class="ml-7 mt-2 flex-col p-2 text-black"
+			onclick={reveal}
+			onmouseleave={hide}
+		>
+			<div class="space-y-2">
+				{@render children()}
 			</div>
-		{/if}
+		</div>
 	{/if}
 </div>
 
@@ -73,8 +96,8 @@
 		transition: all 0.3s ease;
 	}
 	.active-class {
-		background: #eee4e4; /* Warna emas untuk menu aktif */
-		border-left: 5px solid #b8860b; /* Garis penanda menu aktif */
+		background: #eee4e4;
+		border-left: 5px solid #b8860b;
 		font-weight: bold;
 	}
 </style>

@@ -7,8 +7,8 @@
 	onMount(async () => {
 		// Set ukuran grafik
 		const margin = { top: 30, right: 30, bottom: 70, left: 60 },
-			width = 460 - margin.left - margin.right,
-			height = 400 - margin.top - margin.bottom;
+			width = 560 - margin.left - margin.right,
+			height = 300 - margin.top - margin.bottom;
 
 		// Hapus elemen SVG lama jika ada
 		d3.select(chartContainer).select("svg").remove();

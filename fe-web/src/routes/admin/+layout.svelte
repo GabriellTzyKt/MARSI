@@ -92,7 +92,7 @@
 		</Sidebar>
 	</div>
 
-	<main class="flex h-full min-h-screen flex-1 overflow-auto bg-gray-100 p-5">
+	<main class="flex min-h-screen min-w-full flex-1 overflow-auto bg-gray-100 p-5">
 		{@render children()}
 	</main>
 </div>

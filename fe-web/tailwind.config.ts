@@ -16,6 +16,9 @@ export default {
 				customOrange : '#FF8303',
 				customSlate: '#DDE1E6'
 			  },
+			fontFamily: {
+				lato: ['Lato', 'sans-serif'],
+			},
 		}
 	},
 

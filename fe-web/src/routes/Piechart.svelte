@@ -12,8 +12,8 @@
   ];
 
   const colors = d3.scaleOrdinal(d3.schemeSet2); // menggunakan warna bawaan dari d3
-  const width = 400;
-  const height = 400;
+  const width = 460;
+  const height = 340;
   const radius = Math.min(width, height) / 2;
   let svg: SVGSVGElement;
   let tooltip: HTMLDivElement;
