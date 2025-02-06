@@ -17,7 +17,7 @@
 
 <!-- <button class="ms-3 mt-3 bg-yellow-600 p-3 text-white" onclick={setpop}> Click me </button>
 <Modal {pop} nama="Halo" on:close={dispop}></Modal> -->
-<div class="flex flex-col">
+<div class="flex flex-col test">
 	<div class="mx-6 mt-20 flex justify-between md:mx-20 md:mt-0">
 		<div class=" col-start-1 flex items-center justify-center">
 			<a href="/admin/keanggotaan/daftaranggota/tambahanggota"
@@ -74,6 +74,14 @@
 		border-radius: 10px;
 		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 		cursor: pointer;
+	}
+
+	@media (max-width: 768px) {
+		.test{
+			flex-shrink: 0;
+			width:fit-content;
+		}
+
 	}
 
 	

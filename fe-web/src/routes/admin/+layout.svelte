@@ -54,7 +54,7 @@
 </header>
 
 
-<div class=" flex min-h-screen min-w-screen">
+<div class=" flex min-h-screen h-screen min-w-screen">
 	<div class=" test lg:w=[16.7%] w-[16.7%] bg-customYellow lg:block" class:active={$sidebarActive}>
 		<Sidebar>
 			<SidebarMenu
@@ -92,7 +92,7 @@
 		</Sidebar>
 	</div>
 
-	<main class="flex-1 bg-gray-100 p-5">
+	<main class="flex-1 overflow-auto min-h-screen h-full bg-gray-100 p-5">
 		{@render children()}
 	</main>
 </div>
