@@ -17,8 +17,8 @@
 
 <!-- <button class="ms-3 mt-3 bg-yellow-600 p-3 text-white" onclick={setpop}> Click me </button>
 <Modal {pop} nama="Halo" on:close={dispop}></Modal> -->
-<div class="flex flex-col">
-	<div class="mx-6 mt-20 flex justify-between md:mx-20 md:mt-0">
+<div class="flex flex-col md:mx-20 mx-6 mt-20 md:mt-0">
+	<div class="mx-6  flex justify-between md:mx-20 md:mt-0">
 		<div class=" col-start-1 flex items-center justify-center">
 			<a href="/admin/keanggotaan/daftaranggota/tambahanggota"
 				><button class=" custom-button bg-customKrem px-6 py-2"> +Tambah Data </button></a

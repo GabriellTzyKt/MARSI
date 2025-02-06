@@ -70,7 +70,7 @@
 
 	<!-- Another container for the same layout (repeat as needed) -->
 	<div
-		class="form-container1 flex w-full justify-between sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4"
+		class="form-container1 flex w-full justify-between  md:w-1/2 lg:w-1/3 xl:w-1/4"
 		style="background: {hex};"
 	>
 		<!-- Pie chart section -->
