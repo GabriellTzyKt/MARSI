@@ -1,4 +1,4 @@
-<script lang="ts">
+```<script lang="ts">
 	import Table from '$lib/table/Table.svelte';
 	import { geoGnomonic } from 'd3';
 	import { dummydata } from '$lib/dummy';
@@ -67,3 +67,4 @@
 		cursor: pointer;
 	}
 </style>
+```

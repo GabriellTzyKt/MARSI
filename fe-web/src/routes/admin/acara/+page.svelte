@@ -17,8 +17,8 @@
 
 <!-- <button class="ms-3 mt-3 bg-yellow-600 p-3 text-white" onclick={setpop}> Click me </button>
 <Modal {pop} nama="Halo" on:close={dispop}></Modal> -->
-<div class="flex flex-col test">
-	<div class="mx-6 mt-20 flex justify-between md:mx-20 md:mt-0">
+<div class="flex flex-col md:mt-0">
+	<div class="test mx-6 flex justify-between">
 		<div class=" col-start-1 flex items-center justify-center">
 			<a href="/admin/keanggotaan/daftaranggota/tambahanggota"
 				><button class=" custom-button bg-customKrem px-6 py-2"> +Tambah Data </button></a
@@ -78,10 +78,8 @@
 
 	@media (max-width: 768px) {
 		.test{
-			flex-shrink: 0;
-			width:fit-content;
+			margin-top: 90px;
 		}
-
 	}
 
 	

@@ -34,7 +34,7 @@
 
 	<!-- Main container that holds both charts -->
 	<div
-		class="form-container1 flex w-full justify-between sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4"
+		class="form-container1 flex w-full justify-between md:w-1/2 lg:w-1/3 xl:w-1/4"
 		style="background: {hex};"
 	>
 		<!-- Pie chart section -->
@@ -45,7 +45,7 @@
 
 		<!-- Barplot chart section -->
 		<div class="flex flex-col items-center">
-			<p class="mb-3 mr-10 text-xl font-bold">Data BlaBla</p>
+			<p class="mb-3 mr-10 mt-10 text-xl font-bold">Data BlaBla</p>
 			<Barplot />
 		</div>
 	</div>
@@ -63,7 +63,7 @@
 
 		<!-- Barplot chart section -->
 		<div class="flex flex-col items-center">
-			<p class="mb-3 mr-10 text-xl font-bold">Data BlaBla</p>
+			<p class="mb-3 mr-10 mt-10 text-xl font-bold">Data BlaBla</p>
 			<Barplot />
 		</div>
 	</div>
@@ -81,7 +81,7 @@
 
 		<!-- Barplot chart section -->
 		<div class="flex flex-col items-center">
-			<p class="mb-3 mr-10 text-xl font-bold">Data BlaBla</p>
+			<p class="mb-3 mr-10 mt-10 text-xl font-bold">Data BlaBla</p>
 			<Barplot />
 		</div>
 	</div>
