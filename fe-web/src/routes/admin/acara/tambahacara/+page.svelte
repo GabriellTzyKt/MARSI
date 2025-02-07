@@ -1,77 +1,79 @@
 <script lang="ts">
 	let nama = $state('');
-	let nomortelp = $state('');
-	let email = $state('');
+	let tanggal_acara = $state('');
+	let lokasi_acara = $state('');
 	let nama_kerajaan = $state('');
-	let jenis_kerajaan = $state('');
-	let gelar = $state('');
+	let jenis_acara = $state('');
+	let kapasitas = $state('');
+	let penanggungjawab = ['Kerajaan Kraton', 'Kerajaan Betawi', 'Kerajaan Sunda'];
 </script>
 
 <div class="test flex w-full flex-col">
-	<a href="/admin/keanggotaan/daftaranggota"
-		><button class="custom-button bg-customRed">⭠ Kembali</button></a
-	>
-	<p class="ml-5 mt-6 text-3xl font-bold underline">Tambah Anggota</p>
+	<a href="/admin/acara"><button class="custom-button bg-customRed">⭠ Kembali</button></a>
+	<p class="ml-5 mt-6 text-3xl font-bold underline">Tambah Acara</p>
 	<div class="form-container flex flex-col">
 		<form>
 			<div class="input-group flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nama">Nama Anggota</label>
+				<label class="text-md self-start text-left" for="nama">Nama Acara</label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"
 					id="nama"
 					bind:value={nama}
-					placeholder="John Doe"
+					placeholder="Upacara bendera"
 				/>
 			</div>
 			<div class="input-group mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nomor_telepon">Nomor Telepon</label>
+				<label class="text-md self-start text-left" for="nomor_telepon">Tanggal Acara</label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"
 					id="nomor_telepon"
-					bind:value={nomortelp}
-					placeholder="911"
+					bind:value={tanggal_acara}
+					placeholder="22-12-2025"
 				/>
 			</div>
 			<div class="input-group mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nama">Email</label>
+				<label class="text-md self-start text-left" for="nama">Lokasi Acara</label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"
+					id="nomor_telepon"
+					bind:value={lokasi_acara}
+					placeholder="Surabaya"
+				/>
+			</div>
+			<div class="input-group mt-2 flex flex-col gap-1">
+				<label class="text-md self-start text-left" for="nama">Penanggung Jawab</label>
+				<select
+					class="input-field rounded-lg border p-2"
 					id="nama"
-					bind:value={email}
+					bind:value={penanggungjawab[0]}
 					placeholder="azaza@gmail.com"
-				/>
+				>
+					{#each penanggungjawab as p}
+						<option value={p}>{p}</option>
+					{/each}
+				</select>
 			</div>
 			<div class="input-group mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nama">Jenis Kerajaan</label>
+				<label class="text-md self-start text-left" for="nama">Jenis Acara</label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"
 					id="nama"
-					bind:value={jenis_kerajaan}
-					placeholder="Kerajaan A"
+					bind:value={jenis_acara}
+					placeholder="Upacara Adat"
 				/>
 			</div>
 			<div class="input-group mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nama">Nama Kerajaan</label>
+				<label class="text-md self-start text-left" for="nama">Kapasitas</label>
 				<input
 					class="input-field rounded-lg border p-2"
-					type="text"
+					type="number"
 					id="nama"
-					bind:value={nama_kerajaan}
-					placeholder="Kerajaan A"
-				/>
-			</div>
-			<div class="input-group mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nama">Gelar</label>
-				<input
-					class="input-field rounded-lg border p-2"
-					type="text"
-					id="nama"
-					bind:value={gelar}
-					placeholder="Radja"
+					bind:value={kapasitas}
+					placeholder="10000"
 				/>
 				<button class="custom-button bg-customYellow w-40 self-end text-right"> Tambah </button>
 			</div>

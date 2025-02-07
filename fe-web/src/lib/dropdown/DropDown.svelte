@@ -10,7 +10,7 @@
 	const dispatcher = createEventDispatcher();
 	let pop = $state(false);
 	// Unique ID for this dropdown
-	const { id, data } = $props();
+	const { id, data, index, tipe } = $props();
 	let isOpen = $state(false);
 	let temp = $state('');
 
@@ -48,18 +48,35 @@
 		{console.log(data)}
 		{console.log('Dropdown terbuka untuk: ' + id)}
 		<div class="absolute -bottom-16 -right-16 z-50 flex flex-col rounded-xl bg-white">
-			<div class="flex rounded-t-xl px-4 py-1 hover:cursor-pointer hover:bg-gray-400">
-				<p class="">Detail</p>
+			<div class="flex">
+				{#if tipe === 'anggota'}
+					<a
+						href="acara/tambahacara/detail/{data.id}"
+						class="w-full rounded-t-xl px-4 py-1 hover:cursor-pointer hover:bg-gray-400">Detail</a
+					>
+				{:else}
+					<a
+						href="detail/{data.id}"
+						class="w-full rounded-t-xl px-4 py-1 hover:cursor-pointer hover:bg-gray-400">Detail</a
+					>
+				{/if}
 			</div>
-			<div class="flex px-4 py-1 hover:cursor-pointer hover:bg-gray-400">
-				<p class="">Ubah</p>
+			<div class="flex">
+				{#if tipe === 'anggota'}
+					<a
+						href="acara/tambahacara/detail/{data.id}"
+						class="w-full px-4 py-1 hover:cursor-pointer hover:bg-gray-400">Ubah</a
+					>
+				{:else}
+					<a href="detail/{data.id}" class="w-full px-4 py-1 hover:cursor-pointer hover:bg-gray-400"
+						>Ubah</a
+					>
+				{/if}
 			</div>
-			<div
-				class="flex rounded-b-xl px-4 py-1 hover:cursor-pointer hover:bg-gray-400"
-				onclick={toglemodal}
-				onclose={toglemodal}
-			>
-				<p class="">Arsip</p>
+			<div class="flex" onclick={toglemodal} onclose={toglemodal}>
+				<a href="" class="w-full rounded-b-xl px-4 py-1 hover:cursor-pointer hover:bg-gray-400"
+					>Arsip</a
+				>
 			</div>
 		</div>
 	{/if}

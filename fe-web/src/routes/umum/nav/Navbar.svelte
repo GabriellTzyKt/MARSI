@@ -46,7 +46,7 @@
 			<div class="flex flex-grow flex-row items-center justify-evenly">
 				<div class="">
 					<a
-						href=""
+						href="beranda"
 						class="mx-2 px-4 py-2 transition-all duration-100 ease-in-out hover:border-b-2 hover:border-b-gray-800 {page
 							.route.id === '/umum/beranda'
 							? 'border-b-2 border-b-gray-800'
@@ -55,30 +55,38 @@
 				</div>
 				<div>
 					<a
-						href=""
-						class="mx-2 px-4 py-2 transition-all duration-100 ease-in-out hover:border-b-2 hover:border-b-gray-800"
-						>Daftar Kerajaan</a
+						href="daftarkerajaan"
+						class="mx-2 px-4 py-2 transition-all duration-100 ease-in-out hover:border-b-2 hover:border-b-gray-800 {page
+							.route.id === '/umum/daftarkerajaan'
+							? 'border-b-2 border-b-gray-800'
+							: ''}">Daftar Kerajaan</a
 					>
 				</div>
 				<div>
 					<a
-						href=""
-						class="mx-2 px-4 py-2 transition-all duration-100 ease-in-out hover:border-b-2 hover:border-b-gray-800"
-						>Situs Kerajaan</a
+						href="situskerajaan"
+						class="mx-2 px-4 py-2 transition-all duration-100 ease-in-out hover:border-b-2 hover:border-b-gray-800 {page
+							.route.id === '/umum/situskerajaan'
+							? 'border-b-2 border-b-gray-800'
+							: ''}">Situs Kerajaan</a
 					>
 				</div>
 				<div>
 					<a
-						href=""
-						class="mx-2 px-4 py-2 transition-all duration-100 ease-in-out hover:border-b-2 hover:border-b-gray-800"
-						>Aset Kerajaan</a
+						href="asetkerajaan"
+						class="mx-2 px-4 py-2 transition-all duration-100 ease-in-out hover:border-b-2 hover:border-b-gray-800 {page
+							.route.id === '/umum/asetkerajaan'
+							? 'border-b-2 border-b-gray-800'
+							: ''}">Aset Kerajaan</a
 					>
 				</div>
 				<div>
 					<a
-						href=""
-						class="mx-2 px-4 py-2 transition-all duration-100 ease-in-out hover:border-b-2 hover:border-b-gray-800"
-						>Acara</a
+						href="acara"
+						class="mx-2 px-4 py-2 transition-all duration-100 ease-in-out hover:border-b-2 hover:border-b-gray-800 {page
+							.route.id === '/umum/acara'
+							? 'border-b-2 border-b-gray-800'
+							: ''}">Acara</a
 					>
 				</div>
 			</div>
