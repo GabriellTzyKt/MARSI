@@ -1,6 +1,24 @@
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
 import type { Config } from 'tailwindcss';
+import plugin from "tailwindcss/plugin";
+
+const Myclass = plugin(function ({addUtilities}){
+	addUtilities({
+		".my-rotate-y-180":{
+			transform: "rotateY(180deg)"
+		},
+		".preserve-3d":{
+			transformStyle: "preserve-3d"
+		},
+		".perspective":{
+			perspective:"1000px"
+		},
+		".backface-hidden":{
+			backfaceVisibility : "hidden"
+		},
+	})
+})
 
 export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
@@ -22,5 +40,5 @@ export default {
 		}
 	},
 
-	plugins: [typography, forms]
+	plugins: [typography, forms, Myclass]
 } satisfies Config;
