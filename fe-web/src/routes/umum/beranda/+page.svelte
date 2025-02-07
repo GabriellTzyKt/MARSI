@@ -2,11 +2,14 @@
 	import bgTemp from '../../../asset/bg_webumum.png';
 	import candi from '../../../asset/umum/candi.png';
 	import Hover from '../Hoverpopup.svelte';
+	import candi1 from '../../../asset/umum/candi2.png';
+	import gbr from '../../../asset/umum/gbr.png';
+	import Footer from '../../../lib/footer/Footer.svelte';
 
 	let isHovered = $state(false);
 </script>
 
-<section class="relative">
+<section>
 	<div class=" bg-umum flex h-screen flex-col items-center justify-center">
 		<div class=" text-center">
 			<p class="text-5xl font-[600]">MAJELIS AGUNG RAJA SULTAN INDONESIA</p>
@@ -14,9 +17,9 @@
 		<div class="relative mt-10 flex justify-center text-center">
 			<img src={bgTemp} class="w-2/3" alt="" />
 			<div
-				class="absolute bottom-10 mb-3 mr-40 ml-8 z-10"
-                tabindex=0
-                role="button"
+				class="absolute bottom-10 z-10 mb-3 ml-8 mr-40"
+				tabindex="0"
+				role="button"
 				onmouseenter={() => (isHovered = true)}
 				onmouseleave={() => (isHovered = false)}
 			>
@@ -24,10 +27,10 @@
 
 				{#if isHovered}
 					<Hover
-                        text="Keraton Kasunanan Surakarta"
+						text="Keraton Kasunanan Surakarta"
 						location="Surakarta, Jawa Tengah"
 						link="#"
-                        isHovered=true
+						isHovered="true"
 					/>
 				{/if}
 			</div>
@@ -61,7 +64,7 @@
 				anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di Indonesia.
 			</p>
 			<div class="flex items-center justify-end">
-				<a href="" class="bg-btn mx-4 my-2 rounded-full px-4 py-2 hover:bg-yellow-800"
+				<a href="" class="bg-btn my-2 rounded-full px-4 py-2 hover:bg-yellow-800"
 					>Selengkapnya ->
 					<!-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
@@ -72,14 +75,15 @@
 	</div>
 </section>
 <section>
-	<div class="mt-10 grid grid-cols-2 items-center justify-center bg-white">
+	<div class="bg-umum relative mt-10 grid grid-cols-2 items-center justify-center">
 		<div class="me-60 max-w-full break-words p-4 text-left">
-			<p class="mb-4 text-4xl font-[500]">Kerajaan di Indonesia</p>
+			<p class="mb-4 text-4xl font-[500]">Situs Bersejarah Kerajaan</p>
 			<p>
-				Kerajaan-kerajaan yang berdiri di Indonesia berjumlah ratusan. Majelis Agung Raja Sultan
-				Indonesia (MARSI) sendiri merupakan sebuah organisasi yang beranggotakan para Raja beserta
-				dengan Kerajaannya. Anggota MARSI tersebar dari sabang hingga merauke. Melalui laman ini,
-				anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di Indonesia.
+				Dari banyaknya kerajaan yang berdiri dan tersebar di seluruh penjuru nusantara, semua pasti
+				memiliki situs bersejarahnya masing-masing. Mulai dari bangunan, situs khusus, ataupun yang
+				hanya dalam bentuk struktur. Di laman ini, anda dapat mengakses secara lengkap mengenai
+				informasi seputar situs-situs bersejarah dari ratusan kerajaan yang tentunya sangat menarik
+				untuk anda lihat!
 			</p>
 			<div class="flex items-center justify-start">
 				<a href="" class="bg-btn my-2 rounded-full px-4 py-2 hover:bg-yellow-800"
@@ -91,7 +95,7 @@
 			</div>
 		</div>
 		<div class="m-4 text-center">
-			<img src={candi} alt="" />
+			<img src={candi1} alt="" />
 		</div>
 	</div>
 	<div class="wave2">
@@ -109,20 +113,21 @@
 	</div>
 </section>
 <section>
-	<div class="bg-umum -mb-1 mt-10 grid grid-cols-2 items-center justify-center">
+	<div class="relative mt-10 grid grid-cols-2 items-center justify-center bg-white">
 		<div class="m-4 text-center">
-			<img src={candi} alt="" />
+			<img src={gbr} alt="" />
 		</div>
 		<div class="ms-60 max-w-full break-words p-4 text-right">
-			<p class="mb-4 text-4xl font-[500]">Kerajaan di Indonesia</p>
+			<p class="mb-4 text-4xl font-[500]">Situs Bersejarah Kerajaan</p>
 			<p>
-				Kerajaan-kerajaan yang berdiri di Indonesia berjumlah ratusan. Majelis Agung Raja Sultan
-				Indonesia (MARSI) sendiri merupakan sebuah organisasi yang beranggotakan para Raja beserta
-				dengan Kerajaannya. Anggota MARSI tersebar dari sabang hingga merauke. Melalui laman ini,
-				anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di Indonesia.
+				Dari banyaknya kerajaan yang berdiri dan tersebar di seluruh penjuru nusantara, semua pasti
+				memiliki situs bersejarahnya masing-masing. Mulai dari bangunan, situs khusus, ataupun yang
+				hanya dalam bentuk struktur. Di laman ini, anda dapat mengakses secara lengkap mengenai
+				informasi seputar situs-situs bersejarah dari ratusan kerajaan yang tentunya sangat menarik
+				untuk anda lihat!
 			</p>
 			<div class="flex items-center justify-end">
-				<a href="" class="bg-btn mx-4 my-2 rounded-full px-4 py-2 hover:bg-yellow-800"
+				<a href="" class="bg-btn my-2 rounded-full px-2 py-2 hover:bg-yellow-800"
 					>Selengkapnya ->
 					<!-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
@@ -131,6 +136,9 @@
 			</div>
 		</div>
 	</div>
+</section>
+<section>
+	<Footer></Footer>
 </section>
 
 <style>
@@ -151,6 +159,7 @@
 		overflow: hidden;
 		line-height: 0;
 		transform: rotate(180deg);
+		/* transform: scaleY(-1); */
 	}
 	.bg-btn {
 		background-color: #ffa600;
@@ -166,27 +175,42 @@
 		fill: #ffeec5;
 	}
 	.wave2 {
-		position: relative;
 		width: 100%;
 		overflow: hidden;
 		line-height: 0;
 		transform: rotate(180deg);
-		margin-top: -5px;
+		transform: scaleY(-1);
 	}
-
 	.wave2 svg {
 		position: relative;
 		display: block;
 		width: calc(140% + 1.3px);
 		height: 212px;
-		transform: rotateY(180deg);
 	}
 
 	.wave2 .shape-fill {
 		fill: #ffeec5;
 	}
+
 	section {
 		margin-top: 0;
 		padding-top: 0;
+	}
+
+	.wave3 {
+		width: 100%;
+		overflow: hidden;
+		line-height: 0;
+		transform: scaleX(-1);
+	}
+	.wave3 svg {
+		position: relative;
+		display: block;
+		width: calc(140% + 1.3px);
+		height: 212px;
+	}
+
+	.wave3 .shape-fill {
+		fill: #ffa600; /* Sesuaikan warna sesuai kebutuhan */
 	}
 </style>
