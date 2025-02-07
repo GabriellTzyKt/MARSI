@@ -3,35 +3,165 @@
 	import candi from '../../../asset/umum/candi.png';
 	import Hover from '../Hoverpopup.svelte';
 
-	let isHovered = $state(false);
+	let hoveredIcons = new Set();
+
+	function setHover(id: string, isHover: boolean) {
+		if (isHover) {
+			hoveredIcons.add(id);
+		} else {
+			hoveredIcons.delete(id);
+		}
+		hoveredIcons = new Set(hoveredIcons);
+	}
+
 </script>
 
 <section class="relative">
-	<div class=" bg-umum flex h-screen flex-col items-center justify-center">
-		<div class=" text-center">
+	<div class="bg-umum flex h-screen flex-col items-center justify-center">
+		<div class="text-center">
 			<p class="text-5xl font-[600]">MAJELIS AGUNG RAJA SULTAN INDONESIA</p>
 		</div>
 		<div class="relative mt-10 flex justify-center text-center">
 			<img src={bgTemp} class="w-2/3" alt="" />
+			<!-- Icon 1 -->
 			<div
-				class="absolute bottom-10 mb-3 mr-40 ml-8 z-10"
-                tabindex=0
-                role="button"
-				onmouseenter={() => (isHovered = true)}
-				onmouseleave={() => (isHovered = false)}
+				class="absolute bottom-10 z-10 mb-3 ml-8 mr-40"
+				tabindex="0"
+				role="button"
+				onmouseenter={() => setHover('icon1', true)}
+				onmouseleave={() => setHover('icon1', false)}
 			>
 				<span class="mdi--map-marker-radius text-3xl"></span>
 
-				{#if isHovered}
+				{#if hoveredIcons.has('icon1')}
 					<Hover
-                        text="Keraton Kasunanan Surakarta"
+						text="Keraton Kasunanan Surakarta"
 						location="Surakarta, Jawa Tengah"
 						link="#"
-                        isHovered=true
+						isHovered="true"
 					/>
 				{/if}
 			</div>
-		</div>
+			<!-- Icon 2 -->
+			<div
+				class="top-12 mt-12 absolute"
+				tabindex="0"
+				role="button"
+				onmouseenter={() => setHover('icon2', true)}
+				onmouseleave={() => setHover('icon2', false)}
+			>
+				<span class="mdi--map-marker-radius text-3xl"></span>
+
+				{#if hoveredIcons.has('icon2')}
+					<Hover
+						text="Keraton Yogyakarta"
+						location="Yogyakarta, DI Yogyakarta"
+						link="#"
+						isHovered="true"
+					/>
+				{/if}
+			</div>
+
+			<!-- Icon 3 -->
+			<div
+				class="top-10 mt-11 -ml-2 left-1/4 absolute"
+				tabindex="0"
+				role="button"
+				onmouseenter={() => setHover('icon3', true)}
+				onmouseleave={() => setHover('icon3', false)}
+			>
+				<span class="mdi--map-marker-radius text-3xl"></span>
+
+				{#if hoveredIcons.has('icon3')}
+					<Hover
+						text="Test3"
+						location="Maldives"
+						link="#"
+						isHovered="true"
+					/>
+				{/if}
+			</div>
+
+			<!-- Icon 4 -->
+			<div
+				class="top-12 mt-12 ml-5 left-1/4 absolute"
+				tabindex="0"
+				role="button"
+				onmouseenter={() => setHover('icon4', true)}
+				onmouseleave={() => setHover('icon4', false)}
+			>
+				<span class="mdi--map-marker-radius text-3xl"></span>
+
+				{#if hoveredIcons.has('icon4')}
+					<Hover
+						text="Test4"
+						location="Maldives"
+						link="#"
+						isHovered="true"
+					/>
+				{/if}
+			</div>
+
+			<!-- Icon 5 -->
+			<div
+				class="bottom-1/2 ml-2 left-1/4 absolute"
+				tabindex="0"
+				role="button"
+				onmouseenter={() => setHover('icon5', true)}
+				onmouseleave={() => setHover('icon5', false)}
+			>
+				<span class="mdi--map-marker-radius text-3xl"></span>
+
+				{#if hoveredIcons.has('icon5')}
+					<Hover
+						text="Test5"
+						location="Maldives"
+						link="#"
+						isHovered="true"
+					/>
+				{/if}
+			</div>
+
+			<!-- Icon 6 -->
+			<div
+				class="bottom-1/2 ml-12 mb-4 left-1/4 absolute"
+				tabindex="0"
+				role="button"
+				onmouseenter={() => setHover('icon6', true)}
+				onmouseleave={() => setHover('icon6', false)}
+			>
+				<span class="mdi--map-marker-radius text-3xl"></span>
+
+				{#if hoveredIcons.has('icon6')}
+					<Hover
+						text="Test6"
+						location="Maldives"
+						link="#"
+						isHovered="true"
+					/>
+				{/if}
+			</div>
+
+
+			<!-- Icon 7 -->
+			<div
+				class="bottom-1/2 -mb-8 ml-8 left-1/4 absolute"
+				tabindex="0"
+				role="button"
+				onmouseenter={() => setHover('icon7', true)}
+				onmouseleave={() => setHover('icon7', false)}
+			>
+				<span class="mdi--map-marker-radius text-3xl"></span>
+
+				{#if hoveredIcons.has('icon7')}
+					<Hover
+						text="Test7"
+						location="Maldives"
+						link="#"
+						isHovered="true"
+					/>
+				{/if}
+			</div>
 	</div>
 	<div class="wave1">
 		<svg
@@ -47,6 +177,7 @@
 		</svg>
 	</div>
 </section>
+
 <section>
 	<div class="mt-10 grid grid-cols-2 items-center justify-center bg-white">
 		<div class="m-4 text-center">
