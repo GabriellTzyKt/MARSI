@@ -5,27 +5,29 @@
 	import imageprofile from '../../asset/gambar_temp.jpg';
 	import Sidebar from '../Sidebar.svelte';
 	import SidebarMenu from '../SidebarMenu.svelte';
-	import { page } from '$app/stores';
 	// import { page } from 'app/stores';
-	import { derived } from 'svelte/store';
+	// import { derived } from 'svelte/store';
+	import { page } from '$app/state';
 	const isActive = (path: string) => {
-		return $page.url.pathname === path;
+		return page.url.pathname === path;
 	};
 
-	const pageTitle = derived(page, ($page) => {
-		if ($page.route.id === '/admin/beranda') {
+	$inspect(page);
+	$inspect(page.route.id === '/admin/acara/detail/[id]');
+	const pageTitle = $derived.by(() => {
+		if (page.route.id === '/admin/beranda') {
 			return 'Selamat Datang';
-		} else if ($page.route.id === '/admin/keanggotaan/daftaranggota') {
+		} else if (page.route.id === '/admin/keanggotaan/daftaranggota') {
 			return 'Keanggotaan';
-		} else if ($page.route.id === '/admin/keanggotaan/daftaranggota/tambahanggota') {
+		} else if (page.route.id === '/admin/keanggotaan/daftaranggota/tambahanggota') {
 			return 'Keanggotaan';
-		} else if ($page.route.id === '/admin/keanggotaan/gelar') {
+		} else if (page.route.id === '/admin/keanggotaan/gelar') {
 			return 'Keanggotaan';
-		} else if ($page.route.id === '/admin/acara') {
+		} else if (page.route.id === '/admin/acara') {
 			return 'Acara';
-		} else if ($page.route.id == '/admin/acara/tambahacara') {
+		} else if (page.route.id == '/admin/acara/tambahacara') {
 			return 'Acara';
-		} else if ($page.route.id == '/admin/acara/detail/[id]') {
+		} else if (page.route.id === '/admin/acara/tambahacara/detail/[id]') {
 			return 'Acara';
 		}
 	});
@@ -55,7 +57,7 @@
 	</div>
 	<div class="width_head2 flex w-[83.3%] items-center justify-between">
 		<p class="md:w-16,7% lg:w-16,7% ml-5 p-5 text-3xl font-bold text-black">
-			{$pageTitle}
+			{pageTitle}
 		</p>
 		<div class="bg-customYellow mr-5 flex items-center rounded-md p-2">
 			<span class="ml-5 text-black">Admin MARSI</span>

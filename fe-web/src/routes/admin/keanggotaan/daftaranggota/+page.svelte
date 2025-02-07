@@ -14,7 +14,7 @@
 
 <div class="mx-6 mt-20 flex flex-col md:mx-20 md:mt-0">
 	<div class="mx-6 flex justify-between md:mx-20 md:mt-0">
-		<div class=" col-start-1 flex items-center justify-center">
+		<div class=" col-start-1 flex flex-row items-center justify-center">
 			<a href="/admin/keanggotaan/daftaranggota/tambahanggota"
 				><button class=" custom-button bg-customKrem px-6 py-2"> +Tambah Data </button></a
 			>
@@ -62,7 +62,7 @@
 		color: black;
 		font-weight: bold;
 		font-size: 16px;
-		border-radius: 10px;
+		border-radius: 5px;
 		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 		cursor: pointer;
 	}

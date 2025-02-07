@@ -8,8 +8,14 @@
 
 <div class="test flex w-full flex-col">
 	<div class="flex flex-row">
-		<a href="/admin/acara"><button class="custom-button bg-customRed">⭠ Kembali</button></a>
-		<p class="ml-5 mt-6 text-3xl font-bold underline">Detail Acara</p>
+		<div>
+			<a href="/admin/acara"
+				><button class="custom-button bg-customRed px-8 py-2">⭠ Kembali</button></a
+			>
+		</div>
+		<div>
+			<p class="ml-5 mt-6 text-3xl font-bold underline">Detail Acara</p>
+		</div>
 	</div>
 
 	<div class="me-4 flex flex-row items-center justify-end gap-3">

@@ -54,7 +54,7 @@
 	>
 		{#snippet children({ header, data, index })}
 			{#if header === 'Aksi'}
-				<DropDown {index} tipe="anggota" id={`id-acara-${index}`} {data}></DropDown>
+				<DropDown {index} tipe="acara" id={`id-acara-${index}`} {data}></DropDown>
 			{/if}
 			{#if header === 'Status'}
 				<Status status={data.status}></Status>

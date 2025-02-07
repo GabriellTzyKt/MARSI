@@ -3,12 +3,30 @@
 	import { fade, fly } from 'svelte/transition';
 	import xbutton from '../../asset/icons/xbutton.png';
 	import dangerbtn from '../../asset/icons/exclamationmark.png';
+	import { dummyAcara } from '$lib/dummy';
+	import { dummydata } from '$lib/dummy';
 
-	let { pop, nama } = $props();
+	let { pop, data, tipe } = $props();
 	const dispatch = createEventDispatcher();
 	const close = () => {
 		pop = false;
 		dispatch('close');
+	};
+	const arsip = () => {
+		if (tipe === 'anggota') {
+			const index = dummydata.findIndex((d) => d.id === data.id);
+
+			if (index !== -1) {
+				dummydata.splice(index, 1);
+			}
+		} else {
+			const index = dummyAcara.findIndex((d) => d.id === data.id);
+
+			if (index !== -1) {
+				dummyAcara.splice(index, 1);
+			}
+		}
+		close();
 	};
 </script>
 
@@ -40,7 +58,11 @@
 				<img src={dangerbtn} alt="danger-button" class="h-auto w-24" />
 			</div>
 			<div class=" mt-8 px-16">
-				<p class="text-3xl font-[475]">Apakah anda ingin mengarsip anggota {nama}?</p>
+				{#if tipe === 'anggota'}
+					<p class="text-3xl font-[475]">Apakah anda ingin mengarsip anggota {data.nama}?</p>
+				{:else}
+					<p class="text-3xl font-[475]">Apakah anda ingin mengarsip Acara {data.acara}?</p>
+				{/if}
 			</div>
 			<div class="mb-8 mt-16 grid grid-cols-2 items-center justify-center gap-10">
 				<div class="flex">
@@ -52,7 +74,7 @@
 				<div class="flex">
 					<button
 						class="btn-setuju rounded-xl px-8 py-3 font-[500] text-white hover:cursor-pointer hover:ring hover:ring-gray-600"
-						on:click={close}>Iya, arispkan</button
+						on:click={arsip}>Iya, arispkan</button
 					>
 				</div>
 			</div>
