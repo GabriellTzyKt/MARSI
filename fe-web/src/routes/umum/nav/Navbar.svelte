@@ -30,7 +30,7 @@
         
         <div class="hidden lg:flex items-center gap-6">
             <SearchNav />
-            <div class="flex gap-4">
+            <div class="flex gap-4 text-nowrap">
                 <a href="beranda" class="nav-link">Beranda</a>
                 <a href="daftarkerajaan" class="nav-link">Daftar Kerajaan</a>
                 <a href="situskerajaan" class="nav-link">Situs Kerajaan</a>
@@ -66,7 +66,7 @@
     .nav-link:hover {
         border-bottom: 2px solid gray;
     }
-    @media (max-width: 1000px) {
+    @media (max-width: 1200px) {
         .lg\:hidden {
             display: block;
         }

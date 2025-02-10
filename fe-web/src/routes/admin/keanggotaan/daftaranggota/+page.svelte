@@ -1,9 +1,7 @@
 <script lang="ts">
 	import Table from '$lib/table/Table.svelte';
-	import { geoGnomonic } from 'd3';
 	import { dummydata } from '$lib/dummy';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
-	import { get, writable } from 'svelte/store';
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	// import {dropId} from './DropDown.svelte'

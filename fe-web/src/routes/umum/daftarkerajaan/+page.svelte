@@ -2,12 +2,12 @@
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '../nav/Navbar.svelte';
 	import gambarHeader from '../../../asset/umum/keraton 2.png';
-	import gambar from '../../../asset/umum/gbr_1.png'
-    import gambar2 from '../../../asset/umum/gbr_2.png'
-	import gambar3 from '../../../asset/umum/gbr_3.png'
-	import gambar4 from '../../../asset/umum/gbr_4.png'
+	import gambar from '../../../asset/umum/gbr_1.png';
+	import gambar2 from '../../../asset/umum/gbr_2.png';
+	import gambar3 from '../../../asset/umum/gbr_3.png';
+	import gambar4 from '../../../asset/umum/gbr_4.png';
 	import Cardshow from '../Cardshow.svelte';
-
+	let value = $state(0);
 </script>
 
 <Navbar></Navbar>
@@ -19,6 +19,7 @@
 	<!-- Gambar -->
 	<div class="relative">
 		<img src={gambarHeader} alt="" class="h-auto w-full" />
+
 		<p
 			class="absolute left-[35%] top-1/2 z-10 -translate-y-1/2 transform text-6xl font-bold text-black"
 		>
@@ -53,11 +54,33 @@
 		</div>
 	</div>
 
-	<div class="relative mb-20 ml-10 mt-10 grid grid-cols-2 gap-x-4 gap-y-10">
-		<Cardshow judul = "Keraton Kasunanan Surakarta" lokasi = "Surakarta, Jawa Tengah" gambar={gambar} ></Cardshow>
-        <Cardshow judul = "Keraton Ngayogyakarta Hadiningrat" lokasi = "Yogyakarta, Daerah Istimewa Yogyakarta" gambar={gambar2} ></Cardshow>
-		<Cardshow judul = "Kadipaten Mangkunagaran" lokasi = "Surakarta, Jawa Tengah" gambar={gambar4} ></Cardshow>
-		<Cardshow judul = "Keraton Kasunanan Surakarta" lokasi = "Surakarta, Jawa Tengah" gambar={gambar3} ></Cardshow>
+	<!-- Pagination ? -->
+	<div class="ml-11 flex justify-start">
+		<p>Show :</p>
+		<details class="dropdown border-rounded ml-3 border">
+			<summary class="no-arrow w-[50px] text-center"> {value} </summary>
+			<ul class="bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+				<li><button onclick={() => (value = 6)}>6</button></li>
+				<li><button onclick={() => (value = 8)}>8</button></li>
+			</ul>
+		</details>
+		<p class="ml-2">Entries</p>
+	</div>
+
+	<!-- Card Show  -->
+	<div class="relative mb-20 ml-10 mt-10 grid grid-cols-1 md:grid-cols-2 mr-10 gap-x-4 gap-y-10">
+		<Cardshow judul="Keraton Kasunanan Surakarta" lokasi="Surakarta, Jawa Tengah" {gambar} id=1
+		></Cardshow>
+		<Cardshow
+			judul="Keraton Ngayogyakarta Hadiningrat"
+			lokasi="Yogyakarta, Daerah Istimewa Yogyakarta"
+			gambar={gambar2}
+			id=2
+		></Cardshow>
+		<Cardshow judul="Kadipaten Mangkunagaran" lokasi="Surakarta, Jawa Tengah" gambar={gambar4} id=3
+		></Cardshow>
+		<Cardshow judul="Keraton Kasunanan Surakarta" lokasi="Surakarta, Jawa Tengah" gambar={gambar3} id=4
+		></Cardshow>
 	</div>
 </section>
 
@@ -67,5 +90,8 @@
 </div>
 
 <style>
+	.no-arrow {
+		list-style: none;
+	}
 
 </style>

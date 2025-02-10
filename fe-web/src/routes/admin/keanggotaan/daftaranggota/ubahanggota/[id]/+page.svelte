@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/state';
-
+	
 	const { data } = $props();
 	const anggota = data.detil_anggota;
 	let nama = $state(anggota.nama);
