@@ -85,7 +85,7 @@
     .lineicons--eye, .mdi-light--eye-off {
         width: 24px;
         height: 24px;
-        color: gray;
+        color: black;
         display: inline-block;
     }
 </style>
