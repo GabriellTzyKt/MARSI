@@ -1,6 +1,6 @@
 <script lang="ts">
 
-	let { judul, lokasi, gambar } = $props();
+	let { judul, lokasi, gambar, id } = $props();
 
 </script>
 
@@ -13,9 +13,9 @@
 				<span class="bx--map"></span>
 				<p class="text-base text-gray-700">{lokasi}</p>
 			</div>
-			<p class="flex text-center text-blue-600">
+			<a href="/umum/daftarkerajaan/{id}" class="flex text-center text-blue-600">
 				Selanjutnya <span class="formkit--arrowright justify-center self-center"></span>
-			</p>
+			</a>
 		</div>
 	</div>
 </div>
