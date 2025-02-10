@@ -2,12 +2,11 @@
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '../nav/Navbar.svelte';
 	import gambarHeader from '../../../asset/umum/keraton 2.png';
-	import gambar from '../../../asset/umum/gbr_1.png'
-    import gambar2 from '../../../asset/umum/gbr_2.png'
-	import gambar3 from '../../../asset/umum/gbr_3.png'
-	import gambar4 from '../../../asset/umum/gbr_4.png'
+	import gambar from '../../../asset/umum/gbr_1.png';
+	import gambar2 from '../../../asset/umum/gbr_2.png';
+	import gambar3 from '../../../asset/umum/gbr_3.png';
+	import gambar4 from '../../../asset/umum/gbr_4.png';
 	import Cardshow from '../Cardshow.svelte';
-
 </script>
 
 <Navbar></Navbar>
@@ -53,11 +52,20 @@
 		</div>
 	</div>
 
-	<div class="relative mb-20 ml-10 mt-10 grid grid-cols-2 gap-x-4 gap-y-10">
-		<Cardshow judul = "Keraton Kasunanan Surakarta" lokasi = "Surakarta, Jawa Tengah" gambar={gambar} ></Cardshow>
-        <Cardshow judul = "Keraton Ngayogyakarta Hadiningrat" lokasi = "Yogyakarta, Daerah Istimewa Yogyakarta" gambar={gambar2} ></Cardshow>
-		<Cardshow judul = "Kadipaten Mangkunagaran" lokasi = "Surakarta, Jawa Tengah" gambar={gambar4} ></Cardshow>
-		<Cardshow judul = "Keraton Kasunanan Surakarta" lokasi = "Surakarta, Jawa Tengah" gambar={gambar3} ></Cardshow>
+	<div
+		class="relative mx-3 grid grid-cols-1 gap-y-6 md:mx-0 md:mb-20 md:ml-10 md:mt-10 md:grid-cols-2 md:gap-x-4 md:gap-y-10"
+	>
+		<Cardshow judul="Keraton Kasunanan Surakarta" lokasi="Surakarta, Jawa Tengah" {gambar}
+		></Cardshow>
+		<Cardshow
+			judul="Keraton Ngayogyakarta Hadiningrat"
+			lokasi="Yogyakarta, Daerah Istimewa Yogyakarta"
+			gambar={gambar2}
+		></Cardshow>
+		<Cardshow judul="Kadipaten Mangkunagaran" lokasi="Surakarta, Jawa Tengah" gambar={gambar4}
+		></Cardshow>
+		<Cardshow judul="Keraton Kasunanan Surakarta" lokasi="Surakarta, Jawa Tengah" gambar={gambar3}
+		></Cardshow>
 	</div>
 </section>
 
@@ -67,5 +75,4 @@
 </div>
 
 <style>
-
 </style>
