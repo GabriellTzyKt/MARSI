@@ -23,7 +23,7 @@
 
 <nav
 	class="nav fixed top-0 z-50 w-screen bg-white px-3 py-2 lg:px-10"
-	style:top={hidden ? '-60px' : '0'}
+	style:top={hidden ? '-80px' : '0'}
 >
 	<div class="flex items-center justify-between pe-4">
 		<div class="flex items-center gap-4">

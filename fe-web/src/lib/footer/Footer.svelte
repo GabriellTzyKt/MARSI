@@ -17,7 +17,7 @@
 				<p class="mx-2 text-xl font-[600] text-white md:mx-0 md:me-0">Navigasi</p>
 			</div>
 			<div
-				class="mx-3 my-2 grid grid-cols-3 items-center rounded-xl border-2 text-center md:mx-0 md:my-0 md:grid-cols-1 md:items-start md:rounded-none md:border-none md:text-start"
+				class="mx-3 my-2 grid grid-cols-3 items-center rounded-xl border-2 text-center md:mx-0 md:my-0 md:grid-cols-1 md:items-start md:gap-y-2 md:rounded-none md:border-none md:text-start"
 			>
 				<div class="p-2 md:mx-0 md:flex md:p-0">
 					<a href="">Beranda</a>

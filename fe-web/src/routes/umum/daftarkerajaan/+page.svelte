@@ -43,7 +43,7 @@
 				viewBox="0 0 24 24"
 				stroke-width="1.5"
 				stroke="currentColor"
-				class="size-6"
+				class="display-none size-6 md:flex"
 			>
 				<path
 					stroke-linecap="round"
