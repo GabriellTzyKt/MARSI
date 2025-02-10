@@ -1,264 +1,291 @@
+import gambartop from '../asset/umum/keraton 2.png'
+import gambar1 from '../asset/umum/kerajaan_gambar_1.png'
+import gambar2 from '../asset/umum/kerajaan_gambar_2.png'
+import gambar3 from '../asset/umum/kerajaan_gambar_3.png'
+import gambar4 from '../asset/umum/kerajaan_gambar_4.png'
+import bendera_kerajaan from '../asset/umum/bendera_kerajaan.png'
+import lambang_kerajaan from '../asset/umum/lambang_kerajaan.png'
+
+export const tempdata = [
+  {
+    id: 1,
+    gambartop: gambartop,
+    nama_kerajaan: 'Keraton Kasunanan Surakarta',
+    tahun: '1745',
+    bendera:  bendera_kerajaan ,
+    lambang_kerajaan:  lambang_kerajaan ,
+    lokasi: 'Jl. Kamandungan, Baluwarti, Kec. Ps. Kliwon, Kota Surakarta, Jawa Tengah',
+    nama_kasunanan: 'Kesunanan Surakarta Hadiningrat (ꦟꦒꦫꦶꦑꦱꦸꦤꦤꦤ꧀ꦯꦸꦫꦏꦂꦠꦲꦢꦶꦤꦶꦁꦫꦠ꧀)',
+    isi_singkat: 'Nagari Kasunanan Surakarta Hadiningrat adalah sebuah kerajaan di Pulau Jawa bagian tengah yang berdiri pada tahun 1745, yang merupakan penerus dari Kesultanan Mataram yang beribu kota di Kartasura dan selanjutnya berpindah di Surakarta. Pada tahun 1755, sebagai hasil dari Perjanjian Giyanti yang disahkan pada tanggal 13 Februari 1755 antara VOC (Vereenigde Oostindische Compagnie) dengan Pangeran Mangkubumi, disepakati bahwa wilayah Mataram dibagi menjadi dua pemerintahan, yaitu Surakarta dan Yogyakarta.',
+    gambar1: gambar1 ,
+    gambar2: gambar2,
+    gambar3: gambar3,
+    gambar4: gambar4,
+  },
+]
+
+
 export const dummydata = [
-    {
-      id: 0,
-      nama: 'Raja Arthur',
-      telepon: '081234567890',
-      email: 'arthur@camelot.com',
-      kerajaan: 'Camelot',
-      jenis_kerajaan: 'Monarki',
-      gelar: 'Pendekar Meja Bundar',
-    
-    },
-    {
-      id: 1,
-      nama: 'Sultan Saladin',
-      telepon: '082345678901',
-      email: 'saladin@ayyubid.com',
-      kerajaan: 'Ayyubid',
-      jenis_kerajaan: 'Kesultanan',
-      gelar: 'Sultan Mesir dan Suriah',
-    
-    },
-    {
-      id: 2,
-      nama: 'Julius Caesar',
-      telepon: '083456789012',
-      email: 'caesar@romawi.com',
-      kerajaan: 'Romawi',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Konsul & Diktator',
-    
-    },
-    {
-      id: 3,
-      nama: 'Genghis Khan',
-      telepon: '084567890123',
-      email: 'genghis@mongol.com',
-      kerajaan: 'Mongol',
-      jenis_kerajaan: 'Kekhanan',
-      gelar: 'Khan Agung',
-    
-    },
-    {
-      id: 4,
-      nama: 'Napoleon Bonaparte',
-      telepon: '085678901231',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-    
-    },
-    {
-      id: 5,
-      nama: 'Napoleon Bonaparte',
-      telepon: '085678901232',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-    
-    },
-    {
-      id: 6,
-      nama: 'Napoleon Bonaparte',
-      telepon: '085678901233',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-    
-    },
-    {
-      id: 7,
-      nama: 'Napoleon Bonaparte',
-      telepon: '085678901235',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-    
-    },
-    {
-      id: 8,
-      nama: 'Napoleon Bonaparte',
-      telepon: '085678901235',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-    
-    },
-    {
-      id: 9,
-      nama: 'Napoleon Bonaparte',
-      telepon: '085678901236',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-    
-    },
-    {
-      id: 10,
-      nama: 'Napoleon Bonaparte',
-      telepon: '085678901237',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-    
-    },
-    {
-      id: 11,
-      nama: 'Napoleon Bonaparte',
-      telepon: '085678901238',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-    
-    },
-    {
-      id: 12,
-      nama: 'Napoleon Bonaparte',
-      telepon: '085678901239',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-    
-    },
-    {
-      id: 13,
-      nama: 'Napoleon Bonaparte',
-      telepon: '08567890123110',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-    
-    },
-    {
-      id: 14,
-      nama: 'Napoleon Bonaparte',
-      telepon: '08567890123111',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-      
-    },
-    {
-      id: 15,
-      nama: 'Napoleon Bonaparte',
-      telepon: '08567890123112',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-      
-    },
-    {
-      id: 16,
-      nama: 'Napoleon Bonaparte',
-      telepon: '08567890123113',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-      
-    },
-    {
-      id: 17,
-      nama: 'Napoleon Bonaparte',
-      telepon: '08567890123114',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-      
-    },
-    {
-      id: 18,
-      nama: 'Napoleon Bonaparte',
-      telepon: '08567890123115',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-      
-    },
-    {
-      id: 19,
-      nama: 'Napoleon Bonaparte',
-      telepon: '08567890123116',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-      
-    },
-    {
-      id: 20,
-      nama: 'Napoleon Bonaparte',
-      telepon: '08567890123117',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-      
-    },
-    {
-      id: 21,
-      nama: 'Napoleon Bonaparte',
-      telepon: '08567890123118',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-    
-    },
-    {
-      id: 22,
-      nama: 'Napoleon Bonaparte',
-      telepon: '08567890123119',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-    
-    },
-    {
-      id: 23,
-      nama: 'Napoleon Bonaparte',
-      telepon: '08567890123120',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-    
-    },
-    {
-      id: 24,
-      nama: 'Napoleon Bonaparte',
-      telepon: '08567890123121',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-    
-    },
-    {
-      id: 25,
-      nama: 'Napoleon Bonaparte',
-      telepon: '08567890123122',
-      email: 'napoleon@prancis.com',
-      kerajaan: 'Prancis',
-      jenis_kerajaan: 'Kekaisaran',
-      gelar: 'Kaisar Prancis',
-    
-    },
+  {
+    id: 0,
+    nama: 'Raja Arthur',
+    telepon: '081234567890',
+    email: 'arthur@camelot.com',
+    kerajaan: 'Camelot',
+    jenis_kerajaan: 'Monarki',
+    gelar: 'Pendekar Meja Bundar',
+
+  },
+  {
+    id: 1,
+    nama: 'Sultan Saladin',
+    telepon: '082345678901',
+    email: 'saladin@ayyubid.com',
+    kerajaan: 'Ayyubid',
+    jenis_kerajaan: 'Kesultanan',
+    gelar: 'Sultan Mesir dan Suriah',
+
+  },
+  {
+    id: 2,
+    nama: 'Julius Caesar',
+    telepon: '083456789012',
+    email: 'caesar@romawi.com',
+    kerajaan: 'Romawi',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Konsul & Diktator',
+
+  },
+  {
+    id: 3,
+    nama: 'Genghis Khan',
+    telepon: '084567890123',
+    email: 'genghis@mongol.com',
+    kerajaan: 'Mongol',
+    jenis_kerajaan: 'Kekhanan',
+    gelar: 'Khan Agung',
+
+  },
+  {
+    id: 4,
+    nama: 'Napoleon Bonaparte',
+    telepon: '085678901231',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 5,
+    nama: 'Napoleon Bonaparte',
+    telepon: '085678901232',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 6,
+    nama: 'Napoleon Bonaparte',
+    telepon: '085678901233',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 7,
+    nama: 'Napoleon Bonaparte',
+    telepon: '085678901235',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 8,
+    nama: 'Napoleon Bonaparte',
+    telepon: '085678901235',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 9,
+    nama: 'Napoleon Bonaparte',
+    telepon: '085678901236',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 10,
+    nama: 'Napoleon Bonaparte',
+    telepon: '085678901237',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 11,
+    nama: 'Napoleon Bonaparte',
+    telepon: '085678901238',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 12,
+    nama: 'Napoleon Bonaparte',
+    telepon: '085678901239',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 13,
+    nama: 'Napoleon Bonaparte',
+    telepon: '08567890123110',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 14,
+    nama: 'Napoleon Bonaparte',
+    telepon: '08567890123111',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 15,
+    nama: 'Napoleon Bonaparte',
+    telepon: '08567890123112',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 16,
+    nama: 'Napoleon Bonaparte',
+    telepon: '08567890123113',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 17,
+    nama: 'Napoleon Bonaparte',
+    telepon: '08567890123114',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 18,
+    nama: 'Napoleon Bonaparte',
+    telepon: '08567890123115',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 19,
+    nama: 'Napoleon Bonaparte',
+    telepon: '08567890123116',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 20,
+    nama: 'Napoleon Bonaparte',
+    telepon: '08567890123117',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 21,
+    nama: 'Napoleon Bonaparte',
+    telepon: '08567890123118',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 22,
+    nama: 'Napoleon Bonaparte',
+    telepon: '08567890123119',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 23,
+    nama: 'Napoleon Bonaparte',
+    telepon: '08567890123120',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 24,
+    nama: 'Napoleon Bonaparte',
+    telepon: '08567890123121',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
+  {
+    id: 25,
+    nama: 'Napoleon Bonaparte',
+    telepon: '08567890123122',
+    email: 'napoleon@prancis.com',
+    kerajaan: 'Prancis',
+    jenis_kerajaan: 'Kekaisaran',
+    gelar: 'Kaisar Prancis',
+
+  },
 ];
 export const dummyAcara = [
   {
@@ -273,7 +300,7 @@ export const dummyAcara = [
     status: "Berlangsung"
   },
   {
-     id: 1,
+    id: 1,
     id_acara: "id-2",
     nama_acara: "Festival Budaya Nusantara",
     tanggal: "05-06-2025",
@@ -284,7 +311,7 @@ export const dummyAcara = [
     status: "Pending"
   },
   {
-     id: 2,
+    id: 2,
     id_acara: "id-3",
     nama_acara: "Seminar Sejarah Kerajaan",
     tanggal: "12-07-2025",
@@ -295,7 +322,7 @@ export const dummyAcara = [
     status: "Disetujui"
   },
   {
-     id: 3,
+    id: 3,
     id_acara: "id-4",
     nama_acara: "Pentas Seni Wayang Kulit",
     tanggal: "25-09-2025",
@@ -306,7 +333,7 @@ export const dummyAcara = [
     status: "Ditolak"
   },
   {
-     id: 4,
+    id: 4,
     id_acara: "id-5",
     nama_acara: "Upacara Adat Kasunanan",
     tanggal: "10-11-2025",
@@ -317,7 +344,7 @@ export const dummyAcara = [
     status: "Selesai"
   },
   {
-     id: 5,
+    id: 5,
     id_acara: "id-6",
     nama_acara: "Rapat Besar Dewan Adat",
     tanggal: "15-08-2025",
@@ -328,7 +355,7 @@ export const dummyAcara = [
     status: "Berlangsung"
   },
   {
-     id: 6,
+    id: 6,
     id_acara: "id-7",
     nama_acara: "Lomba Masakan Tradisional",
     tanggal: "22-09-2025",
@@ -339,7 +366,7 @@ export const dummyAcara = [
     status: "Pending"
   },
   {
-     id: 7,
+    id: 7,
     id_acara: "id-8",
     nama_acara: "Pameran Artefak Kuno",
     tanggal: "30-10-2025",
@@ -350,7 +377,7 @@ export const dummyAcara = [
     status: "Disetujui"
   },
   {
-     id: 8,
+    id: 8,
     id_acara: "id-9",
     nama_acara: "Dialog Budaya dan Sejarah",
     tanggal: "15-12-2025",
@@ -361,7 +388,7 @@ export const dummyAcara = [
     status: "Ditolak"
   },
   {
-     id: 9,
+    id: 9,
     id_acara: "id-10",
     nama_acara: "Festival Reog Ponorogo",
     tanggal: "05-01-2026",
@@ -371,4 +398,4 @@ export const dummyAcara = [
     kapasitas: "5000",
     status: "Selesai"
   }
-  ]
+]

@@ -34,7 +34,7 @@
 		>
 			<input
 				type="text"
-				class="flex-grow justify-center border-none pe-16 outline-none focus:border-none focus:outline-none focus:ring-0"
+				class="flex flex-grow justify-center border-none pe-16 outline-none focus:border-none focus:outline-none focus:ring-0"
 				placeholder="Search"
 			/>
 			<svg
@@ -68,18 +68,26 @@
 	</div>
 
 	<!-- Card Show  -->
-	<div class="relative mb-20 ml-10 mt-10 grid grid-cols-1 md:grid-cols-2 mr-10 gap-x-4 gap-y-10">
-		<Cardshow judul="Keraton Kasunanan Surakarta" lokasi="Surakarta, Jawa Tengah" {gambar} id=1
+	<div class="relative mb-20 ml-10 mr-10 mt-10 grid grid-cols-1 gap-x-4 gap-y-10 md:grid-cols-2">
+		<Cardshow judul="Keraton Kasunanan Surakarta" lokasi="Surakarta, Jawa Tengah" {gambar} id="1"
 		></Cardshow>
 		<Cardshow
 			judul="Keraton Ngayogyakarta Hadiningrat"
 			lokasi="Yogyakarta, Daerah Istimewa Yogyakarta"
 			gambar={gambar2}
-			id=2
+			id="2"
 		></Cardshow>
-		<Cardshow judul="Kadipaten Mangkunagaran" lokasi="Surakarta, Jawa Tengah" gambar={gambar4} id=3
+		<Cardshow
+			judul="Kadipaten Mangkunagaran"
+			lokasi="Surakarta, Jawa Tengah"
+			gambar={gambar4}
+			id="3"
 		></Cardshow>
-		<Cardshow judul="Keraton Kasunanan Surakarta" lokasi="Surakarta, Jawa Tengah" gambar={gambar3} id=4
+		<Cardshow
+			judul="Keraton Kasunanan Surakarta"
+			lokasi="Surakarta, Jawa Tengah"
+			gambar={gambar3}
+			id="4"
 		></Cardshow>
 	</div>
 </section>
