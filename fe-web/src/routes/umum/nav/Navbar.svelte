@@ -1,101 +1,77 @@
 <script lang="ts">
-	// import Search from '$lib/table/Search.svelte';
-	import { onMount } from 'svelte';
-	import logo_marsi from '../../../asset/logo_MARSI.png';
-	import SearchNav from './SearchNav.svelte';
-	import { page } from '$app/state';
+    import { onMount } from 'svelte';
+    import logo_marsi from '../../../asset/logo_MARSI.png';
+    import SearchNav from './SearchNav.svelte';
 
-	// import { svelte } from '@sveltejs/vite-plugin-svelte';
-	// import { handlers } from 'svelte/legacy';
+    let pos = 0;
+    let hidden = false;
+    let menuOpen = false;
 
-	let pos = $state(0);
-	let hidden = $state(false);
+    onMount(() => {
+        const handleScroll = () => {
+            let curr = window.scrollY;
+            hidden = pos < curr;
+            pos = curr;
+        };
 
-	onMount(() => {
-		const handleScroll = () => {
-			let curr = window.scrollY;
-			if (pos > curr) {
-				hidden = false;
-			} else {
-				hidden = true;
-			}
-			pos = curr;
-		};
-
-		window.addEventListener('scroll', handleScroll);
-		return () => {
-			window.removeEventListener('scroll', handleScroll);
-		};
-	});
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    });
 </script>
 
-<nav class="nav fixed top-0 z-50 w-full bg-white py-2" style:top={hidden ? '-60px' : '0'}>
-	<div class="flex justify-between">
-		<div class="me-16 flex flex-row items-center gap-4">
-			<div class="ms-4">
-				<img src={logo_marsi} class="h-auto w-10" alt="" />
-			</div>
-			<div class="">
-				<p class="text-3xl font-[500]">MARSI</p>
-			</div>
-		</div>
-		<div class="me-10 flex items-center gap-6">
-			<div>
-				<SearchNav></SearchNav>
-			</div>
-			<div class="flex flex-grow flex-row items-center justify-evenly">
-				<div class="">
-					<a
-						href="beranda"
-						class="mx-2 px-4 py-2 transition-all duration-100 ease-in-out hover:border-b-2 hover:border-b-gray-800 {page
-							.route.id === '/umum/beranda'
-							? 'border-b-2 border-b-gray-800'
-							: ''}">Beranda</a
-					>
-				</div>
-				<div>
-					<a
-						href="daftarkerajaan"
-						class="mx-2 px-4 py-2 transition-all duration-100 ease-in-out hover:border-b-2 hover:border-b-gray-800 {page
-							.route.id === '/umum/daftarkerajaan'
-							? 'border-b-2 border-b-gray-800'
-							: ''}">Daftar Kerajaan</a
-					>
-				</div>
-				<div>
-					<a
-						href="situskerajaan"
-						class="mx-2 px-4 py-2 transition-all duration-100 ease-in-out hover:border-b-2 hover:border-b-gray-800 {page
-							.route.id === '/umum/situskerajaan'
-							? 'border-b-2 border-b-gray-800'
-							: ''}">Situs Kerajaan</a
-					>
-				</div>
-				<div>
-					<a
-						href="asetkerajaan"
-						class="mx-2 px-4 py-2 transition-all duration-100 ease-in-out hover:border-b-2 hover:border-b-gray-800 {page
-							.route.id === '/umum/asetkerajaan'
-							? 'border-b-2 border-b-gray-800'
-							: ''}">Aset Kerajaan</a
-					>
-				</div>
-				<div>
-					<a
-						href="acara"
-						class="mx-2 px-4 py-2 transition-all duration-100 ease-in-out hover:border-b-2 hover:border-b-gray-800 {page
-							.route.id === '/umum/acara'
-							? 'border-b-2 border-b-gray-800'
-							: ''}">Acara</a
-					>
-				</div>
-			</div>
-		</div>
-	</div>
+<nav class="nav fixed top-0 z-50 w-screen bg-white py-2 px-4 lg:px-10" style:top={hidden ? '-60px' : '0'}>
+    <div class="flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <img src={logo_marsi} class="h-auto w-10" alt="" />
+            <p class="text-3xl font-medium">MARSI</p>
+        </div>
+        
+        <div class="hidden lg:flex items-center gap-6">
+            <SearchNav />
+            <div class="flex gap-4">
+                <a href="beranda" class="nav-link">Beranda</a>
+                <a href="daftarkerajaan" class="nav-link">Daftar Kerajaan</a>
+                <a href="situskerajaan" class="nav-link">Situs Kerajaan</a>
+                <a href="asetkerajaan" class="nav-link">Aset Kerajaan</a>
+                <a href="acara" class="nav-link">Acara</a>
+            </div>
+        </div>
+        
+        <button class="lg:hidden" on:click={() => menuOpen = !menuOpen}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+        </button>
+    </div>
+    
+    <div class="lg:hidden absolute w-full left-0 bg-white shadow-md transition-all" style:display={menuOpen ? 'block' : 'none'}>
+        <a href="beranda" class="block py-2 px-4 border-b">Beranda</a>
+        <a href="daftarkerajaan" class="block py-2 px-4 border-b">Daftar Kerajaan</a>
+        <a href="situskerajaan" class="block py-2 px-4 border-b">Situs Kerajaan</a>
+        <a href="asetkerajaan" class="block py-2 px-4 border-b">Aset Kerajaan</a>
+        <a href="acara" class="block py-2 px-4">Acara</a>
+    </div>
 </nav>
 
 <style>
-	.nav {
-		transition: top 0.35s;
-	}
+    .nav {
+        transition: top 0.35s;
+    }
+    .nav-link {
+        padding: 8px 16px;
+        transition: border-bottom 0.2s;
+    }
+    .nav-link:hover {
+        border-bottom: 2px solid gray;
+    }
+    @media (max-width: 1000px) {
+        .lg\:hidden {
+            display: block;
+        }
+        .lg\:flex {
+            display: none;
+        }
+    }
 </style>
