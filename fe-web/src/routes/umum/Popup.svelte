@@ -7,7 +7,7 @@
 
   </script>
   
-  <div class="z-20 absolute left-0 w-80 bg-cream text-black rounded-xl shadow-lg p-4 flex items-center gap-2 bg-white">
+  <div class="z-20 absolute left-0 w-80 bg-cream text-black rounded-xl shadow-lg p-2 flex items-center gap-3 bg-white">
     <img 
       src={image}
       alt="Keraton Surakarta"

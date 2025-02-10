@@ -8,6 +8,9 @@ const Myclass = plugin(function ({addUtilities}){
 		".my-rotate-y-180":{
 			transform: "rotateY(180deg)"
 		},
+		".my-rotate-x-180":{
+			transform: "rotateX(180deg)"
+		},
 		".preserve-3d":{
 			transformStyle: "preserve-3d"
 		},
