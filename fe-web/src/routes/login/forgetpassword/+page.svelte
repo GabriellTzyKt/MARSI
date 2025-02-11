@@ -26,6 +26,7 @@
 				</p>
 			</div>
 			<form action="https://api.web3forms.com/submit" method="POST">
+				<!-- access keynya masukin sini ke value nya -->
 				<input type="hidden" name="access_key" value="bbc5b668-b042-46e3-8c3e-9b92c6f6ccc8" />
 				<input type="hidden" name="subject" value="New Submission from MARSI" />
 				<input type="hidden" name="from_name" value="MARSI.com" />
@@ -38,6 +39,11 @@
 					type="hidden"
 					name="6-digits-code"
 					value={Math.floor(100000 + Math.random() * 900000)}
+				/>
+				<input
+					type="hidden"
+					name="redirect"
+					value="http://localhost:5173/login/forgetpassword/verifOTP"
 				/>
 				<div class="mt-3">
 					<div class="flex flex-col">
@@ -83,12 +89,13 @@
 					<div class="mt-4 flex flex-col">
 						<div class="flex flex-col items-center justify-center text-center">
 							<!-- svelte-ignore a11y_consider_explicit_label -->
-							<button type="submit" class="flex w-full"
-								><a
-									href="forgetpassword/verifOTP"
-									class="bg-bt mt-10 w-full py-3 font-[650] text-white">Selanjutnya</a
-								></button
+							<button type="submit" class="bg-bt mt-10 w-full py-3 font-[650] text-white"
+								>Selanjutnya</button
 							>
+							<!-- <a
+								href="forgetpassword/verifOTP"
+								class="bg-bt mt-10 w-full py-3 font-[650] text-white">Selanjutnya</a
+							> -->
 						</div>
 						<p class=" items-start text-center text-xl text-red-700 md:text-start">
 							(Temp) Email mu gabener rek!
