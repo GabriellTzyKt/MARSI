@@ -6,18 +6,68 @@ import gambar4 from '../asset/umum/kerajaan_gambar_4.png'
 import bendera_kerajaan from '../asset/umum/bendera_kerajaan.png'
 import lambang_kerajaan from '../asset/umum/lambang_kerajaan.png'
 
+// situs
+
+import gambarsitus_top from '../asset/umum/gambar_top_situs.png'
+import gambar1_situs from '../asset/umum/gambar1_situs.png'
+import gambar2_situs from '../asset/umum/gambar2_situs.png'
+import gambar3_situs from '../asset/umum/gambar3_situs.png'
+import gambar4_situs from '../asset/umum/gambar4_situs.png'
+
+// aset
+
+import gambaraset_top from '../asset/umum/aset_top_detail.png'
+import gambar1_aset from '../asset/umum/aset1_gbr.png'
+import gambar2_aset from '../asset/umum/aset2_gbr.png'
+import gambar3_aset from '../asset/umum/aset3_gbr.png'
+import gambar4_aset from '../asset/umum/aset4_gbr.png'
+
+
+
+export const tempasetdata = [
+  {
+    id: 1,
+    nama : "Gamelan Sekaten",
+    lagu : "",
+    aset : "Alat Musik",
+    gambartop: gambaraset_top,
+    kepemilikan: "Keraton Kasunanan Surakarta",
+    isi: "Gamelan sekaten adalah jenis gamelan Jawa yang hanya dimainkan dalam pergelaran upacara adat Sekaten yang diselenggarakan di dua keraton pecahan Kesultanan Mataram, yaitu Kesultanan Ngayogyakarta dan Kesunanan Surakarta Hadiningrat. Upacara adat tersebut diadakan untuk memperingati Maulid Nabi Islam Muhammad. Pertama kali dikembangkan pada zaman Kesultanan Demak, gamelan tersebut dijadikan sebagai media dakwah yang digagas oleh Wali Sanga agar orang Jawa bersedia menganut agama Islam.",
+    gambar1: gambar1_aset,
+    gambar2: gambar2_aset,
+    gambar3: gambar3_aset,
+    gambar4: gambar4_aset,
+  },
+
+  {
+    id: 2,
+    nama : "Gamelan Sekaten",
+    lagu : "Rawr Krakatau",
+    aset : "Alat Musik",
+    gambartop: gambaraset_top,
+    kepemilikan: "Keraton Kasunanan Surakarta",
+    isi: "Gamelan sekaten adalah jenis gamelan Jawa yang hanya dimainkan dalam pergelaran upacara adat Sekaten yang diselenggarakan di dua keraton pecahan Kesultanan Mataram, yaitu Kesultanan Ngayogyakarta dan Kesunanan Surakarta Hadiningrat. Upacara adat tersebut diadakan untuk memperingati Maulid Nabi Islam Muhammad. Pertama kali dikembangkan pada zaman Kesultanan Demak, gamelan tersebut dijadikan sebagai media dakwah yang digagas oleh Wali Sanga agar orang Jawa bersedia menganut agama Islam.",
+    gambar1: gambar1_aset,
+    gambar2: gambar2_aset,
+    gambar3: gambar3_aset,
+    gambar4: gambar4_aset,
+  },
+]
+
+
+
 export const tempdata = [
   {
     id: 1,
     gambartop: gambartop,
     nama_kerajaan: 'Keraton Kasunanan Surakarta',
     tahun: '1745',
-    bendera:  bendera_kerajaan ,
-    lambang_kerajaan:  lambang_kerajaan ,
+    bendera: bendera_kerajaan,
+    lambang_kerajaan: lambang_kerajaan,
     lokasi: 'Jl. Kamandungan, Baluwarti, Kec. Ps. Kliwon, Kota Surakarta, Jawa Tengah',
     nama_kasunanan: 'Kesunanan Surakarta Hadiningrat (ꦟꦒꦫꦶꦑꦱꦸꦤꦤꦤ꧀ꦯꦸꦫꦏꦂꦠꦲꦢꦶꦤꦶꦁꦫꦠ꧀)',
     isi_singkat: 'Nagari Kasunanan Surakarta Hadiningrat adalah sebuah kerajaan di Pulau Jawa bagian tengah yang berdiri pada tahun 1745, yang merupakan penerus dari Kesultanan Mataram yang beribu kota di Kartasura dan selanjutnya berpindah di Surakarta. Pada tahun 1755, sebagai hasil dari Perjanjian Giyanti yang disahkan pada tanggal 13 Februari 1755 antara VOC (Vereenigde Oostindische Compagnie) dengan Pangeran Mangkubumi, disepakati bahwa wilayah Mataram dibagi menjadi dua pemerintahan, yaitu Surakarta dan Yogyakarta.',
-    gambar1: gambar1 ,
+    gambar1: gambar1,
     gambar2: gambar2,
     gambar3: gambar3,
     gambar4: gambar4,

@@ -19,11 +19,11 @@
 <!-- Section 1 -->
 <section class="relative">
 	<!-- Gambar -->
-	<div class="relative">
-		<img src={gambarHeader} alt="" class="h-auto w-full" />
+	<div class="relative w-screen h-screen">
+		<img src={gambarHeader} alt="" class="h-screen w-screen" />
 
 		<p
-			class="absolute left-[35%] top-1/2 z-10 -translate-y-1/2 transform text-6xl font-bold text-black"
+			class="absolute top-1/2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-6xl font-bold text-black"
 		>
 			Daftar Kerajaan
 		</p>
@@ -45,7 +45,7 @@
 				viewBox="0 0 24 24"
 				stroke-width="1.5"
 				stroke="currentColor"
-				class="display-none size-6 md:flex"
+				class="flex size-6 flex-shrink-0 sm:text-xl lg:text-2xl"
 			>
 				<path
 					stroke-linecap="round"
