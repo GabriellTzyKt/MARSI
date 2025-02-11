@@ -34,7 +34,7 @@
 		>
 			<input
 				type="text"
-				class="flex-grow justify-center border-none pe-16 outline-none focus:border-none focus:outline-none focus:ring-0"
+				class="flex flex-grow justify-center border-none pe-16 outline-none focus:border-none focus:outline-none focus:ring-0"
 				placeholder="Search"
 			/>
 			<svg

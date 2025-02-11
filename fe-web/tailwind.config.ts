@@ -35,7 +35,8 @@ export default {
 				customRed: '#FF565D',
 				customDarkYellow : '#C1A411',
 				customOrange : '#FF8303',
-				customSlate: '#DDE1E6'
+				customSlate: '#DDE1E6',
+				customBg2 : '#F9D48B',
 			  },
 			fontFamily: {
 				lato: ['Lato', 'sans-serif'],
