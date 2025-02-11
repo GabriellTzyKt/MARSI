@@ -28,7 +28,7 @@
 	<!-- Search bar -->
 	<div class="relative z-10 mb-20 mt-[-30px] flex justify-center">
 		<div
-			class="mx-4 flex w-[50%] items-center justify-center self-center rounded-2xl border bg-white pe-4 ps-4 shadow-md sm:w-[50%] md:justify-between"
+			class="mx-4 flex w-[50%] items-center justify-center self-center rounded-2xl border bg-white pe-4 ps-4 sm:w-[50%] md:justify-between"
 		>
 			<input
 				type="text"

@@ -30,7 +30,7 @@
 	<!-- Search bar -->
 	<div class="relative z-10 mb-20 mt-[-30px] flex justify-center">
 		<div
-			class="mx-4 flex h-fit w-[50%] items-center justify-between self-center rounded-2xl border bg-white pe-4 ps-4 shadow-md"
+			class="mx-4 flex h-fit w-[50%] items-center justify-between self-center rounded-2xl border bg-white pe-4 ps-4"
 		>
 			<input
 				type="text"
