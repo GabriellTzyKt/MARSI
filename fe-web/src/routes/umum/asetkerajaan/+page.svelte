@@ -33,7 +33,7 @@
 		>
 			<input
 				type="text"
-				class="flex flex-grow justify-center rounded-2xl border-none shadow-md outline-none focus:border-none focus:outline-none focus:ring-0 md:pe-16"
+				class="flex flex-grow justify-center rounded-2xl border-none outline-none focus:border-none focus:outline-none focus:ring-0 md:pe-16"
 				placeholder="Search"
 			/>
 			<svg
@@ -110,12 +110,10 @@
 		</div>
 
 		<!-- Card Show  -->
-		<div
-			class="mx-8 mb-20 mt-10 grid grid-cols-1 items-center justify-center space-x-4 space-y-4 md:grid-cols-2"
-		>
+		<div class="mx-8 mb-20 mt-10 grid grid-cols-1 items-center justify-center md:grid-cols-2">
 			<!-- kalau mau kamu loop aja, tinggal import data dari datadummy -->
 			{#each tempdata as t}
-				<div>
+				<div class="mx-2 my-2">
 					<Cardshow
 						judul={t.nama_kerajaan}
 						lokasi={t.lokasi}
@@ -124,31 +122,6 @@
 					></Cardshow>
 				</div>
 			{/each}
-
-			<div>
-				<Cardshow
-					judul="Keraton Ngayogyakarta Hadiningrat"
-					lokasi="Yogyakarta, Daerah Istimewa Yogyakarta"
-					gambar={gambar2}
-					linkTo="2"
-				></Cardshow>
-			</div>
-			<div>
-				<Cardshow
-					judul="Kadipaten Mangkunagaran"
-					lokasi="Surakarta, Jawa Tengah"
-					gambar={gambar4}
-					linkTo="2"
-				></Cardshow>
-			</div>
-			<div>
-				<Cardshow
-					judul="Keraton Kasunanan Surakarta"
-					lokasi="Surakarta, Jawa Tengah"
-					gambar={gambar3}
-					linkTo="2"
-				></Cardshow>
-			</div>
 		</div>
 	</div>
 </section>

@@ -7,6 +7,8 @@
 	import gambar3 from '../../../asset/umum/gbr_3.png';
 	import gambar4 from '../../../asset/umum/gbr_4.png';
 	import Cardshow from '../Cardshow.svelte';
+	import { tempdata } from '$lib/dummy';
+	tempdata;
 	let value = $state(0);
 </script>
 
@@ -68,27 +70,19 @@
 	</div>
 
 	<!-- Card Show  -->
-	<div class="relative mb-20 ml-10 mr-10 mt-10 grid grid-cols-1 gap-x-4 gap-y-10 md:grid-cols-2">
-		<Cardshow judul="Keraton Kasunanan Surakarta" lokasi="Surakarta, Jawa Tengah" {gambar} linkTo=""
-		></Cardshow>
-		<Cardshow
-			judul="Keraton Ngayogyakarta Hadiningrat"
-			lokasi="Yogyakarta, Daerah Istimewa Yogyakarta"
-			gambar={gambar2}
-			linkTo="2"
-		></Cardshow>
-		<Cardshow
-			judul="Kadipaten Mangkunagaran"
-			lokasi="Surakarta, Jawa Tengah"
-			gambar={gambar4}
-			linkTo="3"
-		></Cardshow>
-		<Cardshow
-			judul="Keraton Kasunanan Surakarta"
-			lokasi="Surakarta, Jawa Tengah"
-			gambar={gambar3}
-			linkTo="4"
-		></Cardshow>
+	<!-- Card Show  -->
+	<div class="mx-8 mb-20 mt-10 grid grid-cols-1 items-center justify-center md:grid-cols-2">
+		<!-- kalau mau kamu loop aja, tinggal import data dari datadummy -->
+		{#each tempdata as t}
+			<div class="mx-2 my-2">
+				<Cardshow
+					judul={t.nama_kerajaan}
+					lokasi={t.lokasi}
+					gambar={t.gambartop}
+					linkTo="/umum/daftarkerajaan/{t.id}"
+				></Cardshow>
+			</div>
+		{/each}
 	</div>
 </section>
 

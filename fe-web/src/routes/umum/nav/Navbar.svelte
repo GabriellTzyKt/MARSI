@@ -34,11 +34,11 @@
 		<div class="hidden items-center gap-6 lg:flex">
 			<SearchNav />
 			<div class="flex">
-				<a href="beranda" class="nav-link whitespace-nowrap">Beranda</a>
-				<a href="daftarkerajaan" class="nav-link whitespace-nowrap">Daftar Kerajaan</a>
-				<a href="situskerajaan" class="nav-link whitespace-nowrap">Situs Kerajaan</a>
-				<a href="asetkerajaan" class="nav-link whitespace-nowrap">Aset Kerajaan</a>
-				<a href="acara" class="nav-link whitespace-nowrap">Acara</a>
+				<a href="/umum/beranda" class="nav-link whitespace-nowrap">Beranda</a>
+				<a href="/umum/daftarkerajaan" class="nav-link whitespace-nowrap">Daftar Kerajaan</a>
+				<a href="/umum/situskerajaan" class="nav-link whitespace-nowrap">Situs Kerajaan</a>
+				<a href="/umum/asetkerajaan" class="nav-link whitespace-nowrap">Aset Kerajaan</a>
+				<a href="/umum/acara" class="nav-link whitespace-nowrap">Acara</a>
 			</div>
 		</div>
 
