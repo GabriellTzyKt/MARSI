@@ -32,7 +32,7 @@
 		>
 			<input
 				type="text"
-				class="flex flex-grow justify-center rounded-2xl border-none shadow-md outline-none focus:border-none focus:outline-none focus:ring-0 md:pe-16"
+				class="flex flex-grow justify-center rounded-2xl border-none outline-none focus:border-none focus:outline-none focus:ring-0 md:pe-16"
 				placeholder="Search"
 			/>
 			<svg
