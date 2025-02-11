@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import image from '../../../asset/Logo_MARSI_login.png';
 	let email = $state('Masukkan Email Anda');
 	let tipe = $state('password');
@@ -24,7 +25,20 @@
 					anda.
 				</p>
 			</div>
-			<form action="">
+			<form action="https://api.web3forms.com/submit" method="POST">
+				<input type="hidden" name="access_key" value="bbc5b668-b042-46e3-8c3e-9b92c6f6ccc8" />
+				<input type="hidden" name="subject" value="New Submission from MARSI" />
+				<input type="hidden" name="from_name" value="MARSI.com" />
+				<input
+					type="hidden"
+					name="Don't reply"
+					value="for your information, this email is sent to you as automatic email, so we ask your understanding, dont reply this email thanks"
+				/>
+				<input
+					type="hidden"
+					name="6-digits-code"
+					value={Math.floor(100000 + Math.random() * 900000)}
+				/>
 				<div class="mt-3">
 					<div class="flex flex-col">
 						<p class="mb-2">{txtlogin}</p>
@@ -68,7 +82,13 @@
 					</div>
 					<div class="mt-4 flex flex-col">
 						<div class="flex flex-col items-center justify-center text-center">
-							<a href="" class="bg-bt mt-10 w-full py-3 font-[650] text-white">Selanjutnya</a>
+							<!-- svelte-ignore a11y_consider_explicit_label -->
+							<button type="submit" class="flex w-full"
+								><a
+									href="forgetpassword/verifOTP"
+									class="bg-bt mt-10 w-full py-3 font-[650] text-white">Selanjutnya</a
+								></button
+							>
 						</div>
 						<p class=" items-start text-center text-xl text-red-700 md:text-start">
 							(Temp) Email mu gabener rek!

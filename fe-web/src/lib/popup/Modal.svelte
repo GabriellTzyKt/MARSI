@@ -49,19 +49,19 @@
 				<img
 					src={xbutton}
 					alt="x-button"
-					class="h-6 w-auto hover:cursor-pointer"
+					class="h-8 w-auto rounded-full p-2 hover:cursor-pointer hover:bg-gray-400"
 					on:click={close}
 				/>
 			</div>
 
 			<div class="mt-8 p-4">
-				<img src={dangerbtn} alt="danger-button" class="h-auto w-24" />
+				<img src={dangerbtn} alt="danger-button" class="h-auto w-16" />
 			</div>
-			<div class=" mt-8 px-16">
+			<div class=" mt-8 px-10">
 				{#if tipe === 'anggota'}
-					<p class="text-3xl font-[475]">Apakah anda ingin mengarsip anggota {data.nama}?</p>
+					<p class="text-xl font-[475]">Apakah anda ingin mengarsip anggota {data.nama}?</p>
 				{:else}
-					<p class="text-3xl font-[475]">Apakah anda ingin mengarsip Acara {data.acara}?</p>
+					<p class="text-xl font-[475]">Apakah anda ingin mengarsip Acara {data.acara}?</p>
 				{/if}
 			</div>
 			<div class="mb-8 mt-16 grid grid-cols-2 items-center justify-center gap-10">
