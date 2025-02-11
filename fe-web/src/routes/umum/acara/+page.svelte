@@ -58,37 +58,37 @@
 		</div>
 
 		<!-- Card Show  -->
-		<div class="mx-8 mb-20 me-0 mt-10 grid grid-cols-1 items-center justify-center md:grid-cols-2">
-			<div>
+		<div class="mx-8 mb-20 mt-10 grid grid-cols-1 items-center justify-center md:grid-cols-2">
+			<div class="mx-2">
 				<Cardshow
 					judul="Keraton Kasunanan Surakarta"
 					lokasi="Surakarta, Jawa Tengah"
 					{gambar}
-					id="1"
+					linkTo=""
 				></Cardshow>
 			</div>
-			<div>
+			<div class="mx-2">
 				<Cardshow
 					judul="Keraton Ngayogyakarta Hadiningrat"
 					lokasi="Yogyakarta, Daerah Istimewa Yogyakarta"
 					gambar={gambar2}
-					id="2"
+					linkTo=""
 				></Cardshow>
 			</div>
-			<div>
+			<div class="mx-2">
 				<Cardshow
 					judul="Kadipaten Mangkunagaran"
 					lokasi="Surakarta, Jawa Tengah"
 					gambar={gambar4}
-					id="3"
+					linkTo=""
 				></Cardshow>
 			</div>
-			<div>
+			<div class="mx-2">
 				<Cardshow
 					judul="Keraton Kasunanan Surakarta"
 					lokasi="Surakarta, Jawa Tengah"
 					gambar={gambar3}
-					id="4"
+					linkTo=""
 				></Cardshow>
 			</div>
 		</div>

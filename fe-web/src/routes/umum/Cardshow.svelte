@@ -1,19 +1,17 @@
 <script lang="ts">
-
-	let { judul, lokasi, gambar, id } = $props();
-
+	let { judul, lokasi, gambar, linkTo } = $props();
 </script>
 
-<div class="max-w-2xl overflow-hidden rounded shadow-lg">
-	<img class="w-full" src={gambar} alt="Sunset in the mountains" />
-	<div class="px-6 py-4">
+<div class=" w-xl flex h-auto flex-col justify-center rounded shadow-lg">
+	<img class="h-64 w-full object-cover text-center" src={gambar} alt="Sunset in the mountains" />
+	<div class="mx-6 py-4">
 		<div class="mb-2 text-xl font-bold">{judul}</div>
 		<div class="flex justify-between">
-			<div class="flex items-center self-center">
+			<div class="flex items-center">
 				<span class="bx--map"></span>
 				<p class="text-base text-gray-700">{lokasi}</p>
 			</div>
-			<a href="/umum/daftarkerajaan/{id}" class="flex text-center text-blue-600">
+			<a href={linkTo} class="flex text-center text-blue-600">
 				Selanjutnya <span class="formkit--arrowright justify-center self-center"></span>
 			</a>
 		</div>
