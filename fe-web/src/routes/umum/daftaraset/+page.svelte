@@ -7,6 +7,8 @@
 	import gambar3 from '../../../asset/umum/aset3.png';
 	import gambar4 from '../../../asset/umum/aset4.png';
 	import Cardshow from '../Cardshow.svelte';
+	import { tempasetdata } from '$lib/dummy';
+
 	let value = $state(0);
 </script>
 
@@ -17,18 +19,20 @@
 <!-- Section 1 -->
 <section class="relative">
 	<!-- Gambar -->
-    <div class="relative h-screen w-screen">
-        <img src={gambarHeader} alt="" class="h-screen w-screen" />
-      
-        <p class="absolute top-1/2 left-[50%] transform -translate-x-1/2 -translate-y-1/2 text-6xl font-bold text-black">
-          Daftar Acara
-        </p>
-      </div>
+	<div class="relative h-screen w-screen">
+		<img src={gambarHeader} alt="" class="h-screen w-screen" />
+
+		<p
+			class="absolute left-[50%] top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-6xl font-bold text-black"
+		>
+			Daftar Acara
+		</p>
+	</div>
 
 	<!-- Search bar -->
 	<div class="relative z-10 mb-20 mt-[-30px] flex justify-center">
 		<div
-			class="mx-4 flex h-fit w-[100%] lg:w-[50%] items-center justify-between self-center rounded-2xl border bg-white pe-4 ps-4 shadow-md"
+			class="mx-4 flex h-fit w-[100%] items-center justify-between self-center rounded-2xl border bg-white pe-4 ps-4 shadow-md lg:w-[50%]"
 		>
 			<input
 				type="text"
@@ -67,38 +71,9 @@
 
 	<!-- Card Show  -->
 	<div class="relative mb-20 ml-10 mr-10 mt-10 grid grid-cols-1 gap-x-4 gap-y-10 md:grid-cols-2">
-		<Cardshow judul="Keraton Kasunanan Surakarta" lokasi="Surakarta, Jawa Tengah" {gambar} id="1"
-		></Cardshow>
-		<Cardshow
-			judul="Keraton Ngayogyakarta Hadiningrat"
-			lokasi="Yogyakarta, Daerah Istimewa Yogyakarta"
-			gambar={gambar2}
-			id="2"
-		></Cardshow>
-		<Cardshow
-			judul="Kadipaten Mangkunagaran"
-			lokasi="Surakarta, Jawa Tengah"
-			gambar={gambar3}
-			id="3"
-		></Cardshow>
-		<Cardshow
-			judul="Keraton Kasunanan Surakarta"
-			lokasi="Surakarta, Jawa Tengah"
-			gambar={gambar4}
-			id="4"
-		></Cardshow>
-		<Cardshow
-			judul="Keraton Kasunanan Surakarta"
-			lokasi="Surakarta, Jawa Tengah"
-			gambar={gambar4}
-			id="5"
-		></Cardshow>
-		<Cardshow
-			judul="Keraton Kasunanan Surakarta"
-			lokasi="Surakarta, Jawa Tengah"
-			gambar={gambar4}
-			id="6"
-		></Cardshow>
+		{#each tempasetdata as t}
+			<Cardshow judul={t.nama} lokasi={t.kepemilikan} gambar={t.gambartop} id={t.id}></Cardshow>
+		{/each}
 	</div>
 </section>
 
@@ -111,5 +86,4 @@
 	.no-arrow {
 		list-style: none;
 	}
-
 </style>

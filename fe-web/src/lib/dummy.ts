@@ -22,7 +22,72 @@ import gambar2_aset from '../asset/umum/aset2_gbr.png'
 import gambar3_aset from '../asset/umum/aset3_gbr.png'
 import gambar4_aset from '../asset/umum/aset4_gbr.png'
 
-
+export const detil_situs = [
+  {
+    id: 1,
+    gambartop: gambarsitus_top,
+    nama_tempat: "Candi Borobudur",
+    gambar1: gambar1_situs,
+    gambar2: gambar2_situs,
+    gambar3: gambar3_situs,
+    gambar4: gambar4_situs,
+    nomor_cagarbudaya: "CB00123",
+    kepemilikan: "Pemerintah Indonesia",
+    pendiri: "Dinasti Syailendra",
+    tahun: 800,
+    jenis_situs: "Candi Buddha",
+    isi: "Candi Borobudur adalah candi Buddha terbesar di dunia yang terletak di Magelang, Jawa Tengah.",
+    lokasi: "Magelang, Jawa Tengah, Indonesia"
+},
+  {
+    id: 2,
+    gambartop: gambarsitus_top,
+    nama_tempat: "Candi Borobudur",
+    gambar1: gambar1_situs,
+    gambar2: gambar2_situs,
+    gambar3: gambar3_situs,
+    gambar4: gambar4_situs,
+    nomor_cagarbudaya: "CB00123",
+    kepemilikan: "Pemerintah Indonesia",
+    pendiri: "Dinasti Syailendra",
+    tahun: 800,
+    jenis_situs: "Candi Buddha",
+    isi: "Candi Borobudur adalah candi Buddha terbesar di dunia yang terletak di Magelang, Jawa Tengah.",
+    lokasi: "Magelang, Jawa Tengah, Indonesia"
+},
+  {
+    id: 3,
+    gambartop: gambarsitus_top,
+    nama_tempat: "Candi Borobudur",
+    gambar1: gambar1_situs,
+    gambar2: gambar2_situs,
+    gambar3: gambar3_situs,
+    gambar4: gambar4_situs,
+    nomor_cagarbudaya: "CB00123",
+    kepemilikan: "Pemerintah Indonesia",
+    pendiri: "Dinasti Syailendra",
+    tahun: 800,
+    jenis_situs: "Candi Buddha",
+    isi: "Candi Borobudur adalah candi Buddha terbesar di dunia yang terletak di Magelang, Jawa Tengah.",
+    lokasi: "Magelang, Jawa Tengah, Indonesia"
+},
+  {
+    id: 4,
+    gambartop: gambarsitus_top,
+    nama_tempat: "Candi Borobudur",
+    gambar1: gambar1_situs,
+    gambar2: gambar2_situs,
+    gambar3: gambar3_situs,
+    gambar4: gambar4_situs,
+    nomor_cagarbudaya: "CB00123",
+    kepemilikan: "Pemerintah Indonesia",
+    pendiri: "Dinasti Syailendra",
+    tahun: 800,
+    jenis_situs: "Candi Buddha",
+    isi: "Candi Borobudur adalah candi Buddha terbesar di dunia yang terletak di Magelang, Jawa Tengah.",
+    lokasi: "Magelang, Jawa Tengah, Indonesia"
+},
+]
 
 export const tempasetdata = [
   {

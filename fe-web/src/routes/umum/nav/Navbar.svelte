@@ -36,7 +36,7 @@
 			<div class="flex">
 				<a href="/umum/beranda" class="nav-link whitespace-nowrap">Beranda</a>
 				<a href="/umum/daftarkerajaan" class="nav-link whitespace-nowrap">Daftar Kerajaan</a>
-				<a href="/umum/situskerajaan" class="nav-link whitespace-nowrap">Situs Kerajaan</a>
+				<a href="/umum/daftarsitus" class="nav-link whitespace-nowrap">Situs Kerajaan</a>
 				<a href="/umum/asetkerajaan" class="nav-link whitespace-nowrap">Aset Kerajaan</a>
 				<a href="/umum/acara" class="nav-link whitespace-nowrap">Acara</a>
 			</div>
