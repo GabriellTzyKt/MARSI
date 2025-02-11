@@ -50,13 +50,13 @@
 	</div>
 </section>
 
-<section class="bg-customBg2 relative h-fit w-full pt-10">
+<section class="bg-customBg2 relative h-fit w-full md:pt-10">
 	<div class="edit">
 		<div class="form-container absolute mx-auto px-4 lg:mb-20">
 			<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 				<div>
 					<img src={gambar1} class="h-auto w-full rounded-lg object-cover" alt="" />
-					<div class="mt-4 flex justify-center lg:gap-4 gap-1">
+					<div class="mt-4 flex justify-center gap-1 lg:gap-4">
 						<span class="material-symbols--arrow-circle-left-rounded self-center"></span>
 						<img src={gambar2} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
 						<img src={gambar3} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
@@ -67,13 +67,17 @@
 				<div>
 					<p class="text-xl font-semibold">{nama}</p>
 					<div class="mt-5 flex items-center">
-						<div class="flex h-10 w-10 items-center justify-center rounded-full border bg-yellow-600">
+						<div
+							class="flex h-10 w-10 items-center justify-center rounded-full border bg-yellow-600"
+						>
 							<span class="ph--scroll"></span>
 						</div>
 						<p class="ml-2">Tahun berdiri : {tahun}</p>
 					</div>
 					<div class="mt-5 flex items-center">
-						<div class="flex h-10 w-10 items-center justify-center rounded-full border bg-yellow-600">
+						<div
+							class="flex h-10 w-10 items-center justify-center rounded-full border bg-yellow-600"
+						>
 							<span class="tabler--flag"></span>
 						</div>
 						<p class="ml-2 flex items-center">
@@ -81,7 +85,9 @@
 						</p>
 					</div>
 					<div class="mt-5 flex items-center">
-						<div class="flex h-10 w-10 items-center justify-center rounded-full border bg-yellow-600">
+						<div
+							class="flex h-10 w-10 items-center justify-center rounded-full border bg-yellow-600"
+						>
 							<span class="material-symbols--shield-outline-rounded"></span>
 						</div>
 						<p class="ml-2 flex items-center">
@@ -89,13 +95,15 @@
 						</p>
 					</div>
 					<div class="mt-5 flex items-center">
-						<div class="flex flex-shrink-0 h-10 w-10 items-center justify-center rounded-full border bg-yellow-600">
+						<div
+							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
+						>
 							<span class="bx--map text-xl"></span>
 						</div>
-						<p class="ml-3 items-center text-start"> Lokasi : {lokasi}</p>
+						<p class="ml-3 items-center text-start">Lokasi : {lokasi}</p>
 					</div>
 					<p class="mt-3 text-start">{nama_kasunanan}</p>
-					<p class="mt-3 text-sm text-start">{isi}</p>
+					<p class="mt-3 text-start text-sm">{isi}</p>
 					<p class="mt-3 text-center lg:text-start">Navigasi</p>
 					<div class="duar mt-3 flex gap-4">
 						<div class="flex h-12 w-12 items-center justify-center rounded-full border bg-blue-600">

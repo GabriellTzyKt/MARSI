@@ -7,6 +7,8 @@
 	import gambar3 from '../../../asset/umum/gbr_3.png';
 	import gambar4 from '../../../asset/umum/gbr_4.png';
 	import Cardshow from '../Cardshow.svelte';
+	import { tempdata } from '$lib/dummy';
+	tempdata;
 	let value = $state(0);
 </script>
 
@@ -30,7 +32,7 @@
 	<!-- Search bar -->
 	<div class="relative z-10 mb-20 mt-[-30px] flex justify-center">
 		<div
-			class="mx-4 flex h-fit w-[50%] items-center justify-between self-center rounded-2xl border bg-white pe-4 ps-4 shadow-md"
+			class="mx-4 flex h-fit w-[50%] items-center justify-between self-center rounded-2xl border bg-white pe-4 ps-4"
 		>
 			<input
 				type="text"
@@ -68,27 +70,19 @@
 	</div>
 
 	<!-- Card Show  -->
-	<div class="relative mb-20 ml-10 mr-10 mt-10 grid grid-cols-1 gap-x-4 gap-y-10 md:grid-cols-2">
-		<Cardshow judul="Keraton Kasunanan Surakarta" lokasi="Surakarta, Jawa Tengah" {gambar} id="1"
-		></Cardshow>
-		<Cardshow
-			judul="Keraton Ngayogyakarta Hadiningrat"
-			lokasi="Yogyakarta, Daerah Istimewa Yogyakarta"
-			gambar={gambar2}
-			id="2"
-		></Cardshow>
-		<Cardshow
-			judul="Kadipaten Mangkunagaran"
-			lokasi="Surakarta, Jawa Tengah"
-			gambar={gambar4}
-			id="3"
-		></Cardshow>
-		<Cardshow
-			judul="Keraton Kasunanan Surakarta"
-			lokasi="Surakarta, Jawa Tengah"
-			gambar={gambar3}
-			id="4"
-		></Cardshow>
+	<!-- Card Show  -->
+	<div class="mx-8 mb-20 mt-10 grid grid-cols-1 items-center justify-center md:grid-cols-2">
+		<!-- kalau mau kamu loop aja, tinggal import data dari datadummy -->
+		{#each tempdata as t}
+			<div class="mx-2 my-2">
+				<Cardshow
+					judul={t.nama_kerajaan}
+					lokasi={t.lokasi}
+					gambar={t.gambartop}
+					linkTo="/umum/daftarkerajaan/{t.id}"
+				></Cardshow>
+			</div>
+		{/each}
 	</div>
 </section>
 

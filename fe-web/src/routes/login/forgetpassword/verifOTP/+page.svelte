@@ -12,7 +12,7 @@
 </script>
 
 <div class="bg-login flex items-center justify-center">
-	<div class="rounded-lg border bg-white px-2 py-3 sm:px-10 sm:py-8 md:px-16 md:py-8">
+	<div class="mx-4 rounded-lg border bg-white px-2 py-3 sm:px-10 sm:py-8 md:px-16 md:py-8">
 		<div class="flex flex-col gap-4">
 			<div class="flex justify-center text-center">
 				<img src={image} alt="" class="w-26 h-auto" />
@@ -26,11 +26,11 @@
 			<form action="">
 				<div class="mt-3">
 					<div class="flex flex-col">
-							<input
-								type=text
-								class="bg-input border-none py-2"
-                                placeholder="Masukkan 6 digit kode anda"
-							/>
+						<input
+							type="text"
+							class="bg-input border-none py-2"
+							placeholder="Masukkan 6 digit kode anda"
+						/>
 					</div>
 					<div class="mt-4 flex flex-col">
 						<div class="flex flex-col items-center justify-center text-center">

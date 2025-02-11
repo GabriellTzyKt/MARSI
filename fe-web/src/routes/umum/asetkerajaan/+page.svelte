@@ -8,6 +8,7 @@
 	import gambar4 from '../../../asset/umum/gbr_4.png';
 	import Cardshow from '../Cardshow.svelte';
 	import PaginationUmum from '../PaginationUmum.svelte';
+	import { tempdata } from '$lib/dummy';
 	let value = $state(0);
 </script>
 
@@ -32,7 +33,7 @@
 		>
 			<input
 				type="text"
-				class="flex flex-grow justify-center rounded-2xl border-none shadow-md outline-none focus:border-none focus:outline-none focus:ring-0 md:pe-16"
+				class="flex flex-grow justify-center rounded-2xl border-none outline-none focus:border-none focus:outline-none focus:ring-0 md:pe-16"
 				placeholder="Search"
 			/>
 			<svg
@@ -109,39 +110,18 @@
 		</div>
 
 		<!-- Card Show  -->
-		<div class="mx-8 mb-20 me-0 mt-10 grid grid-cols-1 items-center justify-center md:grid-cols-2">
-			<div>
-				<Cardshow
-					judul="Keraton Kasunanan Surakarta"
-					lokasi="Surakarta, Jawa Tengah"
-					{gambar}
-					id="1"
-				></Cardshow>
-			</div>
-			<div>
-				<Cardshow
-					judul="Keraton Ngayogyakarta Hadiningrat"
-					lokasi="Yogyakarta, Daerah Istimewa Yogyakarta"
-					gambar={gambar2}
-					id="2"
-				></Cardshow>
-			</div>
-			<div>
-				<Cardshow
-					judul="Kadipaten Mangkunagaran"
-					lokasi="Surakarta, Jawa Tengah"
-					gambar={gambar4}
-					id="3"
-				></Cardshow>
-			</div>
-			<div>
-				<Cardshow
-					judul="Keraton Kasunanan Surakarta"
-					lokasi="Surakarta, Jawa Tengah"
-					gambar={gambar3}
-					id="4"
-				></Cardshow>
-			</div>
+		<div class="mx-8 mb-20 mt-10 grid grid-cols-1 items-center justify-center md:grid-cols-2">
+			<!-- kalau mau kamu loop aja, tinggal import data dari datadummy -->
+			{#each tempdata as t}
+				<div class="mx-2 my-2">
+					<Cardshow
+						judul={t.nama_kerajaan}
+						lokasi={t.lokasi}
+						gambar={t.gambartop}
+						linkTo="/umum/daftarkerajaan/{t.id}"
+					></Cardshow>
+				</div>
+			{/each}
 		</div>
 	</div>
 </section>
