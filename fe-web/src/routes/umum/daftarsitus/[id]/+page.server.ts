@@ -1,0 +1,13 @@
+import { tempsitusdata } from "$lib/dummy";
+import type { PageServerLoad } from "./$types";
+
+export const load: PageServerLoad = async ({ params }) => {
+    const id = Number(params.id);
+    const detil_situs = tempsitusdata.find((situs) => situs.id === id);
+
+    if (!detil_situs) {
+        throw new Error(`Data tidak ditemukan untuk ID: ${id}`);
+    }
+
+    return { detil_situs };
+};

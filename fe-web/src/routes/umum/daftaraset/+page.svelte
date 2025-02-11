@@ -1,11 +1,11 @@
 <script lang="ts">
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '../nav/Navbar.svelte';
-	import gambarHeader from '../../../asset/umum/keraton 2.png';
-	import gambar from '../../../asset/umum/gbr_1.png';
-	import gambar2 from '../../../asset/umum/gbr_2.png';
-	import gambar3 from '../../../asset/umum/gbr_3.png';
-	import gambar4 from '../../../asset/umum/gbr_4.png';
+	import gambarHeader from '../../../asset/umum/aset_top.png';
+	import gambar from '../../../asset/umum/aset1.png';
+	import gambar2 from '../../../asset/umum/aset2.png';
+	import gambar3 from '../../../asset/umum/aset3.png';
+	import gambar4 from '../../../asset/umum/aset4.png';
 	import Cardshow from '../Cardshow.svelte';
 	let value = $state(0);
 </script>
@@ -17,24 +17,22 @@
 <!-- Section 1 -->
 <section class="relative">
 	<!-- Gambar -->
-	<div class="relative w-screen h-screen">
-		<img src={gambarHeader} alt="" class="h-screen w-screen" />
-
-		<p
-			class="absolute top-1/2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-6xl font-bold text-black"
-		>
-			Daftar Kerajaan
-		</p>
-	</div>
+    <div class="relative h-screen w-screen">
+        <img src={gambarHeader} alt="" class="h-screen w-screen" />
+      
+        <p class="absolute top-1/2 left-[50%] transform -translate-x-1/2 -translate-y-1/2 text-6xl font-bold text-black">
+          Daftar Acara
+        </p>
+      </div>
 
 	<!-- Search bar -->
 	<div class="relative z-10 mb-20 mt-[-30px] flex justify-center">
 		<div
-			class="mx-4 flex h-fit w-[50%] items-center justify-between self-center rounded-2xl border bg-white pe-4 ps-4 shadow-md"
+			class="mx-4 flex h-fit w-[100%] lg:w-[50%] items-center justify-between self-center rounded-2xl border bg-white pe-4 ps-4 shadow-md"
 		>
 			<input
 				type="text"
-				class="flex flex-grow justify-center border-none pe-16 outline-none focus:border-none focus:outline-none focus:ring-0"
+				class="flex flex-grow justify-center border-none pe-5 outline-none focus:border-none focus:outline-none focus:ring-0"
 				placeholder="Search"
 			/>
 			<svg
@@ -43,7 +41,7 @@
 				viewBox="0 0 24 24"
 				stroke-width="1.5"
 				stroke="currentColor"
-				class="flex size-6 flex-shrink-0 sm:text-xl lg:text-2xl"
+				class="flex size-6 flex-shrink-0"
 			>
 				<path
 					stroke-linecap="round"
@@ -80,14 +78,26 @@
 		<Cardshow
 			judul="Kadipaten Mangkunagaran"
 			lokasi="Surakarta, Jawa Tengah"
-			gambar={gambar4}
+			gambar={gambar3}
 			id="3"
 		></Cardshow>
 		<Cardshow
 			judul="Keraton Kasunanan Surakarta"
 			lokasi="Surakarta, Jawa Tengah"
-			gambar={gambar3}
+			gambar={gambar4}
 			id="4"
+		></Cardshow>
+		<Cardshow
+			judul="Keraton Kasunanan Surakarta"
+			lokasi="Surakarta, Jawa Tengah"
+			gambar={gambar4}
+			id="5"
+		></Cardshow>
+		<Cardshow
+			judul="Keraton Kasunanan Surakarta"
+			lokasi="Surakarta, Jawa Tengah"
+			gambar={gambar4}
+			id="6"
 		></Cardshow>
 	</div>
 </section>
@@ -101,4 +111,5 @@
 	.no-arrow {
 		list-style: none;
 	}
+
 </style>

@@ -5,8 +5,6 @@
 	import imageprofile from '../../asset/gambar_temp.jpg';
 	import Sidebar from '../Sidebar.svelte';
 	import SidebarMenu from '../SidebarMenu.svelte';
-	// import { page } from 'app/stores';
-	// import { derived } from 'svelte/store';
 	import { page } from '$app/state';
 	const isActive = (path: string) => {
 		return page.url.pathname === path;

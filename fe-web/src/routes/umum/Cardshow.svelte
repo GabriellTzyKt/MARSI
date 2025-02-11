@@ -1,19 +1,36 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { page } from '$app/state';
+	$inspect(page);
+
+	let path: string = $state(''); // Variabel untuk menyimpan path dinamis
+
+	onMount(() => {
+		// Mengatur path berdasarkan route id
+		if (page.route.id === '/umum/daftarsitus') {
+			path = "/umum/daftarsitus";
+		} else if (page.route.id === '/umum/daftarkerajaan') {
+			path = "/umum/daftarkerajaan";
+		} else if (page.route.id === '/umum/daftaraset') {
+			path = "/umum/daftaraset";
+		}
+	});
 
 	let { judul, lokasi, gambar, id } = $props();
-
 </script>
 
 <div class="max-w-2xl overflow-hidden rounded shadow-lg">
 	<img class="w-full" src={gambar} alt="Sunset in the mountains" />
 	<div class="px-6 py-4">
 		<div class="mb-2 text-xl font-bold">{judul}</div>
-		<div class="flex justify-between">
-			<div class="flex items-center self-center">
-				<span class="bx--map"></span>
-				<p class="text-base text-gray-700">{lokasi}</p>
+		<div class="flex flex-col lg:flex-row lg:justify-between">
+			<div class="flex items-center justify-start lg:self-center">
+				<span class="bx--map mr-3"></span>
+				<p class="self-start text-start text-base text-gray-700">{lokasi}</p>
 			</div>
-			<a href="/umum/daftarkerajaan/{id}" class="flex text-center text-blue-600">
+			<a 
+			href="{path}/{id}" 
+			class="mt-3 flex text-center text-blue-600">
 				Selanjutnya <span class="formkit--arrowright justify-center self-center"></span>
 			</a>
 		</div>
@@ -38,5 +55,9 @@
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Cpath fill='%230E8FEB' d='M12.5 5h-9c-.28 0-.5-.22-.5-.5s.22-.5.5-.5h9c.28 0 .5.22.5.5s-.22.5-.5.5'/%3E%3Cpath fill='%230E8FEB' d='M10 8.5a.47.47 0 0 1-.35-.15c-.2-.2-.2-.51 0-.71l3.15-3.15l-3.15-3.15c-.2-.2-.2-.51 0-.71s.51-.2.71 0l3.5 3.5c.2.2.2.51 0 .71l-3.5 3.5c-.1.1-.23.15-.35.15Z'/%3E%3C/svg%3E");
+	}
+
+	@media (min-width: 768px) {
+
 	}
 </style>
