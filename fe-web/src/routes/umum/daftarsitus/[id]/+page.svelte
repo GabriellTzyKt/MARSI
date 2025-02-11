@@ -37,7 +37,7 @@
 			<p class="absolute left-10 top-[15%]">
 				<a href="/umum/daftarsitus">
 					<span class="ph--arrow-bend-up-left-bold mt-3"></span>
-					Kembali Ke Daftar Aset
+					Kembali Ke Daftar Situs
 				</a>
 			</p>
 			<p

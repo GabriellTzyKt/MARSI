@@ -8,7 +8,7 @@
 	import gambar4 from '../../../asset/umum/gbr_4.png';
 	import Cardshow from '../Cardshow.svelte';
 	import PaginationUmum from '../PaginationUmum.svelte';
-	import { tempdata } from '$lib/dummy';
+	import { tempdata, tempasetdata } from '$lib/dummy';
 
 	let value = $state(0);
 </script>
@@ -63,10 +63,9 @@
 		<!-- Card Show  -->
 		<div class="mx-8 mb-20 mt-10 grid grid-cols-1 items-center justify-center md:grid-cols-2">
 			<!-- kalau mau kamu loop aja, tinggal import data dari datadummy -->
-			{#each tempdata as t}
+			{#each tempasetdata as t}
 				<div class="mx-2 my-2">
-					<Cardshow judul={t.nama_kerajaan} lokasi={t.lokasi} gambar={t.gambartop} id={t.id}
-					></Cardshow>
+					<Cardshow judul={t.nama} lokasi={t.kepemilikan} gambar={t.gambartop} id={t.id}></Cardshow>
 				</div>
 			{/each}
 		</div>

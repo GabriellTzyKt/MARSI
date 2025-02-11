@@ -32,9 +32,9 @@
 		<img src={gambar} alt="" class="min-w-screen min-h-screen object-cover" />
 		<div class="absolute inset-0 flex items-center justify-center">
 			<p class="absolute left-10 top-[15%]">
-				<a href="/umum/daftarkerajaan">
+				<a href="/umum/daftaraset">
 					<span class="ph--arrow-bend-up-left-bold mt-3"></span>
-					Kembali Ke Daftar Kerajaan
+					Kembali Ke Daftar Aset
 				</a>
 			</p>
 			<p
@@ -53,15 +53,15 @@
 			<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 				<div>
 					<img src={gambar1} class="h-auto w-full rounded-lg object-cover" alt="" />
-                    {#if lagu == ''}
-					<div class="mt-4 flex justify-center gap-1 lg:gap-4">
-						<span class="material-symbols--arrow-circle-left-rounded self-center"></span>
-						<img src={gambar2} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
-						<img src={gambar3} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
-						<img src={gambar4} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
-						<span class="material-symbols--arrow-circle-right self-center"></span>
-					</div>
-                    {/if}
+					{#if lagu == ''}
+						<div class="mt-4 flex justify-center gap-1 lg:gap-4">
+							<span class="material-symbols--arrow-circle-left-rounded self-center"></span>
+							<img src={gambar2} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
+							<img src={gambar3} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
+							<img src={gambar4} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
+							<span class="material-symbols--arrow-circle-right self-center"></span>
+						</div>
+					{/if}
 				</div>
 				<div>
 					<p class="flex items-center self-center text-start text-xl font-semibold">
