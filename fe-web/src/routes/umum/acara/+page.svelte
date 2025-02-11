@@ -20,11 +20,14 @@
 <!-- Section 1 -->
 <section class="relative mt-10 md:mt-0">
 	<!-- Gambar -->
-	<div class="relative text-center">
-		<img src={gambarHeader} alt="" class="h-auto w-full" />
-		<div class="absolute inset-0 z-10 flex items-center justify-center">
-			<p class="text-6xl font-bold text-black">Daftar Acara</p>
-		</div>
+	<div class="relative h-screen w-screen">
+		<img src={gambarHeader} alt="" class="h-screen w-screen" />
+
+		<p
+			class="absolute left-[50%] top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-6xl font-bold text-black"
+		>
+			Daftar Acara
+		</p>
 	</div>
 
 	<!-- Search bar -->

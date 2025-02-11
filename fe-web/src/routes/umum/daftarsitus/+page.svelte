@@ -29,7 +29,6 @@
 			Daftar Situs
 		</p>
 	</div>
-
 	<!-- Search bar -->
 	<div class="relative z-10 mb-20 mt-[-30px] flex justify-center">
 		<div

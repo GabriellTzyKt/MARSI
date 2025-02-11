@@ -25,7 +25,7 @@
 		<p
 			class="absolute left-[50%] top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-6xl font-bold text-black"
 		>
-			Daftar Acara
+			Daftar Aset
 		</p>
 	</div>
 

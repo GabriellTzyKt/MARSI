@@ -17,26 +17,28 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
 
 <!-- Section 1 -->
-<section class="relative">
+<section class="relative mt-10 md:mt-0">
+	<!-- Gambar -->
 	<!-- Gambar -->
 	<div class="relative h-screen w-screen">
 		<img src={gambarHeader} alt="" class="h-screen w-screen" />
 
 		<p
-			class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-6xl font-bold text-black"
+			class="absolute left-[50%] top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-6xl font-bold text-black"
 		>
 			Daftar Kerajaan
 		</p>
 	</div>
 
 	<!-- Search bar -->
+	<!-- Search bar -->
 	<div class="relative z-10 mb-20 mt-[-30px] flex justify-center">
 		<div
-			class="mx-4 flex h-fit w-[50%] items-center justify-between self-center rounded-2xl border bg-white pe-4 ps-4"
+			class="mx-4 flex w-[50%] items-center justify-center self-center rounded-2xl border bg-white pe-4 ps-4 sm:w-[50%] md:justify-between"
 		>
 			<input
 				type="text"
-				class="flex flex-grow justify-center border-none pe-16 outline-none focus:border-none focus:outline-none focus:ring-0"
+				class="flex flex-grow justify-center rounded-2xl border-none outline-none focus:border-none focus:outline-none focus:ring-0 md:pe-16"
 				placeholder="Search"
 			/>
 			<svg
@@ -45,7 +47,7 @@
 				viewBox="0 0 24 24"
 				stroke-width="1.5"
 				stroke="currentColor"
-				class="flex size-6 flex-shrink-0 sm:text-xl lg:text-2xl"
+				class="hidden size-6 md:block"
 			>
 				<path
 					stroke-linecap="round"
