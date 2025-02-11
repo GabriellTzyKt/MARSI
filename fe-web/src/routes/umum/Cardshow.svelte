@@ -13,6 +13,8 @@
 			path = '/umum/daftarkerajaan';
 		} else if (page.route.id === '/umum/daftaraset') {
 			path = '/umum/daftaraset';
+		} else if (page.route.id === '/umum/acara') {
+			path = '/umum/acara';
 		}
 	});
 

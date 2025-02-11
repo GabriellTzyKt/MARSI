@@ -19,11 +19,11 @@
 <!-- Section 1 -->
 <section class="relative">
 	<!-- Gambar -->
-	<div class="relative w-screen h-screen">
+	<div class="relative h-screen w-screen">
 		<img src={gambarHeader} alt="" class="h-screen w-screen" />
 
 		<p
-			class="absolute top-1/2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-6xl font-bold text-black"
+			class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-6xl font-bold text-black"
 		>
 			Daftar Kerajaan
 		</p>
@@ -75,11 +75,7 @@
 		<!-- kalau mau kamu loop aja, tinggal import data dari datadummy -->
 		{#each tempdata as t}
 			<div class="mx-2 my-2">
-				<Cardshow
-					judul={t.nama_kerajaan}
-					lokasi={t.lokasi}
-					gambar={t.gambartop}
-					linkTo="/umum/daftarkerajaan/{t.id}"
+				<Cardshow judul={t.nama_kerajaan} lokasi={t.lokasi} gambar={t.gambartop} id={t.id}
 				></Cardshow>
 			</div>
 		{/each}

@@ -114,11 +114,7 @@
 			<!-- kalau mau kamu loop aja, tinggal import data dari datadummy -->
 			{#each tempdata as t}
 				<div class="mx-2 my-2">
-					<Cardshow
-						judul={t.nama_kerajaan}
-						lokasi={t.lokasi}
-						gambar={t.gambartop}
-						linkTo="/umum/daftarkerajaan/{t.id}"
+					<Cardshow judul={t.nama_kerajaan} lokasi={t.lokasi} gambar={t.gambartop} id={t.id}
 					></Cardshow>
 				</div>
 			{/each}

@@ -7,6 +7,8 @@
 	import gambar3 from '../../../asset/umum/gbr_3.png';
 	import gambar4 from '../../../asset/umum/gbr_4.png';
 	import Cardshow from '../Cardshow.svelte';
+	import { tempdata } from '$lib/dummy';
+
 	let value = $state(0);
 </script>
 
@@ -69,26 +71,9 @@
 
 	<!-- Card Show  -->
 	<div class="relative mb-20 ml-10 mr-10 mt-10 grid grid-cols-1 gap-x-4 gap-y-10 md:grid-cols-2">
-		<Cardshow judul="Keraton Kasunanan Surakarta" lokasi="Surakarta, Jawa Tengah" {gambar} linkTo=""
-		></Cardshow>
-		<Cardshow
-			judul="Keraton Ngayogyakarta Hadiningrat"
-			lokasi="Yogyakarta, Daerah Istimewa Yogyakarta"
-			gambar={gambar2}
-			linkTo=""
-		></Cardshow>
-		<Cardshow
-			judul="Kadipaten Mangkunagaran"
-			lokasi="Surakarta, Jawa Tengah"
-			gambar={gambar4}
-			linkTo=""
-		></Cardshow>
-		<Cardshow
-			judul="Keraton Kasunanan Surakarta"
-			lokasi="Surakarta, Jawa Tengah"
-			gambar={gambar3}
-			linkTo=""
-		></Cardshow>
+		{#each tempdata as t}
+			<Cardshow judul={t.nama_kerajaan} lokasi={t.lokasi} {gambar} id={t.id}></Cardshow>
+		{/each}
 	</div>
 </section>
 
