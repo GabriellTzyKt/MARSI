@@ -22,11 +22,38 @@ import gambar2_aset from '../asset/umum/aset2_gbr.png'
 import gambar3_aset from '../asset/umum/aset3_gbr.png'
 import gambar4_aset from '../asset/umum/aset4_gbr.png'
 
+// acara 
+import gambaracara_top from '../asset/umum/acara_header.png';
+import gambar1_acara from '../asset/umum/acara_1.png'
+import gambar2_acara from '../asset/umum/acara_2.png'
+import gambar3_acara from '../asset/umum/acara_3.png'
+import gambar4_acara from '../asset/umum/acara_4.png'
+
+
+
+export const detail_acara = [
+  {
+    id: 1,
+    gambartop: gambaracara_top,
+    nama_tempat: "Kirab Malam 1 Suro",
+    gambar1: gambar1_acara,
+    gambar2: gambar2_acara,
+    gambar3: gambar3_acara,
+    gambar4: gambar4_acara,
+    kepemilikan: "Keraton kasunanan surakarta",
+    jam_selesai: '23:59 - selesai',
+    tanggal_acara: '07/07/2024',
+    isi: "Kirab Pusaka Malam 1 Suro  di Keraton Surakarta adalah perayaan tahunan yang menandai tahun baru Jawa dengan pengusungan pusaka keraton. Acara dimulai dengan doa bersama di keraton, diikuti oleh prosesi mengarak pusaka seperti keris dan barang bersejarah, disertai iringan musik gamelan dan tarian tradisional. Masyarakat antusias menyaksikan prosesi yang melambangkan warisan budaya dan spiritualitas. Acara diakhiri dengan ritual penutup untuk menjaga hubungan antara keraton dan rakyat, sekaligus melestarikan tradisi luhur budaya Jawa.",
+    lokasi: "Jl. Kamandungan, Baluwarti, Kec. Ps. Kliwon, Kota Surakarta, Jawa Tengah"
+  }
+
+]
+
 export const detil_situs = [
   {
     id: 1,
-    gambartop: gambarsitus_top,
-    nama_tempat: "Candi Borobudur",
+    gambartop: gambaraset_top,
+    nama_tempat: "Keraton kasunana surakarta",
     gambar1: gambar1_situs,
     gambar2: gambar2_situs,
     gambar3: gambar3_situs,

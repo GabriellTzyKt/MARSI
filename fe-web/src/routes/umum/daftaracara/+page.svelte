@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '../nav/Navbar.svelte';
-	import gambarHeader from '../../../asset/umum/keraton 2.png';
-	import gambar from '../../../asset/umum/gbr_1.png';
+	import gambarHeader from '../../../asset/umum/acara_header.png';
+	import gambar from '../../../asset/umum/acara_1.png';
 	import gambar2 from '../../../asset/umum/gbr_2.png';
 	import gambar3 from '../../../asset/umum/gbr_3.png';
 	import gambar4 from '../../../asset/umum/gbr_4.png';
@@ -13,7 +13,7 @@
 	let keyword = $state('');
 
 	const situsList = [
-		{ id: 1, judul: 'Keraton Kasunanan Surakarta', lokasi: 'Surakarta, Jawa Tengah', gambar },
+		{ id: 1, judul: 'KItab Malam 1 Suro', lokasi: 'Keraton Kasunanan Surakarta', gambar },
 		{
 			id: 2,
 			judul: 'Keraton Ngayogyakarta Hadiningrat',
@@ -170,7 +170,7 @@
 		<p
 			class="absolute left-[50%] top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-6xl font-bold text-black"
 		>
-			Daftar Kerajaan
+			Daftar Acara
 		</p>
 	</div>
 

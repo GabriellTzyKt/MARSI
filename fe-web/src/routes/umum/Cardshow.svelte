@@ -13,9 +13,9 @@
 			path = '/umum/daftarkerajaan';
 		} else if (page.route.id === '/umum/daftaraset') {
 			path = '/umum/daftaraset';
-		} else if (page.route.id === '/umum/acara') {
-			path = '/umum/acara';
-		}
+		} else if (page.route.id === '/umum/daftaracara') {
+			path = '/umum/daftaracara';
+		} 
 	});
 
 	let { judul, lokasi, gambar, id } = $props();

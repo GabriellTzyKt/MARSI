@@ -5,20 +5,18 @@
 
 	const { data } = $props();
 	console.log('Data yang diterima:', data);
-	const situs = data.detil;
-	let gambar = situs.gambartop;
-	let nama = situs.nama_tempat;
-	let gambar1 = situs.gambar1;
-	let gambar2 = situs.gambar2;
-	let gambar3 = situs.gambar3;
-	let gambar4 = situs.gambar4;
-	let nomorcagarbudaya = situs.nomor_cagarbudaya;
-	let kepemilikan = situs.kepemilikan;
-	let pendiri = situs.pendiri;
-	let tahun_berdiri = situs.tahun;
-	let jenis_situs = situs.jenis_situs;
-	let isi = situs.isi;
-	let lokasi = situs.lokasi;
+	const acara = data.detil_acara;
+	let gambar = acara.gambartop;
+	let nama = acara.nama_tempat;
+	let gambar1 = acara.gambar1;
+	let gambar2 = acara.gambar2;
+	let gambar3 = acara.gambar3;
+	let gambar4 = acara.gambar4;
+	let kepemilikan = acara.kepemilikan;
+	let tanggal_acara = acara.tanggal_acara;
+	let jam_selesai = acara.jam_selesai;
+    let lokasi_acara = acara.lokasi;
+	let isi = acara.isi;
 </script>
 
 <Navbar></Navbar>
@@ -30,9 +28,9 @@
 		<img src={gambar} alt="" class="min-w-screen min-h-screen object-cover" />
 		<div class="absolute inset-0 flex items-center justify-center">
 			<p class="absolute left-10 top-[15%]">
-				<a href="/umum/daftarsitus">
+				<a href="/umum/daftaracara">
 					<span class="ph--arrow-bend-up-left-bold mt-3"></span>
-					Kembali Ke Daftar Situs
+					Kembali Ke Daftar Acara
 				</a>
 			</p>
 			<p
@@ -65,53 +63,33 @@
 						<div
 							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
 						>
-							<img src={bangunan} alt="" />
-						</div>
-						<p class="ml-2 items-center text-start">Nomor Cagar Budaya : {nomorcagarbudaya}</p>
-					</div>
-					<div class="mt-5 flex items-center">
-						<div
-							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
-						>
 							<span class="bxs--castle"></span>
 						</div>
 						<p class="ml-2 items-center text-start">Kepemilikan : {kepemilikan}</p>
 					</div>
-
 					<div class="mt-5 flex items-center">
 						<div
 							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
 						>
-							<span class="material-symbols--person"></span>
+							<span class="solar--calendar-bold"></span>
 						</div>
-						<p class="ml-2 items-center text-start">Dibangun Oleh : {pendiri}</p>
+						<p class="ml-2 items-center text-start">Tanggal Acara : {tanggal_acara}</p>
 					</div>
-
 					<div class="mt-5 flex items-center">
 						<div
 							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
 						>
-							<span class="ph--scroll"></span>
+							<span class="tabler--clock-filled"></span>
 						</div>
-						<p class="ml-2 items-center text-start">Tahun berdiri : {tahun_berdiri}</p>
+						<p class="ml-2 items-center text-start">Jam : {jam_selesai}</p>
 					</div>
-
 					<div class="mt-5 flex items-center">
 						<div
 							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
 						>
-							<span class="mingcute--wave-fill"></span>
+							<span class="bx--map"></span>
 						</div>
-						<p class="ml-2 items-center text-start">Jenis Situs : {jenis_situs}</p>
-					</div>
-
-					<div class="mt-5 flex items-center">
-						<div
-							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
-						>
-							<span class="bx--map text-xl"></span>
-						</div>
-						<p class="ml-2 items-center text-start">Lokasi : {lokasi}</p>
+						<p class="ml-2 items-center text-start">Lokasi Acara : {lokasi_acara}</p>
 					</div>
 
 					<p class="mb-5 mt-3 text-start text-sm">{isi}</p>
@@ -139,25 +117,25 @@
 		height: 18px;
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M12 14c2.206 0 4-1.794 4-4s-1.794-4-4-4s-4 1.794-4 4s1.794 4 4 4m0-6c1.103 0 2 .897 2 2s-.897 2-2 2s-2-.897-2-2s.897-2 2-2'/%3E%3Cpath fill='%23000' d='M11.42 21.814a1 1 0 0 0 1.16 0C12.884 21.599 20.029 16.44 20 10c0-4.411-3.589-8-8-8S4 5.589 4 9.995c-.029 6.445 7.116 11.604 7.42 11.819M12 4c3.309 0 6 2.691 6 6.005c.021 4.438-4.388 8.423-6 9.73c-1.611-1.308-6.021-5.294-6-9.735c0-3.309 2.691-6 6-6'/%3E%3C/svg%3E");
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fffefb' d='M12 14c2.206 0 4-1.794 4-4s-1.794-4-4-4s-4 1.794-4 4s1.794 4 4 4m0-6c1.103 0 2 .897 2 2s-.897 2-2 2s-2-.897-2-2s.897-2 2-2'/%3E%3Cpath fill='%23fffefb' d='M11.42 21.814a1 1 0 0 0 1.16 0C12.884 21.599 20.029 16.44 20 10c0-4.411-3.589-8-8-8S4 5.589 4 9.995c-.029 6.445 7.116 11.604 7.42 11.819M12 4c3.309 0 6 2.691 6 6.005c.021 4.438-4.388 8.423-6 9.73c-1.611-1.308-6.021-5.294-6-9.735c0-3.309 2.691-6 6-6'/%3E%3C/svg%3E");
 	}
 
-	.mingcute--wave-fill {
+	.tabler--clock-filled {
 		display: inline-block;
 		width: 18px;
 		height: 18px;
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none'%3E%3Cpath d='m12.594 23.258l-.012.002l-.071.035l-.02.004l-.014-.004l-.071-.036q-.016-.004-.024.006l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.016-.018m.264-.113l-.014.002l-.184.093l-.01.01l-.003.011l.018.43l.005.012l.008.008l.201.092q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.003-.011l.018-.43l-.003-.012l-.01-.01z'/%3E%3Cpath fill='%23000' d='M18.147 6.733a10.6 10.6 0 0 0-5.244.528l-.346.132a13.6 13.6 0 0 1-7.16.84c-1.038-.16-2.12-.418-3.068-.891a1.5 1.5 0 0 1 1.202-2.745l.132.058c.682.32 1.45.499 2.19.613c1.344.206 3.183.22 5.244-.529l.346-.132a13.6 13.6 0 0 1 7.16-.84c1.038.16 2.119.419 3.066.89a1.514 1.514 0 0 1 .672 2.014c-.369.738-1.122.907-2.005.674l-2.19-.612Zm0 6a10.6 10.6 0 0 0-5.244.528l-.346.132a13.6 13.6 0 0 1-7.16.84c-1.038-.16-2.12-.418-3.068-.891a1.5 1.5 0 0 1 1.202-2.745l.132.058c.682.32 1.45.499 2.19.613c1.344.206 3.183.22 5.244-.529l.346-.132a13.6 13.6 0 0 1 7.16-.84c1.038.16 2.119.419 3.066.89a1.514 1.514 0 0 1 .672 2.014c-.369.739-1.122.907-2.005.674l-2.19-.612Zm-5.954 6.8l.364-.14a10.6 10.6 0 0 1 5.59-.66l2.19.612c.882.233 1.635.065 2.005-.674a1.514 1.514 0 0 0-.673-2.013c-.947-.472-2.028-.73-3.066-.89a13.6 13.6 0 0 0-6.797.7l-.363.14c-2.202.88-4.172.878-5.59.66c-.634-.098-1.29-.243-1.893-.484l-.297-.13a1.5 1.5 0 0 0-1.334 2.688c.947.473 2.03.731 3.068.89c1.752.27 4.143.28 6.796-.7Z'/%3E%3C/g%3E%3C/svg%3E");
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fffefb' d='M17 3.34a10 10 0 1 1-14.995 8.984L2 12l.005-.324A10 10 0 0 1 17 3.34M12 6a1 1 0 0 0-.993.883L11 7v5l.009.131a1 1 0 0 0 .197.477l.087.1l3 3l.094.082a1 1 0 0 0 1.226 0l.094-.083l.083-.094a1 1 0 0 0 0-1.226l-.083-.094L13 11.585V7l-.007-.117A1 1 0 0 0 12 6'/%3E%3C/svg%3E");
 	}
 
-	.material-symbols--person {
+	.solar--calendar-bold {
 		display: inline-block;
 		width: 18px;
 		height: 18px;
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M12 12q-1.65 0-2.825-1.175T8 8t1.175-2.825T12 4t2.825 1.175T16 8t-1.175 2.825T12 12m-8 8v-2.8q0-.85.438-1.562T5.6 14.55q1.55-.775 3.15-1.162T12 13t3.25.388t3.15 1.162q.725.375 1.163 1.088T20 17.2V20z'/%3E%3C/svg%3E");
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fffefb' d='M7.75 2.5a.75.75 0 0 0-1.5 0v1.58c-1.44.115-2.384.397-3.078 1.092c-.695.694-.977 1.639-1.093 3.078h19.842c-.116-1.44-.398-2.384-1.093-3.078c-.694-.695-1.639-.977-3.078-1.093V2.5a.75.75 0 0 0-1.5 0v1.513C15.585 4 14.839 4 14 4h-4c-.839 0-1.585 0-2.25.013z'/%3E%3Cpath fill='%23fffefb' fill-rule='evenodd' d='M2 12c0-.839 0-1.585.013-2.25h19.974C22 10.415 22 11.161 22 12v2c0 3.771 0 5.657-1.172 6.828S17.771 22 14 22h-4c-3.771 0-5.657 0-6.828-1.172S2 17.771 2 14zm15 2a1 1 0 1 0 0-2a1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2a1 1 0 0 0 0 2m-4-5a1 1 0 1 1-2 0a1 1 0 0 1 2 0m0 4a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-6-3a1 1 0 1 0 0-2a1 1 0 0 0 0 2m0 4a1 1 0 1 0 0-2a1 1 0 0 0 0 2' clip-rule='evenodd'/%3E%3C/svg%3E");
 	}
 
 	.bxs--castle {
@@ -169,14 +147,6 @@
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M20 11h-2V6h1V2h-2v2h-1V2h-2v2h-1V2h-2v2h-1V2H8v2H7V2H5v4h1v5H4V9H2v12h7v-5a3 3 0 0 1 6 0v5h7V9h-2zm-10-1H8V7h2zm6 0h-2V7h2z'/%3E%3C/svg%3E");
 	}
 
-	.ph--scroll {
-		display: inline-block;
-		width: 18px;
-		height: 18px;
-		background-repeat: no-repeat;
-		background-size: 100% 100%;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath fill='%23000' d='M96 104a8 8 0 0 1 8-8h64a8 8 0 0 1 0 16h-64a8 8 0 0 1-8-8m8 40h64a8 8 0 0 0 0-16h-64a8 8 0 0 0 0 16m128 48a32 32 0 0 1-32 32H88a32 32 0 0 1-32-32V64a16 16 0 0 0-32 0c0 5.74 4.83 9.62 4.88 9.66A8 8 0 0 1 24 88a7.9 7.9 0 0 1-4.79-1.61C18.05 85.54 8 77.61 8 64a32 32 0 0 1 32-32h136a32 32 0 0 1 32 32v104h8a8 8 0 0 1 4.8 1.6c1.2.86 11.2 8.79 11.2 22.4M96.26 173.48A8.07 8.07 0 0 1 104 168h88V64a16 16 0 0 0-16-16H67.69A31.7 31.7 0 0 1 72 64v128a16 16 0 0 0 32 0c0-5.74-4.83-9.62-4.88-9.66a7.82 7.82 0 0 1-2.86-8.86M216 192a12.58 12.58 0 0 0-3.23-8h-94a27 27 0 0 1 1.21 8a31.8 31.8 0 0 1-4.29 16H200a16 16 0 0 0 16-16'/%3E%3C/svg%3E");
-	}
 	.material-symbols--arrow-circle-left-rounded {
 		display: inline-block;
 		width: 18px;
