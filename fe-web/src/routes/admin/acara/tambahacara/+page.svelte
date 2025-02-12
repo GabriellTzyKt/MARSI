@@ -1,4 +1,7 @@
 <script lang="ts">
+	import SucessModal from '$lib/popup/SucessModal.svelte';
+	import { fade } from 'svelte/transition';
+
 	let nama = $state('');
 	let tanggal_acara = $state('');
 	let lokasi_acara = $state('');
@@ -6,6 +9,15 @@
 	let jenis_acara = $state('');
 	let kapasitas = $state('');
 	let penanggungjawab = ['Kerajaan Kraton', 'Kerajaan Betawi', 'Kerajaan Sunda'];
+
+	let sucess = $state(false);
+	const toggle = () => {
+		if (sucess) {
+			sucess = false;
+		} else {
+			sucess = true;
+		}
+	};
 </script>
 
 <div class="test flex w-full flex-col">
@@ -75,11 +87,23 @@
 					bind:value={kapasitas}
 					placeholder="10000"
 				/>
-				<button class="custom-button bg-customYellow w-40 self-end text-right"> Tambah </button>
+				<button class="custom-button bg-customYellow w-40 self-end text-right" onclick={toggle}>
+					Tambah
+				</button>
 			</div>
 		</form>
 	</div>
 </div>
+{#if sucess}
+	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
+		<SucessModal
+			open={sucess}
+			text="Acara Berhasil Ditambahkan!"
+			to="/admin/acara"
+			on:close={toggle}
+		></SucessModal>
+	</div>
+{/if}
 
 <style>
 	.input-field {

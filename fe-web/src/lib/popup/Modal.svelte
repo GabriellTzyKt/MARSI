@@ -5,28 +5,39 @@
 	import dangerbtn from '../../asset/icons/exclamationmark.png';
 	import { dummyAcara } from '$lib/dummy';
 	import { dummydata } from '$lib/dummy';
+	import SucessModal from './SucessModal.svelte';
 
 	let { pop, data, tipe } = $props();
+	let success = $state(false);
+	const toggle = () => {
+		if (!success) {
+			success = true;
+		} else success = false;
+	};
+
 	const dispatch = createEventDispatcher();
 	const close = () => {
 		pop = false;
 		dispatch('close');
 	};
+
 	const arsip = () => {
-		if (tipe === 'anggota') {
-			const index = dummydata.findIndex((d) => d.id === data.id);
+		// if (tipe === 'anggota') {
+		// 	const index = dummydata.findIndex((d) => d.id === data.id);
 
-			if (index !== -1) {
-				dummydata.splice(index, 1);
-			}
-		} else {
-			const index = dummyAcara.findIndex((d) => d.id === data.id);
+		// 	if (index !== -1) {
+		// 		dummydata.splice(index, 1);
+		// 	}
+		// } else {
+		// 	const index = dummyAcara.findIndex((d) => d.id === data.id);
 
-			if (index !== -1) {
-				dummyAcara.splice(index, 1);
-			}
-		}
+		// 	if (index !== -1) {
+		// 		dummyAcara.splice(index, 1);
+		// 	}
+		// }
+
 		close();
+		toggle();
 	};
 </script>
 
@@ -40,7 +51,7 @@
 	>
 		<div
 			class="relative flex flex-col items-center rounded-3xl border bg-white"
-			in:fly={{ y: 100, duration: 100 }}
+			in:fade={{ duration: 100 }}
 			out:fade={{ duration: 100 }}
 			on:click|stopPropagation
 		>
@@ -80,6 +91,27 @@
 			</div>
 		</div>
 	</div>
+{/if}
+{#if success}
+	{#if tipe === 'anggota'}
+		<div in:fade={{ duration: 300 }} out:fade={{ duration: 300 }}>
+			<SucessModal
+				open={success}
+				text="Anggota {data.nama} Berhasil Diarsipkan!"
+				to="/admin/keanggotaan/daftaranggota"
+				on:close={toggle}
+			></SucessModal>
+		</div>
+	{:else}
+		<div in:fade={{ duration: 300 }} out:fade={{ duration: 300 }}>
+			<SucessModal
+				open={success}
+				text="Acara {data.nama} Berhasil Diarsipkan!"
+				to="/admin/acara"
+				on:close={toggle}
+			></SucessModal>
+		</div>
+	{/if}
 {/if}
 
 <style>
