@@ -178,6 +178,7 @@
 	<div class="relative z-10 mb-20 mt-[-30px] flex justify-center">
 		<div
 			class="mx-4 flex h-fit w-[100%] items-center justify-between self-center rounded-2xl border bg-white pe-4 ps-4 shadow-md lg:w-[50%]"
+			class="mx-4 flex h-fit w-[100%] items-center justify-between self-center rounded-2xl border bg-white pe-4 ps-4 shadow-md lg:w-[50%]"
 		>
 			<input
 				type="text"
@@ -266,5 +267,4 @@
 	.no-arrow {
 		list-style: none;
 	}
-
 </style>

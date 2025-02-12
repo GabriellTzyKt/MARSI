@@ -8,7 +8,7 @@
 	import gambar4 from '../../../asset/umum/gbr_4.png';
 	import Cardshow from '../Cardshow.svelte';
 	import PaginationUmum from '../PaginationUmum.svelte';
-	import { tempdata } from '$lib/dummy';
+	import { tempdata, tempasetdata } from '$lib/dummy';
 
 	let value = $state(0);
 </script>
@@ -20,11 +20,14 @@
 <!-- Section 1 -->
 <section class="relative mt-10 md:mt-0">
 	<!-- Gambar -->
-	<div class="relative text-center">
-		<img src={gambarHeader} alt="" class="h-auto w-full" />
-		<div class="absolute inset-0 z-10 flex items-center justify-center">
-			<p class="text-6xl font-bold text-black">Daftar Acara</p>
-		</div>
+	<div class="relative h-screen w-screen">
+		<img src={gambarHeader} alt="" class="h-screen w-screen" />
+
+		<p
+			class="absolute left-[50%] top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-6xl font-bold text-black"
+		>
+			Daftar Acara
+		</p>
 	</div>
 
 	<!-- Search bar -->
@@ -63,14 +66,9 @@
 		<!-- Card Show  -->
 		<div class="mx-8 mb-20 mt-10 grid grid-cols-1 items-center justify-center md:grid-cols-2">
 			<!-- kalau mau kamu loop aja, tinggal import data dari datadummy -->
-			{#each tempdata as t}
+			{#each tempasetdata as t}
 				<div class="mx-2 my-2">
-					<Cardshow
-						judul={t.nama_kerajaan}
-						lokasi={t.lokasi}
-						gambar={t.gambartop}
-						linkTo="/umum/daftarkerajaan/{t.id}"
-					></Cardshow>
+					<Cardshow judul={t.nama} lokasi={t.kepemilikan} gambar={t.gambartop} id={t.id}></Cardshow>
 				</div>
 			{/each}
 		</div>

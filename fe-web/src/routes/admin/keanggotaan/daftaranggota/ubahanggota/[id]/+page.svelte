@@ -1,5 +1,7 @@
 <script lang="ts">
-	
+	import SucessModal from '$lib/popup/SucessModal.svelte';
+	import { fade } from 'svelte/transition';
+
 	const { data } = $props();
 	const anggota = data.detil_anggota;
 	let nama = $state(anggota.nama);
@@ -8,6 +10,14 @@
 	let nama_kerajaan = $state(anggota.kerajaan);
 	let jenis_kerajaan = $state(anggota.jenis_kerajaan);
 	let gelar = $state(anggota.gelar);
+
+	let success = $state(false);
+
+	const toggle = () => {
+		if (!success) {
+			success = true;
+		} else success = false;
+	};
 
 	console.log(data);
 </script>
@@ -80,11 +90,23 @@
 					bind:value={gelar}
 					placeholder="10000"
 				/>
-				<button class="custom-button bg-customYellow w-40 self-end text-right"> Tambah </button>
+				<button class="custom-button bg-customYellow w-40 self-end text-right" onclick={toggle}>
+					Tambah
+				</button>
 			</div>
 		</form>
 	</div>
 </div>
+{#if success}
+	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
+		<SucessModal
+			open={success}
+			text="Data Anggota Berhasil Diganti!"
+			to="/admin/keanggotaan/daftaranggota"
+			on:close={toggle}
+		></SucessModal>
+	</div>
+{/if}
 
 <style>
 	.custom-button {

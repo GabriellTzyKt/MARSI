@@ -61,11 +61,25 @@
 		class="absolute left-0 w-full whitespace-nowrap bg-white shadow-md transition-all lg:hidden"
 		style:display={menuOpen ? 'block' : 'none'}
 	>
-		<a href="beranda" class="block border-b px-4 py-2">Beranda</a>
-		<a href="daftarkerajaan" class="block border-b px-4 py-2">Daftar Kerajaan</a>
-		<a href="daftarsitus" class="block border-b px-4 py-2">Situs Kerajaan</a>
-		<a href="daftaraset" class="block border-b px-4 py-2">Aset Kerajaan</a>
-		<a href="daftaracara" class="block px-4 py-2">Acara</a>
+		<a href="/umum/beranda" class="block border-b px-4 py-2" on:click={() => (menuOpen = !menuOpen)}
+			>Beranda</a
+		>
+		<a
+			href="/umum/daftarkerajaan"
+			class="block border-b px-4 py-2"
+			on:click={() => (menuOpen = !menuOpen)}>Daftar Kerajaan</a
+		>
+		<a
+			href="/umum/daftarsitus"
+			class="block border-b px-4 py-2"
+			on:click={() => (menuOpen = !menuOpen)}>Situs Kerajaan</a
+		>
+		<a
+			href="/umum/daftaraset"
+			class="block border-b px-4 py-2"
+			on:click={() => (menuOpen = !menuOpen)}>Aset Kerajaan</a
+		>
+		<a href="/umum/acara" class="block px-4 py-2" on:click={() => (menuOpen = !menuOpen)}>Acara</a>
 	</div>
 </nav>
 

@@ -8,11 +8,13 @@
 	onMount(() => {
 		// Mengatur path berdasarkan route id
 		if (page.route.id === '/umum/daftarsitus') {
-			path = "/umum/daftarsitus";
+			path = '/umum/daftarsitus';
 		} else if (page.route.id === '/umum/daftarkerajaan') {
-			path = "/umum/daftarkerajaan";
+			path = '/umum/daftarkerajaan';
 		} else if (page.route.id === '/umum/daftaraset') {
-			path = "/umum/daftaraset";
+			path = '/umum/daftaraset';
+		} else if (page.route.id === '/umum/acara') {
+			path = '/umum/acara';
 		}
 	});
 
@@ -58,6 +60,5 @@
 	}
 
 	@media (min-width: 768px) {
-
 	}
 </style>

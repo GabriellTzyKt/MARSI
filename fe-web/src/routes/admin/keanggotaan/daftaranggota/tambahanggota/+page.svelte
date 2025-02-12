@@ -1,10 +1,21 @@
 <script lang="ts">
+	import SucessModal from '$lib/popup/SucessModal.svelte';
+	import { fade } from 'svelte/transition';
+
 	let nama = $state('');
 	let nomortelp = $state('');
 	let email = $state('');
 	let nama_kerajaan = $state('');
 	let jenis_kerajaan = $state('');
 	let gelar = $state('');
+
+	let success = $state(false);
+
+	let toggle = () => {
+		if (!success) {
+			success = true;
+		} else success = false;
+	};
 </script>
 
 <div class="test flex w-full flex-col">
@@ -76,11 +87,23 @@
 					bind:value={gelar}
 					placeholder="Radja"
 				/>
-				<button class="custom-button bg-customYellow w-40 self-end text-right"> Tambah </button>
+				<button class="custom-button bg-customYellow w-40 self-end text-right" onclick={toggle}>
+					Tambah
+				</button>
 			</div>
 		</form>
 	</div>
 </div>
+
+{#if success}
+	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
+		<SucessModal
+			open={success}
+			text="Anggota Berhasil Ditambahkan"
+			to="/admin/keanggotaan/daftaranggota"
+		></SucessModal>
+	</div>
+{/if}
 
 <style>
 	.input-field {

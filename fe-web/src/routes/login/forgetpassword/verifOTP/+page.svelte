@@ -1,5 +1,10 @@
 <script lang="ts">
+	import SucessModal from '$lib/popup/SucessModal.svelte';
+	import { ssrModuleExportsKey } from 'vite/module-runner';
 	import image from '../../../../asset/Logo_MARSI_login.png';
+	import { subset } from 'd3';
+	import { fade, fly } from 'svelte/transition';
+
 	let email = $state('Masukkan Email Anda');
 	let tipe = $state('password');
 	let password = $state('password');
@@ -9,6 +14,15 @@
 	let tipelogin = $state('email');
 	let txtlogin = $state('Email');
 	let trans = $state(false);
+
+	let sucess = $state(false);
+	const toggle = () => {
+		if (sucess) {
+			sucess = false;
+		} else {
+			sucess = true;
+		}
+	};
 </script>
 
 <div class="bg-login flex items-center justify-center">
@@ -34,7 +48,11 @@
 					</div>
 					<div class="mt-4 flex flex-col">
 						<div class="flex flex-col items-center justify-center text-center">
-							<a href="" class="bg-bt mt-5 w-full py-3 font-[650] text-white">Selanjutnya</a>
+							<!-- <a href="/login" class="bg-bt mt-5 w-full py-3 font-[650] text-white">Selanjutnya</a> -->
+							<!-- svelte-ignore a11y_consider_explicit_label -->
+							<button onclick={toggle} class="bg-bt mt-5 w-full py-3 font-[650] text-white"
+								>Selanjutnya</button
+							>
 						</div>
 						<div class="batas mb-3 mt-3"></div>
 						<div class="flex flex-row items-center justify-center text-center">
@@ -51,6 +69,13 @@
 		</div>
 	</div>
 </div>
+
+{#if sucess}
+	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
+		<SucessModal text="Password Berhasil Diganti!" to="/login" open={sucess} on:close={toggle}
+		></SucessModal>
+	</div>
+{/if}
 
 <style>
 	.bg-login {

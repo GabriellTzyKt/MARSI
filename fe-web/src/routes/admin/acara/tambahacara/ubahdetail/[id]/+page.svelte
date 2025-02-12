@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import SucessModal from '$lib/popup/SucessModal.svelte';
+	import { fade } from 'svelte/transition';
 
 	const { data } = $props();
 	const acara = data.acara;
@@ -18,6 +20,12 @@
 		'Gabriel'
 	]);
 	console.log(data);
+	let success = $state(false);
+	const toggle = () => {
+		if (!success) {
+			success = true;
+		} else success = false;
+	};
 </script>
 
 <div class="test flex w-full flex-col">
@@ -89,11 +97,23 @@
 					bind:value={kapasitas}
 					placeholder="10000"
 				/>
-				<button class="custom-button bg-customYellow w-40 self-end text-right"> Tambah </button>
+				<button class="custom-button bg-customYellow w-40 self-end text-right" onclick={toggle}>
+					Ubah
+				</button>
 			</div>
 		</form>
 	</div>
 </div>
+{#if success}
+	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
+		<SucessModal
+			open={success}
+			text="Data Acara berhasil diubah!"
+			to="/admin/acara"
+			on:close={toggle}
+		></SucessModal>
+	</div>
+{/if}
 
 <style>
 	.custom-button {

@@ -5,7 +5,7 @@
 
 	const { data } = $props();
 	console.log('Data yang diterima:', data);
-	const situs = data.detil_situs;
+	const situs = data.detil;
 	let gambar = situs.gambartop;
 	let nama = situs.nama_tempat;
 	let gambar1 = situs.gambar1;
@@ -37,7 +37,7 @@
 			<p class="absolute left-10 top-[15%]">
 				<a href="/umum/daftarsitus">
 					<span class="ph--arrow-bend-up-left-bold mt-3"></span>
-					Kembali Ke Daftar Aset
+					Kembali Ke Daftar Situs
 				</a>
 			</p>
 			<p
@@ -55,7 +55,7 @@
 		<div class="form-container absolute mx-auto px-4 lg:mb-20">
 			<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 				<div>
-					<img src={gambar1} class="h-auto w-full rounded-lg object-cover mt-10" alt="" />
+					<img src={gambar1} class="mt-10 h-auto w-full rounded-lg object-cover" alt="" />
 					<div class="mt-4 flex justify-center gap-1 lg:gap-4">
 						<span class="material-symbols--arrow-circle-left-rounded self-center"></span>
 						<img src={gambar2} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
@@ -65,10 +65,10 @@
 					</div>
 				</div>
 				<div>
-					<p class="text-xl font-semibold text-start mt-10">{nama}</p>
+					<p class="mt-10 text-start text-xl font-semibold">{nama}</p>
 					<div class="mt-5 flex items-center">
 						<div
-							class="flex flex-shrink-0 h-10 w-10 items-center justify-center rounded-full border bg-yellow-600"
+							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
 						>
 							<img src={bangunan} alt="" />
 						</div>
@@ -76,7 +76,7 @@
 					</div>
 					<div class="mt-5 flex items-center">
 						<div
-							class="flex flex-shrink-0 h-10 w-10 items-center justify-center rounded-full border bg-yellow-600"
+							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
 						>
 							<span class="bxs--castle"></span>
 						</div>
@@ -85,7 +85,7 @@
 
 					<div class="mt-5 flex items-center">
 						<div
-							class="flex flex-shrink-0 h-10 w-10 items-center justify-center rounded-full border bg-yellow-600"
+							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
 						>
 							<span class="material-symbols--person"></span>
 						</div>
@@ -94,7 +94,7 @@
 
 					<div class="mt-5 flex items-center">
 						<div
-							class="flex flex-shrink-0 h-10 w-10 items-center justify-center rounded-full border bg-yellow-600"
+							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
 						>
 							<span class="ph--scroll"></span>
 						</div>
@@ -103,21 +103,23 @@
 
 					<div class="mt-5 flex items-center">
 						<div
-							class="flex flex-shrink-0 h-10 w-10 items-center justify-center rounded-full border bg-yellow-600"
+							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
 						>
 							<span class="mingcute--wave-fill"></span>
 						</div>
-						<p class="ml-2 items-center text-start ">Jenis Situs : {jenis_situs}</p>
+						<p class="ml-2 items-center text-start">Jenis Situs : {jenis_situs}</p>
 					</div>
 
-                    <div class="mt-5 flex items-center">
-						<div class="flex flex-shrink-0 h-10 w-10 items-center justify-center rounded-full border bg-yellow-600">
+					<div class="mt-5 flex items-center">
+						<div
+							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
+						>
 							<span class="bx--map text-xl"></span>
 						</div>
-						<p class="ml-2 items-center text-start"> Lokasi : {lokasi}</p>
+						<p class="ml-2 items-center text-start">Lokasi : {lokasi}</p>
 					</div>
 
-					<p class="mt-3 text-start text-sm mb-5">{isi}</p>
+					<p class="mb-5 mt-3 text-start text-sm">{isi}</p>
 				</div>
 			</div>
 		</div>
@@ -136,7 +138,7 @@
 		}
 	}
 
-    .bx--map {
+	.bx--map {
 		display: inline-block;
 		width: 18px;
 		height: 18px;

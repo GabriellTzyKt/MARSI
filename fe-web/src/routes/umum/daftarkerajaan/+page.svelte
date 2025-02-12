@@ -169,6 +169,7 @@
 		<img src={gambarHeader} alt="" class="h-screen w-screen" />
 		<p
 			class="absolute left-[50%] top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-6xl font-bold text-black"
+			class="absolute left-[50%] top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-6xl font-bold text-black"
 		>
 			Daftar Kerajaan
 		</p>
