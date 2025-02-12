@@ -36,9 +36,9 @@
 			<div class="flex">
 				<a href="/umum/beranda" class="nav-link whitespace-nowrap">Beranda</a>
 				<a href="/umum/daftarkerajaan" class="nav-link whitespace-nowrap">Daftar Kerajaan</a>
-				<a href="/umum/situskerajaan" class="nav-link whitespace-nowrap">Situs Kerajaan</a>
-				<a href="/umum/asetkerajaan" class="nav-link whitespace-nowrap">Aset Kerajaan</a>
-				<a href="/umum/acara" class="nav-link whitespace-nowrap">Acara</a>
+				<a href="/umum/daftarsitus" class="nav-link whitespace-nowrap">Situs Kerajaan</a>
+				<a href="/umum/daftaraset" class="nav-link whitespace-nowrap">Aset Kerajaan</a>
+				<a href="/umum/daftaracara" class="nav-link whitespace-nowrap">Acara</a>
 			</div>
 		</div>
 
@@ -63,9 +63,9 @@
 	>
 		<a href="beranda" class="block border-b px-4 py-2">Beranda</a>
 		<a href="daftarkerajaan" class="block border-b px-4 py-2">Daftar Kerajaan</a>
-		<a href="situskerajaan" class="block border-b px-4 py-2">Situs Kerajaan</a>
-		<a href="asetkerajaan" class="block border-b px-4 py-2">Aset Kerajaan</a>
-		<a href="acara" class="block px-4 py-2">Acara</a>
+		<a href="daftarsitus" class="block border-b px-4 py-2">Situs Kerajaan</a>
+		<a href="daftaraset" class="block border-b px-4 py-2">Aset Kerajaan</a>
+		<a href="daftaracara" class="block px-4 py-2">Acara</a>
 	</div>
 </nav>
 

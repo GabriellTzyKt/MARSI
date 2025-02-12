@@ -19,20 +19,20 @@
 	let { judul, lokasi, gambar, id } = $props();
 </script>
 
-<div class=" w-xl flex h-auto flex-col justify-center rounded shadow-lg">
-	<img class="h-64 w-full object-cover text-center" src={gambar} alt="Sunset in the mountains" />
-	<div class="mx-6 py-4">
-		<div class="mb-2 text-xl font-bold">{judul}</div>
-		<div class="flex flex-col lg:flex-row lg:justify-between">
-			<div class="flex items-center justify-start lg:self-center">
-				<span class="bx--map mr-3"></span>
-				<p class="self-start text-start text-base text-gray-700">{lokasi}</p>
+<div class="grid grid-cols-1 gap-6">
+	<div class="w-xl flex h-full flex-col justify-between rounded shadow-lg min-h-[350px]">
+		<img class="h-64 w-full object-cover text-center" src={gambar} alt="Sunset in the mountains" />
+		<div class="flex flex-col flex-grow mx-6 py-4">
+			<div class="mb-2 text-xl font-bold md:truncate">{judul}</div>
+			<div class="flex flex-col lg:flex-row lg:justify-between flex-grow">
+				<div class="flex items-center justify-start lg:self-center">
+					<span class="bx--map mr-3"></span>
+					<p class="self-start text-start text-base text-gray-700 md:truncate mr-3">{lokasi}</p>
+				</div>
+				<a href="{path}/{id}" class="lg:mt-0 mt-3 flex text-center text-blue-600">
+					Selanjutnya <span class="formkit--arrowright justify-center self-center"></span>
+				</a>
 			</div>
-			<a 
-			href="{path}/{id}" 
-			class="mt-3 flex text-center text-blue-600">
-				Selanjutnya <span class="formkit--arrowright justify-center self-center"></span>
-			</a>
 		</div>
 	</div>
 </div>
