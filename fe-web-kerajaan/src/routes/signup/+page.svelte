@@ -1,7 +1,7 @@
 <script lang="ts">
 	import gambar from '$lib/asset/kerajaan/image.svg';
 	import Footer from '$lib/footer/Footer.svelte';
-	import gambar2 from '$lib/asset/kerajaan/temp_gbr_login.png';
+	import gambar2 from '$lib/asset/kerajaan/temp_login.png';
 	import Navbar from '$lib/navbarLogin/Navbar.svelte';
     import SuccessModal from '$lib/modal/SuccessModal.svelte';
     import { fade } from 'svelte/transition';
@@ -20,9 +20,9 @@
 <Navbar></Navbar>
 
 <!-- Singup Page -->
-<section>
+<section class="flex min-h-screen min-w-screen">
 	<div class="relative">
-		<img src={gambar} alt="" class="h-full w-full" />
+        <img src={gambar} alt="" class="object-cover w-full h-full" />
 		<div class="absolute left-0 top-0 flex h-full w-full items-center justify-center p-4">
 			<div
 				class="h-fit w-full max-w-[450px] rounded-lg border border-gray-500 bg-gray-200 p-6 opacity-90"

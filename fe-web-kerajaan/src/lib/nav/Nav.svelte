@@ -3,7 +3,7 @@
 	import badran from '$lib/assets/icon/badran.png';
 </script>
 
-<nav class=" bg-badran min-w-screen left-0 top-0 z-10 py-2 text-white">
+<nav class=" bg-badran min-w-screen left-0 top-0 z-10 py-2 text-white p-10 overflow-hidden">
 	<div class=" grid grid-cols-2">
 		<div class="ms-4 flex justify-start">
 			<img src={badran} class="h-12 w-auto" alt="" />
