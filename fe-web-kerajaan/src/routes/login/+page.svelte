@@ -16,12 +16,11 @@
 	});
 </script>
 
-<div class=" max-w-screen flex min-h-screen flex-col">
-	<Nav></Nav>
-
-	<div class="bg flex grow flex-col items-center justify-center">
+<Nav></Nav>
+<div class="flex min-h-screen w-screen flex-col">
+	<div class="bg min-w-screen flex w-full grow flex-col items-center justify-center">
 		<div
-			class="mx-8 mb-10 mt-10 flex flex-col justify-center rounded-md bg-white/60 p-2 md:mx-0 md:mb-0 md:mt-0 md:p-4"
+			class=" mb-10 mt-10 flex flex-col justify-center rounded-md bg-white/60 p-2 md:p-4 xl:mx-0 xl:mb-0 xl:mt-0"
 		>
 			<div class="flex items-center justify-center">
 				<img src={bg} class="h-26 w-auto rounded-full bg-gray-200/40 p-3" alt="" />
