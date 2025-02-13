@@ -21,6 +21,7 @@ import gambar1_aset from '../asset/umum/aset1_gbr.png'
 import gambar2_aset from '../asset/umum/aset2_gbr.png'
 import gambar3_aset from '../asset/umum/aset3_gbr.png'
 import gambar4_aset from '../asset/umum/aset4_gbr.png'
+import lagu from '../asset/umum/Rick-Roll-Sound-Effect.mp3'
 
 // acara 
 import gambaracara_top from '../asset/umum/acara_header.png';
@@ -133,8 +134,8 @@ export const tempasetdata = [
 
   {
     id: 2,
-    nama : "Gamelan Sekaten",
-    lagu : "Rawr Krakatau",
+    nama : "Gamelan Sekaten (Contoh Ada Lagu)",
+    lagu : lagu,
     aset : "Alat Musik",
     gambartop: gambaraset_top,
     kepemilikan: "Keraton Kasunanan Surakarta",

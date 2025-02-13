@@ -16,6 +16,33 @@
 	let gambar2 = anggota.gambar2;
 	let gambar3 = anggota.gambar3;
 	let gambar4 = anggota.gambar4;
+
+	let playingState = 'paused'
+	let song = new Audio(lagu)
+
+	function togglePlaying() {
+		playingState === 'paused'? play() : pause()
+	}
+	
+	function loadSong() {
+		song.volume = 0.2
+		song.play()		
+	}
+
+	function play() {
+		if (playingState === 'playing') {
+			pause()
+		}
+		
+		playingState = 'playing'
+		loadSong()
+	}
+
+	function pause() {
+		playingState = 'paused'
+		song.pause()
+	}	
+
 </script>
 
 <Navbar></Navbar>
@@ -67,7 +94,7 @@
 					<p class="flex items-center self-center text-start text-xl font-semibold">
 						{nama}
 						{#if lagu !== ''}
-							<span class="gg--play-button-o ml-3"></span>
+							<button class="gg--play-button-o ml-3" onclick={togglePlaying}></button>
 						{/if}
 
 						<!-- {lagu ? <span class="gg--play-button-o ml-3"></span> : ""} -->
