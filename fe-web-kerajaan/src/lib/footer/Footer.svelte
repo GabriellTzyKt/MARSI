@@ -1,21 +1,21 @@
 <script lang="ts">
-	import marsi from '../asset/kerajaan/logo_MARSI.png';
-	import fb from '../asset/kerajaan/Facebook.png';
-	import twt from '../asset/kerajaan/Twitter.png';
-	import ig from '../asset/kerajaan/Instagram.png';
+	import bdran from '$lib/assets/icon/badran.png';
+	import fb from '$lib/assets/icon/Facebook.png';
+	import twt from '$lib/assets/icon/Twitter.png';
+	import ig from '$lib/assets/icon/Instagram.png';
 </script>
 
-<div class="bg-footer w-full">
+<div class="bg-badran w-screen">
 	<div class="flex flex-col items-center justify-center md:flex-row">
 		<div class=" flex flex-col items-center md:me-32 md:w-1/2 md:flex-row md:justify-end">
 			<div class="mb-4 md:mb-0">
-				<img src={marsi} alt="" class="w-32" />
+				<img src={bdran} alt="" class="w-28" />
 			</div>
 			<div
-				class=" flex flex-row items-center gap-y-2 text-white md:my-8 md:ms-8 md:flex-col md:items-start"
+				class=" flex flex-row items-center gap-y-2 text-white md:my-2 md:ms-8 md:flex-col md:items-start"
 			>
 				<div>
-					<p class="mx-2 text-xl font-[600] text-white md:mx-0 md:me-0">Navigasi</p>
+					<p class="mx-2 text-lg font-[600] text-white md:mx-0 md:me-0">Navigasi</p>
 				</div>
 				<div
 					class="mx-3 my-2 grid grid-cols-3 items-center rounded-xl border-2 text-center md:mx-0 md:my-0 md:grid-cols-1 md:items-start md:gap-y-2 md:rounded-none md:border-none md:text-start"
@@ -64,6 +64,6 @@
 
 <style>
 	.bg-footer {
-		background-color: darkblue;
+		background-color: #857d68;
 	}
 </style>
