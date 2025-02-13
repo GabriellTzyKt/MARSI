@@ -49,11 +49,6 @@
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
 
-<!-- Section 1 -->
-<Navbar></Navbar>
-
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
-
 <section class="relative w-full">
 	<div class="relative">
 		<img src={gambar} alt="" class="min-w-screen min-h-screen object-cover" />
