@@ -3,9 +3,8 @@
 	import Footer from '$lib/footer/Footer.svelte';
 	import gambar2 from '$lib/asset/kerajaan/temp_login.png';
 	import Navbar from '$lib/navbarLogin/Navbar.svelte';
-    import SuccessModal from '$lib/modal/SuccessModal.svelte';
-    import { fade } from 'svelte/transition';
-
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import { fade } from 'svelte/transition';
 
 	let success = $state(false);
 
@@ -20,12 +19,12 @@
 <Navbar></Navbar>
 
 <!-- Singup Page -->
-<section class="flex min-h-screen min-w-screen">
+<section class="flex min-h-screen w-full overflow-hidden">
 	<div class="relative">
-        <img src={gambar} alt="" class="object-cover w-full h-full" />
+		<img src={gambar} alt="" class="h-full w-full object-cover" />
 		<div class="absolute left-0 top-0 flex h-full w-full items-center justify-center p-4">
 			<div
-				class="h-fit w-full max-w-[450px] rounded-lg border border-gray-500 bg-gray-200 p-6 opacity-90"
+				class="max-h-fit w-full max-w-[450px] rounded-lg border border-gray-500 bg-gray-200 p-6 opacity-90 flex-shrink-1"
 			>
 				<div class="mt-6 inline-flex w-full justify-center">
 					<div class="relative">
@@ -59,7 +58,9 @@
 					/>
 				</div>
 				<div class="mt-6 flex flex-col">
-					<button class="w-full rounded-lg bg-blue-600 p-2 text-center text-white" onclick={toggle}>Lanjut</button>
+					<button class="w-full rounded-lg bg-blue-600 p-2 text-center text-white" onclick={toggle}
+						>Lanjut</button
+					>
 					<p class="mt-3 pb-3 text-center">
 						Sudah punya akun? <span class="cursor-pointer text-blue-500 underline">Masuk</span>
 					</p>
@@ -77,7 +78,9 @@
 {/if}
 
 <!-- Footer -->
-<Footer></Footer>
+<section class="flex h-fit min-w-full overflow-hidden">
+	<Footer></Footer>
+</section>
 
 <style>
 </style>
