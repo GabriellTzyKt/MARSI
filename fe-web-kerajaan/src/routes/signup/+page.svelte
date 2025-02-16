@@ -24,12 +24,12 @@
 		<img src={gambar} alt="" class="h-full w-full object-cover" />
 		<div class="absolute left-0 top-0 flex h-full w-full items-center justify-center p-4">
 			<div
-				class="max-h-fit w-full max-w-[450px] rounded-lg border border-gray-500 bg-gray-200 p-6 opacity-90 flex-shrink-1"
+				class="max-h-[98vh] w-full max-w-[450px] rounded-lg border border-gray-500 bg-gray-200 p-6 opacity-90 lg:h-fit"
 			>
 				<div class="mt-6 inline-flex w-full justify-center">
 					<div class="relative">
 						<div class="absolute inset-0 rounded-full bg-gray-600 opacity-80"></div>
-						<img src={gambar2} alt="" class="relative h-auto w-auto rounded-xl" />
+						<img src={gambar2} alt="" class="relative lg:h-auto lg:w-auto h-[100%] w-[100px] justify-center rounded-xl" />
 					</div>
 				</div>
 

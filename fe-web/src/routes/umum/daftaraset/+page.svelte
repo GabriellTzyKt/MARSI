@@ -248,7 +248,7 @@
 		<div class="flex justify-center">
 			<button
 				onclick={loadMore}
-				class="edit flex-shrink-1 mx-auto mb-10 h-[40px] w-[85%] items-center rounded-lg border bg-white shadow-md"
+				class="edit flex-shrink-1 mx-auto mb-10 h-[40px] w-[85%] items-center rounded-lg border bg-white shadow-md animate-bounce"
 			>
 				See More !
 			</button>
