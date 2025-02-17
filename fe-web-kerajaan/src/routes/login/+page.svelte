@@ -64,12 +64,13 @@
 				{/each}
 			</div>
 			<div class="flex w-full items-center justify-center">
-				<button class="bg-badran-bt w-full rounded-full py-2 text-white" onclick={cek}>Masuk</button
+				<button class="bg-color-btn-badran w-full rounded-full py-2 text-white" onclick={cek}
+					>Masuk</button
 				>
 			</div>
 			<div class="flex items-center justify-center">
 				<p class="me-2">Belum punya akun?</p>
-				<a href="/signup" class=" text-badran-bt">Daftar</a>
+				<a href="/signup" class=" text-color-btn-badran">Daftar</a>
 			</div>
 		</div>
 	</div>

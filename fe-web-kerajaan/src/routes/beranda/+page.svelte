@@ -1,7 +1,8 @@
 <script lang="ts">
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '$lib/navbar/Navbar.svelte';
-	import gambarAtas from '$lib/asset/kerajaan/image.svg';
+	// import gambarAtas from '$lib/asset/kerajaan/image.svg';
+	import gambarAtas from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import gambar2 from '$lib/asset/kerajaan/gambar2.png';
 	import gambar3 from '$lib/asset/kerajaan/gambar3.png';
 	import gambar4 from '$lib/asset/kerajaan/gambar4.png';

@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* @import "tailwindcss"; */
 
 @theme {
     --color-badran: #0b2e4b;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import gambar2 from '$lib/asset/kerajaan/temp_login.png';
+	import gambar2 from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import gambarprofile from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import { page } from '$app/state';
 
