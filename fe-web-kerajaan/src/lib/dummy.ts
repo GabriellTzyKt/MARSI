@@ -3,6 +3,27 @@ import gambar2 from "$lib/asset/kerajaan/situs_2.png";
 import gambar3 from "$lib/asset/kerajaan/situs_3.png";
 import gambar4 from "$lib/asset/kerajaan/situs_4.png";
 
+export const detail_kelompok = [
+  {
+    id: 1,
+    lokasi: "Surakarta",
+    penanggungjawab: " Sigma Boy ",
+    pembina:" Boy Sigma ",
+    pelindung: " A ",
+    email: "Sigma@gmail.com",
+    nama_kegiatan: "Bregada - Prajurit Keraton Surakarta Hadiningrat",
+    nomor_telepon: "0876539484",
+    jumlah_anggota: "125 Anggota",
+    isi: 'Kirab Pusaka Malam 1 Suro  di Keraton Surakarta adalah perayaan tahunan yang menandai tahun baru Jawa dengan pengusungan pusaka keraton. Acara dimulai dengan doa bersama di keraton, diikuti oleh prosesi mengarak pusaka seperti keris dan barang bersejarah, disertai iringan musik gamelan dan tarian tradisional. Masyarakat antusias menyaksikan prosesi yang melambangkan warisan budaya dan spiritualitas. Acara diakhiri dengan ritual penutup untuk menjaga hubungan antara keraton dan rakyat, sekaligus melestarikan tradisi luhur budaya Jawa.',
+    gambar1: gambar1,
+    gambar2: gambar2,
+    gambar3: gambar3,
+    gambar4: gambar4,
+
+  }
+
+]
+
 
 export const detail_acara = [
   {

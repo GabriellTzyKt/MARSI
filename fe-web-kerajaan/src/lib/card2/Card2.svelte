@@ -53,7 +53,16 @@
 							Selanjutnya
 							<span class="fluent--arrow-right-12-filled"></span>
 						</a>
-					{/if}
+					{:else if page.route.id == '/kelompok'}
+					<a
+						href="/kelompok/{id}"
+						class="my-2 ml-auto flex items-center gap-2 rounded-full border-2 px-2 py-1 text-blue-500"
+					>
+						Selanjutnya
+						<span class="fluent--arrow-right-12-filled"></span>
+					</a>
+				{/if}
+
 				{:else if id == 0}
 					<a
 						href="/"
