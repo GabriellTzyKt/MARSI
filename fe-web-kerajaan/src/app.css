@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@theme {
+    --color-badran: #0b2e4b;
+    --color-badran-bt: #004DA3;
+}
