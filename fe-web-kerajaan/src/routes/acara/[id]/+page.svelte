@@ -76,7 +76,7 @@
 
                     <div class="mt-8 flex items-center ">
 						<button class=" w-full h-fit px-2 py-3 border-2 border-red-400 bg-red-400 text-white text-center rounded-full">
-                            <a href="/acara">Daftar Acara</a></button>
+                            <a href="/acara/rsvp">Daftar Acara</a></button>
 					</div>
 				</div>
 			</div>

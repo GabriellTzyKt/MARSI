@@ -14,7 +14,7 @@
 				  pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
 				  menyegarkan. In the name of the wind`,
 			situs: situs1,
-			status: 'completed'
+			status: 'upcoming'
 		},
 		{
 			id: 2,
@@ -47,7 +47,7 @@
 		}
 	];
 
-	let activeTab = $state('completed');
+	let activeTab = $state('upcoming');
 
 	function setActive(tab: string) {
 		activeTab = tab;
@@ -101,7 +101,7 @@
 		</div>
 	</div>
 
-	<div class="mb-10 ml-5 mr-5 mt-10 flex justify-center">
+	<div class="mb-10 ml-5 mr-5 mt-10 flex justify-center h-full">
 		<div class="mx-auto grid grid-cols-4 gap-4">
 			{#each filteredData as event}
 				<Card2 situs={event.situs} header={event.header} isi={event.isi} icon="" id={event.id} />
