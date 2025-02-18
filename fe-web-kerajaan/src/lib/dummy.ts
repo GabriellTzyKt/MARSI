@@ -64,3 +64,8 @@ export const detail_situs = [
   }
 
 ]
+
+export const events = [
+  { title: "Meetup Svelte", location: "Jakarta", date: "20 Feb 2025", organizer: "Komunitas Svelte ID" },
+  { title: "Workshop Web", location: "Bandung", date: "25 Feb 2025", organizer: "Web Dev Indonesia" },
+];
