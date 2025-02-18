@@ -3,9 +3,9 @@
 	import jd from '$lib/asset/profile/jdpp.jpg';
 	import { slide } from 'svelte/transition';
 	import Items from './Items.svelte';
-	import { events } from '$lib/dummy';
+	import { accounts, events } from '$lib/dummy';
 	import Input from './Input.svelte';
-
+	import { goto } from '$app/navigation';
 	let chose: number | null = $state(null);
 	const toggle = (id: number) => {
 		chose = chose === id ? null : id;
@@ -56,7 +56,7 @@
 				<p class="text-lg">Nama Lengkap</p>
 			</div>
 			<div class="mt-2 w-full">
-				<Input value="Jane Doe" type="text"></Input>
+				<Input value={accounts[0].nama_lengkap} type="text"></Input>
 			</div>
 		</div>
 
@@ -68,7 +68,7 @@
 					<p class="text-lg">Tempat lahir</p>
 				</div>
 				<div class="mt-2">
-					<Input value="Sukowono" type="text"></Input>
+					<Input value={accounts[0].tempat_lahir} type="text"></Input>
 				</div>
 			</div>
 			<!-- tanggal Lahir -->
@@ -82,7 +82,7 @@
 						name=""
 						class="w-full rounded-lg border border-gray-500 bg-white py-2 ps-2 text-gray-500 focus:outline-none"
 						id=""
-						value="2035-12-12"
+						value={accounts[0].tanggal_lahir}
 						readonly
 					/>
 					<svg
@@ -108,7 +108,7 @@
 				<p class="text-lg">Alamat</p>
 			</div>
 			<div class="mt-2">
-				<Input value="Jalan Raya Sultan Agung no 17" type="text"></Input>
+				<Input value={accounts[0].alamat} type="text"></Input>
 			</div>
 		</div>
 
@@ -120,7 +120,7 @@
 					<p class="text-lg">Jenis Kelamin</p>
 				</div>
 				<div class="mt-2">
-					<Input value="Perempuan" type="text"></Input>
+					<Input value={accounts[0].jenis_kelamin} type="text"></Input>
 				</div>
 			</div>
 			<!-- wongso -->
@@ -129,7 +129,7 @@
 					<p class="text-lg">Wongso</p>
 				</div>
 				<div class=" mt-2">
-					<Input value="Chindo" type="text"></Input>
+					<Input value={accounts[0].wongso} type="text"></Input>
 				</div>
 			</div>
 		</div>
@@ -139,7 +139,7 @@
 				<p class="text-lg">Email</p>
 			</div>
 			<div class="mt-2">
-				<Input value="jane11@gmail.com" type="email"></Input>
+				<Input value={accounts[0].email} type="email"></Input>
 			</div>
 		</div>
 		<!-- Pekerjaan $ Agama -->
@@ -150,7 +150,7 @@
 					<p class="text-lg">Pekerjaan</p>
 				</div>
 				<div class="mt-2">
-					<Input value="Ibu Rumah Tangga" type="text"></Input>
+					<Input value={accounts[0].pekerjaan} type="text"></Input>
 				</div>
 			</div>
 			<!-- agama -->
@@ -159,7 +159,7 @@
 					<p class="text-lg">Agama</p>
 				</div>
 				<div class=" mt-2">
-					<Input value="Kristen Protestan" type="text"></Input>
+					<Input value={accounts[0].agama} type="text"></Input>
 				</div>
 			</div>
 		</div>
@@ -169,7 +169,7 @@
 				<p class="text-lg">Asma Dalem</p>
 			</div>
 			<div class="mt-2">
-				<Input value="Jane Doe Kwan" type="text"></Input>
+				<Input value={accounts[0].asma_dalem} type="text"></Input>
 			</div>
 		</div>
 		<!-- Ayah $ Ibu -->
@@ -180,7 +180,7 @@
 					<p class="text-lg">Ayah</p>
 				</div>
 				<div class="mt-2">
-					<Input value="John Doe" type="text"></Input>
+					<Input value={accounts[0].ayah} type="text"></Input>
 				</div>
 			</div>
 			<!-- ibu -->
@@ -189,7 +189,7 @@
 					<p class="text-lg">Ibu</p>
 				</div>
 				<div class=" mt-2">
-					<Input value="Doe Lilac" type="text"></Input>
+					<Input value={accounts[0].ibu} type="text"></Input>
 				</div>
 			</div>
 		</div>
@@ -199,7 +199,7 @@
 				<p class="text-lg">Gelar</p>
 			</div>
 			<div class="mt-2">
-				<Input value="Eric's Wife" type="text"></Input>
+				<Input value={accounts[0].gelar} type="text"></Input>
 			</div>
 		</div>
 		<div class="mt-4 flex flex-row justify-end">
@@ -207,12 +207,17 @@
 				<button class="rounded-lg border border-gray-500 px-3 py-2 shadow-2xl">Barcode</button>
 			</div>
 			<div class="ms-4">
-				<button class="bg-badran-yellow rounded-lg border px-6 py-2 shadow-2xl">Ubah</button>
+				<button
+					class="bg-badran-yellow rounded-lg border px-6 py-2 shadow-2xl"
+					onclick={() => {
+						goto(`/profile/${accounts[0].id}`);
+					}}>Ubah</button
+				>
 			</div>
 		</div>
 	</div>
 	<!-- Riwayat acara, organisasi, dan komunitas -->
-	<div class=" flex flex-col">
+	<div class=" flex flex-col pb-4">
 		<div class="rounded-md border p-2">
 			<!-- Riwayat Acara -->
 			<div class="border-badran-bt flex flex-col rounded-md border px-4 py-2">
@@ -222,14 +227,12 @@
 					</div>
 					<div class="grid grid-cols-1 gap-3 md:grid-cols-2">
 						<!-- cari -->
-						<div class=" mx-2 flex flex-row items-center rounded-lg border px-2">
-							<div class="flex items-center px-2 py-1 focus-within:border-blue-500">
-								<input
-									type="text"
-									placeholder="Cari.."
-									class=" bg-transparent p-2 focus:outline-none"
-								/>
-							</div>
+						<div class=" mx-2 flex items-center rounded-lg border px-2">
+							<input
+								type="text"
+								placeholder="Cari.."
+								class=" w-full bg-transparent px-2 py-2 focus:outline-none"
+							/>
 
 							<!-- svelte-ignore a11y_consider_explicit_label -->
 							<button class="text-gray-600 hover:text-gray-800">
@@ -280,14 +283,13 @@
 					</div>
 					<div class="grid grid-cols-1 gap-3 md:grid-cols-2">
 						<!-- cari -->
-						<div class=" mx-2 flex flex-row items-center rounded-lg border px-2">
-							<div class="flex items-center px-2 py-1 focus-within:border-blue-500">
-								<input
-									type="text"
-									placeholder="Cari.."
-									class=" bg-transparent p-2 focus:outline-none"
-								/>
-							</div>
+						<!-- cari -->
+						<div class=" mx-2 flex items-center rounded-lg border px-2">
+							<input
+								type="text"
+								placeholder="Cari.."
+								class=" w-full bg-transparent px-2 py-2 focus:outline-none"
+							/>
 
 							<!-- svelte-ignore a11y_consider_explicit_label -->
 							<button class="text-gray-600 hover:text-gray-800">
@@ -338,14 +340,12 @@
 					</div>
 					<div class="grid grid-cols-1 gap-3 md:grid-cols-2">
 						<!-- cari -->
-						<div class=" mx-2 flex flex-row items-center rounded-lg border px-2">
-							<div class="flex items-center px-2 py-1 focus-within:border-blue-500">
-								<input
-									type="text"
-									placeholder="Cari.."
-									class=" bg-transparent p-2 focus:outline-none"
-								/>
-							</div>
+						<div class=" mx-2 flex items-center rounded-lg border px-2">
+							<input
+								type="text"
+								placeholder="Cari.."
+								class=" w-full bg-transparent px-2 py-2 focus:outline-none"
+							/>
 
 							<!-- svelte-ignore a11y_consider_explicit_label -->
 							<button class="text-gray-600 hover:text-gray-800">

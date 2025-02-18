@@ -79,3 +79,23 @@ export const events = [
   { title: "Digital Marketing Seminar", location: "Jakarta", date: "10 Jun 2025", organizer: "Marketing Pro" },
   { title: "IoT Innovation Talk", location: "Bandung", date: "25 Jun 2025", organizer: "IoT Indonesia" },
 ];
+export const accounts = [
+  {
+    id : 1,
+    nama_lengkap: "Jane Doe",
+    tempat_lahir: "Sukowono",
+    tanggal_lahir: "2035-12-12",
+    alamat: "Jalan Raya Sultan Agung no 17",
+    jenis_kelamin: "Perempuan",
+    wongso: "Chindo",
+    email: "jane11@gmail.com",
+    pekerjaan: "Ibu Rumah Tangga",
+    agama: "Kristen Protestan",
+    asma_dalem: "Jane Doe Kwan",
+    ayah: "John Doe",
+    ibu: "Doe Lilac",
+    gelar: "Eric's Wife"
+
+
+  }
+]
