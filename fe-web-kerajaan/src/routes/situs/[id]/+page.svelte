@@ -1,8 +1,7 @@
 <script lang="ts">
-	import Marquee from '$lib/components/Marquee.svelte';
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '$lib/navbar/Navbar.svelte';
-	import { cn } from '$lib/utils';
+	import Marquee from 'svelte-fast-marquee';
 
 	const { data } = $props();
 	console.log('Data yang diterima:', data);
@@ -48,42 +47,16 @@
 						alt="foto 1"
 					/>
 
-					<div
-						class={cn(
-							'relative w-full cursor-pointer overflow-hidden rounded-2xl border-2 border-black p-4',
-							'border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]',
-							'dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]'
-						)}
-					>
-						<Marquee {pauseOnHover} {reverse}>
-							<div class="mx-auto mt-5 flex items-center gap-2 lg:gap-4">
-								<img
-									src={gambar2}
-									class="h-16 w-auto rounded-lg object-cover lg:h-24"
-									alt="foto 2"
-								/>
-								<img
-									src={gambar2}
-									class="h-16 w-auto rounded-lg object-cover lg:h-24"
-									alt="foto 2"
-								/>
-								<img
-									src={gambar2}
-									class="h-16 w-auto rounded-lg object-cover lg:h-24"
-									alt="foto 2"
-								/>
-								<img
-									src={gambar2}
-									class="h-16 w-auto rounded-lg object-cover lg:h-24"
-									alt="foto 2"
-								/>
+					<div class="mt-5">
+						<Marquee>
+							<div class="grid grid-cols-3 items-center">
+								<img src={gambar2} class="col-span-1 m-1 h-fit w-fit" alt="" />
+								<img src={gambar3} class="col-span-1 m-1 h-fit w-fit" alt="" />
+								<img src={gambar4} class="col-span-1 m-1 h-fit w-fit" alt="" />
 							</div>
 						</Marquee>
-
-						<div
-							class="dark:from-background pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-white"
-						></div>
 					</div>
+
 					<button class="mt-10 w-[40%] rounded-lg border bg-blue-400 px-2 py-3 text-white">
 						<a href="/situs/riwayat/{id}"> Riwayat Acara </a></button
 					>
