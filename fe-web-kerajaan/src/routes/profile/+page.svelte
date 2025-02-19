@@ -6,6 +6,7 @@
 	import { accounts, events } from '$lib/dummy';
 	import Input from './Input.svelte';
 	import { goto } from '$app/navigation';
+	import Footer from '$lib/footer/Footer.svelte';
 	let chose: number | null = $state(null);
 	const toggle = (id: number) => {
 		chose = chose === id ? null : id;
@@ -42,7 +43,7 @@
 		<p class="text-xl font-[600]">Profile</p>
 	</div>
 </div>
-<div class=" me-4 ms-4 grid grid-cols-1 justify-center gap-8 pt-8 xl:mx-10 xl:grid-cols-2">
+<div class="mb-4 me-4 ms-4 grid grid-cols-1 justify-center gap-8 pt-8 xl:mx-10 xl:grid-cols-2">
 	<!-- info profile -->
 	<div class="flex w-full flex-col justify-center">
 		<!-- profile pict -->
@@ -140,6 +141,27 @@
 			</div>
 			<div class="mt-2">
 				<Input value={accounts[0].email} type="email"></Input>
+			</div>
+		</div>
+		<!-- no telpon $ hobi -->
+		<div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+			<!-- pekerjaan -->
+			<div class="flex w-full flex-col">
+				<div>
+					<p class="text-lg">No Telpon</p>
+				</div>
+				<div class="mt-2">
+					<Input value={accounts[0].nomer_telpon} type="text"></Input>
+				</div>
+			</div>
+			<!-- agama -->
+			<div class="flex w-full flex-col">
+				<div>
+					<p class="text-lg">Hobi</p>
+				</div>
+				<div class=" mt-2">
+					<Input value={accounts[0].hobi} type="text"></Input>
+				</div>
 			</div>
 		</div>
 		<!-- Pekerjaan $ Agama -->
@@ -390,3 +412,4 @@
 		</div>
 	</div>
 </div>
+<Footer></Footer>

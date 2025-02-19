@@ -5,8 +5,8 @@
 	import ig from '$lib/assets/icon/Instagram.png';
 </script>
 
-<div class="bg-badran b w-full">
-	<div class="flex flex-col items-center justify-center md:flex-row ">
+<div class="bg-badran w-full">
+	<div class="flex flex-col items-center justify-center md:flex-row">
 		<div class=" flex flex-col items-center md:me-32 md:w-1/2 md:flex-row md:justify-end">
 			<div class="mb-4 md:mb-0">
 				<img src={bdran} alt="" class="w-28" />

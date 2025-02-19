@@ -94,8 +94,9 @@ export const accounts = [
     asma_dalem: "Jane Doe Kwan",
     ayah: "John Doe",
     ibu: "Doe Lilac",
-    gelar: "Eric's Wife"
-
+    gelar: "Eric's Wife",
+    nomer_telpon: "0895399852711",
+    hobi: "Memasak"
 
   }
 ]
