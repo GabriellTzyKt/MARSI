@@ -3,6 +3,7 @@ import gambar2 from "$lib/asset/kerajaan/situs_2.png";
 import gambar3 from "$lib/asset/kerajaan/situs_3.png";
 import gambar4 from "$lib/asset/kerajaan/situs_4.png";
 
+
 export const detail_kelompok = [
   {
     id: 1,

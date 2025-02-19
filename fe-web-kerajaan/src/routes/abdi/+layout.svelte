@@ -2,30 +2,35 @@
 	import { writable } from 'svelte/store';
 	import '../../app.css';
 	import image from '$lib/asset/kerajaan/sidebaricon.png';
-	import imageprofile from '$lib/asset/kerajaan/gambar_temp.jpg'
+	import imageprofile from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import { page } from '$app/state';
 	import Sidebar from '$lib/sidebar/Sidebar.svelte';
 	import SidebarMenu from '$lib/sidebar/SidebarMenu.svelte';
+
 	const isActive = (path: string) => {
-		return page.url.pathname === path;
+		return page.route.id === path;
 	};
 
 	$inspect(page);
 	const pageTitle = $derived.by(() => {
-		if (page.route.id === '/abdi/komunitas') {
+		if (page.route.id === '/abdi/dashboard') {
 			return 'Daftar Komunitas';
-		} else if (page.route.id === '/admin/keanggotaan/daftaranggota') {
-			return 'Keanggotaan';
-		} else if (page.route.id === '/admin/keanggotaan/daftaranggota/tambahanggota') {
-			return 'Keanggotaan';
-		} else if (page.route.id === '/admin/keanggotaan/gelar') {
-			return 'Keanggotaan';
-		} else if (page.route.id === '/admin/acara') {
-			return 'Acara';
-		} else if (page.route.id == '/admin/acara/tambahacara') {
-			return 'Acara';
-		} else if (page.route.id === '/admin/acara/tambahacara/detail/[id]') {
-			return 'Acara';
+		} else if (page.route.id === '/abdi/komunitas/detail') {
+			return 'Detail Komunitas';
+		} else if (page.route.id === '/abdi/komunitas/edit') {
+			return 'Edit Komunitas';
+		} else if (page.route.id === '/abdi/komunitas/daftaranggota') {
+			return 'Daftar Anggota Komunitas';
+		}  else if (page.route.id === '/abdi/komunitas/daftaranggota/edit') {
+			return 'Ubah Abdi';
+		}else if (page.route.id === '/abdi/komunitas/acara/detail') {
+			return 'Detail Acara Komunitas';
+		} else if (page.route.id === '/abdi/komunitas/acara/edit') {
+			return 'Edit Acara Komunitas';
+		} else if (page.route.id == '/abdi/komunitas/acara/buat') {
+			return 'Buat Acara Komunitas';
+		} else if (page.route.id === '/abdi/komunitas/acara/laporan') {
+			return 'Laporan Acara';
 		}
 	});
 	let { children } = $props();
@@ -37,9 +42,9 @@
 	};
 </script>
 
-<header class="min-w-full flex">
+<header class="flex min-w-full">
 	<div
-		class="test2 width_head1 bg-blue-400 flex w-[16.7%] items-center justify-between text-center"
+		class="test2 width_head1 flex w-[16.7%] items-center justify-between bg-blue-400 text-center"
 	>
 		<button
 			type="button"
@@ -47,7 +52,7 @@
 			onclick={toggleSidebar}
 			aria-label="Toggle sidebar"
 		></button>
-		<div class="flex items-center justify-center self-center mx-auto">
+		<div class="mx-auto flex items-center justify-center self-center">
 			<img src={image} alt="Deskripsi Gambar" class="ml-2" />
 		</div>
 	</div>
@@ -55,52 +60,46 @@
 		<p class="md:w-16,7% lg:w-16,7% ml-5 p-5 text-3xl font-bold text-black">
 			{pageTitle}
 		</p>
-		<div class=" border-blue-600 border-2 mr-5 flex items-center rounded-md p-2">
+		<div class=" mr-5 flex items-center rounded-md border-2 border-blue-600 p-2">
 			<span class="ml-5 text-black">Sriayu Mutiara</span>
 			<img src={imageprofile} alt="duar" class="ml-5 mr-5 h-10 w-10 rounded-full" />
 		</div>
 	</div>
 </header>
 
-<div class=" min-w-full flex min-h-screen">
-	<div class=" test lg:w=[16.7%] bg-blue-400 w-[16.7%] lg:block" class:active={$sidebarActive}>
+<div class=" flex min-h-screen min-w-full">
+	<div class=" test lg:w=[16.7%] w-[16.7%] bg-blue-400 lg:block" class:active={$sidebarActive}>
 		<Sidebar>
 			<SidebarMenu
-				href="/admin/beranda"
+				href="/abdi/dashboard"
 				icon="mdi:home"
-				anchor="Beranda"
-				active={isActive('/admin/beranda')}
+				anchor="Dashboard"
+				active={isActive('/abdi/dashboard')}
 			/>
-			<SidebarMenu href="#" icon="mdi:people" anchor="Keanggotaan" hasChildren={true}>
+			<SidebarMenu href="#" icon="mdi:people" anchor="Komunitas" hasChildren={true}>
 				<SidebarMenu
-					href="/admin/keanggotaan/daftaranggota"
+					href="/abdi/komunitas/detail"
 					icon="mdi:book"
-					anchor="Daftar Anggota"
-					active={isActive('/admin/keanggotaan/daftaranggota')}
+					anchor="Detail komunitas"
+					active={isActive('/abdi/komunitas/detail')}
 				/>
 				<SidebarMenu
-					href="/admin/keanggotaan/gelar"
+					href="/abdi/komunitas/daftaranggota"
+					icon="mdi:crown"
+					anchor="Daftar Anggota"
+					active={isActive('/abdi/komunitas/daftaranggota')}
+				/>
+				<SidebarMenu
+					href="/abdi/komunitas/acara/detail"
 					icon="mdi:crown"
 					anchor="Gelar"
-					active={isActive('/admin/keanggotaan/gelar')}
+					active={isActive('/abdi/komunitas/acara/detail')}
 				/>
 			</SidebarMenu>
-			<SidebarMenu
-				href="/admin/acara"
-				icon="mdi:calendar"
-				anchor="Acara"
-				active={isActive('/admin/acara')}
-			/>
-			<SidebarMenu
-				href="/admin/landing"
-				icon="mdi:globe"
-				anchor="Landing page"
-				active={isActive('/admin/landing')}
-			/>
 		</Sidebar>
 	</div>
 
-	<main class="flex min-h-screen flex-1 overflow-auto bg-gray-100 p-5">
+	<main class="flex min-h-full flex-1 overflow-auto bg-gray-100 p-5">
 		{@render children()}
 	</main>
 </div>
