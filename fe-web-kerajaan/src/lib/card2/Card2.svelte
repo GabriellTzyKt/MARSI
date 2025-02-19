@@ -15,13 +15,13 @@
 			alt="awawwa"
 		/>
 	</div>
-	<div class="relative px-6 py-4">
-		<h1 class="text-nowrap text-2xl">{header}</h1>
+	<div class="relative px-6 py-4 min-w-40">
+		<h1 class=" text-2xl h-[65px] line-clamp-2 text-center">{header}</h1>
 		<div class="flex flex-col">
-			<p class="multiline-ellipsis mb-5 mt-5 h-[100px] text-sm text-gray-700">
+			<p class="multiline-ellipsis mb-5 mt-5 h-fulltext-sm text-gray-700">
 				{isi}
 			</p>
-			<div class="flex h-fit w-full justify-center lg:justify-end">
+			<div class="flex h-full w-full justify-center lg:justify-end">
 				{#if icon == 'tempatIstirahat'}
 					<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
 						<i class="material-symbols--bed-outline-rounded text-lg text-white"></i>
