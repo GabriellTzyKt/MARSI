@@ -65,3 +65,39 @@ export const detail_situs = [
   }
 
 ]
+export const events = [
+  { title: "Meetup Svelte", location: "Jakarta", date: "20 Feb 2025", organizer: "Komunitas Svelte ID" },
+  { title: "Workshop Web", location: "Bandung", date: "25 Feb 2025", organizer: "Web Dev Indonesia" },
+  { title: "Conference JavaScript", location: "Surabaya", date: "10 Mar 2025", organizer: "JS Indonesia" },
+  { title: "Seminar UI/UX Design", location: "Yogyakarta", date: "15 Mar 2025", organizer: "Designers Unite" },
+  { title: "Tech Talk AI", location: "Bali", date: "30 Mar 2025", organizer: "AI Innovators" },
+  { title: "Hackathon Mobile Apps", location: "Medan", date: "05 Apr 2025", organizer: "Dev Enthusiasts" },
+  { title: "Web Development Bootcamp", location: "Malang", date: "12 Apr 2025", organizer: "Code Academy" },
+  { title: "Cloud Computing Meetup", location: "Semarang", date: "18 Apr 2025", organizer: "CloudTech" },
+  { title: "Data Science Workshop", location: "Makassar", date: "23 Apr 2025", organizer: "Data Enthusiasts" },
+  { title: "Blockchain Conference", location: "Palembang", date: "05 May 2025", organizer: "Blockchain Indonesia" },
+  { title: "AI & Machine Learning Bootcamp", location: "Surabaya", date: "20 May 2025", organizer: "AI Academy" },
+  { title: "Digital Marketing Seminar", location: "Jakarta", date: "10 Jun 2025", organizer: "Marketing Pro" },
+  { title: "IoT Innovation Talk", location: "Bandung", date: "25 Jun 2025", organizer: "IoT Indonesia" },
+];
+export const accounts = [
+  {
+    id : 1,
+    nama_lengkap: "Jane Doe",
+    tempat_lahir: "Sukowono",
+    tanggal_lahir: "2035-12-12",
+    alamat: "Jalan Raya Sultan Agung no 17",
+    jenis_kelamin: "Perempuan",
+    wongso: "Chindo",
+    email: "jane11@gmail.com",
+    pekerjaan: "Ibu Rumah Tangga",
+    agama: "Kristen Protestan",
+    asma_dalem: "Jane Doe Kwan",
+    ayah: "John Doe",
+    ibu: "Doe Lilac",
+    gelar: "Eric's Wife",
+    nomer_telpon: "0895399852711",
+    hobi: "Memasak"
+
+  }
+]

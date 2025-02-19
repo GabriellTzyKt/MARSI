@@ -1,28 +1,56 @@
 <script lang="ts">
 	import gambar2 from '$lib/asset/kerajaan/temp_login.png';
-    import gambarprofile from '$lib/asset/kerajaan/gambar_temp.jpg'
+	import gambarprofile from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import { page } from '$app/state';
+	import { slide } from 'svelte/transition';
 
-    let id = Number();
-
-    $inspect(page);
+	let id = Number();
+	let isOpen = false;
+	$inspect(page);
 </script>
 
+<section class=" w-full bg-blue-900 p-4">
+	<div class="flex items-center justify-between">
+		<img src={gambar2} class=" ml-3 h-[60px] max-w-full p-2" alt="" />
+		<nav class="hidden space-x-20 text-white md:flex">
+			<a href="/beranda" class:underline={page.route.id === '/beranda'}>Beranda</a>
+			<a href="/situs" class:underline={page.route.id?.startsWith('/situs')}>Situs</a>
+			<a href="/acara" class:underline={page.route.id?.startsWith('/acara')}>Acara</a>
+			<a href="/kelompok" class:underline={page.route.id?.startsWith('/kelompok')}>Kelompok</a>
+			<a href="/" class:underline={page.route.id === '/'}>Beranda</a>
+		</nav>
 
-<section class="h-fit w-full bg-blue-900">
-	<div class="flex items-center justify-between self-center">
-		<img src={gambar2} class=" h-[60px] w-fit p-2 ml-3" alt="" />
-        <div class="flex space-x-20 text-white">
-            <a href="/beranda" class:underline={page.route.id === '/beranda'}>Beranda</a>
-            <a href="/situs" class:underline={page.route.id?.startsWith('/situs')}>Situs</a>
-            <a href="/acara" class:underline={page.route.id?.startsWith('/acara')}>Acara</a>
-            <a href="/kelompok" class:underline={page.route.id?.startsWith('/kelompok')}>Kelompok</a>
-            <a href="/" class:underline={page.route.id === '/'}>Beranda</a>
-          </div>
-		<img src={gambarprofile} alt="" class="ml-5 mr-5 h-10 w-10 rounded-full">
+		<div class="flex items-center space-x-4">
+			<a href="/profile"
+				><img src={gambarprofile} alt="" class="ml-5 mr-5 h-10 w-10 rounded-full" />
+			</a>
+			<button
+				class="text-white md:hidden"
+				onclick={() => {
+					isOpen = !isOpen;
+				}}
+			>
+				{#if isOpen}
+					&times; <!-- Close Icon -->
+				{:else}
+					&#9776; <!-- Hamburger Icon -->
+				{/if}</button
+			>
+		</div>
 	</div>
+	<!-- Mobile Menu -->
+	{#if isOpen}
+		<div
+			class="mt-4 space-y-2 text-center text-white md:hidden"
+			transition:slide={{ duration: 100 }}
+		>
+			<a href="/beranda" class="block">Beranda</a>
+			<a href="/situs" class="block">Situs</a>
+			<a href="/acara" class="block">Acara</a>
+			<a href="/kelompok" class="block">Kelompok</a>
+		</div>
+	{/if}
 </section>
 
 <style>
-    
 </style>
