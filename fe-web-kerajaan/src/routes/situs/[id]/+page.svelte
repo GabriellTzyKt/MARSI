@@ -1,6 +1,8 @@
 <script lang="ts">
+	import Marquee from '$lib/components/Marquee.svelte';
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '$lib/navbar/Navbar.svelte';
+	import { cn } from '$lib/utils';
 
 	const { data } = $props();
 	console.log('Data yang diterima:', data);
@@ -20,7 +22,8 @@
 	const gambar4 = situs.gambar4;
 	const penanggung_jawab = situs.penanggungjawab;
 
-	
+	let pauseOnHover = $state(true);
+	let reverse = true;
 </script>
 
 <div class="relative">
@@ -44,15 +47,46 @@
 						class="mt-12 h-[50%] w-[500px] self-center rounded-lg object-cover"
 						alt="foto 1"
 					/>
-					<div class="mt-4 flex gap-2 lg:gap-4">
-						<span class="material-symbols--arrow-circle-left-rounded ml-2 self-center"></span>
-						<img src={gambar2} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="foto 2" />
-						<img src={gambar3} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="foto 3" />
-						<img src={gambar4} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="foto 4" />
-						<span class="material-symbols--arrow-circle-right self-center"></span>
+
+					<div
+						class={cn(
+							'relative w-full cursor-pointer overflow-hidden rounded-2xl border-2 border-black p-4',
+							'border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]',
+							'dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]'
+						)}
+					>
+						<Marquee {pauseOnHover} {reverse}>
+							<div class="mx-auto mt-5 flex items-center gap-2 lg:gap-4">
+								<img
+									src={gambar2}
+									class="h-16 w-auto rounded-lg object-cover lg:h-24"
+									alt="foto 2"
+								/>
+								<img
+									src={gambar2}
+									class="h-16 w-auto rounded-lg object-cover lg:h-24"
+									alt="foto 2"
+								/>
+								<img
+									src={gambar2}
+									class="h-16 w-auto rounded-lg object-cover lg:h-24"
+									alt="foto 2"
+								/>
+								<img
+									src={gambar2}
+									class="h-16 w-auto rounded-lg object-cover lg:h-24"
+									alt="foto 2"
+								/>
+							</div>
+						</Marquee>
+
+						<div
+							class="dark:from-background pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-white"
+						></div>
 					</div>
-					<button class="mt-10 border rounded-lg bg-blue-400 px-2 py-3 w-[40%] text-white">
-						<a href="/situs/riwayat/{id}"> Riwayat Acara </a></button>
+					<button class="mt-10 w-[40%] rounded-lg border bg-blue-400 px-2 py-3 text-white">
+						<a href="/situs/riwayat/{id}"> Riwayat Acara </a></button
+					>
 				</div>
 				<div>
 					<div class="mt-5 flex items-center">
@@ -105,7 +139,6 @@
 </section>
 
 <style>
-	
 	.solar--arrow-left-outline {
 		display: inline-block;
 		width: 32px;
@@ -169,7 +202,7 @@
 		margin-right: auto;
 	}
 
-	.material-symbols--arrow-circle-left-rounded {
+	/* .material-symbols--arrow-circle-left-rounded {
 		display: inline-block;
 		width: 18px;
 		height: 18px;
@@ -185,5 +218,5 @@
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='m12 16l4-4l-4-4l-1.4 1.4l1.6 1.6H8v2h4.2l-1.6 1.6zm0 6q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22'/%3E%3C/svg%3E");
-	}
+	} */
 </style>

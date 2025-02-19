@@ -22,18 +22,14 @@
 		timer = setInterval(() => {
 			elapsed.update((n) => {
 				if (n >= duration) {
-					elapsed.set(0); // Reset timer
-					hide(); // Hide submenu after 1 second
+					elapsed.set(0); 
+					hide();
 					return 0;
 				}
-				return n + 1000; // Add 1 second on each interval
+				return n + 1000; 
 			});
 		}, 1000);
 	};
-
-	// const click = () => {
-	//     startTimer();
-	// };
 
 	function handleClick() {
 		reveal();
@@ -56,9 +52,8 @@
 <div class="group relative">
 	<div
 		transition:fly={{ y: 20, duration: 300 }}
-		class="ml-7 mr-5 mt-2 flex items-center justify-between rounded-md p-3 transition-all duration-300 hover:cursor-pointer hover:bg-gray-100 hover:bg-gray-200 {active
-			? 'active-class'
-			: ''}"
+		class="ml-7 mr-5 mt-2 flex items-center justify-between rounded-md p-3 transition-all duration-300 hover:cursor-pointer hover:bg-gray-100 hover:bg-gray-200 
+		{active	? 'active-class': 'active-class2'}"
 		onclick={handleClick}
 	>
 		<a {href} class="flex items-center space-x-2">
@@ -80,7 +75,7 @@
 	{#if hasChildren && $display === ' '}
 		<div
 			transition:fly={{ x: -20, duration: 300 }}
-			class="ml-7 mt-2 flex-col p-2 text-black"
+			class="ml-7 mt-2 flex-col p-2 text-black {active? 'active-class': ' border-l-gray-400'}"
 			onclick={reveal}
 			onmouseleave={hide}
 		>
@@ -97,7 +92,12 @@
 	}
 	.active-class {
 		background: #eee4e4;
-		border-left: 5px solid #b8860b;
+		border-left: 5px solid blue;
+		font-weight: bold;
+	}
+
+	.active-class2 {
+		border-left: 5px solid gainsboro;
 		font-weight: bold;
 	}
 </style>
