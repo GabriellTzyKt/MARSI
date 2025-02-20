@@ -42,9 +42,9 @@
 
 <header class="w-full lg:flex lg:h-full lg:min-w-full">
 	<div
-		class="test2 width_head1 flex items-center justify-between lg:justify-center bg-blue-400 p-2 lg:w-[16.7%]"
+		class="test2 width_head1 flex items-center justify-between bg-blue-400 p-2 lg:w-[16.7%] lg:justify-center"
 	>
-		<div class="lg:hidden buttonshow">
+		<div class="buttonshow lg:hidden">
 			<button
 				type="button"
 				class="ri--menu-line ml-2 block lg:hidden"
@@ -98,7 +98,7 @@
 </header>
 
 <div class="flex h-fit min-w-full">
-	<div class="test hidden w-fit min-h-screen bg-blue-400 lg:block lg:w-[16.7%]">
+	<div class="test hidden min-h-screen w-fit bg-blue-400 lg:block lg:w-[16.7%]">
 		<Sidebar>
 			<SidebarMenu
 				href="/abdi/dashboard"
@@ -108,10 +108,10 @@
 			/>
 			<SidebarMenu href="#" icon="mdi:people" anchor="Komunitas" hasChildren={true}>
 				<SidebarMenu
-					href="/abdi/komunitas/detail"
+					href="/abdi/dashboard/komunitas/detail"
 					icon="mdi:book"
 					anchor="Detail komunitas"
-					active={isActive('/abdi/komunitas/detail')}
+					active={isActive('/abdi/dashboard/komunitas/acara/detail')}
 				/>
 				<SidebarMenu
 					href="/abdi/komunitas/daftaranggota"
