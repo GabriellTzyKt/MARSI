@@ -22,11 +22,11 @@
 		timer = setInterval(() => {
 			elapsed.update((n) => {
 				if (n >= duration) {
-					elapsed.set(0); 
+					elapsed.set(0);
 					hide();
 					return 0;
 				}
-				return n + 1000; 
+				return n + 1000;
 			});
 		}, 1000);
 	};
@@ -49,11 +49,14 @@
 </script>
 
 <!-- SidebarMenu Layout -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="group relative">
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<div
 		transition:fly={{ y: 20, duration: 300 }}
-		class="ml-7 mr-5 mt-2 flex items-center justify-between rounded-md p-3 transition-all duration-300 hover:cursor-pointer hover:bg-gray-100 hover:bg-gray-200 
-		{active	? 'active-class': 'active-class2'}"
+		class="ml-7 mr-5 mt-2 flex items-center justify-between rounded-md p-3 transition-all duration-300 hover:cursor-pointer hover:bg-gray-100 hover:bg-gray-200
+		{active ? 'active-class' : 'active-class2'}"
 		onclick={handleClick}
 	>
 		<a {href} class="flex items-center space-x-2">
@@ -75,7 +78,7 @@
 	{#if hasChildren && $display === ' '}
 		<div
 			transition:fly={{ x: -20, duration: 300 }}
-			class="ml-7 mt-2 flex-col p-2 text-black {active? 'active-class': ' border-l-gray-400'}"
+			class="ml-7 mt-2 flex-col p-2 text-black {active ? 'active-class' : ' border-l-gray-400'}"
 			onclick={reveal}
 			onmouseleave={hide}
 		>
