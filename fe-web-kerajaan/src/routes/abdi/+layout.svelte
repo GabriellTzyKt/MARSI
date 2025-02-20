@@ -12,7 +12,7 @@
 	$inspect(page);
 	const pageTitle = $derived.by(() => {
 		if (page.route.id === '/abdi/dashboard') {
-			return 'Daftar Komunitas';
+			return 'Selamat datang';
 		} else if (page.route.id === '/abdi/komunitas/detail') {
 			return 'Detail Komunitas';
 		} else if (page.route.id === '/abdi/komunitas/edit') {
@@ -65,6 +65,7 @@
 					anchor="Dashboard"
 					active={isActive('/abdi/dashboard')}
 				/>
+
 				<SidebarMenu href="#" icon="mdi:people" anchor="Komunitas" hasChildren={true}>
 					<SidebarMenu
 						href="/abdi/komunitas/detail"
@@ -83,6 +84,12 @@
 						icon="mdi:crown"
 						anchor="Gelar"
 						active={isActive('/abdi/komunitas/acara/detail')}
+					/>
+					<SidebarMenu
+						href="/abdi/komunitas/acara"
+						icon="mdi:crown"
+						anchor="Acara"
+						active={isActive('/abdi/komunitas/acara')}
 					/>
 				</SidebarMenu>
 			</Sidebar>

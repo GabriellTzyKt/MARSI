@@ -1,25 +1,60 @@
 <script lang="ts">
 	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
+	import org from '$lib/asset/icon/org.png';
+	import kom from '$lib/asset/icon/com.png';
+	import situs from '$lib/asset/icon/landmark.png';
+	import sekre from '$lib/asset/icon/gov.png';
 	let total = $state(16);
 </script>
 
-<div class="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-12 mx-auto">
-	<p>lol</p>
-	{#each Array(total) as _}
-		<div class="relative h-full">
-			<a href="/" class="block h-60 w-60 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-				<div class="mx-auto flex w-full items-center justify-center">
-					<img src={gambartemp} class="h-25 w-25 ml-5 mr-5 rounded-full" alt="" />
-				</div>
-				<h5 class="mb-2 mt-2 text-center text-2xl font-bold tracking-tight text-black">
-					Sinau batik
-				</h5>
-				<button class="absolute right-0 mr-3 mt-8 w-20 rounded-lg bg-blue-500 px-2 py-1 text-white">
-					Detail
-				</button>
-			</a>
+<div class="mx-4 mb-2 mt-5 flex w-full flex-col">
+	<div class="">
+		<p class="text-xl font-[600]">Menu Manajemen</p>
+	</div>
+	<div class="mt-4 grid grid-cols-1 items-center justify-center gap-4 md:grid-cols-3">
+		<div class="an border-badran-bt mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer">
+			<div class=" mb-3 flex items-center justify-center">
+				<img src={org} alt="" />
+			</div>
+			<div class="bg-badran-bt flex items-center justify-center rounded-full">
+				<p class="px-3 py-2 text-center text-xl text-white">Manajemen Organisasi</p>
+			</div>
 		</div>
-	{/each}
+		<div class="an border-badran-bdr mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer">
+			<div class="an mb-3 flex items-center justify-center">
+				<img src={kom} alt="" />
+			</div>
+			<div class=" bg-badran-bdr flex items-center justify-center rounded-full">
+				<p class="px-3 py-2 text-center text-xl text-white">Manajemen Komunitas</p>
+			</div>
+		</div>
+		<div class="an border-badran-bdy mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer">
+			<div class=" mb-3 flex items-center justify-center">
+				<img src={situs} alt="" />
+			</div>
+			<div class="bg-badran-bdy flex items-center justify-center rounded-full">
+				<p class="px-3 py-2 text-center text-xl text-white">Manajemen Situs</p>
+			</div>
+		</div>
+		<div
+			class="an border-badran-bdg mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer md:col-start-2"
+		>
+			<div class=" mb-3 flex items-center justify-center">
+				<img src={sekre} alt="" />
+			</div>
+			<div class="bg-badran-bdg flex items-center justify-center rounded-full">
+				<p class="px-3 py-2 text-center text-xl text-white">Sekretariat</p>
+			</div>
+		</div>
+	</div>
 </div>
 
-<style></style>
+<style>
+	.an {
+		transition: all 0.2s;
+	}
+	.an:hover {
+		transform: translateY(-10px);
+		box-shadow: brown;
+	}
+</style>
