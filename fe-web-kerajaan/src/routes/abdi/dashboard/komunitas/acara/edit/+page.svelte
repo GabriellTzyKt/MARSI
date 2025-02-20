@@ -4,7 +4,7 @@
 
 <div class="min-h-full w-full">
 	<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-		<div class="mt-5 grid grid-cols-4 gap-12">
+		<div class="mt-5 grid lg:grid-cols-4 grid-cols-1 gap-12">
 			<div class="col-span-2">
 				<div class="mt-2 w-full">
 					<p>Nama Acara:</p>
@@ -40,8 +40,8 @@
 				</div>
 			</div>
 
-			<div class="col-span-2">
-				<div class="mt-2 flex w-full">
+			<div class="col-span-2 ">
+				<div class="mt-2 flex flexcoba w-full">
 					<div class="flex-1">
 						<p>Kapasitas Acara:</p>
 						<input
@@ -50,9 +50,9 @@
 							class="w-full rounded-lg border px-2 py-1"
 						/>
 					</div>
-					<div class="flex ml-10">
-						<div class="w-full">
-							<p class="text-center mr-5">Jenis Acara</p>
+					<div class="ml-10 flex">
+						<div class="w-full items-center text-center mr-10">
+							<p class="lg:mt-0 mt-3 lg:mb-0 mb-3">Jenis Acara</p>
 							<div class="mt-2 flex">
 								<div class="mx-2 flex items-center justify-center">
 									<input
@@ -84,15 +84,15 @@
 					</div>
 				</div>
 				<div class="col-span-2 mt-2 w-full">
-					<p>Penanggung Jawab:</p>
+					<p class="mt-2">Penanggung Jawab:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
 				</div>
-				<div class="mt-2 flex w-full">
-					<div class="flex-1 mt-2">
+				<div class="mt-2 flex flexcoba w-full">
+					<div class="mt-2 lg:flex-1">
 						<p>Kapasitas Acara:</p>
 						<input
 							type="text"
@@ -100,19 +100,19 @@
 							class="w-full rounded-lg border px-2 py-1"
 						/>
 					</div>
-					<div class="flex-1 ml-10">
-                        <div class="mt-2 w-full">
-                            <p>Penanggung Jawab:</p>
-                            <input
-                                type="text"
-                                placeholder="Masukkan Nama"
-                                class="w-full rounded-lg border px-2 py-1"
-                            />
-                        </div>
+					<div class="lg:ml-10 flex-1">
+						<div class="mt-2 w-full">
+							<p>Penanggung Jawab:</p>
+							<input
+								type="text"
+								placeholder="Masukkan Nama"
+								class="w-full rounded-lg border px-2 py-1"
+							/>
+						</div>
 					</div>
 				</div>
-				<div class="mt-2 flex w-full">
-					<div class="flex-1 mt-2">
+				<div class="mt-2 flex flexcoba w-full">
+					<div class="mt-2 lg:flex-1">
 						<p>Kapasitas Acara:</p>
 						<input
 							type="text"
@@ -120,25 +120,24 @@
 							class="w-full rounded-lg border px-2 py-1"
 						/>
 					</div>
-					<div class="flex-1 ml-10">
-                        <div class="mt-2 w-full">
-                            <p>Penanggung Jawab:</p>
-                            <input
-                                type="text"
-                                placeholder="Masukkan Nama"
-                                class="w-full rounded-lg border px-2 py-1"
-                            />
-                        </div>
+					<div class="lg:ml-10 flex-1">
+						<div class="mt-2 w-full">
+							<p>Penanggung Jawab:</p>
+							<input
+								type="text"
+								placeholder="Masukkan Nama"
+								class="w-full rounded-lg border px-2 py-1"
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
-
 		</div>
 
 		<div class="mt-5 h-1 w-full bg-slate-300"></div>
 
 		<div class="mt-8 flex w-full">
-			<p class="my-auto ml-10 w-full text-center font-bold">Undangan</p>
+			<p class="my-auto ml-10 w-full lg:text-center text-start font-bold">Undangan</p>
 			<button class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white">
 				Tambah Undangan
 			</button>
@@ -146,18 +145,18 @@
 
 		<!-- bawah -->
 
-		<div class="mt-10 grid grid-cols-8 gap-2">
+		<div class="mt-10 grid grid-cols-9 gap-2">
 			{#each Array(total) as _, i}
 				<div class="col-span-1 w-full">{i + 1}</div>
-				<div class="col-span-1 w-full rounded-lg border px-2 py-1">
-                    <select name="panggilan" id="panggilan" class="w-full mt-1">
+				<div class="col-span-2 w-full rounded-lg border px-2 py-1">
+                    <select name="panggilan" id="panggilan" class="w-full">
                         <option value="volvo">Tn</option>
                         <option value="saab">Ny</option>
                       </select>
                 </div>				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
 				<div class="col-span-2 w-full rounded-lg border px-2 py-1">Tn</div>
 				<div class="col-span-1">
-					<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
+					<span class="flex h-8 w-8 items-center justify-center rounded-full bg-red-400 p-2">
 						<i class="gg--trash z-10 items-center text-2xl"></i>
 					</span>
 				</div>
@@ -169,10 +168,16 @@
 <style>
 	.gg--trash {
 		display: inline-block;
-		width: 32px;
-		height: 32px;
+		width: 16px;
+		height: 16px;
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='%23fff6f6'%3E%3Cpath fill-rule='evenodd' d='M17 5V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1H4a1 1 0 0 0 0 2h1v11a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V7h1a1 1 0 1 0 0-2zm-2-1H9v1h6zm2 3H7v11a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1z' clip-rule='evenodd'/%3E%3Cpath d='M9 9h2v8H9zm4 0h2v8h-2z'/%3E%3C/g%3E%3C/svg%3E");
+	}
+
+	@media (max-width: 768px) {
+		.flexcoba {
+			flex-direction: column;
+		}
 	}
 </style>

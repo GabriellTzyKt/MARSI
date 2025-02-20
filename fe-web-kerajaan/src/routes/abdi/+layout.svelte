@@ -115,10 +115,10 @@
 			/>
 			<SidebarMenu href="#" icon="mdi:people" anchor="Komunitas" hasChildren={true}>
 				<SidebarMenu
-					href="/abdi/komunitas/detail"
+					href="/abdi/dashboard/komunitas/detail"
 					icon="mdi:book"
 					anchor="Detail komunitas"
-					active={isActive('/abdi/komunitas/detail')}
+					active={isActive('/abdi/dashboard/komunitas/acara/detail')}
 				/>
 				<SidebarMenu
 					href="/abdi/komunitas/daftaranggota"

@@ -45,7 +45,7 @@
 				</span>
 			</button>
 		</div>
-		<div class="mt-5 grid grid-cols-4 gap-12">
+		<div class="mt-5 grid lg:grid-cols-4 grid-cols-1 gap-12">
 			<div class="col-span-2">
 				<div class="mt-2 w-full">
 					<p>Nama Acara:</p>
@@ -81,8 +81,8 @@
 				</div>
 			</div>
 
-			<div class="col-span-2">
-				<div class="mt-2 flex w-full">
+			<div class="col-span-2 ">
+				<div class="mt-2 flex flexcoba w-full">
 					<div class="flex-1">
 						<p>Kapasitas Acara:</p>
 						<input
@@ -92,8 +92,8 @@
 						/>
 					</div>
 					<div class="ml-10 flex">
-						<div class="w-full">
-							<p class="mr-5 text-center">Jenis Acara</p>
+						<div class="w-full items-center text-center mr-10">
+							<p class="lg:mt-0 mt-3 lg:mb-0 mb-3">Jenis Acara</p>
 							<div class="mt-2 flex">
 								<div class="mx-2 flex items-center justify-center">
 									<input
@@ -125,15 +125,15 @@
 					</div>
 				</div>
 				<div class="col-span-2 mt-2 w-full">
-					<p>Penanggung Jawab:</p>
+					<p class="mt-2">Penanggung Jawab:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
 				</div>
-				<div class="mt-2 flex w-full">
-					<div class="mt-2 flex-1">
+				<div class="mt-2 flex flexcoba w-full">
+					<div class="mt-2 lg:flex-1">
 						<p>Kapasitas Acara:</p>
 						<input
 							type="text"
@@ -141,7 +141,7 @@
 							class="w-full rounded-lg border px-2 py-1"
 						/>
 					</div>
-					<div class="ml-10 flex-1">
+					<div class="lg:ml-10 flex-1">
 						<div class="mt-2 w-full">
 							<p>Penanggung Jawab:</p>
 							<input
@@ -152,8 +152,8 @@
 						</div>
 					</div>
 				</div>
-				<div class="mt-2 flex w-full">
-					<div class="mt-2 flex-1">
+				<div class="mt-2 flex flexcoba w-full">
+					<div class="mt-2 lg:flex-1">
 						<p>Kapasitas Acara:</p>
 						<input
 							type="text"
@@ -161,7 +161,7 @@
 							class="w-full rounded-lg border px-2 py-1"
 						/>
 					</div>
-					<div class="ml-10 flex-1">
+					<div class="lg:ml-10 flex-1">
 						<div class="mt-2 w-full">
 							<p>Penanggung Jawab:</p>
 							<input
@@ -215,5 +215,12 @@
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='%23fff6f6'%3E%3Cpath fill-rule='evenodd' d='M17 5V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1H4a1 1 0 0 0 0 2h1v11a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V7h1a1 1 0 1 0 0-2zm-2-1H9v1h6zm2 3H7v11a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1z' clip-rule='evenodd'/%3E%3Cpath d='M9 9h2v8H9zm4 0h2v8h-2z'/%3E%3C/g%3E%3C/svg%3E");
+	}
+
+
+	@media (max-width: 768px) {
+		.flexcoba {
+			flex-direction: column;
+		}
 	}
 </style>
