@@ -7,28 +7,11 @@
 	import Sidebar from '$lib/sidebar/Sidebar.svelte';
 	import SidebarMenu from '$lib/sidebar/SidebarMenu.svelte';
 
-	const isActive = (path: string) => page.route.id === path;
-
-	$inspect(page);
+	// const isActive = (path: string) => page.route.id === path;
+	console.log(page.route.id);
 	const pageTitle = $derived.by(() => {
-		if (page.route.id === '/abdi/dashboard') {
-			return 'Daftar Komunitas';
-		} else if (page.route.id === '/abdi/komunitas/detail') {
-			return 'Detail Komunitas';
-		} else if (page.route.id === '/abdi/komunitas/edit') {
-			return 'Edit Komunitas';
-		} else if (page.route.id === '/abdi/komunitas/daftaranggota') {
-			return 'Daftar Anggota Komunitas';
-		} else if (page.route.id === '/abdi/komunitas/daftaranggota/edit') {
-			return 'Ubah Abdi';
-		} else if (page.route.id === '/abdi/komunitas/acara/detail') {
-			return 'Detail Acara Komunitas';
-		} else if (page.route.id === '/abdi/komunitas/acara/edit') {
-			return 'Edit Acara Komunitas';
-		} else if (page.route.id === '/abdi/komunitas/acara/buat') {
-			return 'Buat Acara Komunitas';
-		} else if (page.route.id === '/abdi/komunitas/acara/laporan') {
-			return 'Laporan Acara';
+		if (page.route.id === '/managemen') {
+			return 'Selamat Datang';
 		}
 	});
 	let { children } = $props();
@@ -59,39 +42,7 @@
 	{#if $sidebarActive}
 		<div class="mobile-sidebar-options flex w-full flex-col bg-blue-400 p-2 lg:hidden">
 			<Sidebar>
-				<SidebarMenu
-					href="/abdi/dashboard"
-					icon="mdi:home"
-					anchor="Dashboard"
-					active={isActive('/abdi/dashboard')}
-				/>
-
-				<SidebarMenu href="#" icon="mdi:people" anchor="Komunitas" hasChildren={true}>
-					<SidebarMenu
-						href="/abdi/komunitas/detail"
-						icon="mdi:book"
-						anchor="Detail komunitas"
-						active={isActive('/abdi/komunitas/detail')}
-					/>
-					<SidebarMenu
-						href="/abdi/komunitas/daftaranggota"
-						icon="mdi:crown"
-						anchor="Daftar Anggota"
-						active={isActive('/abdi/komunitas/daftaranggota')}
-					/>
-					<SidebarMenu
-						href="/abdi/komunitas/acara/detail"
-						icon="mdi:crown"
-						anchor="Gelar"
-						active={isActive('/abdi/komunitas/acara/detail')}
-					/>
-					<SidebarMenu
-						href="/abdi/komunitas/acara"
-						icon="mdi:crown"
-						anchor="Acara"
-						active={isActive('/abdi/komunitas/acara')}
-					/>
-				</SidebarMenu>
+				<SidebarMenu href="/managemen" icon="mdi:home" anchor="Managemen" active={true} />
 			</Sidebar>
 		</div>
 	{/if}
@@ -107,32 +58,7 @@
 <div class="flex h-fit min-w-full">
 	<div class="test hidden min-h-screen w-fit bg-blue-400 lg:block lg:w-[16.7%]">
 		<Sidebar>
-			<SidebarMenu
-				href="/abdi/dashboard"
-				icon="mdi:home"
-				anchor="Dashboard"
-				active={isActive('/abdi/dashboard')}
-			/>
-			<SidebarMenu href="#" icon="mdi:people" anchor="Komunitas" hasChildren={true}>
-				<SidebarMenu
-					href="/abdi/komunitas/detail"
-					icon="mdi:book"
-					anchor="Detail komunitas"
-					active={isActive('/abdi/komunitas/detail')}
-				/>
-				<SidebarMenu
-					href="/abdi/komunitas/daftaranggota"
-					icon="mdi:crown"
-					anchor="Daftar Anggota"
-					active={isActive('/abdi/komunitas/daftaranggota')}
-				/>
-				<SidebarMenu
-					href="/abdi/komunitas/acara/detail"
-					icon="mdi:crown"
-					anchor="Gelar"
-					active={isActive('/abdi/komunitas/acara/detail')}
-				/>
-			</SidebarMenu>
+			<SidebarMenu href="/managemen" icon="mdi:home" anchor="Managemen" active={true} />
 		</Sidebar>
 	</div>
 
