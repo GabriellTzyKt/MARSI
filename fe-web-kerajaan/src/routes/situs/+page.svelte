@@ -39,7 +39,7 @@
 	</div>
 
 	<div class="ml-5 mr-5 flex justify-center">
-		<div class="mx-auto grid grid-cols-4 gap-4">
+		<div class="mx-auto grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1  gap-4">
 			<Card2
 				situs={situs1}
 				header="Keraton Surakarta Hadiningrat"

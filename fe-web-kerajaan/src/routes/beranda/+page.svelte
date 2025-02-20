@@ -17,22 +17,22 @@
 <Navbar></Navbar>
 
 <!-- 1  -->
-<section class="h-full w-full">
+<section class="h-fit w-full">
 	<div class="relative">
-		<img src={gambarAtas} alt="" class="h-full w-full object-cover" />
+		<img src={gambarAtas} alt="" class="min-h-screen w-full object-cover" />
 		<div class="absolute top-[25%] flex h-full w-full flex-col text-center">
-			<p class="items-center text-8xl text-white">Maha Menteri</p>
+			<p class="items-center text-2xl lg:text-8xl text-white">Maha Menteri</p>
 			<div>
-				<p class="mt-4 items-center text-8xl text-white">Keraton Surakarta</p>
-				<p class="mt-4 items-center text-xl text-white">
+				<p class="mt-4 items-center text-2xl lg:text-8xl text-white">Keraton Surakarta</p>
+				<p class="mt-4 items-center text-2xl text-white">
 					Deskripsi singkat mengenai Maha Menteri Keraton Surakarta
 				</p>
-				<p class="mt-12 text-xl text-white">Acara Mendatang</p>
+				<p class="mt-12 text-2xl text-white">Acara Mendatang</p>
 				<div class="mt-4 flex justify-center gap-1 lg:gap-4">
 					<span class="gg--arrow-left-o self-center"></span>
-					<img src={gambar2} class="h-16 w-auto rounded-lg object-cover lg:h-40" alt="" />
-					<img src={gambar3} class="h-16 w-auto rounded-lg object-cover lg:h-40" alt="" />
-					<img src={gambar4} class="h-16 w-auto rounded-lg object-cover lg:h-40" alt="" />
+					<img src={gambar2} class="h-20 w-auto rounded-lg object-cover lg:h-40" alt="" />
+					<img src={gambar3} class="h-20 w-auto rounded-lg object-cover lg:h-40" alt="" />
+					<img src={gambar4} class="h-20 w-auto rounded-lg object-cover lg:h-40" alt="" />
 					<span class="gg--arrow-right-o self-center"></span>
 				</div>
 			</div>
@@ -44,7 +44,7 @@
 <section class="h-auto w-full bg-slate-200 py-5">
 	<p class="mb-5 py-5 text-center text-2xl font-bold text-blue-500">Tentang Keraton Solo</p>
 	<div class="flex justify-center">
-		<div class="mx-auto grid grid-cols-3 gap-2">
+		<div class="mx-auto p-5 grid lg:grid-cols-3 grid-cols-1 gap-2">
 			<!-- Grid item 1 -->
 			<CardAbout
 				gambarAbout={gambarAbout1}
@@ -98,7 +98,7 @@
 	</div>
 	<!-- Situs -->
 	<div class="ml-5 mr-5 flex justify-center">
-		<div class="mx-auto grid grid-cols-4 gap-4">
+		<div class="mx-auto grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1  gap-4">
 			<Card2
 				situs={situs1}
 				header="Keraton Surakarta Hadiningrat"
@@ -170,7 +170,7 @@
 	</div>
 	<!-- Situs -->
 	<div class="ml-5 mr-5 flex justify-center">
-		<div class="mx-auto grid grid-cols-4 gap-4">
+		<div class="mx-auto grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1  gap-4">
 			<Card2
 				situs={situs1}
 				header="Keraton Surakarta Hadiningrat"
@@ -240,7 +240,7 @@
 		</div>
 	</div>
 	<div class="ml-5 mr-5">
-		<div class="mx-auto grid grid-cols-4 gap-8">
+		<div class="mx-auto grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-8">
 			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
 
 			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
@@ -267,7 +267,7 @@
 		</div>
 	</div>
 	<div class="ml-5 mr-5">
-		<div class="mx-auto grid grid-cols-4 gap-8">
+		<div class="mx-auto grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1  gap-8">
 			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
 
 			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>

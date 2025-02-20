@@ -1,8 +1,7 @@
 <script lang="ts">
-	import Marquee from '$lib/components/Marquee.svelte';
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '$lib/navbar/Navbar.svelte';
-	import { cn } from '$lib/utils';
+	import Marquee from 'svelte-fast-marquee';
 
 	const { data } = $props();
 	console.log('Data yang diterima:', data);
@@ -33,57 +32,31 @@
 <section class="bg-gray-100 pb-10 pt-20">
 	<div class="mx-auto max-w-6xl px-4">
 		<div class="form-container">
-			<div class="flex items-center justify-between self-center pt-10 text-center">
+			<div class="flex items-center justify-between self-center pt-10 text-center gap-5">
 				<span class="solar--arrow-left-outline ml-8"></span>
 				<p class="text-center text-xl font-semibold">{nama}</p>
-				<p class="mr-5 h-fit w-fit rounded-full border bg-red-300 px-2 py-3 text-end">
+				<p class="mr-5 h-fit w-fit rounded-full border md:text-center bg-red-300 px-2 py-2 lg:text-end">
 					Milik : {pemilik}
 				</p>
 			</div>
-			<div class="grid grid-cols-1 gap-8 px-10 py-10 md:grid-cols-2">
-				<div>
+			<div class="min-h-screen grid grid-cols-1 gap-8 px-10 py-10 md:grid-cols-2">
+				<div class="h-fit">
 					<img
 						src={gambar1}
-						class="mt-12 h-[50%] w-[500px] self-center rounded-lg object-cover"
+						class="mt-12 lg:h-[50%] lg:w-[500px] w-[300px] h-[30%] self-center rounded-lg object-cover"
 						alt="foto 1"
 					/>
 
-					<div
-						class={cn(
-							'relative w-full cursor-pointer overflow-hidden rounded-2xl border-2 border-black p-4',
-							'border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]',
-							'dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]'
-						)}
-					>
-						<Marquee {pauseOnHover} {reverse}>
-							<div class="mx-auto mt-5 flex items-center gap-2 lg:gap-4">
-								<img
-									src={gambar2}
-									class="h-16 w-auto rounded-lg object-cover lg:h-24"
-									alt="foto 2"
-								/>
-								<img
-									src={gambar2}
-									class="h-16 w-auto rounded-lg object-cover lg:h-24"
-									alt="foto 2"
-								/>
-								<img
-									src={gambar2}
-									class="h-16 w-auto rounded-lg object-cover lg:h-24"
-									alt="foto 2"
-								/>
-								<img
-									src={gambar2}
-									class="h-16 w-auto rounded-lg object-cover lg:h-24"
-									alt="foto 2"
-								/>
+					<div class="mt-5">
+						<Marquee>
+							<div class="grid grid-cols-3 items-center">
+								<img src={gambar2} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
+								<img src={gambar3} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
+								<img src={gambar4} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
 							</div>
 						</Marquee>
-
-						<div
-							class="dark:from-background pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-white"
-						></div>
 					</div>
+
 					<button class="mt-10 w-[40%] rounded-lg border bg-blue-400 px-2 py-3 text-white">
 						<a href="/situs/riwayat/{id}"> Riwayat Acara </a></button
 					>

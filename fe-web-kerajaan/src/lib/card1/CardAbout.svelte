@@ -11,9 +11,9 @@
 	const bgClass = colorMap[warna] || 'bg-gray-100';
 </script>
 
-<div class={`h-full max-w-sm overflow-hidden rounded ${bgClass} shadow-lg`}>
-	<div class="w-full">
-		<img class="ml-4 mt-3 h-full w-[350px]" src={gambarAbout} alt="Sunset in the mountains" />
+<div class={`h-full w-full overflow-hidden rounded ${bgClass} shadow-lg`}>
+	<div class="w-full flex justify-center mx-auto">
+		<img class="mt-3 h-full w-[300px] lg:w-[400px]" src={gambarAbout} alt="Sunset in the mountains" />
 	</div>
 	<div class="px-6 py-4">
 		<p class="text-md mb-5 mt-5 text-gray-700">

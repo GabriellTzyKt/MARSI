@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '$lib/navbar/Navbar.svelte';
+	import Marquee from 'svelte-fast-marquee';
 
 	const { data } = $props();
 	console.log('Data yang diterima:', data);
@@ -39,12 +40,14 @@
 						class="mt-12 h-[50%] w-[500px] self-center rounded-lg object-cover"
 						alt="foto 1"
 					/>
-					<div class="mt-4 flex gap-2 lg:gap-4">
-						<span class="material-symbols--arrow-circle-left-rounded ml-2 self-center"></span>
-						<img src={gambar2} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="foto 2" />
-						<img src={gambar3} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="foto 3" />
-						<img src={gambar4} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="foto 4" />
-						<span class="material-symbols--arrow-circle-right self-center"></span>
+					<div class="mt-5">
+						<Marquee>
+							<div class="grid grid-cols-3 items-center">
+								<img src={gambar2} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
+								<img src={gambar3} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
+								<img src={gambar4} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
+							</div>
+						</Marquee>
 					</div>
 				</div>
 				<div>
@@ -94,7 +97,7 @@
 						<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
 							<span class="typcn--group flex-shrink-0"></span>
 						</span>
-						<p class="text-md ml-4">Jumlah Anggota : {jumlah_anggota}</p>
+						<p class="text-md ml-4 text-start">Jumlah Anggota : {jumlah_anggota}</p>
 					</div>
 
 					<div class="mt-5 flex items-center">
