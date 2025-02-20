@@ -5,7 +5,7 @@
 	import { slide } from 'svelte/transition';
 
 	let id = Number();
-	let isOpen = false;
+	let isOpen = $state(false);
 	$inspect(page);
 </script>
 
@@ -31,9 +31,9 @@
 				}}
 			>
 				{#if isOpen}
-					&times; <!-- Close Icon -->
+					&times;
 				{:else}
-					&#9776; <!-- Hamburger Icon -->
+					&#9776;
 				{/if}</button
 			>
 		</div>
@@ -41,13 +41,13 @@
 	<!-- Mobile Menu -->
 	{#if isOpen}
 		<div
-			class="mt-4 space-y-2 text-center text-white md:hidden"
+			class="mt-4 space-y-2 text-center text-white md:hidden flex-col flex"
 			transition:slide={{ duration: 100 }}
 		>
-			<a href="/beranda" class="block">Beranda</a>
-			<a href="/situs" class="block">Situs</a>
-			<a href="/acara" class="block">Acara</a>
-			<a href="/kelompok" class="block">Kelompok</a>
+			<a href="/beranda" class:underline={page.route.id === '/beranda'}>Beranda</a>
+			<a href="/situs" class:underline={page.route.id?.startsWith('/situs')}>Situs</a>
+			<a href="/acara" class:underline={page.route.id?.startsWith('/acara')}>Acara</a>
+			<a href="/kelompok" class:underline={page.route.id?.startsWith('/kelompok')}>Kelompok</a>
 		</div>
 	{/if}
 </section>

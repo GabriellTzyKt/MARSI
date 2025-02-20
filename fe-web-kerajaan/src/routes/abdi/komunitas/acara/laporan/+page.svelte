@@ -2,14 +2,16 @@
 	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
 
-    let total = $state(8)
+	let total = $state(8);
 </script>
 
 <div class="min-h-full w-full">
 	<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="flex w-full justify-between">
 			<p>Informasi Acara</p>
-			<a href='/abdi/komunitas/acara/edit'><button class="w-40 rounded-lg border-2 bg-yellow-500 px-2 py-2">Ubah</button></a>
+			<a href="/abdi/komunitas/acara/edit"
+				><button class="w-40 rounded-lg border-2 bg-yellow-500 px-2 py-2">Ubah</button></a
+			>
 		</div>
 
 		<div class="mt-5 grid grid-cols-4 gap-12">
@@ -114,17 +116,95 @@
 
 		<!-- bawah -->
 
-		<p class="mt-5 text-start text-xl font-bold text-blue-600 mb-5">Daftar Undangan</p>
+		<p class="mb-5 mt-5 text-start text-xl font-bold text-blue-600">Daftar Undangan</p>
 		<div class="grid grid-cols-8 gap-2">
 			{#each Array(total) as _, i}
-				<div class="col-span-1 w-full">{i+1}</div>
+				<div class="col-span-1 w-full">{i + 1}</div>
 				<div class="col-span-1 w-full rounded-lg border px-2 py-1">Tn</div>
 				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
 				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
 			{/each}
 		</div>
+
+		<div class="mt-5 h-1 w-full bg-slate-300"></div>
+
+		<div class="flex flex-col">
+			<div>
+				<p class="mt-5 text-start text-2xl font-bold text-blue-700">Laporan Acara</p>
+			</div>
+			<div class="grid grid-cols-3 gap-2">
+				<div class="col-span-1 mt-5 h-full w-full rounded-lg border-2 border-gray-500">
+					<p class="ml-5 mt-5 text-xl font-bold text-blue-700">Peserta</p>
+					<p class="ml-5 mt-5">Jumlah Orang Hadir</p>
+					<input
+						type="text"
+						placeholder="Masukkan Jumlah"
+						class="ml-3 w-[90%] rounded-lg border-2 border-gray-400 px-2 py-2"
+					/>
+					<p class="ml-5 mt-5">Perkiraan Jumlah Orang Hadir</p>
+					<input
+						type="text"
+						placeholder="Masukkan Jumlah"
+						class="ml-3 w-[90%] rounded-lg border-2 border-gray-400 px-2 py-2"
+					/>
+					<p class="ml-5 mt-5">Bukti Foto</p>
+					<div class="relative ml-3 w-[90%]">
+					  <input
+						type="text"
+						placeholder="Unggah Bukti Foto"
+						class="w-full rounded-lg border-2 border-gray-400 px-2 py-2" 
+					  />
+					  <span class="pajamas--media absolute right-2 opacity-55 mt-2.5">
+					  </span>
+					</div>
+				</div>
+
+				<!-- 2 -->
+				<div class="col-span-2 mt-5 h-full w-full rounded-lg border-2 border-gray-500">
+					<div class="flex items-center justify-between">
+						<p class="ml-5 text-xl font-bold text-blue-700">RAB</p>
+						<button class="px-15 mb-6 mr-10 mt-5 rounded-lg border bg-blue-500 py-2 text-white">
+							Tambah
+						</button>
+					</div>
+					<div class="h-13 mx-auto w-[95%] rounded-lg border-2 border-gray-400">
+						<p class="px-3 py-2 text-xl">
+							Total Biaya : <span class="text-green-600">1.000.000</span>
+						</p>
+					</div>
+					<!-- Component Kotak Bawah -->
+					<div class="h-fit py-3 mx-auto mt-4 w-[95%] rounded-lg border-2 border-gray-400">
+						<div class="mx-auto mt-4 h-fit w-[95%] rounded-lg border-2 border-gray-400 grid grid-cols-3 px-3 py-2 gap-2">
+							<input class="col-span-2 w-full mt-2 h-5 py-4 rounded-lg border-2 border-black px-3" type="text" placeholder="Keterangan">
+							<input class="col-span-1 w-full mt-2 h-5 py-4 rounded-lg mb-2 border-2 border-black px-3" type="text" placeholder="Jumlah Uang">
+						</div>
+						<div class="mx-auto mt-4 h-fit w-[95%] rounded-lg border-2 border-gray-400 grid grid-cols-3 px-3 py-2 gap-2">
+							<input class="col-span-2 w-full mt-2 h-5 py-4 rounded-lg border-2 border-black px-3" type="text" placeholder="Keterangan">
+							<input class="col-span-1 w-full mt-2 h-5 py-4 rounded-lg mb-2 border-2 border-black px-3" type="text" placeholder="Jumlah Uang">
+						</div>
+						<div class="mx-auto mt-4 h-fit w-[95%] rounded-lg border-2 border-gray-400 grid grid-cols-3 px-3 py-2 gap-2">
+							<input class="col-span-2 w-full mt-2 h-5 py-4 rounded-lg border-2 border-black px-3" type="text" placeholder="Keterangan">
+							<input class="col-span-1 w-full mt-2 h-5 py-4 rounded-lg mb-2 border-2 border-black px-3" type="text" placeholder="Jumlah Uang">
+						</div>
+						<div class="mx-auto mt-4 h-fit w-[95%] rounded-lg border-2 border-gray-400 grid grid-cols-3 px-3 py-2 gap-2">
+							<input class="col-span-2 w-full mt-2 h-5 py-4 rounded-lg border-2 border-black px-3" type="text" placeholder="Keterangan">
+							<input class="col-span-1 w-full mt-2 h-5 py-4 rounded-lg mb-2 border-2 border-black px-3" type="text" placeholder="Jumlah Uang">
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 
 <style>
+	.pajamas--media {
+		display: inline-block;
+		width: 22px;
+		height: 22px;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23101010' fill-rule='evenodd' d='M13 2.5H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V3a.5.5 0 0 0-.5-.5M3 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm9 9.857L9.5 8l-2.476 2.83L5.5 9L4 10.8V12h8zM6.5 8a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3' clip-rule='evenodd'/%3E%3C/svg%3E");
+	}
 </style>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '$lib/navbar/Navbar.svelte';
+	import Marquee from 'svelte-fast-marquee';
 
 	const { data } = $props();
 	console.log('Data yang diterima:', data);
@@ -35,12 +36,14 @@
 						class="mt-12 h-[50%] w-[500px] self-center rounded-lg object-cover"
 						alt="foto 1"
 					/>
-					<div class="mt-4 flex gap-2 lg:gap-4">
-						<span class="material-symbols--arrow-circle-left-rounded ml-2 self-center"></span>
-						<img src={gambar2} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="foto 2" />
-						<img src={gambar3} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="foto 3" />
-						<img src={gambar4} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="foto 4" />
-						<span class="material-symbols--arrow-circle-right self-center"></span>
+					<div class="mt-5">
+						<Marquee>
+							<div class="grid grid-cols-3 items-center">
+								<img src={gambar2} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
+								<img src={gambar3} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
+								<img src={gambar4} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
+							</div>
+						</Marquee>
 					</div>
 				</div>
 				<div>
@@ -58,7 +61,7 @@
 
 					<div class="mt-5 flex items-center">
 						<span class="solar--calendar-linear flex-shrink-0"></span>
-						<p class="text-md ml-4">{tanggal}</p>
+						<p class="text-md ml-4 text-start">{tanggal}</p>
 					</div>
 
 					<div class="mt-5 flex items-center">
