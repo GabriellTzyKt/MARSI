@@ -4,7 +4,6 @@
 </script>
 
 <div class="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-12 mx-auto">
-	<p>lol</p>
 	{#each Array(total) as _}
 		<div class="relative h-full">
 			<a href="/" class="block h-60 w-60 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
