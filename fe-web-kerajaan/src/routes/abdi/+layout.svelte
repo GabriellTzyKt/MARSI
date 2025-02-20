@@ -12,7 +12,7 @@
 	$inspect(page);
 	const pageTitle = $derived.by(() => {
 		if (page.route.id === '/abdi/dashboard') {
-			return 'Daftar Komunitas';
+			return 'Selamat datang';
 		} else if (page.route.id === '/abdi/komunitas/detail') {
 			return 'Detail Komunitas';
 		} else if (page.route.id === '/abdi/komunitas/edit') {
