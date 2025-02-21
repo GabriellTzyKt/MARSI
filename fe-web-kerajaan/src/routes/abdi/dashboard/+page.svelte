@@ -12,30 +12,45 @@
 		<p class="text-xl font-[600]">Menu Manajemen</p>
 	</div>
 	<div class="mt-4 grid grid-cols-1 items-center justify-center gap-4 md:grid-cols-3">
-		<div class="an border-badran-bt mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer">
-			<div class=" mb-3 flex items-center justify-center">
-				<img src={org} alt="" />
+		<a href="/abdi/dashboard/organisasi/beranda">
+			<div
+				class="an border-badran-bt mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer"
+			>
+				<div class=" mb-3 flex items-center justify-center">
+					<img src={org} alt="" />
+				</div>
+				<div class="bg-badran-bt flex items-center justify-center rounded-full">
+					<p class="px-3 py-2 text-center text-xl text-white">Manajemen Organisasi</p>
+				</div>
 			</div>
-			<div class="bg-badran-bt flex items-center justify-center rounded-full">
-				<p class="px-3 py-2 text-center text-xl text-white">Manajemen Organisasi</p>
+		</a>
+
+		<a href="/abdi/dashboard/komunitas/beranda">
+			<div
+				class="an border-badran-bdr mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer"
+			>
+				<div class="an mb-3 flex items-center justify-center">
+					<img src={kom} alt="" />
+				</div>
+				<div class=" bg-badran-bdr flex items-center justify-center rounded-full">
+					<p class="px-3 py-2 text-center text-xl text-white">Manajemen Komunitas</p>
+				</div>
 			</div>
-		</div>
-		<div class="an border-badran-bdr mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer">
-			<div class="an mb-3 flex items-center justify-center">
-				<img src={kom} alt="" />
+		</a>
+
+		<a href="/abdi/dashboard/situs/beranda">
+			<div
+				class="an border-badran-bdy mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer"
+			>
+				<div class=" mb-3 flex items-center justify-center">
+					<img src={situs} alt="" />
+				</div>
+				<div class="bg-badran-bdy flex items-center justify-center rounded-full">
+					<p class="px-3 py-2 text-center text-xl text-white">Manajemen Situs</p>
+				</div>
 			</div>
-			<div class=" bg-badran-bdr flex items-center justify-center rounded-full">
-				<p class="px-3 py-2 text-center text-xl text-white">Manajemen Komunitas</p>
-			</div>
-		</div>
-		<div class="an border-badran-bdy mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer">
-			<div class=" mb-3 flex items-center justify-center">
-				<img src={situs} alt="" />
-			</div>
-			<div class="bg-badran-bdy flex items-center justify-center rounded-full">
-				<p class="px-3 py-2 text-center text-xl text-white">Manajemen Situs</p>
-			</div>
-		</div>
+		</a>
+
 		<div
 			class="an border-badran-bdg mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer md:col-start-2"
 		>

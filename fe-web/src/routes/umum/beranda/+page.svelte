@@ -19,59 +19,61 @@
 
 <!-- Section 1 -->
 <section class="relative overflow-x-hidden">
-    <div class=" min-w-screen bg-umum flex flex-col items-center justify-center min-h-screen">
-        <div class="text-center">
-            <p class="mt-20 text-5xl font-[600]">MAJELIS AGUNG RAJA SULTAN INDONESIA</p>
-        </div>
-        <div class="relative mt-10 w-full">
-            <img src={bgTemp} class="w-auto h-auto mb-10 mr-10 mt-10" alt="" />
+	<div class=" min-w-screen bg-umum flex min-h-screen flex-col items-center justify-center">
+		<div class="text-center">
+			<p class="mt-20 text-5xl font-[600]">MAJELIS AGUNG RAJA SULTAN INDONESIA</p>
+		</div>
+		<div class="relative mt-10 w-full">
+			<img src={bgTemp} class="mb-10 mr-10 mt-10 h-auto w-auto" alt="" />
 
-            <Mapicon
-                id="icon1"
-                text="Keraton Kasunanan Surakarta"
-                location="Surakarta, Jawa Tengah"
-                link="#"
-                position="absolute top-[20%] left-[20%] translate-x-[-50%] translate-y-[-50%]"
-                {hoveredIcons}
-            ></Mapicon>
+			<Mapicon
+				id="icon1"
+				text="Keraton Kasunanan Surakarta"
+				location="Surakarta, Jawa Tengah"
+				link="#"
+				position="absolute top-[20%] left-[20%] translate-x-[-50%] translate-y-[-50%]"
+				{hoveredIcons}
+			></Mapicon>
 
-            <Mapicon
-                id="icon2"
-                text="Keraton Kasunanan Surakarta"
-                location="Surakarta, Jawa Tengah"
-                link="#"
-                position="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]"
-                {hoveredIcons}
-            ></Mapicon>
+			<Mapicon
+				id="icon2"
+				text="Keraton Kasunanan Surakarta"
+				location="Surakarta, Jawa Tengah"
+				link="#"
+				position="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]"
+				{hoveredIcons}
+			></Mapicon>
 
-            <Mapicon
-                id="icon3"
-                text="Keraton Kasunanan Surakarta"
-                location="Surakarta, Jawa Tengah"
-                link="#"
-                position="absolute bottom-[20%] right-[20%] translate-x-[-50%] translate-y-[-50%]"
-                {hoveredIcons}
-            ></Mapicon>
-        </div>
-    </div>
+			<Mapicon
+				id="icon3"
+				text="Keraton Kasunanan Surakarta"
+				location="Surakarta, Jawa Tengah"
+				link="#"
+				position="absolute bottom-[20%] right-[20%] translate-x-[-50%] translate-y-[-50%]"
+				{hoveredIcons}
+			></Mapicon>
+		</div>
+	</div>
 </section>
-
-
 
 <!-- Section 2 -->
 <section
 	class=" relative mb-20 h-[100%] w-[100%] overflow-hidden bg-cover bg-center p-5"
 	style:background-image="url('{gambar5}')"
 >
-	<div class=" grid grid-cols-1 md:grid-cols-2 items-center justify-center">
+	<div class=" grid grid-cols-1 items-center justify-center md:grid-cols-2">
 		<div class="mb-10 ml-10 mt-10 grid grid-cols-3 grid-rows-[auto_auto_1fr] gap-1">
 			<img src={gambar1} alt="dor" class="col-span-1 row-span-2 h-full object-cover" />
 			<img src={gambar2} class="col-span-2 row-span-1 h-[205px] object-cover" alt="dor" />
 			<img src={gambar3} class="col-span-2 row-span-1 h-[172px] object-cover" alt="dor" />
-			<img src={gambar4} class="col-span-3 h-auto max-h-60 lg:w-[93%] w-[100%] object-cover" alt="dordordor" />
+			<img
+				src={gambar4}
+				class="col-span-3 h-auto max-h-60 w-[100%] object-cover lg:w-[93%]"
+				alt="dordordor"
+			/>
 		</div>
 
-		<div class="ms-30 max-w-full break-words text-center p-4 lg:text-left lg:mr-10 lg:mb-0 mb-10">
+		<div class="ms-30 mb-10 max-w-full break-words p-4 text-center lg:mb-0 lg:mr-10 lg:text-left">
 			<p class="mb-4 text-4xl font-[500]">Tentang Kami</p>
 			<p>
 				Majelis Agung Raja Sultan Indonesia (MARSI) adalah sebuah organisasi yang menghimpun
@@ -99,11 +101,11 @@
 		</svg>
 	</div>
 	<div class="bg-umum relative pb-10">
-		<div class="grid grid-cols-1 md:grid-cols-2 items-center justify-center">
+		<div class="grid grid-cols-1 items-center justify-center md:grid-cols-2">
 			<div class="m-4 text-center">
 				<img src={candi} alt="" />
 			</div>
-			<div class="me-30 md:me-60 max-w-full break-words p-4 text-center lg:text-left">
+			<div class="me-30 max-w-full break-words p-4 text-center md:me-60 lg:text-left">
 				<p class="mb-4 text-4xl font-[500]">Kerajaan di Indonesia</p>
 				<p>
 					Kerajaan-kerajaan yang berdiri di Indonesia berjumlah ratusan. Majelis Agung Raja Sultan
@@ -151,7 +153,7 @@
 <!-- Section 5 -->
 <section class="relative">
 	<section class="relative bg-white pb-10 pt-10">
-		<div class="grid grid-cols-1 md:grid-cols-2 items-center justify-center">
+		<div class="grid grid-cols-1 items-center justify-center md:grid-cols-2">
 			<div class=" max-w-full break-words p-4 text-center lg:text-right">
 				<p class="mb-4 text-4xl font-[500]">Situs Bersejarah Kerajaan</p>
 				<p class=" min-w-screen lg:ml-auto lg:w-[80%]">
@@ -161,10 +163,10 @@
 					lengkap mengenai informasi seputar situs-situs bersejarah dari ratusan kerajaan yang
 					tentunya sangat menarik untuk anda lihat!
 				</p>
-				<div class="flex min-w-screen lg:w-full justify-self-center">
+				<div class="min-w-screen flex justify-self-center lg:w-full">
 					<a
 						href="/"
-						class="my-2 lg:ml-auto flex items-center gap-2 rounded-full px-5 py-3 text-orange-500"
+						class="my-2 flex items-center gap-2 rounded-full px-5 py-3 text-orange-500 lg:ml-auto"
 					>
 						Selengkapnya
 						<span class="gg--arrow-right-o"></span>
@@ -194,11 +196,13 @@
 		</svg>
 	</div>
 
-	<div class="bg-umum relative mt-10 grid grid-cols-1 md:grid-cols-2 items-center justify-center">
+	<div class="bg-umum relative mt-10 grid grid-cols-1 items-center justify-center md:grid-cols-2">
 		<div class="m-4">
 			<img src={gbr} class="mt-20" alt="" />
 		</div>
-		<div class="mr-4 ms-4 md:mr-20 md:ms-40 flex max-w-full flex-col break-words p-4 text-center lg:text-right">
+		<div
+			class="mr-4 ms-4 flex max-w-full flex-col break-words p-4 text-center md:mr-20 md:ms-40 lg:text-right"
+		>
 			<p class="mb-4 text-4xl font-[500]">Aset Bersejarah Kerajaan</p>
 			<p>
 				Kerajaan yang telah berdiri sejak lama tentu memiliki aset yang senantiasa dijaga. Ada aset
@@ -206,15 +210,27 @@
 				tarian). Tentu aset-aset tersebut memiliki nilai sejarah yang sangat tinggi dan pastinya
 				akan sangat menarik untuk anda lihat dan pelajari melalui laman berikut!
 			</p>
+
+
+			<!-- Tombol Animasi Work -->
 			<div class="flex w-full justify-center lg:justify-end">
 				<a
 					href="/"
-					class="my-2 flex items-center gap-2 rounded-full px-5 py-3 text-orange-500"
+					class="group relative my-2 flex items-center gap-2 overflow-hidden rounded-full px-5 py-3 text-orange-500"
 				>
-					Selengkapnya
-					<span class="gg--arrow-right-o"></span>
+					<span class="relative z-10 pr-5 transition-colors duration-500 group-hover:text-black">
+						Selengkapnya
+					</span>
+					<span
+						class="absolute right-0 flex h-7 w-7 items-center justify-end rounded-full border-2 border-orange-400 px-1 pt-0.5 transition-all duration-500 ease-in-out group-hover:h-full group-hover:w-full group-hover:bg-orange-400"
+					>
+						<i
+							class="solar--arrow-right-linear right-2 text-2xl text-orange-400 transition-colors duration-500 group-hover:absolute group-hover:text-white"
+						></i>
+					</span>
 				</a>
 			</div>
+
 		</div>
 	</div>
 </section>
@@ -223,13 +239,13 @@
 <div class="mb-10 mt-20">
 	<section class="relative">
 		<section class="relative bg-white pb-10">
-			<div class="grid grid-cols-1 md:grid-cols-2 items-center justify-center">
-				<div class="max-w-full break-words p-4 lg:text-right text-center item-center">
+			<div class="grid grid-cols-1 items-center justify-center md:grid-cols-2">
+				<div class="item-center max-w-full break-words p-4 text-center lg:text-right">
 					<p class="mb-5 mt-5">SOROTAN ACARA</p>
-					<p class="mb-5 lg:ms-40 text-4xl font-[500]">
+					<p class="mb-5 text-4xl font-[500] lg:ms-40">
 						Pengukuhan Majelis Agung Raja Sultan Indonesia
 					</p>
-					<p class="mb-2 lg:ml-auto lg:w-[70%] w-[100%] items-center">
+					<p class="mb-2 w-[100%] items-center lg:ml-auto lg:w-[70%]">
 						Kementrian Dalam Negeri (Kemendagri) mengukuhkan Majelis Agung Raja Sultan (MARS)
 						Indonesia di Kantor Kemendagri, Medan Merdeka Utara, Jakarta Pusat, Kamis (24/8/2017).
 					</p>
@@ -240,7 +256,7 @@
 						</a>
 					</div>
 				</div>
-				<div class="m-4 flex items-center justify-center lg:mr-20 lg:-mx-20">
+				<div class="m-4 flex items-center justify-center lg:-mx-20 lg:mr-20">
 					<img src={gambar2} alt="" class="h-[300px] w-[450px]" />
 				</div>
 			</div>
@@ -270,6 +286,21 @@
 		background-size: 100% 100%;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='%23ff9400'%3E%3Cpath d='m12.052 14.829l1.414 1.414L17.71 12l-4.243-4.243l-1.414 1.415L13.88 11H6.343v2h7.537z'/%3E%3Cpath fill-rule='evenodd' d='M19.778 19.778c4.296-4.296 4.296-11.26 0-15.556s-11.26-4.296-15.556 0s-4.296 11.26 0 15.556s11.26 4.296 15.556 0m-1.414-1.414A9 9 0 1 0 5.636 5.636a9 9 0 0 0 12.728 12.728' clip-rule='evenodd'/%3E%3C/g%3E%3C/svg%3E");
 	}
+
+	.solar--arrow-right-linear {
+		display: inline-block;
+		width: 18px;
+		height: 18px;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23dc7e00' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M4 12h16m0 0l-6-6m6 6l-6 6'/%3E%3C/svg%3E");
+		transition: background-image 0.3s ease-in-out;
+	}
+
+	.group:hover .solar--arrow-right-linear {
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M4 12h16m0 0l-6-6m6 6l-6 6'/%3E%3C/svg%3E");
+	}
+
 	.bg-umum {
 		background-color: #ffeec5;
 	}
