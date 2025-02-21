@@ -3,6 +3,7 @@
 	import check from '$lib/icons/check.png';
 	import { fade, fly } from 'svelte/transition';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	const { open, text, to } = $props();
 	let t = $state(open);
 	let timer;
@@ -11,11 +12,20 @@
 		if (timer) {
 			clearTimeout(timer);
 		}
-		timer = setTimeout(() => {
-			t = false;
-			goto(to);
-			dispatch('close');
-		}, 3000);
+
+		if (page.route.id === 'abdi/dashboard/komunitas/acara/buat') {
+			timer = setTimeout(() => {
+				t = false;
+				goto(to);
+				dispatch('close');
+			}, 2000);
+		} else {
+			timer = setTimeout(() => {
+				t = false;
+				goto(to);
+				dispatch('close');
+			}, 3000);
+		}
 	});
 </script>
 

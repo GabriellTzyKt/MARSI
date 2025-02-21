@@ -54,10 +54,10 @@
 				<div class="mb-2 flex items-center lg:mb-0">
 					<div class="mx-2 flex items-center justify-center">
 						<input
-							id="default-radio-1"
+							id="default-radio-1-{id}"
 							type="radio"
 							value=""
-							name="default-radio"
+							name="default-radio-{id}"
 							class="h-3 w-3 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
 						/>
 						<label for="default-radio-1" class="ms-2 text-sm font-medium text-gray-900">Ya</label>
@@ -65,10 +65,10 @@
 					<div class="flex items-center justify-center">
 						<input
 							checked
-							id="default-radio-2"
+							id="default-radio-2-{id}"
 							type="radio"
 							value=""
-							name="default-radio"
+							name="default-radio-{id}"
 							class="h-3 w-3 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
 						/>
 						<label for="default-radio-2" class="ms-2 text-sm font-medium text-black">Tidak</label>
