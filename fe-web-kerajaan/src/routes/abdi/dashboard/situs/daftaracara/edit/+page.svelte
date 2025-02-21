@@ -19,42 +19,7 @@
 </script>
 
 <div class="min-h-screen w-full">
-	<div class="mt-2 flex w-fit gap-2 rounded-full border-2 px-5 py-2">
-		<button
-			onclick={() => setActive('upcoming')}
-			class="relative overflow-hidden rounded-full border-2 px-5 py-1 font-semibold"
-		>
-			<span
-				class="absolute left-0 top-0 h-full bg-blue-600 transition-all duration-300"
-				style:width={activeTab === 'upcoming' ? '100%' : '0%'}
-			></span>
-			<span
-				class="relative z-10 transition-colors duration-300"
-				class:text-white={activeTab === 'upcoming'}
-				class:text-blue-600={activeTab !== 'upcoming'}
-			>
-				Baru
-			</span>
-		</button>
-
-		<!-- Tombol 'Selesai' -->
-		<button
-			onclick={() => setActive('completed')}
-			class="relative overflow-hidden rounded-full border-2 px-5 py-1 font-semibold"
-		>
-			<span
-				class="absolute left-0 top-0 h-full bg-blue-600 transition-all duration-300"
-				style:width={activeTab === 'completed' ? '100%' : '0%'}
-			></span>
-			<span
-				class="relative z-10 transition-colors duration-300"
-				class:text-white={activeTab === 'completed'}
-				class:text-blue-600={activeTab !== 'completed'}
-			>
-				Lama
-			</span>
-		</button>
-	</div>
+	
 	<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 		<div class="col-span-2">
 			<div class="mt-2 w-full">
@@ -168,7 +133,7 @@
                 <p>Deskripsi Acara:</p>
                 <textarea
                     placeholder="Masukkan Deskripsi Acara"
-                    class="h-20 w-full resize-none rounded-md border px-3 py-1 text-lg"
+                    class="h-25 w-full resize-none rounded-md border px-3 py-1 text-lg"
                 ></textarea>
             </div>
 		</div>
@@ -206,7 +171,7 @@
 
 	<div class="mt-8 flex w-full justify-center lg:justify-end">
 		<button class="w-50 text-nowrap rounded-lg bg-green-400 px-2 py-2 text-white" onclick={toggle}>
-			Buat acara
+			Simpan Data
 		</button>
 	</div>
 </div>
@@ -215,7 +180,7 @@
 		<SucessModal
 			open={success}
 			text="Tamu Berhasil Di Undang!"
-			to="/abdi/dashboard/komunitas/acara"
+			to="/abdi/dashboard/situs/daftaracara"
 			on:close={toggle}
 		></SucessModal>
 	</div>
