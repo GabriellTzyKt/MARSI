@@ -1,16 +1,20 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
-	import { dummyAcara, dummyAnggota } from '$lib/dummy';
-
+	import { dummyAnggota, dummyOrganisasi } from '$lib/dummy';
 	import Search from '$lib/table/Search.svelte';
-	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
 </script>
 
 <div class="flex w-full flex-col">
-	<div class="mx-10 flex justify-between">
-		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white">+Tambah Data</button>
-		<div class="flex items-center gap-2">
+	<div class=" flex flex-col xl:flex-row xl:justify-between">
+		<button
+			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
+			onclick={() => {
+				goto('/abdi/dashboard/organisasi/tambah');
+			}}>+Tambah Data</button
+		>
+		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
 			<select
 				name="Organisasi"
@@ -65,27 +69,32 @@
 			</div>
 		</div>
 	</div>
-	<div class="mx-10 flex">
+	<div class="flex w-full">
 		<Table
 			table_header={[
-				['id_acara', 'Id Acara'],
-				['nama_acaara', 'Nama Acara'],
-				['tanggal', 'Tanggal Acara'],
+				['id_organisasi', 'Id Organisasi'],
+				['nama_organisasi', 'Nama Organisasi'],
+				['tanggal_berdiri', 'Tanggal Berdiri'],
 				['lokasi', 'Lokasi'],
 				['penanggungjawab', 'Penanggung Jawab'],
-				['jenis_acara', 'Jenis Acara'],
-				['kapasitas', 'Kapasitas'],
-				['children', 'Status'],
+				['pelindung', 'Pelindung'],
+				['pembina', 'Pembina'],
 				['children', 'Aksi']
 			]}
-			table_data={dummyAcara}
+			table_data={dummyOrganisasi}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
-					<DropDown {index} tipe="anggota" id={`id-${index}`} {data}></DropDown>
-				{/if}
-				{#if header === 'Status'}
-					<Status status={data.status}></Status>
+					<DropDown
+						{index}
+						items={[
+							['Ubah', '/abdi/dashboard/organisasi/edit'],
+							['children', 'non-aktifkan', '/abdi/dashboard/organisasi/daftarorganisasi']
+						]}
+						tipe="anggota"
+						id={`id-${index}`}
+						{data}
+					></DropDown>
 				{/if}
 			{/snippet}
 		</Table>

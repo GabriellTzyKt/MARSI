@@ -11,7 +11,7 @@
 	const dispatcher = createEventDispatcher();
 	let pop = $state(false);
 	// Unique ID for this dropdown
-	const { id, data, index, tipe } = $props();
+	const { id, data, index, tipe, items } = $props();
 	let isOpen = $state(false);
 	let temp = $state('');
 
@@ -50,37 +50,26 @@
 		{console.log(data)}
 		{console.log('Dropdown terbuka untuk: ' + id)}
 		<div class="absolute -bottom-24 right-12 z-50 flex flex-col rounded-xl bg-white">
-			<div class="flex">
-				{#if tipe === 'anggota'}
-					<a
-						href="daftaranggota/ubahanggota/{data.id}"
-						class="w-full rounded-t-lg px-4 py-1 hover:cursor-pointer hover:bg-gray-400">Detail</a
-					>
-				{:else}
-					<a
-						href="acara/tambahacara/detail/{data.id}"
-						class="w-full rounded-t-lg px-4 py-1 hover:cursor-pointer hover:bg-gray-400">Detail</a
-					>
-				{/if}
-			</div>
-			<div class="flex">
-				{#if tipe === 'anggota'}
-					<a
-						href="/abdi/komunitas/daftaranggota{data.id}"
-						class="w-full px-4 py-1 hover:cursor-pointer hover:bg-gray-400">Ubah</a
-					>
-				{:else}
-					<a
-						href="acara/tambahacara/ubahdetail/{data.id}"
-						class="w-full px-4 py-1 hover:cursor-pointer hover:bg-gray-400">Ubah</a
-					>
-				{/if}
-			</div>
-			<div class="flex" onclick={toglemodal} onclose={toglemodal}>
-				<a href="" class="w-full rounded-b-lg px-4 py-1 hover:cursor-pointer hover:bg-gray-400"
-					>Arsip</a
-				>
-			</div>
+			{#each items as i, p}
+				<div class="flex">
+					{#if i[0] === 'children'}
+						<a
+							href={i[2]}
+							class="w-full px-4 py-1 {p === 0 ? 'rounded-t-lg' : ''} {p === items.length - 1
+								? 'rounded-b-lg'
+								: ''} hover:cursor-pointer hover:bg-gray-400"
+							onclick={toglemodal}>{i[1]}</a
+						>
+					{:else}
+						<a
+							href={i[1]}
+							class="w-full px-4 py-1 {p === 0 ? 'rounded-t-lg' : ''} {p === items.length - 1
+								? 'rounded-b-lg'
+								: ''} hover:cursor-pointer hover:bg-gray-400">{i[0]}</a
+						>
+					{/if}
+				</div>
+			{/each}
 		</div>
 	{/if}
 </div>

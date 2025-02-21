@@ -11,8 +11,8 @@
 	console.log(table_data);
 </script>
 
-<div class="mt-4 flex w-full flex-col items-center justify-center rounded-xl">
-	<table class=" w-full table-auto border-separate border-spacing-0 rounded-xl border md:mx-10">
+<div class="mt-4 flex w-full flex-col overflow-x-auto rounded-xl">
+	<table class=" w-full table-auto border-separate border-spacing-0 rounded-xl border">
 		<thead class="marsi rounded-xl">
 			<tr class=" rounded-xl">
 				<th class="rounded-tl-xl px-2 py-3 text-left">No</th>
@@ -69,7 +69,7 @@
 			{/each}
 		</tbody>
 	</table>
-	<div class="mt-4 flex w-full justify-between">
+	<div class="mt-4 flex w-full flex-col md:flex-row md:justify-between">
 		<div>
 			<p class=" text-gray-500">Showing 1 to 10 of 20 entries</p>
 		</div>

@@ -29,7 +29,7 @@
 			<div
 				class="an border-badran-bdr mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer"
 			>
-				<div class="an mb-3 flex items-center justify-center">
+				<div class=" mb-3 flex items-center justify-center">
 					<img src={kom} alt="" />
 				</div>
 				<div class=" bg-badran-bdr flex items-center justify-center rounded-full">

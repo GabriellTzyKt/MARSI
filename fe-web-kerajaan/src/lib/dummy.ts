@@ -567,3 +567,50 @@ export const dummydata = [
 
   },
 ];
+export const dummyOrganisasi = [
+  {
+    "id_organisasi": 1,
+    "nama_organisasi": "Persatuan Pemuda Nusantara",
+    "tanggal_berdiri": "12-05-2000",
+    "lokasi": "Jakarta, Indonesia",
+    "penanggungjawab": "Budi Santoso",
+    "pelindung": "Dr. Hendra Wijaya",
+    "pembina": "Prof. Rina Kusuma"
+  },
+  {
+    "id_organisasi": 2,
+    "nama_organisasi": "Laskar Budaya Indonesia",
+    "tanggal_berdiri": "25-08-1998",
+    "lokasi": "Yogyakarta, Indonesia",
+    "penanggungjawab": "Siti Rahmawati",
+    "pelindung": "Ir. Suparno",
+    "pembina": "Dr. Widya Kartika"
+  },
+  {
+    "id_organisasi": 3,
+    "nama_organisasi": "Forum Inovasi Teknologi",
+    "tanggal_berdiri": "10-11-2010",
+    "lokasi": "Bandung, Indonesia",
+    "penanggungjawab": "Andi Prasetyo",
+    "pelindung": "Prof. Dimas Wibowo",
+    "pembina": "Dr. Sri Handayani"
+  },
+  {
+    "id_organisasi": 4,
+    "nama_organisasi": "Komunitas Hijau Lestari",
+    "tanggal_berdiri": "05-06-2005",
+    "lokasi": "Surabaya, Indonesia",
+    "penanggungjawab": "Lina Marlina",
+    "pelindung": "Dr. Fajar Ramadhan",
+    "pembina": "Prof. Agus Sutanto"
+  },
+  {
+    "id_organisasi": 5,
+    "nama_organisasi": "Gerakan Sosial Muda",
+    "tanggal_berdiri": "20-07-2012",
+    "lokasi": "Medan, Indonesia",
+    "penanggungjawab": "Rizky Fahmi",
+    "pelindung": "Ir. Bambang Setiawan",
+    "pembina": "Dr. Farida Hasan"
+  }
+]
