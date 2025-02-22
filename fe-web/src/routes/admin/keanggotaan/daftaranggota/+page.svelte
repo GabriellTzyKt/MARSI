@@ -10,7 +10,7 @@
 	// console.log(data.tabel)
 </script>
 
-<div class="mx-6 mt-20 flex flex-col md:mx-20 md:mt-0">
+<div class="mx-6 mt-20 flex flex-col md:mx-20 md:mt-0 w-full">
 	<div class="mx-6 flex justify-between md:mx-20 md:mt-0">
 		<div class=" col-start-1 flex flex-row items-center justify-center">
 			<a href="/admin/keanggotaan/daftaranggota/tambahanggota"

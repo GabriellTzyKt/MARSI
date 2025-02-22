@@ -221,6 +221,12 @@
 						anchor="Detail Situs"
 						active={isActive('/abdi/dashboard/situs/detail')}
 					/>
+					<SidebarMenu
+						href="/abdi/dashboard/situs/daftaracara/detail"
+						icon="mdi:book"
+						anchor="Daftar Acara"
+						active={isActive('/abdi/dashboard/situs/daftaracara/detail')}
+					/>
 				</SidebarMenu>
 			</Sidebar>
 		{/if}

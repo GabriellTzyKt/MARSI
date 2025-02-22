@@ -114,17 +114,33 @@
 					anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di
 					Indonesia.
 				</p>
-				<div class="flex justify-center lg:justify-start">
-					<a href="/" class="my-2 flex items-center gap-2 rounded-full px-5 py-3 text-orange-500">
-						Selengkapnya
-						<span class="gg--arrow-right-o"></span>
+				<div class="flex w-full justify-center lg:justify-start">
+					<a
+						href="/"
+						class="group relative my-2 flex items-center gap-2 overflow-hidden rounded-full px-5 py-3 text-orange-500"
+					>
+						<span class="relative z-10 pr-5 transition-colors duration-500 group-hover:text-black">
+							Selengkapnya
+						</span>
+						<span
+							class="absolute right-0 flex h-7 w-7 items-center justify-end rounded-full border-2 border-orange-400 px-1 pt-0.5 transition-all duration-500 ease-in-out group-hover:h-full group-hover:w-full group-hover:bg-orange-400"
+						>
+							<i
+								class="solar--arrow-right-linear right-2 text-2xl text-orange-400 transition-colors duration-500 group-hover:absolute group-hover:text-white"
+							></i>
+						</span>
 					</a>
 				</div>
 			</div>
 		</div>
 
-		<p class="mb-10 mt-20 text-center text-6xl font-semibold">Beberapa Kerajaan Di Indonesia</p>
-		<div class="flex flex-wrap justify-center gap-x-10 gap-y-4">
+		<div class="flexcoba mb-10 mt-20 flex items-center justify-between px-20">
+			<p class="text-nowrap text-3xl font-semibold">Kerajaan di Indonesia</p>
+			<span class="bg-slate-400 rounded-full lg:mt-0 mt-10 border h-12 w-12 items-center justify-center flex">
+				<i class="material-symbols--refresh lg:mt-0"></i>
+			</span>
+		</div>
+		<div class="mx-auto flex flex-wrap justify-center gap-12 gap-y-4">
 			<Flipcard
 				gambar={kerajaan1}
 				kerajaan="Keraton Surakarta Kasunanan"
@@ -135,9 +151,13 @@
 			<Flipcard
 				gambar={kerajaan2}
 				kerajaan="Kesultanan Ngayogyakarta Hadiningrat"
-				judul="Uvuvwevwevwe"
+				judul="Kesultanan Ngayogyakarta Hadiningrat"
 				lokasi="Yogyakarta, Jawa Tengah"
-				isi="ugwebmubwim osas"
+				isi="Kerajaan-kerajaan yang berdiri di Indonesia berjumlah ratusan. Majelis Agung Raja Sultan
+					Indonesia (MARSI) sendiri merupakan sebuah organisasi yang beranggotakan para Raja beserta
+					dengan Kerajaannya. Anggota MARSI tersebar dari sabang hingga merauke. Melalui laman ini,
+					anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di
+					Indonesia."
 			></Flipcard>
 			<Flipcard
 				gambar={kerajaan3}
@@ -163,13 +183,21 @@
 					lengkap mengenai informasi seputar situs-situs bersejarah dari ratusan kerajaan yang
 					tentunya sangat menarik untuk anda lihat!
 				</p>
-				<div class="min-w-screen flex justify-self-center lg:w-full">
+				<div class="flex w-full justify-center lg:justify-end">
 					<a
 						href="/"
-						class="my-2 flex items-center gap-2 rounded-full px-5 py-3 text-orange-500 lg:ml-auto"
+						class="group relative my-2 flex items-center gap-2 overflow-hidden rounded-full px-5 py-3 text-orange-500"
 					>
-						Selengkapnya
-						<span class="gg--arrow-right-o"></span>
+						<span class="relative z-10 pr-5 transition-colors duration-500 group-hover:text-black">
+							Selengkapnya
+						</span>
+						<span
+							class="absolute right-0 flex h-7 w-7 items-center justify-end rounded-full border-2 border-orange-400 px-1 pt-0.5 transition-all duration-500 ease-in-out group-hover:h-full group-hover:w-full group-hover:bg-orange-400"
+						>
+							<i
+								class="solar--arrow-right-linear right-2 text-2xl text-orange-400 transition-colors duration-500 group-hover:absolute group-hover:text-white"
+							></i>
+						</span>
 					</a>
 				</div>
 			</div>
@@ -211,8 +239,7 @@
 				akan sangat menarik untuk anda lihat dan pelajari melalui laman berikut!
 			</p>
 
-
-			<!-- Tombol Animasi Work -->
+			<!-- Tombol Animasi 1 -->
 			<div class="flex w-full justify-center lg:justify-end">
 				<a
 					href="/"
@@ -230,7 +257,6 @@
 					</span>
 				</a>
 			</div>
-
 		</div>
 	</div>
 </section>
@@ -265,7 +291,7 @@
 </div>
 
 <!-- Footer -->
-<section>
+<section class="h-full w-full overflow-hidden">
 	<Footer></Footer>
 </section>
 
@@ -278,13 +304,10 @@
 		background-size: 100% 100%;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M13 18.75a.74.74 0 0 1-.53-.22a.75.75 0 0 1 0-1.06L17.94 12l-5.47-5.47a.75.75 0 0 1 1.06-1.06l6 6a.75.75 0 0 1 0 1.06l-6 6a.74.74 0 0 1-.53.22'/%3E%3Cpath fill='%23000' d='M19 12.75H5a.75.75 0 0 1 0-1.5h14a.75.75 0 0 1 0 1.5'/%3E%3C/svg%3E");
 	}
-	.gg--arrow-right-o {
-		display: inline-block;
-		width: 40px;
-		height: 40px;
-		background-repeat: no-repeat;
-		background-size: 100% 100%;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='%23ff9400'%3E%3Cpath d='m12.052 14.829l1.414 1.414L17.71 12l-4.243-4.243l-1.414 1.415L13.88 11H6.343v2h7.537z'/%3E%3Cpath fill-rule='evenodd' d='M19.778 19.778c4.296-4.296 4.296-11.26 0-15.556s-11.26-4.296-15.556 0s-4.296 11.26 0 15.556s11.26 4.296 15.556 0m-1.414-1.414A9 9 0 1 0 5.636 5.636a9 9 0 0 0 12.728 12.728' clip-rule='evenodd'/%3E%3C/g%3E%3C/svg%3E");
+	@media (max-width: 768px) {
+		.flexcoba {
+			flex-direction: column;
+		}
 	}
 
 	.solar--arrow-right-linear {
@@ -329,5 +352,19 @@
 	section {
 		margin-top: 0;
 		padding-top: 0;
+	}
+
+	.material-symbols--refresh {
+		display: inline-block;
+		width: 48px;
+		height: 48px;
+		--svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M12 20q-3.35 0-5.675-2.325T4 12t2.325-5.675T12 4q1.725 0 3.3.712T18 6.75V4h2v7h-7V9h4.2q-.8-1.4-2.187-2.2T12 6Q9.5 6 7.75 7.75T6 12t1.75 4.25T12 18q1.925 0 3.475-1.1T17.65 14h2.1q-.7 2.65-2.85 4.325T12 20'/%3E%3C/svg%3E");
+		background-color: currentColor;
+		-webkit-mask-image: var(--svg);
+		mask-image: var(--svg);
+		-webkit-mask-repeat: no-repeat;
+		mask-repeat: no-repeat;
+		-webkit-mask-size: 100% 100%;
+		mask-size: 100% 100%;
 	}
 </style>

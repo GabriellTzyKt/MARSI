@@ -19,10 +19,10 @@
 </script>
 
 <div class="min-h-screen w-full">
-	<div class="mt-2 flex w-fit gap-2 rounded-full border-2 px-5 py-2">
+	<div class="mt-2 flex w-80 gap-2 rounded-full border-2 px-5 py-2">
 		<button
 			onclick={() => setActive('upcoming')}
-			class="relative overflow-hidden rounded-full border-2 px-5 py-1 font-semibold"
+			class="relative overflow-hidden w-full rounded-full border-2 px-5 py-1 font-semibold"
 		>
 			<span
 				class="absolute left-0 top-0 h-full bg-blue-600 transition-all duration-300"
@@ -37,10 +37,9 @@
 			</span>
 		</button>
 
-		<!-- Tombol 'Selesai' -->
 		<button
 			onclick={() => setActive('completed')}
-			class="relative overflow-hidden rounded-full border-2 px-5 py-1 font-semibold"
+			class="relative w-full overflow-hidden rounded-full border-2 px-5 py-1 font-semibold"
 		>
 			<span
 				class="absolute left-0 top-0 h-full bg-blue-600 transition-all duration-300"
@@ -185,17 +184,17 @@
 
 	<!-- bawah -->
 
-	<div class="mt-10 grid grid-cols-8 gap-2">
+	<div class="mt-10 grid grid-cols-9 gap-2">
 		{#each Array(total) as _, i}
 			<div class="col-span-1 w-full">{i + 1}</div>
-			<div class="col-span-1 w-full rounded-lg border px-2 py-1">
+			<div class="col-span-2 w-full rounded-lg border px-2 py-1">
 				<select name="panggilan" id="panggilan" class="mt-1 w-full">
 					<option value="volvo">Tn</option>
 					<option value="saab">Ny</option>
 				</select>
 			</div>
-			<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
-			<div class="col-span-2 w-full rounded-lg border px-2 py-1">Tn</div>
+			<input class="col-span-3 w-full rounded-lg border px-2 py-1" type="text">
+			<input class="col-span-2 w-full rounded-lg border px-2 py-1">
 			<div class="col-span-1">
 				<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
 					<i class="gg--trash z-10 items-center text-2xl"></i>
