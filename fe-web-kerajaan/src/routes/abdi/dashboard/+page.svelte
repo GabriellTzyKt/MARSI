@@ -29,7 +29,7 @@
 			<div
 				class="an border-badran-bdr mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer"
 			>
-				<div class="an mb-3 flex items-center justify-center">
+				<div class=" mb-3 flex items-center justify-center">
 					<img src={kom} alt="" />
 				</div>
 				<div class=" bg-badran-bdr flex items-center justify-center rounded-full">
@@ -70,6 +70,6 @@
 	}
 	.an:hover {
 		transform: translateY(-10px);
-		box-shadow: brown;
+		box-shadow: 0 0 30px gray;
 	}
 </style>

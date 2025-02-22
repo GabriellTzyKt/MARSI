@@ -6,9 +6,9 @@
 </script>
 
 <div class="flex w-full flex-col">
-	<div class="mx-10 flex justify-between">
+	<div class=" flex flex-col xl:flex-row xl:justify-between">
 		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white">+Tambah Data</button>
-		<div class="flex items-center gap-2">
+		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
 			<select
 				name="Organisasi"
@@ -63,7 +63,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="mx-10 flex">
+	<div class="flex w-full">
 		<Table
 			table_header={[
 				['id_anggota', 'Id Anggota'],
@@ -78,7 +78,16 @@
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
-					<DropDown {index} tipe="anggota" id={`id-${index}`} {data}></DropDown>
+					<DropDown
+						items={[
+							['Edit', '/abdi/dashboard/organisasi/daftaranggota/edit'],
+							['children', 'Non Aktifkan', '']
+						]}
+						{index}
+						tipe="anggota"
+						id={`id-${index}`}
+						{data}
+					></DropDown>
 				{/if}
 			{/snippet}
 		</Table>

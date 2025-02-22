@@ -56,6 +56,8 @@
 			return 'Detail Situs';
 		} else if (page.route.id === '/abdi/dashboard/situs/detail/ubah') {
 			return 'Ubah Situs';
+		} else if (page.route.id === '/abdi/dashboard/organisasi/daftarorganisasi') {
+			return 'Daftar Organisasi';
 		}
 	});
 	let { children } = $props();
@@ -147,10 +149,10 @@
 		{#if page.route.id?.startsWith('/abdi/dashboard/komunitas')}
 			<Sidebar>
 				<SidebarMenu
-					href="/abdi/dashboard/komunitas/beranda"
+					href="/abdi/dashboard"
 					icon="mdi:home"
 					anchor="Dashboard"
-					active={isActive('/abdi/dashboard/komunitas/beranda')}
+					active={isActive('/abdi/dashboard')}
 				/>
 				<SidebarMenu href="#" icon="mdi:people" anchor="Komunitas" hasChildren={true}>
 					<SidebarMenu
@@ -178,17 +180,17 @@
 		{#if page.route.id?.startsWith('/abdi/dashboard/organisasi')}
 			<Sidebar>
 				<SidebarMenu
-					href="/abdi/dashboard/organisasi/beranda"
+					href="/abdi/dashboard"
 					icon="mdi:home"
 					anchor="Dashboard"
-					active={isActive('/abdi/dashboard/organisasi/beranda')}
+					active={isActive('/abdi/dashboard')}
 				/>
-				<SidebarMenu href="#" icon="mdi:people" anchor="Komunitas" hasChildren={true}>
+				<SidebarMenu href="#" icon="mdi:people" anchor="Organisasi" hasChildren={true}>
 					<SidebarMenu
-						href="/abdi/dashboard/organisasi/detail"
+						href="/abdi/dashboard/organisasi/daftarorganisasi"
 						icon="mdi:book"
-						anchor="Detail komunitas"
-						active={isActive('/abdi/dashboard/organisasi/acara/detail')}
+						anchor="Daftar Organisasi"
+						active={isActive('/abdi/dashboard/organisasi/daftarorganisasi')}
 					/>
 					<SidebarMenu
 						href="/abdi/dashboard/organisasi/daftaranggota"
@@ -196,12 +198,12 @@
 						anchor="Daftar Anggota"
 						active={isActive('/abdi/dashboard/organisasi/daftaranggota')}
 					/>
-					<SidebarMenu
+					<!-- <SidebarMenu
 						href="/abdi/dashboard/organisasi/acara/detail"
 						icon="mdi:crown"
 						anchor="Acara"
 						active={isActive('/abdi/dashboard/organisasi/acara/detail')}
-					/>
+					/> -->
 				</SidebarMenu>
 			</Sidebar>
 		{/if}

@@ -98,7 +98,7 @@
 			<SucessModal
 				open={success}
 				text="Anggota {data.nama} Berhasil Diarsipkan!"
-				to="/abdi/komunitas/daftaranggota"
+				to="/abdi/dashboard/komunitas/daftaranggota"
 				on:close={toggle}
 			></SucessModal>
 		</div>
