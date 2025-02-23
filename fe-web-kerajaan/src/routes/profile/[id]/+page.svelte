@@ -265,11 +265,11 @@
 				</div>
 
 				<div class=" flex items-center justify-center gap-1">
-					<input type="radio" name="" id="" value="yes" />
+					<input type="radio" name="ayah_abdi" id="" value="yes" />
 					<p>Yes</p>
 				</div>
 				<div class="flex items-center justify-center gap-1">
-					<input type="radio" name="" id="" value="no" />
+					<input type="radio" name="ayah_abdi" id="" value="no" />
 					<p>No</p>
 				</div>
 			</div>
@@ -290,11 +290,11 @@
 				</div>
 
 				<div class=" flex items-center justify-center gap-1">
-					<input type="radio" name="" id="" value="yes" />
+					<input type="radio" name="ibu_abdi" id="" value="yes" />
 					<p>Yes</p>
 				</div>
 				<div class="flex items-center justify-center gap-1">
-					<input type="radio" name="" id="" value="no" />
+					<input type="radio" name="ibu_abdi" id="" value="no" />
 					<p>No</p>
 				</div>
 			</div>

@@ -7,7 +7,7 @@
 	import { dummydata } from '$lib/dummy';
 	import SucessModal from './SucessModal.svelte';
 
-	let { pop, data, tipe } = $props();
+	let { pop, data, text, link, successText } = $props();
 	let success = $state(false);
 	const toggle = () => {
 		if (!success) {
@@ -69,11 +69,7 @@
 				<img src={dangerbtn} alt="danger-button" class="h-auto w-16" />
 			</div>
 			<div class=" mt-8 px-10">
-				{#if tipe === 'anggota'}
-					<p class="text-xl font-[475]">Apakah anda ingin mengarsip anggota {data.nama}?</p>
-				{:else}
-					<p class="text-xl font-[475]">Apakah anda ingin mengarsip Acara {data.acara}?</p>
-				{/if}
+				<p class="text-xl font-[475]">{text}</p>
 			</div>
 			<div class="mb-8 mt-16 grid grid-cols-2 items-center justify-center gap-10">
 				<div class="flex">
@@ -93,25 +89,9 @@
 	</div>
 {/if}
 {#if success}
-	{#if tipe === 'anggota'}
-		<div in:fade={{ duration: 300 }} out:fade={{ duration: 300 }}>
-			<SucessModal
-				open={success}
-				text="Anggota {data.nama} Berhasil Diarsipkan!"
-				to="/admin/keanggotaan/daftaranggota"
-				on:close={toggle}
-			></SucessModal>
-		</div>
-	{:else}
-		<div in:fade={{ duration: 300 }} out:fade={{ duration: 300 }}>
-			<SucessModal
-				open={success}
-				text="Acara {data.nama} Berhasil Diarsipkan!"
-				to="/admin/acara"
-				on:close={toggle}
-			></SucessModal>
-		</div>
-	{/if}
+	<div in:fade={{ duration: 300 }} out:fade={{ duration: 300 }}>
+		<SucessModal open={success} text={successText} to={link} on:close={toggle}></SucessModal>
+	</div>
 {/if}
 
 <style>

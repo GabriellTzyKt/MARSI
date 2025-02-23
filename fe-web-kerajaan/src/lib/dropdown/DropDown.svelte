@@ -11,7 +11,7 @@
 	const dispatcher = createEventDispatcher();
 	let pop = $state(false);
 	// Unique ID for this dropdown
-	const { id, data, index, tipe, items } = $props();
+	const { id, data, items, text, link, successText } = $props();
 	let isOpen = $state(false);
 	let temp = $state('');
 
@@ -27,6 +27,8 @@
 	const toglemodal = () => {
 		if (!pop) {
 			pop = true;
+			openDropdown === null;
+			toggleDropdown();
 		} else {
 			pop = false;
 		}
@@ -45,7 +47,8 @@
 	</div>
 
 	<!-- {console.log(openDropdown === id)} -->
-
+	<!-- urutan = 1. judul/nama
+	 			2. link kalau ada -->
 	{#if $openDropdown === id}
 		{console.log(data)}
 		{console.log('Dropdown terbuka untuk: ' + id)}
@@ -73,11 +76,8 @@
 		</div>
 	{/if}
 </div>
-{#if tipe === 'anggota'}
-	<Modal {pop} {data} tipe="anggota"></Modal>
-{:else}
-	<Modal {pop} {data} tipe="acara"></Modal>
-{/if}
+<Modal {pop} {successText} {data} {text} {link}></Modal>
+
 <!-- onclick={() => {
     if (open) {
         dispatcher('close');

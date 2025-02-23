@@ -10,9 +10,9 @@
 	// console.log(data.tabel)
 </script>
 
-<div class="mx-6 mt-20 flex flex-col md:mx-20 md:mt-0 w-full">
-	<div class="mx-6 flex justify-between md:mx-20 md:mt-0">
-		<div class=" col-start-1 flex flex-row items-center justify-center">
+<div class="mt-20 flex w-full flex-col xl:mt-0">
+	<div class=" flex flex-col justify-center xl:mt-0 xl:flex-row xl:justify-between">
+		<div class=" col-start-1 mb-4 flex flex-row items-center justify-center xl:mb-0">
 			<a href="/admin/keanggotaan/daftaranggota/tambahanggota"
 				><button class=" custom-button bg-customKrem px-6 py-2"> +Tambah Data </button></a
 			>
@@ -46,7 +46,20 @@
 	>
 		{#snippet children({ header, data, index })}
 			{#if header === 'Aksi'}
-				<DropDown {index} tipe="anggota" id={`id-${index}`} {data}></DropDown>
+				<DropDown
+					text="apakah yakin ingin mengarsip anggota {data.nama} ini?"
+					successText={`Anggota ${data.nama} berhasil diarsipkan!`}
+					link="/admin/keanggotaan/daftaranggota"
+					{index}
+					items={[
+						['Detail', `/admin/keanggotaan/daftaranggota/tambahanggota/${data.id}`],
+						['Ubah', `/admin/keanggotaan/daftaranggota/ubahanggota/${data.id}`],
+						['children', 'Arsipkan']
+					]}
+					tipe="anggota"
+					id={`id-anggota-${index}`}
+					{data}
+				></DropDown>
 			{/if}
 		{/snippet}
 	</Table>
