@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import gambar from '../../asset/testflipanime.jpg';
 </script>
 
@@ -28,4 +28,4 @@
 
 
 <style>
-</style>
+</style> -->

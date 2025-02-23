@@ -10,39 +10,96 @@
 	let nama = anggota.nama;
 	let lagu = anggota.lagu;
 	let aset = anggota.aset;
+	let vidio = anggota.vidio || '';
 	let isi = anggota.isi;
 	let kepemilikan = anggota.kepemilikan;
 	let gambar1 = anggota.gambar1;
 	let gambar2 = anggota.gambar2;
 	let gambar3 = anggota.gambar3;
 	let gambar4 = anggota.gambar4;
+	let durasiLagu = $state(0);
+	let waktuSekarang = $state(0);
 
-	let playingState = 'paused'
-	let song = new Audio(lagu)
+	let playingState = 'paused';
+	let duration: string = $state('0:00');
+	let videoState = $state('paused');
+	let song = new Audio(lagu);
+	let videoRef: HTMLVideoElement | null = $state(null);
+
+	function formatTime(time: number) {
+		const minutes = Math.floor(time / 60);
+		const seconds = Math.floor(time % 60)
+			.toString()
+			.padStart(2, '0');
+		return `${minutes}:${seconds}`;
+	}
+
+	function updateRemainingTime() {
+		if (videoRef) {
+			const timeLeft = videoRef.duration - videoRef.currentTime;
+			duration = formatTime(timeLeft);
+		}
+	}
+
+	function setInitialTime() {
+		if (videoRef) {
+			duration = formatTime(videoRef.duration);
+		}
+	}
+
+	function playVideo() {
+		if (videoRef) {
+			videoRef.play();
+			videoState = 'playing';
+		}
+	}
+
+	function pauseVideo() {
+		if (videoState === 'playing') {
+			if (videoRef) {
+				videoRef.pause();
+				videoState = 'paused';
+			}
+		}
+	}
+
+	function toggleVideo() {
+		videoState === 'paused' ? playVideo() : pauseVideo();
+	}
 
 	function togglePlaying() {
-		playingState === 'paused'? play() : pause()
+		playingState === 'paused' ? play() : pause();
 	}
-	
+
 	function loadSong() {
-		song.volume = 0.2
-		song.play()		
+		song.volume = 0.2;
+		song.play();
 	}
 
 	function play() {
 		if (playingState === 'playing') {
-			pause()
+			pause();
 		}
-		
-		playingState = 'playing'
-		loadSong()
+
+		playingState = 'playing';
+		loadSong();
 	}
 
 	function pause() {
-		playingState = 'paused'
-		song.pause()
-	}	
+		playingState = 'paused';
+		song.pause();
+	}
 
+	function updateIndikator() {
+		waktuSekarang = song.currentTime;
+	}
+
+	function ambilDurasi() {
+		durasiLagu = song.duration;
+	}
+
+	song.onloadedmetadata = ambilDurasi;
+	song.ontimeupdate = updateIndikator;
 </script>
 
 <Navbar></Navbar>
@@ -74,8 +131,36 @@
 		<div class="form-container absolute mx-auto px-4 lg:mb-20">
 			<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 				<div>
-					<img src={gambar1} class="h-auto w-full rounded-lg object-cover" alt="" />
+					{#if lagu !== ''}
+						<img src={gambar1} class="h-auto w-full rounded-lg object-cover" alt="" />
+
+						<div class="mt-4 flex justify-center gap-1 lg:gap-4">
+							<span class="material-symbols--arrow-circle-left-rounded self-center"></span>
+							<img src={gambar2} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
+							<img src={gambar3} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
+							<img src={gambar4} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
+							<span class="material-symbols--arrow-circle-right self-center"></span>
+						</div>
+					{/if}
+
 					{#if lagu == ''}
+						<div class="relative">
+							<!-- Video -->
+							<video
+								bind:this={videoRef}
+								src={vidio}
+								class="h-auto w-full rounded-lg object-cover"
+								onloadedmetadata={setInitialTime}
+								ontimeupdate={updateRemainingTime}
+							></video>
+
+							<!-- Durasi di atas video -->
+							<div
+								class="absolute bottom-2 right-2 rounded bg-black bg-opacity-60 px-2 py-1 text-sm text-white"
+							>
+								{duration}
+							</div>
+						</div>
 						<div class="mt-4 flex justify-center gap-1 lg:gap-4">
 							<span class="material-symbols--arrow-circle-left-rounded self-center"></span>
 							<img src={gambar2} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
@@ -86,14 +171,66 @@
 					{/if}
 				</div>
 				<div>
-					<p class="flex items-center self-center text-start text-xl font-semibold">
+					<p class="relative flex items-center space-x-2 text-xl font-semibold">
 						{nama}
-						{#if lagu !== ''}
-							<button class="gg--play-button-o ml-3" onclick={togglePlaying}></button>
+
+						{#if vidio !== ''}
+							<button onclick={toggleVideo} class="group ml-5 flex items-center justify-center">
+								<span
+									class="bg-customKrem relative flex h-10 w-10 items-center justify-center rounded-full border-2 p-2 transition-all duration-500 ease-in-out group-hover:w-[150px]"
+								>
+									{#if videoState == 'paused'}
+										<p
+											class="text-xs opacity-0 transition-opacity delay-200 duration-300 ease-in-out group-hover:opacity-100"
+										>
+											Putar Video
+										</p>
+									{/if}
+
+									{#if videoState == 'playing'}
+										<p
+											class="text-xs opacity-0 transition-opacity delay-200 duration-300 ease-in-out group-hover:opacity-100"
+										>
+											Pause Video
+										</p>
+									{/if}
+
+									<i class="iconoir--play absolute left-2 text-2xl text-white"></i>
+								</span>
+							</button>
 						{/if}
 
-						<!-- {lagu ? <span class="gg--play-button-o ml-3"></span> : ""} -->
+						{#if lagu !== ''}
+							<button onclick={togglePlaying} class="group ml-5 flex items-center justify-center">
+								<span
+									class="bg-customKrem relative flex h-10 w-10 items-center justify-center rounded-full border-2 p-2 transition-all duration-500 ease-in-out group-hover:w-[200px]"
+								>
+									<span class="absolute left-7 hidden text-xs text-white group-hover:block">
+										{Math.floor(waktuSekarang)}s
+									</span>
+
+									<!-- svelte-ignore node_invalid_placement_ssr -->
+									<div
+										class="absolute left-[45px] right-[45px] hidden h-1 rounded-full bg-slate-500 group-hover:block"
+									>
+										<div
+											class="z-10 h-1 rounded-full bg-green-400 transition-all duration-200"
+											style="width: {durasiLagu > 0
+												? (waktuSekarang / durasiLagu) * 100 + '%'
+												: '0%'}"
+										></div>
+									</div>
+
+									<span class="absolute right-4 hidden text-xs text-white group-hover:block">
+										{Math.floor(durasiLagu)}s
+									</span>
+
+									<i class="iconoir--play absolute left-2 text-2xl text-white"></i>
+								</span>
+							</button>
+						{/if}
 					</p>
+
 					<div class="mt-5 flex items-center">
 						<div
 							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
@@ -119,9 +256,9 @@
 	</div>
 </section>
 
-<div class="relative">
+<section class="h-full w-full overflow-hidden">
 	<Footer></Footer>
-</div>
+</section>
 
 <style>
 	@media (max-width: 768px) {
@@ -130,13 +267,14 @@
 			margin-bottom: 10px;
 		}
 	}
-	.gg--play-button-o {
+
+	.iconoir--play {
 		display: inline-block;
-		width: 32px;
-		height: 32px;
+		width: 18px;
+		height: 18px;
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='%23F9D48B'%3E%3Cpath fill-rule='evenodd' d='M12 21a9 9 0 1 0 0-18a9 9 0 0 0 0 18m0 2c6.075 0 11-4.925 11-11S18.075 1 12 1S1 5.925 1 12s4.925 11 11 11' clip-rule='evenodd'/%3E%3Cpath d='m16 12l-6 4.33V7.67z'/%3E%3C/g%3E%3C/svg%3E");
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23f6f6f6' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6.906 4.537A.6.6 0 0 0 6 5.053v13.894a.6.6 0 0 0 .906.516l11.723-6.947a.6.6 0 0 0 0-1.032z'/%3E%3C/svg%3E");
 	}
 
 	.bxs--castle {
