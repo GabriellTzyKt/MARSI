@@ -11,8 +11,8 @@
 	console.log(table_data);
 </script>
 
-<div class="mt-4 flex items-center justify-center rounded-xl">
-	<table class="mx-6 w-full table-auto border-separate border-spacing-0 rounded-xl border md:mx-20">
+<div class="mt-4 flex w-full flex-col overflow-x-auto rounded-xl">
+	<table class=" w-full table-auto border-separate border-spacing-0 rounded-xl border">
 		<thead class="marsi rounded-xl">
 			<tr class=" rounded-xl">
 				<th class="rounded-tl-xl px-2 py-3 text-left">No</th>
@@ -69,10 +69,44 @@
 			{/each}
 		</tbody>
 	</table>
+	<div class="mt-4 flex w-full flex-col md:flex-row md:justify-between">
+		<div>
+			<p class=" text-gray-500">Showing 1 to 10 of 20 entries</p>
+		</div>
+		<div class="flex flex-row">
+			<div>
+				<button class=" m border-badran-bt hover:bg-badran-bt border p-2">Previous</button>
+			</div>
+			<div>
+				<button class="border-badran-bt hover:bg-marsi m border p-2">1</button>
+			</div>
+			<div>
+				<button class="border-badran-bt hover:bg-badran-bt m border p-2">2</button>
+			</div>
+			<div>
+				<button class="border-badran-bt hover:bg-badran-bt m border p-2">3</button>
+			</div>
+			<div>
+				<button class="border-badran-bt hover:bg-badran-bt m border p-2">4</button>
+			</div>
+			<div>
+				<button class="border-badran-bt hover:bg-badran-bt m border p-2">...</button>
+			</div>
+			<div>
+				<button class="border-badran-bt hover:bg-badran-bt m border p-2">10</button>
+			</div>
+			<div>
+				<button class="border-badran-bt hover:bg-badran-bt m border p-2">Next</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <style>
 	.marsi {
+		background-color: #f9d48b;
+	}
+	.m:hover {
 		background-color: #f9d48b;
 	}
 </style>
