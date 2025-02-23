@@ -86,12 +86,13 @@
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
 					<DropDown
-						{index}
+						text={`apakah anda yakin ingin mengarsip anggota ${data.nama_organisasi}?`}
+						link="/abdi/dashboard/organisasi/daftarorganisasi"
+						successText={`berhasil mengarship organisai ${data.nama_organisasi}`}
 						items={[
 							['Ubah', '/abdi/dashboard/organisasi/edit'],
-							['children', 'non-aktifkan', '/abdi/dashboard/organisasi/daftarorganisasi']
+							['children', 'non-aktifkan']
 						]}
-						tipe="anggota"
 						id={`id-${index}`}
 						{data}
 					></DropDown>
