@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <script lang="ts">
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAcara, dummyAnggota } from '$lib/dummy';
@@ -97,6 +96,3 @@
 		</Table>
 	</div>
 </div>
-=======
-<p>Ba ini daftar acara</p>
->>>>>>> adam
