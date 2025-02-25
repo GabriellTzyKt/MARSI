@@ -1,8 +1,7 @@
 <script lang="ts">
 	import DropDown from '$lib/dropdown/DropDown.svelte';
-	import { dummyAcara, dummyAnggota } from '$lib/dummy';
+	import { dummySekreAnggotaOrg } from '$lib/dummy';
 	import Search from '$lib/table/Search.svelte';
-	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
 </script>
 
@@ -67,30 +66,37 @@
 	<div class="flex w-full">
 		<Table
 			table_header={[
-				['id_acara', 'Id Acara'],
-				['nama_acara', 'Nama Acara'],
-				['tanggal', 'Tanggal'],
-				['lokasi', 'Lokasi'],
-				['penanggungjawab', 'Penanggung Jawab'],
-				['jenis_acara', 'Jenis Acara'],
-				['kapasitas', 'Kapasitas'],
-				['children', 'Status'],
+				['id_anggota', 'Id Anggota'],
+				['asma_timur', 'Asma Timur'],
+				['asma_dalem', 'Asma Dalem'],
+				['tempat_lahir', 'tempat_lahir'],
+				['tanggal_lahir', 'tanggal_lahir'],
+				['jabatan_organisasi', 'Jabatan Organisasi'],
+				['jaatan_komunitas', 'Jabatan Komunitas'],
+				['gelar', 'Gelar'],
+				['no_telepon', 'Nomer Telepon'],
 				['children', 'Aksi']
 			]}
-			table_data={dummyAcara}
+			table_data={dummySekreAnggotaOrg}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
 					<DropDown
-						text={`Apakah yakin ingin mengarsipkan ${data.nama_acara}?`}
-						successText={`Berhasil mengarsipkan ${data.nama_acara}!`}
-						link="/abdi/dashboard/organisasi/acara"
-						items={[['Detail', `/abdi/dashboard/situs/detail`]]}
+						text={`Apakah yakin ingin mengarsipkan abdi?`}
+						successText={`Berhasil mengarsipkan abdi!`}
+						link="/abdi/dashboard/organisasi/daftaranggota"
+						items={[
+							['Ubah', '/abdi/sekretariat/anggota/daftaranggota/ubah'],
+							['History Gelar', '/abdi/sekretariat/anggota/daftaranggota/historygelar'],
+							[
+								'History Bintang Jasa',
+								'/abdi/sekretariat/anggota/daftaranggota/historybintangjasa'
+							],
+							['children', 'Non Aktifkan', '']
+						]}
 						id={`id-${index}`}
 						{data}
 					></DropDown>
-				{:else if header === 'Status'}
-					<Status status={data.status}></Status>
 				{/if}
 			{/snippet}
 		</Table>

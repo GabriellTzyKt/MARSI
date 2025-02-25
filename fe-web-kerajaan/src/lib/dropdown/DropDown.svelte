@@ -52,7 +52,7 @@
 	{#if $openDropdown === id}
 		{console.log(data)}
 		{console.log('Dropdown terbuka untuk: ' + id)}
-		<div class="absolute -bottom-24 right-12 z-50 flex flex-col rounded-xl bg-white">
+		<div class="absolute -bottom-10 right-16 z-50 flex flex-col rounded-xl bg-white">
 			{#each items as i, p}
 				<div class="flex">
 					{#if i[0] === 'children'}

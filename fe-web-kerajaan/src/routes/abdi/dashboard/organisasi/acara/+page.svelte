@@ -85,7 +85,12 @@
 						text={`Apakah yakin ingin mengarsipkan ${data.nama_acara}?`}
 						successText={`Berhasil mengarsipkan ${data.nama_acara}!`}
 						link="/abdi/dashboard/organisasi/acara"
-						items={[['Detail', `/abdi/dashboard/situs/detail`]]}
+						items={[
+							['Detail', `/abdi/dashboard/organisasi/acara/ubah/${index}`],
+							['Ubah', `/abdi/dashboard/organisasi/acara/edit/${index}`],
+							['Laporan', `/abdi/dashboard/organisasi/acara/laporan/${index}`],
+							['children', 'Arsip', '']
+						]}
 						id={`id-${index}`}
 						{data}
 					></DropDown>

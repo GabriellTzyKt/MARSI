@@ -1,6 +1,6 @@
 <script lang="ts">
 	import DropDown from '$lib/dropdown/DropDown.svelte';
-	import { dummyAcara, dummyAnggota } from '$lib/dummy';
+	import { dummyAcara, dummyAnggota, dummyBukuTamu } from '$lib/dummy';
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
@@ -8,7 +8,7 @@
 
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
-		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white">+Tambah Data</button>
+		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white">+Tambah Kunjungan</button>
 		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
 			<select
@@ -67,17 +67,15 @@
 	<div class="flex w-full">
 		<Table
 			table_header={[
-				['id_acara', 'Id Acara'],
-				['nama_acara', 'Nama Acara'],
+				['id_kunjungan', 'Id Kunjungan'],
+				['nama_pengunjung', 'Nama Pengunjung'],
 				['tanggal', 'Tanggal'],
-				['lokasi', 'Lokasi'],
-				['penanggungjawab', 'Penanggung Jawab'],
-				['jenis_acara', 'Jenis Acara'],
-				['kapasitas', 'Kapasitas'],
+				['no_telepon', 'Nomer Telepon'],
+				['keterangan', 'Keterangan'],
 				['children', 'Status'],
 				['children', 'Aksi']
 			]}
-			table_data={dummyAcara}
+			table_data={dummyBukuTamu}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
