@@ -255,6 +255,12 @@
 						anchor="Buku Tamu"
 						active={isActive('/abdi/dashboard/situs/bukutamu')}
 					/>
+					<SidebarMenu
+						href="/abdi/dashboard/situs/daftaracara/detail"
+						icon="mdi:book"
+						anchor="Daftar Acara"
+						active={isActive('/abdi/dashboard/situs/daftaracara/detail')}
+					/>
 				</SidebarMenu>
 			</Sidebar>
 		{/if}

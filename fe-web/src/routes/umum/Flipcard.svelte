@@ -1,9 +1,39 @@
 <script lang="ts">
 	let { gambar, kerajaan, judul, lokasi, isi } = $props();
+
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		document.querySelectorAll('.flip-button').forEach((button) => {
+			const lastSpan = button.querySelector('span:last-child') as HTMLElement | null;
+			const firstSpan = button.querySelector('span:first-child') as HTMLElement | null;
+			const icon = button.querySelector('i') as HTMLElement | null;
+
+			if (lastSpan && firstSpan && icon) {
+				lastSpan.addEventListener('mouseenter', () => {
+					firstSpan.style.color = 'white';
+				});
+
+				lastSpan.addEventListener('mouseleave', () => {
+					firstSpan.style.color = '';
+				});
+
+				icon.addEventListener('mouseenter', () => {
+					icon.style.backgroundImage = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000000' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M4 12h16m0 0l-6-6m6 6l-6 6'/%3E%3C/svg%3E")`;
+				});
+
+				icon.addEventListener('mouseleave', () => {
+					icon.style.backgroundImage = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23ff7700' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M4 12h16m0 0l-6-6m6 6l-6 6'/%3E%3C/svg%3E")`;
+				});
+			}
+		});
+	});
 </script>
 
-<div class="perspective group h-[420px] w-[300px] cursor-pointer rounded-full bg-transparent">
-	<div class="preserve-3d group-hover:my-rotate-y-180 relative h-full w-full duration-1000">
+<div class="perspective group h-[520px] w-[360px] cursor-pointer rounded-full bg-transparent">
+	<div
+		class="preserve-3d group-hover:my-rotate-y-180 relative h-full w-full rounded-full duration-1000"
+	>
 		<div class="backface-hidden absolute h-full w-full">
 			<div
 				class="text-md absolute bottom-0 flex h-fit w-full flex-col rounded-full p-2 font-semibold text-white"
@@ -22,24 +52,45 @@
 		</div>
 
 		<div
-			class="my-rotate-y-180 backface-hidden absolute flex h-full w-full flex-col items-center justify-center bg-gray-100 px-2 text-center text-red-600"
+			class="my-rotate-y-180 backface-hidden absolute flex h-full w-full flex-col rounded-lg bg-gray-100 p-8 text-red-600"
 		>
-			<h1 class="text-2xl font-semibold">{judul}</h1>
-			<p class="my-2 text-lg">10.0 Rating</p>
-			<p class="line-clamp-4 w-full max-w-[240px] overflow-hidden text-ellipsis">
-				{isi}
-			</p>
-			<button
-				class="absolute -bottom-20 mt-20 scale-0 rounded-full bg-teal-500
-            px-6 py-2 font-semibold text-white delay-500 duration-1000 group-hover:bottom-10 group-hover:scale-125"
-			>
-				Detail?
-			</button>
+			<div class="flex flex-col">
+				<h1 class="text-start text-xl font-semibold">{judul}</h1>
+				<p class="line-clamp-7 text-md w-full max-w-[340px] overflow-hidden text-ellipsis">
+					{isi}
+				</p>
+				<div class="flex w-full justify-center lg:justify-end">
+					<a
+						href="/"
+						class="flip-button relative my-2 flex items-center gap-2 overflow-hidden rounded-full px-5 py-3 text-orange-500 transition-all duration-500"
+					>
+						<span class="relative z-10 pr-5 transition-colors duration-500"> Selengkapnya </span>
+						<span
+							class="absolute right-0 flex h-7 w-7 items-center justify-end rounded-full border-2 border-orange-400 px-1 pt-0.5 transition-all duration-500 ease-in-out hover:h-full hover:w-full hover:bg-orange-400"
+						>
+							<i
+								class="solar--arrow-right-linear right-1 text-2xl text-orange-400 transition-colors duration-500 hover:text-white"
+							></i>
+						</span>
+					</a>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
 
 <style>
+	/* Default icon */
+	.solar--arrow-right-linear {
+		display: inline-block;
+		width: 18px;
+		height: 18px;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23dc7e00' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M4 12h16m0 0l-6-6m6 6l-6 6'/%3E%3C/svg%3E");
+		transition: background-image 0.3s ease-in-out;
+	}
+
 	.fluent--arrow-circle-up-right-16-regular {
 		display: inline-block;
 		width: 24px;

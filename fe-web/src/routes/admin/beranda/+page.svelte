@@ -42,7 +42,7 @@
 		{/each}
 	</div>
 
-	<div class="flex min-w-full flex-col flex-wrap items-center gap-6 overflow-auto p-5 lg:flex-row">
+	<div class="flex w-full flex-col flex-wrap items-center overflow-auto gap-6 p-5 lg:flex-row">
 		<div class="flex-shrink-1 flex-grow rounded-md border border-gray-500 bg-white p-5">
 			<p class="mb-3 text-center text-xl font-bold">Jumlah Anggota MARSI Tahun 2024</p>
 			<Barplot />

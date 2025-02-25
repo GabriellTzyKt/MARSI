@@ -22,6 +22,7 @@ import gambar2_aset from '../asset/umum/aset2_gbr.png'
 import gambar3_aset from '../asset/umum/aset3_gbr.png'
 import gambar4_aset from '../asset/umum/aset4_gbr.png'
 import lagu from '../asset/umum/Rick-Roll-Sound-Effect.mp3'
+import vidio from "../asset/videotest.mp4"
 
 // acara 
 import gambaracara_top from '../asset/umum/acara_header.png';
@@ -125,6 +126,7 @@ export const tempasetdata = [
     aset : "Alat Musik",
     gambartop: gambaraset_top,
     kepemilikan: "Keraton Kasunanan Surakarta",
+    vidio : vidio,
     isi: "Gamelan sekaten adalah jenis gamelan Jawa yang hanya dimainkan dalam pergelaran upacara adat Sekaten yang diselenggarakan di dua keraton pecahan Kesultanan Mataram, yaitu Kesultanan Ngayogyakarta dan Kesunanan Surakarta Hadiningrat. Upacara adat tersebut diadakan untuk memperingati Maulid Nabi Islam Muhammad. Pertama kali dikembangkan pada zaman Kesultanan Demak, gamelan tersebut dijadikan sebagai media dakwah yang digagas oleh Wali Sanga agar orang Jawa bersedia menganut agama Islam.",
     gambar1: gambar1_aset,
     gambar2: gambar2_aset,
