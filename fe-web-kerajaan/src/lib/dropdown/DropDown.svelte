@@ -50,15 +50,18 @@
 	<!-- urutan = 1. judul/nama
 	 			2. link kalau ada -->
 	{#if $openDropdown === id}
-		{console.log(data)}
-		{console.log('Dropdown terbuka untuk: ' + id)}
-		<div class="absolute -bottom-10 right-16 z-50 flex flex-col rounded-xl bg-white">
+		{console.log(items.length)}
+		<div
+			class="absolute {items.length <= 3
+				? '-bottom-10'
+				: '-bottom-38'} z-9999 right-16 flex flex-col rounded-xl bg-white"
+		>
 			{#each items as i, p}
 				<div class="flex">
 					{#if i[0] === 'children'}
 						<a
 							href={i[2]}
-							class="w-full px-4 py-1 {p === 0 ? 'rounded-t-lg' : ''} {p === items.length - 1
+							class="w-full px-4 py-1 {p === 0 ? 'rounded-t-lg' : ''}  {p === items.length - 1
 								? 'rounded-b-lg'
 								: ''} hover:cursor-pointer hover:bg-gray-400"
 							onclick={toglemodal}>{i[1]}</a

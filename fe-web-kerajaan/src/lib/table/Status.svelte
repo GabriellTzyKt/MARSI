@@ -9,6 +9,8 @@
 	class:bg-ditolak={status === 'Ditolak'}
 	class:bg-selesai={status === 'Selesai'}
 	class:bg-pending={status === 'Pending'}
+	class:bg-tugas-berlangsung={status === 'TB'}
+	class:bg-tugas-selesai={status === 'TS'}
 >
 	<p class="text-xs">{status}</p>
 </div>
@@ -28,5 +30,11 @@
 	}
 	.bg-pending {
 		background-color: #eaec6e;
+	}
+	.bg-tugas-selesai {
+		background-color: #629a34a6;
+	}
+	.bg-tugas-berlangsung {
+		background-color: #00b7ff80;
 	}
 </style>

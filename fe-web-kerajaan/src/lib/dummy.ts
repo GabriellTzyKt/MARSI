@@ -768,3 +768,211 @@ export const dummySekreAnggotaOrg = [
     no_telepon: "083812345678",
   }
 ];
+export const dummySekreAnggotaKom = [
+  {
+    id: 1,
+    id_anggota: "A001",
+    nama_anggota: "Raden Wijaya",
+    tanggal_bergabung: "11-12-2025",
+    jabatan_komunitas: "Ketua",
+    nomer_telepon: "081234567890",
+    email: "raden.wijaya@example.com"
+  },
+  {
+    id: 2,
+    id_anggota: "A002",
+    nama_anggota: "Gajah Mada",
+    tanggal_bergabung: "15-08-2024",
+    jabatan_komunitas: "Wakil Ketua",
+    nomer_telepon: "081298765432",
+    email: "gajah.mada@example.com"
+  },
+  {
+    id: 3,
+    id_anggota: "A003",
+    nama_anggota: "Diponegoro",
+    tanggal_bergabung: "01-04-2023",
+    jabatan_komunitas: "Sekretaris",
+    nomer_telepon: "081356789012",
+    email: "diponegoro@example.com"
+  },
+  {
+    id: 4,
+    id_anggota: "A004",
+    nama_anggota: "Cut Nyak Dhien",
+    tanggal_bergabung: "20-07-2022",
+    jabatan_komunitas: "Bendahara",
+    nomer_telepon: "081478901234",
+    email: "cut.nyak.dhien@example.com"
+  },
+  {
+    id: 5,
+    id_anggota: "A005",
+    nama_anggota: "Sudirman",
+    tanggal_bergabung: "10-11-2021",
+    jabatan_komunitas: "Anggota",
+    nomer_telepon: "081567890123",
+    email: "sudirman@example.com"
+  }
+];
+export const dummySekreKom = [
+  {
+    id: 1,
+    id_komunitas: "K-0001",
+    nama_komunitas: "Komunitas Gajahmada",
+    tanggal_berdiri: "11-12-2000",
+    lokasi_komunitas: "Surabaya",
+    penanggungjawab: "Suprianto",
+    pelindung: "Margaret",
+    pembina: "Mulyono"
+  },
+  {
+    id: 2,
+    id_komunitas: "K-0002",
+    nama_komunitas: "Komunitas Diponegoro",
+    tanggal_berdiri: "15-08-1995",
+    lokasi_komunitas: "Yogyakarta",
+    penanggungjawab: "Sutrisno",
+    pelindung: "Sulastri",
+    pembina: "Handoko"
+  },
+  {
+    id: 3,
+    id_komunitas: "K-0003",
+    nama_komunitas: "Komunitas Cut Nyak Dhien",
+    tanggal_berdiri: "20-07-1990",
+    lokasi_komunitas: "Banda Aceh",
+    penanggungjawab: "Fatimah",
+    pelindung: "Zulkifli",
+    pembina: "Rahmat"
+  },
+  {
+    id: 4,
+    id_komunitas: "K-0004",
+    nama_komunitas: "Komunitas Sultan Hasanuddin",
+    tanggal_berdiri: "10-11-1985",
+    lokasi_komunitas: "Makassar",
+    penanggungjawab: "Hendrawan",
+    pelindung: "Sri Hartati",
+    pembina: "Budiman"
+  },
+  {
+    id: 5,
+    id_komunitas: "K-0005",
+    nama_komunitas: "Komunitas Pattimura",
+    tanggal_berdiri: "05-05-1975",
+    lokasi_komunitas: "Ambon",
+    penanggungjawab: "Taufik",
+    pelindung: "Elisabeth",
+    pembina: "Jonathan"
+  }
+];
+export const dummySekreSitus = [
+  {
+    id: 1,
+    id_situs: "S-0001",
+    nama_situs: "Candi Borobudur",
+    alamat_situs: "Magelang, Jawa Tengah",
+    dibangun_oleh: "Dinasti Syailendra",
+    juru_kunci: "Mbah Maridjan",
+    wisata: "Ya",
+    aksi: "Detail"
+  },
+  {
+    id: 2,
+    id_situs: "S-0002",
+    nama_situs: "Candi Prambanan",
+    alamat_situs: "Sleman, Yogyakarta",
+    dibangun_oleh: "Rakai Pikatan",
+    juru_kunci: "Suwondo",
+    wisata: "Ya",
+    aksi: "Detail"
+  },
+  {
+    id: 3,
+    id_situs: "S-0003",
+    nama_situs: "Goa Selarong",
+    alamat_situs: "Bantul, Yogyakarta",
+    dibangun_oleh: "Diponegoro (markas perang)",
+    juru_kunci: "Pak Riyanto",
+    wisata: "Ya",
+    aksi: "Detail"
+  },
+  {
+    id: 4,
+    id_situs: "S-0004",
+    nama_situs: "Benteng Vredeburg",
+    alamat_situs: "Yogyakarta",
+    dibangun_oleh: "VOC Belanda",
+    juru_kunci: "Pak Suyatno",
+    wisata: "Ya",
+    aksi: "Detail"
+  },
+  {
+    id: 5,
+    id_situs: "S-0005",
+    nama_situs: "Lawang Sewu",
+    alamat_situs: "Semarang, Jawa Tengah",
+    dibangun_oleh: "Belanda",
+    juru_kunci: "Bu Sri Hartati",
+    wisata: "Ya",
+    aksi: "Detail"
+  }
+];
+export const dummyTugas = [
+  {
+    id: 1,
+    id_tugas: "T-0001",
+    nama_tugas: "Menyusun Laporan Keuangan",
+    pemberi_tugas: "Ketua Komunitas",
+    anggota_yang_ditugaskan: "Cut Nyak Dhien",
+    tanggal_pemberian: "2025-02-20",
+    deskripsi_tugas: "Membuat laporan keuangan bulanan komunitas.",
+    status: "TB",
+    aksi: "Detail"
+  },
+  {
+    id: 2,
+    id_tugas: "T-0002",
+    nama_tugas: "Mengelola Sosial Media",
+    pemberi_tugas: "Sekretaris",
+    anggota_yang_ditugaskan: "Gajah Mada",
+    tanggal_pemberian: "2025-02-18",
+    deskripsi_tugas: "Memposting dan mengelola akun Instagram komunitas.",
+    status: "TS",
+    aksi: "Detail"
+  },
+  {
+    id: 3,
+    id_tugas: "T-0003",
+    nama_tugas: "Menyusun Acara Kegiatan",
+    pemberi_tugas: "Ketua Komunitas",
+    anggota_yang_ditugaskan: "Diponegoro",
+    tanggal_pemberian: "2025-02-15",
+    deskripsi_tugas: "Menyiapkan rundown acara pertemuan bulanan.",
+    status: "TB",
+    aksi: "Detail"
+  },
+  {
+    id: 4,
+    id_tugas: "T-0004",
+    nama_tugas: "Merancang Desain Banner",
+    pemberi_tugas: "Wakil Ketua",
+    anggota_yang_ditugaskan: "Sudirman",
+    tanggal_pemberian: "2025-02-10",
+    deskripsi_tugas: "Membuat desain banner untuk event komunitas.",
+    status: "TS",
+    aksi: "Detail"
+  },
+  {
+    id: 5,
+    id_tugas: "T-0005",
+    nama_tugas: "Membuat Database Anggota",
+    pemberi_tugas: "Sekretaris",
+    anggota_yang_ditugaskan: "Raden Wijaya",
+    tanggal_pemberian: "2025-02-05",
+    deskripsi_tugas: "Menginput data anggota komunitas ke dalam sistem.",
+    status: "TB",
+    aksi: "Detail"
+  }
+];

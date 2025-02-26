@@ -31,7 +31,7 @@
 			{#each table_data as data, i}
 				<tr class="">
 					<td
-						class=" py-3 text-center"
+						class=" whitespace-normal break-words py-3 text-center"
 						class:border-y={i !== table_data.length - 1}
 						class:border-bl-xl={i === table_data.length - 1}
 						class:border-br-xl={i === table_data.length - 1}
@@ -41,7 +41,7 @@
 					{#each table_header as header, b}
 						{#if typeof header === 'string'}
 							<td
-								class=" py-3 text-left"
+								class=" whitespace-normal break-words py-3 text-left"
 								class:border-y={i !== table_data.length - 1}
 								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}
@@ -49,7 +49,7 @@
 							>
 						{:else if header[0] === 'children'}
 							<td
-								class=" py-3 text-left"
+								class=" whitespace-normal break-words py-3 text-left"
 								class:border-y={i !== table_data.length - 1}
 								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}
@@ -57,7 +57,7 @@
 							>
 						{:else}
 							<td
-								class=" py-3 text-left"
+								class=" whitespace-normal break-words py-3 text-left"
 								class:border-y={i !== table_data.length - 1}
 								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}
