@@ -17,6 +17,7 @@
 			<a href="/situs" class:underline={page.route.id?.startsWith('/situs')}>Situs</a>
 			<a href="/acara" class:underline={page.route.id?.startsWith('/acara')}>Acara</a>
 			<a href="/kelompok" class:underline={page.route.id?.startsWith('/kelompok')}>Kelompok</a>
+			<a href="/sabdi" class:underline={page.route.id === '/sabdi'}>Abdi</a>
 			<a href="/cariabdi" class:underline={page.route.id === '/'}>Abdi</a>
 		</nav>
 
@@ -41,7 +42,7 @@
 	<!-- Mobile Menu -->
 	{#if isOpen}
 		<div
-			class="mt-4 space-y-2 text-center text-white md:hidden flex-col flex"
+			class="mt-4 flex flex-col space-y-2 text-center text-white md:hidden"
 			transition:slide={{ duration: 100 }}
 		>
 			<a href="/beranda" class:underline={page.route.id === '/beranda'}>Beranda</a>

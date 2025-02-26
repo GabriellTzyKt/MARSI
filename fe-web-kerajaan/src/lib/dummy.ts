@@ -614,3 +614,157 @@ export const dummyOrganisasi = [
     "pembina": "Dr. Farida Hasan"
   }
 ]
+export const dummyBukuTamu = [
+  {
+    id: 1,
+    id_kunjungan: "K-10",
+    nama_pengunjung: "Adi Sampoerna",
+    tanggal: "2025-02-13",
+    no_telepon: "0895388939292",
+    keterangan: "Hadir, aman aja",
+    status: "Sehat"
+  },
+  {
+    id: 2,
+    id_kunjungan: "K-11",
+    nama_pengunjung: "Budi Santoso",
+    tanggal: "2025-02-14",
+    no_telepon: "081234567890",
+    keterangan: "Mengantarkan dokumen",
+    status: "Sehat"
+  },
+  {
+    id: 3,
+    id_kunjungan: "K-12",
+    nama_pengunjung: "Citra Dewi",
+    tanggal: "2025-02-15",
+    no_telepon: "082112345678",
+    keterangan: "Bertemu dengan HRD",
+    status: "Sehat"
+  },
+  {
+    id: 4,
+    id_kunjungan: "K-13",
+    nama_pengunjung: "Dewi Lestari",
+    tanggal: "2025-02-16",
+    no_telepon: "085677889900",
+    keterangan: "Keperluan bisnis",
+    status: "Kurang fit"
+  },
+  {
+    id: 5,
+    id_kunjungan: "K-14",
+    nama_pengunjung: "Eka Prasetyo",
+    tanggal: "2025-02-17",
+    no_telepon: "083812345678",
+    keterangan: "Menemui manajer proyek",
+    status: "Sehat"
+  },
+  {
+    id: 6,
+    id_kunjungan: "K-15",
+    nama_pengunjung: "Fajar Ramadhan",
+    tanggal: "2025-02-18",
+    no_telepon: "081299887766",
+    keterangan: "Kunjungan rutin",
+    status: "Sehat"
+  },
+  {
+    id: 7,
+    id_kunjungan: "K-16",
+    nama_pengunjung: "Gita Sari",
+    tanggal: "2025-02-19",
+    no_telepon: "087755443322",
+    keterangan: "Melihat fasilitas kantor",
+    status: "Sehat"
+  },
+  {
+    id: 8,
+    id_kunjungan: "K-17",
+    nama_pengunjung: "Hendra Wijaya",
+    tanggal: "2025-02-20",
+    no_telepon: "082244556677",
+    keterangan: "Mewakili perusahaan lain",
+    status: "Demam"
+  },
+  {
+    id: 9,
+    id_kunjungan: "K-18",
+    nama_pengunjung: "Indah Permata",
+    tanggal: "2025-02-21",
+    no_telepon: "081356789012",
+    keterangan: "Menghadiri seminar",
+    status: "Sehat"
+  },
+  {
+    id: 10,
+    id_kunjungan: "K-19",
+    nama_pengunjung: "Joko Widodo",
+    tanggal: "2025-02-22",
+    no_telepon: "089876543210",
+    keterangan: "Diskusi kerja sama",
+    status: "Sehat"
+  }
+];
+export const dummySekreAnggotaOrg = [
+  {
+    id: 0,
+    id_anggota: "A-10",
+    asma_timur: "Kanjeng BLABLA",
+    asma_dalem: "Jujuan",
+    tempat_lahir: "Surabaya",
+    tanggal_lahir: "26-12-1970",
+    jabatan_organisasi: "Pelindung",
+    jaatan_komunitas: "Anggota",
+    gelar: "Raja",
+    no_telepon: "0894646464664",
+  },
+  {
+    id: 1,
+    id_anggota: "A-11",
+    asma_timur: "Raden Mas Suryo",
+    asma_dalem: "Wiraatmaja",
+    tempat_lahir: "Yogyakarta",
+    tanggal_lahir: "15-08-1980",
+    jabatan_organisasi: "Ketua",
+    jaatan_komunitas: "Pembina",
+    gelar: "Adipati",
+    no_telepon: "081234567890",
+  },
+  {
+    id: 2,
+    id_anggota: "A-12",
+    asma_timur: "Gusti Agung",
+    asma_dalem: "Bagus Prakoso",
+    tempat_lahir: "Solo",
+    tanggal_lahir: "03-05-1975",
+    jabatan_organisasi: "Sekretaris",
+    jaatan_komunitas: "Koordinator",
+    gelar: "Tumenggung",
+    no_telepon: "082112345678",
+  },
+  {
+    id: 3,
+    id_anggota: "A-13",
+    asma_timur: "Pangeran Wijaya",
+    asma_dalem: "Satrio Utomo",
+    tempat_lahir: "Jakarta",
+    tanggal_lahir: "20-11-1990",
+    jabatan_organisasi: "Bendahara",
+    jaatan_komunitas: "Penasehat",
+    gelar: "Mangkunegara",
+    no_telepon: "085677889900",
+  },
+  {
+    id: 4,
+    id_anggota: "A-14",
+    asma_timur: "Gusti Raden",
+    asma_dalem: "Jayakarta",
+    tempat_lahir: "Bandung",
+    tanggal_lahir: "07-09-1982",
+    jabatan_organisasi: "Anggota",
+    jaatan_komunitas: "Anggota",
+    gelar: "Pangeran",
+    no_telepon: "083812345678",
+  }
+];
