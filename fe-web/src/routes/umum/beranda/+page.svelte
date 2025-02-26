@@ -2,9 +2,6 @@
 	import bgTemp from '../../../asset/bg_webumum.png';
 	import Flipcard from '../Flipcard.svelte';
 	import Mapicon from '../Mapicon.svelte';
-	import kerajaan1 from '../../../asset/umum/kerajaan_1.png';
-	import kerajaan2 from '../../../asset/umum/kerajaan_2.png';
-	import kerajaan3 from '../../../asset/umum/kerajaan_3.png';
 	import candi from '../../../asset/umum/candi.png';
 	import candi2 from '../../../asset/umum/candi2.png';
 	import gbr from '../../../asset/umum/gbr.png';
@@ -14,7 +11,13 @@
 	import gambar3 from '../../../asset/umum/img_3.png';
 	import gambar4 from '../../../asset/umum/img_4.png';
 	import gambar5 from '../../../asset/umum/image-bg.png';
+	import { page } from '$app/state';
+
 	let hoveredIcons = new Set();
+
+	let { data } = $props();
+	console.log(data);
+	const selectedFlip = data.selectedFlip;
 </script>
 
 <!-- Section 1 -->
@@ -86,7 +89,7 @@
 </section>
 
 <!-- Section 3 + 4 -->
-<section class="relative">
+<section class="relative h-fit">
 	<div class="waves_a rotate-180">
 		<svg
 			data-name="Layer 1"
@@ -136,36 +139,23 @@
 
 		<div class="flexcoba mb-10 mt-20 flex items-center justify-between px-20">
 			<p class="text-nowrap text-3xl font-semibold">Kerajaan di Indonesia</p>
-			<span class="bg-slate-400 rounded-full lg:mt-0 mt-10 border h-12 w-12 items-center justify-center flex">
+			<button
+				class="mt-10 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-slate-400 lg:mt-0"
+				onclick={() => window.location.reload()}
+			>
 				<i class="material-symbols--refresh lg:mt-0"></i>
-			</span>
+			</button>
 		</div>
 		<div class="mx-auto flex flex-wrap justify-center gap-12 gap-y-4">
-			<Flipcard
-				gambar={kerajaan1}
-				kerajaan="Keraton Surakarta Kasunanan"
-				judul="Uvuvwevwevwe"
-				lokasi="Surakarta, Jawa Tengah"
-				isi="ugwebmubwim osas"
-			></Flipcard>
-			<Flipcard
-				gambar={kerajaan2}
-				kerajaan="Kesultanan Ngayogyakarta Hadiningrat"
-				judul="Kesultanan Ngayogyakarta Hadiningrat"
-				lokasi="Yogyakarta, Jawa Tengah"
-				isi="Kerajaan-kerajaan yang berdiri di Indonesia berjumlah ratusan. Majelis Agung Raja Sultan
-					Indonesia (MARSI) sendiri merupakan sebuah organisasi yang beranggotakan para Raja beserta
-					dengan Kerajaannya. Anggota MARSI tersebar dari sabang hingga merauke. Melalui laman ini,
-					anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di
-					Indonesia."
-			></Flipcard>
-			<Flipcard
-				gambar={kerajaan3}
-				kerajaan="Kesultanan Cirebon"
-				judul="Uvuvwevwevwe"
-				lokasi="Cirebon, Jawa Barat"
-				isi="ugwebmubwim osas"
-			></Flipcard>
+			{#each selectedFlip as item, i}
+				<Flipcard
+					gambar={item.gambar}
+					kerajaan={item.kerajaan}
+					judul={item.kerajaan}
+					lokasi={item.lokasi}
+					isi={item.isi}
+				/>
+			{/each}
 		</div>
 	</div>
 </section>

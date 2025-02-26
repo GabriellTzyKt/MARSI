@@ -31,7 +31,82 @@ import gambar2_acara from '../asset/umum/acara_2.png'
 import gambar3_acara from '../asset/umum/acara_3.png'
 import gambar4_acara from '../asset/umum/acara_4.png'
 
+// flipcard 
+import gambar1_flip from '../asset/umum/kerajaan_1.png';
+import gambar2_flip from '../asset/umum/kerajaan_2.png';
+import gambar3_flip from '../asset/umum/kerajaan_3.png';
 
+export const data_flipcard = [
+  {
+    id: 1,
+    gambar: gambar1_flip,
+    kerajaan: "Keraton Surakarta Kasunanan",
+    lokasi : "Surakarta, Jawa Tengah",
+    isi : "Kerajaan-kerajaan yang berdiri di Indonesia berjumlah ratusan. Majelis Agung Raja Sultan Indonesia (MARSI) sendiri merupakan sebuah organisasi yang beranggotakan para Raja beserta dengan Kerajaannya. Anggota MARSI tersebar dari sabang hingga merauke. Melalui laman ini, anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di Indonesia.",
+  },
+
+  {
+    id: 2,
+    gambar: gambar2_flip,
+    kerajaan: "Kesultanan Ngayogyakarta Hadiningrat",
+    lokasi :"Yogyakarta, Jawa Tengah",
+    isi : "Kerajaan-kerajaan yang berdiri di Indonesia berjumlah ratusan. Majelis Agung Raja Sultan Indonesia (MARSI) sendiri merupakan sebuah organisasi yang beranggotakan para Raja beserta dengan Kerajaannya. Anggota MARSI tersebar dari sabang hingga merauke. Melalui laman ini, anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di Indonesia.",
+  
+  },
+  {
+    id: 3,
+    gambar: gambar3_flip,
+    kerajaan: "Kesultanan Cirebon",
+    lokasi :"Cirebon, Jawa Barat",
+    isi : "Kerajaan-kerajaan yang berdiri di Indonesia berjumlah ratusan. Majelis Agung Raja Sultan Indonesia (MARSI) sendiri merupakan sebuah organisasi yang beranggotakan para Raja beserta dengan Kerajaannya. Anggota MARSI tersebar dari sabang hingga merauke. Melalui laman ini, anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di Indonesia.",
+  },
+  {
+    id: 4,
+    gambar: gambar1_flip,
+    kerajaan: "Keraton Surakarta Kasunanan 2",
+    lokasi : "Surakarta, Jawa Tengah",
+    isi : "Kerajaan-kerajaan yang berdiri di Indonesia berjumlah ratusan. Majelis Agung Raja Sultan Indonesia (MARSI) sendiri merupakan sebuah organisasi yang beranggotakan para Raja beserta dengan Kerajaannya. Anggota MARSI tersebar dari sabang hingga merauke. Melalui laman ini, anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di Indonesia.",
+  },
+
+  {
+    id: 5,
+    gambar: gambar2_flip,
+    kerajaan: "Kesultanan Ngayogyakarta Hadiningrat 2",
+    lokasi :"Yogyakarta, Jawa Tengah",
+    isi : "Kerajaan-kerajaan yang berdiri di Indonesia berjumlah ratusan. Majelis Agung Raja Sultan Indonesia (MARSI) sendiri merupakan sebuah organisasi yang beranggotakan para Raja beserta dengan Kerajaannya. Anggota MARSI tersebar dari sabang hingga merauke. Melalui laman ini, anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di Indonesia.",
+  
+  },
+  {
+    id: 6,
+    gambar: gambar3_flip,
+    kerajaan: "Kesultanan Cirebon 2",
+    lokasi :"Cirebon, Jawa Barat",
+    isi : "Kerajaan-kerajaan yang berdiri di Indonesia berjumlah ratusan. Majelis Agung Raja Sultan Indonesia (MARSI) sendiri merupakan sebuah organisasi yang beranggotakan para Raja beserta dengan Kerajaannya. Anggota MARSI tersebar dari sabang hingga merauke. Melalui laman ini, anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di Indonesia.",
+  },
+  {
+    id: 7,
+    gambar: gambar1_flip,
+    kerajaan: "Keraton Surakarta Kasunanan 3",
+    lokasi : "Surakarta, Jawa Tengah",
+    isi : "Kerajaan-kerajaan yang berdiri di Indonesia berjumlah ratusan. Majelis Agung Raja Sultan Indonesia (MARSI) sendiri merupakan sebuah organisasi yang beranggotakan para Raja beserta dengan Kerajaannya. Anggota MARSI tersebar dari sabang hingga merauke. Melalui laman ini, anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di Indonesia.",
+  },
+
+  {
+    id: 8,
+    gambar: gambar2_flip,
+    kerajaan: "Kesultanan Ngayogyakarta Hadiningrat 3",
+    lokasi :"Yogyakarta, Jawa Tengah",
+    isi : "Kerajaan-kerajaan yang berdiri di Indonesia berjumlah ratusan. Majelis Agung Raja Sultan Indonesia (MARSI) sendiri merupakan sebuah organisasi yang beranggotakan para Raja beserta dengan Kerajaannya. Anggota MARSI tersebar dari sabang hingga merauke. Melalui laman ini, anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di Indonesia.",
+  
+  },
+  {
+    id: 9,
+    gambar: gambar3_flip,
+    kerajaan: "Kesultanan Cirebon 3",
+    lokasi :"Cirebon, Jawa Barat",
+    isi : "Kerajaan-kerajaan yang berdiri di Indonesia berjumlah ratusan. Majelis Agung Raja Sultan Indonesia (MARSI) sendiri merupakan sebuah organisasi yang beranggotakan para Raja beserta dengan Kerajaannya. Anggota MARSI tersebar dari sabang hingga merauke. Melalui laman ini, anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di Indonesia.",
+  }
+]
 
 export const detail_acara = [
   {

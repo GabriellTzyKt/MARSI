@@ -25,7 +25,7 @@
 
 <section class="relative w-full">
 	<div class="relative">
-		<img src={gambar} alt="" class="min-w-screen min-h-screen object-cover" />
+		<img src={gambar} alt="" class="min-w-full min-h-screen object-cover" />
 		<div class="absolute inset-0 flex items-center justify-center">
 			<p class="absolute left-10 top-[15%]">
 				<a href="/umum/daftaracara">
@@ -99,9 +99,9 @@
 	</div>
 </section>
 
-<div class="relative">
+<section class="h-full w-full overflow-hidden">
 	<Footer></Footer>
-</div>
+</section>
 
 <style>
 	@media (max-width: 768px) {

@@ -1,7 +1,7 @@
 <script lang="ts">
 </script>
 
-<div class="h-full w-full">
+<div class="min-h-full w-full">
 	<div class="mt-10 grid grid-cols-2 gap-4">
 		<!-- 1 -->
 		<div>
@@ -238,13 +238,14 @@
 					/>
 					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 				</div>
+				
 			</div>
+			
 		</div>
 	</div>
-
-	<div class="relative w-full">
+	<div class="flex justify-end w-full">
 		<button
-			class="w-50 t-0 absolute right-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
+			class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
 			>Simpan Data</button
 		>
 	</div>

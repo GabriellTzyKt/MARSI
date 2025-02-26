@@ -59,7 +59,7 @@
 				<p class="line-clamp-7 text-md w-full max-w-[340px] overflow-hidden text-ellipsis">
 					{isi}
 				</p>
-				<div class="flex w-full justify-center lg:justify-end">
+				<div class="flex w-full absolute bottom-0 right-4 justify-center lg:justify-end">
 					<a
 						href="/"
 						class="flip-button relative my-2 flex items-center gap-2 overflow-hidden rounded-full px-5 py-3 text-orange-500 transition-all duration-500"

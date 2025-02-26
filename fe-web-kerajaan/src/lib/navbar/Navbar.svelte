@@ -17,7 +17,7 @@
 			<a href="/situs" class:underline={page.route.id?.startsWith('/situs')}>Situs</a>
 			<a href="/acara" class:underline={page.route.id?.startsWith('/acara')}>Acara</a>
 			<a href="/kelompok" class:underline={page.route.id?.startsWith('/kelompok')}>Kelompok</a>
-			<a href="/" class:underline={page.route.id === '/'}>Beranda</a>
+			<a href="/cariabdi" class:underline={page.route.id === '/'}>Abdi</a>
 		</nav>
 
 		<div class="flex items-center space-x-4">

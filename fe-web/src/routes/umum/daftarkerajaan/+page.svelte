@@ -165,7 +165,7 @@
 <Navbar></Navbar>
 
 <section class="relative">
-	<div class="relative h-screen w-screen">
+	<div class="relative h-screen w-full">
 		<img src={gambarHeader} alt="" class="h-screen w-screen" />
 		<p
 			class="absolute left-[50%] top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-6xl font-bold text-black"
@@ -255,9 +255,9 @@
 	{/if}
 </section>
 
-<div class="relative w-screen">
+<section class="h-full w-full overflow-hidden">
 	<Footer></Footer>
-</div>
+</section>
 
 <style>
 	@media (max-width: 820px) {

@@ -7,7 +7,7 @@
 	<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="flex w-full justify-between">
 			<p class="mt-2">Informasi Acara</p>
-			<a href='/abdi/komunitas/acara/edit'><button class="w-40 rounded-lg border-2 bg-yellow-500 px-2 py-2">Ubah</button></a>
+			<a href='/abdi/dashboard/komunitas/acara/edit'><button class="w-40 rounded-lg border-2 bg-yellow-500 px-2 py-2">Ubah</button></a>
 		</div>
 
 		<div class="mt-5 grid lg:grid-cols-4 grid-cols-2 gap-12">
