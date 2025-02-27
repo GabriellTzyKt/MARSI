@@ -4,8 +4,8 @@
 	const { children } = $props();
 </script>
 
-<h3 class="p-6">Menu Organisasi</h3>
-<!-- {#if page.route.id?.startsWith('/abdi/dashboard/organisasi')}
+<!-- <h3 class="p-6">Menu Organisasi</h3> -->
+{#if page.route.id?.startsWith('/abdi/dashboard/organisasi')}
 	<h3 class="p-6">Menu Organisasi</h3>
 {:else if page.route.id?.startsWith('/abdi/dashboard/komunitas')}
 	<h3 class="p-6">Menu Komunitas</h3>
@@ -15,7 +15,7 @@
 	<h3 class="p-6">Menu Sekretariat</h3>
 {:else}
 	<h3 class="p-6">Menu Manajemen</h3>
-{/if} -->
+{/if}
 
 {@render children()}
 
