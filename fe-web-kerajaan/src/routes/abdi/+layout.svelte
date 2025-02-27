@@ -64,6 +64,8 @@
 			return 'Daftar Acara di Situs';
 		} else if (page.route.id === '/abdi/dashboard/situs/bukutamu') {
 			return 'Buku Tamu Situs';
+		} else if (page.route.id === '/abdi/dashboard/situs/daftaracara/detail') {
+			return 'Detail Acara Situs';
 		} else if (page.route.id === '/abdi/sekretariat/anggota/daftaranggota/tambah') {
 			return 'Tambah Abdi';
 		} else if (page.route.id === '/abdi/sekretariat/anggota/daftaranggota/ubah') {
