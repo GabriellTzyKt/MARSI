@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAcara, dummyAnggota } from '$lib/dummy';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
@@ -8,7 +10,12 @@
 
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
-		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white">+Tambah Data</button>
+		<button
+			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
+			onclick={() => {
+				goto('/abdi/dashboard/situs/daftaracara/buat');
+			}}>+Tambah Data</button
+		>
 		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
 			<select
@@ -84,8 +91,8 @@
 					<DropDown
 						text={`Apakah yakin ingin mengarsipkan ${data.nama_acara}?`}
 						successText={`Berhasil mengarsipkan ${data.nama_acara}!`}
-						link="/abdi/dashboard/organisasi/acara"
-						items={[['Detail', `/abdi/dashboard/situs/detail`]]}
+						link="/abdi/dashboard/situs/daftaracara"
+						items={[['Detail', `/abdi/dashboard/situs/daftaracara/detail`]]}
 						id={`id-${index}`}
 						{data}
 					></DropDown>

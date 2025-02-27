@@ -184,10 +184,10 @@
 						active={isActive('/abdi/dashboard/komunitas/daftaranggota')}
 					/>
 					<SidebarMenu
-						href="/abdi/dashboard/komunitas/acara/detail"
+						href="/abdi/dashboard/komunitas/acara"
 						icon="mdi:crown"
 						anchor="Acara"
-						active={isActive('/abdi/dashboard/komunitas/acara/detail')}
+						active={isActive('/abdi/dashboard/komunitas/acara')}
 					/>
 				</SidebarMenu>
 			</Sidebar>
@@ -264,35 +264,7 @@
 				</SidebarMenu>
 			</Sidebar>
 		{/if}
-		{#if page.route.id?.startsWith('/abdi/dashboard/situs')}
-			<Sidebar>
-				<SidebarMenu
-					href="/abdi/dashboard/"
-					icon="mdi:home"
-					anchor="Dashboard"
-					active={isActive('/abdi/dashboard/')}
-				/>
-				<SidebarMenu
-					href="/abdi/dashboard/situs/beranda"
-					icon="mdi:people"
-					anchor="Situs"
-					hasChildren={true}
-				>
-					<SidebarMenu
-						href="/abdi/dashboard/situs/daftaracara"
-						icon="mdi:book"
-						anchor="Daftar Acara"
-						active={isActive('/abdi/dashboard/situs/daftaracara')}
-					/>
-					<SidebarMenu
-						href="/abdi/dashboard/situs/bukutamu"
-						icon="mdi:book"
-						anchor="Buku Tamu"
-						active={isActive('/abdi/dashboard/situs/bukutamu')}
-					/>
-				</SidebarMenu>
-			</Sidebar>
-		{/if}
+
 		{#if page.route.id?.startsWith('/abdi/sekretariat')}
 			<Sidebar>
 				<SidebarMenu

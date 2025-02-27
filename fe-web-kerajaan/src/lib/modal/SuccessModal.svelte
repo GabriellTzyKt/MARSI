@@ -8,11 +8,14 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore event_directive_deprecated -->
 <div
 	class="fixed left-0 top-0 flex min-h-full min-w-full items-center justify-center bg-black/75"
 	in:fly={{ y: 100, duration: 100 }}
 	out:fade={{ duration: 100 }}
-	on:click|stopPropagation
+	onclick={(e) => {
+		e.stopPropagation();
+	}}
 >
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore event_directive_deprecated -->
@@ -20,7 +23,9 @@
 		class=" relative flex flex-col items-center justify-center rounded-xl border bg-white"
 		in:fly={{ y: 100, duration: 100 }}
 		out:fade={{ duration: 100 }}
-		on:click|stopPropagation
+		onclick={(e) => {
+			e.stopPropagation();
+		}}
 	>
 		<div class="mt-8 p-2">
 			<img src={check} class="h-auto w-24" alt="" />

@@ -87,9 +87,9 @@
 						successText="berhasil diarsip"
 						link="/abdi/dashboard/komunitas/acara"
 						items={[
-							['Detail', ''],
-							['Ubah', ''],
-							['Laporan', ''],
+							['Detail', '/abdi/dashboard/komunitas/acara/detail'],
+							['Ubah', '/abdi/dashboard/komunitas/acara/edit'],
+							['Laporan', '/abdi/dashboard/komunitas/acara/laporan'],
 							['children', 'Arsip', '']
 						]}
 						id={`id-${index}`}

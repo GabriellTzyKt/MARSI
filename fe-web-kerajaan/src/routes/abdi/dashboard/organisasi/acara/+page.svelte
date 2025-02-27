@@ -8,7 +8,8 @@
 
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
-		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white">+Tambah Data</button>
+		<button class="bg-badran-bt cursor-pointer rounded-lg px-3 py-2 text-white">+Tambah Data</button
+		>
 		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
 			<select

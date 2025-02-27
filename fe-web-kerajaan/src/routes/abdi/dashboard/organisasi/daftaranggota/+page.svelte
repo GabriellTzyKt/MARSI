@@ -1,13 +1,21 @@
 <script lang="ts">
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAnggota } from '$lib/dummy';
+	import TambahAnggota from '$lib/popup/TambahAnggota.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
+	import { fade } from 'svelte/transition';
+	let open = $state(false);
 </script>
 
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
-		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white">+Tambah Data</button>
+		<button
+			class="bg-badran-bt cursor-pointer rounded-lg px-3 py-2 text-white"
+			onclick={() => {
+				open = true;
+			}}>+Tambah Data</button
+		>
 		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
 			<select
@@ -94,3 +102,8 @@
 		</Table>
 	</div>
 </div>
+{#if open}
+	<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
+		<TambahAnggota bind:value={open}></TambahAnggota>
+	</div>
+{/if}

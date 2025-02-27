@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import { fade } from 'svelte/transition';
 
@@ -22,7 +23,7 @@
 	<div class="mt-2 flex w-80 gap-2 rounded-full border-2 px-5 py-2">
 		<button
 			onclick={() => setActive('upcoming')}
-			class="relative overflow-hidden w-full rounded-full border-2 px-5 py-1 font-semibold"
+			class="relative w-full overflow-hidden rounded-full border-2 px-5 py-1 font-semibold"
 		>
 			<span
 				class="absolute left-0 top-0 h-full bg-blue-600 transition-all duration-300"
@@ -69,11 +70,11 @@
 				<p>Tujuan Acara:</p>
 				<input type="text" placeholder="Masukkan Nama" class="w-full rounded-lg border px-2 py-1" />
 			</div>
-            <div class="mt-3 w-full">
+			<div class="mt-3 w-full">
 				<p>Tujuan Acara:</p>
 				<input type="text" placeholder="Masukkan Nama" class="w-full rounded-lg border px-2 py-1" />
 			</div>
-            <div class="mt-3 w-full">
+			<div class="mt-3 w-full">
 				<p>Tujuan Acara:</p>
 				<input type="text" placeholder="Masukkan Nama" class="w-full rounded-lg border px-2 py-1" />
 			</div>
@@ -163,13 +164,13 @@
 					</div>
 				</div>
 			</div>
-            <div class="mt-2 w-full">
-                <p>Deskripsi Acara:</p>
-                <textarea
-                    placeholder="Masukkan Deskripsi Acara"
-                    class="h-20 w-full resize-none rounded-md border px-3 py-1 text-lg"
-                ></textarea>
-            </div>
+			<div class="mt-2 w-full">
+				<p>Deskripsi Acara:</p>
+				<textarea
+					placeholder="Masukkan Deskripsi Acara"
+					class="h-20 w-full resize-none rounded-md border px-3 py-1 text-lg"
+				></textarea>
+			</div>
 		</div>
 	</div>
 
@@ -193,8 +194,8 @@
 					<option value="saab">Ny</option>
 				</select>
 			</div>
-			<input class="col-span-3 w-full rounded-lg border px-2 py-1" type="text">
-			<input class="col-span-2 w-full rounded-lg border px-2 py-1">
+			<input class="col-span-3 w-full rounded-lg border px-2 py-1" type="text" />
+			<input class="col-span-2 w-full rounded-lg border px-2 py-1" />
 			<div class="col-span-1">
 				<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
 					<i class="gg--trash z-10 items-center text-2xl"></i>
