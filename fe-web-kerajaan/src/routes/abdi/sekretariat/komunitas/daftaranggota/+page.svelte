@@ -1,16 +1,14 @@
 <script lang="ts">
 	import DropDown from '$lib/dropdown/DropDown.svelte';
-	import { dummySekreSitus, dummyAnggota } from '$lib/dummy';
-
+	import { dummySekreAnggotaKom } from '$lib/dummy';
 	import Search from '$lib/table/Search.svelte';
-	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
 </script>
 
 <div class="flex w-full flex-col">
-	<div class="mx-10 flex justify-between">
+	<div class=" flex flex-col xl:flex-row xl:justify-between">
 		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white">+Tambah Data</button>
-		<div class="flex items-center gap-2">
+		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
 			<select
 				name="Organisasi"
@@ -65,32 +63,30 @@
 			</div>
 		</div>
 	</div>
-	<div class="mx-10 flex">
+	<div class="flex w-full">
 		<Table
 			table_header={[
-				['id_situs', 'Id Situs'],
-				['nama_situs', 'Nama Situs'],
-				['alamat_situs', 'Alamat Situs'],
-				['dibangun_oleh', 'Dibangun Oleh'],
-				['juru_kunci', 'Juru Kunci'],
-				['wisata', 'Wisata'],
+				['id_anggota', 'Id Anggota'],
+				['nama_anggota', 'Nama Anggota'],
+				['tanggal_bergabung', 'Tanggal Bergabung'],
 
+				['jabatan_komunitas', 'Jabatan Komunitas'],
+				['nomer_telepon', 'Nomer Telepon'],
+				['email', 'Email'],
 				['children', 'Aksi']
 			]}
-			table_data={dummySekreSitus}
+			table_data={dummySekreAnggotaKom}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
 					<DropDown
-						text=" apa yakin mau menghapus acara ini?"
-						successText="berhasil diarsip"
-						link="/abdi/dashboard/komunitas/acara"
+						text={`Apakah yakin ingin mengarsipkan abdi?`}
+						successText={`Berhasil mengarsipkan abdi!`}
+						link="/abdi/dashboard/organisasi/daftaranggota"
 						items={[
-							['Detail', ''],
-							['Ubah', ''],
-							['Buku Tamu', ''],
+							['Edit', '/abdi/sekretariat/komunitas/daftaranggota/ubah'],
 
-							['children', 'Hapus', '']
+							['children', 'Non Aktifkan', '']
 						]}
 						id={`id-${index}`}
 						{data}

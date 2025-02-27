@@ -82,7 +82,19 @@
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
-					<DropDown {index} tipe="anggota" id={`id-${index}`} {data}></DropDown>
+					<DropDown
+						text=" apa yakin mau menghapus acara ini?"
+						successText="berhasil diarsip"
+						link="/abdi/dashboard/komunitas/acara"
+						items={[
+							['Detail', ''],
+							['Ubah', ''],
+							['Laporan', ''],
+							['children', 'Arsip', '']
+						]}
+						id={`id-${index}`}
+						{data}
+					></DropDown>
 				{/if}
 				{#if header === 'Status'}
 					<Status status={data.status}></Status>
