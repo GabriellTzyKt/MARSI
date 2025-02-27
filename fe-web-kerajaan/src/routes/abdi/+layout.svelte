@@ -220,10 +220,10 @@
 						active={isActive('/abdi/dashboard/komunitas/daftaranggota')}
 					/>
 					<SidebarMenu
-						href="/abdi/dashboard/komunitas/acara/detail"
+						href="/abdi/dashboard/komunitas/acara"
 						icon="mdi:crown"
 						anchor="Acara"
-						active={isActive('/abdi/dashboard/komunitas/acara/detail')}
+						active={isActive('/abdi/dashboard/komunitas/acara')}
 					/>
 				</SidebarMenu>
 			</Sidebar>

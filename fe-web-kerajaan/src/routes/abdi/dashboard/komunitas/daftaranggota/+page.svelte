@@ -1,13 +1,25 @@
 <script lang="ts">
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAnggota } from '$lib/dummy';
+	import TambahAnggota from '$lib/popup/TambahAnggota.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
+	import { fade } from 'svelte/transition';
+	let open = $state(false);
+	let toggle = () => {
+		if (!open) {
+			open = true;
+		} else open = false;
+		console.log(open);
+	};
 </script>
 
 <div class="flex w-full flex-col">
 	<div class="flex flex-col xl:flex-row xl:justify-between">
-		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white">+Tambah Data</button>
+		<button
+			class="bg-badran-bt rounded-lg px-3 py-2 text-white hover:cursor-pointer"
+			onclick={toggle}>+Tambah Data</button
+		>
 		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
 			<select
@@ -79,8 +91,9 @@
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
 					<DropDown
-						{index}
-						tipe="anggota"
+						text="Apakah yakin ingin di arsip?"
+						successText=""
+						link="/abdi/dashboard/komunitas/daftaranggota"
 						id={`id-${index}`}
 						{data}
 						items={[
@@ -93,3 +106,8 @@
 		</Table>
 	</div>
 </div>
+{#if open}
+	<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
+		<TambahAnggota bind:value={open}></TambahAnggota>
+	</div>
+{/if}
