@@ -166,8 +166,8 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
 
 <section class="relative">
-	<div class="relative h-screen w-screen">
-		<img src={gambarHeader} alt="" class="h-screen w-screen" />
+	<div class="relative h-screen w-full">
+		<img src={gambarHeader} alt="" class="h-screen w-full" />
 		<p
 			class="absolute left-[50%] top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-6xl font-bold text-black"
 		>
@@ -258,9 +258,9 @@
 
 
 <!-- Footer -->
-<div class="relative">
+<section class="h-full w-full overflow-hidden">
 	<Footer></Footer>
-</div>
+</section>
 
 <style>
 	.no-arrow {

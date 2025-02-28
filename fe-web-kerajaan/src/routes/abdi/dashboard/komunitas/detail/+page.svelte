@@ -10,7 +10,7 @@
 			<span class="mdi--edit absolute"></span>
 		</div>
 		<div class="flex w-full lg:justify-end justify-center lg:mt-0 mt-5">
-			<a href="/abdi/komunitas/edit"
+			<a href="/abdi/dashboard/komunitas/edit"
 				><button class="w-50 h-fit items-end rounded-lg bg-yellow-300 px-2 py-2 text-black">
 					Ubah
 				</button></a

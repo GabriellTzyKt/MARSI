@@ -64,6 +64,42 @@
 			return 'Daftar Acara di Situs';
 		} else if (page.route.id === '/abdi/dashboard/situs/bukutamu') {
 			return 'Buku Tamu Situs';
+		} else if (page.route.id === '/abdi/dashboard/situs/daftaracara/detail') {
+			return 'Detail Acara Situs';
+		} else if (page.route.id === '/abdi/sekretariat/anggota/daftaranggota/tambah') {
+			return 'Tambah Abdi';
+		} else if (page.route.id === '/abdi/sekretariat/anggota/daftaranggota/ubah') {
+			return 'Edit Abdi';
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/buat') {
+			return 'Tambah Organisasi';
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit') {
+			return 'Edit Organisasi';
+		} else if (page.route.id === '/abdi/sekretariat/komunitas/daftarkomunitas/buat') {
+			return 'Tambah Komunitas';
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit') {
+			return 'Edit Komunitas';
+		} else if (page.route.id === '/abdi/sekretariat/acara/detail') {
+			return 'Detail Acara';
+		} else if (page.route.id === '/abdi/sekretariat/acara/edit') {
+			return 'Edit Acara';
+		} else if (page.route.id === '/abdi/sekretariat/acara/buat') {
+			return 'Buat Acara';
+		} else if (page.route.id === '/abdi/sekretariat/anggota/daftaranggota') {
+			return 'Daftar Anggota';
+		} else if (page.route.id === '/abdi/sekretariat/anggota/pelantikan') {
+			return 'Pelantikan Abdi';
+		} else if (page.route.id === '/abdi/sekretariat/anggota/bintangjasa') {
+			return 'Bintang Jasa';
+		} else if (page.route.id === '/abdi/sekretariat/komunitas/daftarkomunitas') {
+			return 'Daftar Komunitas';
+		} else if (page.route.id === '/abdi/sekretariat/komunitas/daftaranggota') {
+			return 'Daftar Anggota';
+		} else if (page.route.id === '/abdi/sekretariat/acara') {
+			return 'Daftar Acara';
+		} else if (page.route.id === '/abdi/sekretariat/situs') {
+			return 'Daftar Situs';
+		} else if (page.route.id === '/abdi/sekretariat/tugas') {
+			return 'Daftar Tugas';
 		}
 	});
 	let { children } = $props();
@@ -211,7 +247,6 @@
 						href="/abdi/dashboard/organisasi/daftarorganisasi"
 						icon="mdi:book"
 						anchor="Daftar Organisasi"
-						active={isActive('/abdi/dashboard/organisasi/daftarorganisasi')}
 					/>
 					<SidebarMenu
 						href="/abdi/dashboard/organisasi/daftaranggota"
@@ -278,7 +313,7 @@
 						href="/abdi/sekretariat/anggota/daftaranggota"
 						icon="mdi:book"
 						anchor="Daftar Anggota"
-						active={isActive('/abdi/sekretariat/anggota/daftaranggota')}
+						active={window.location.pathname.startsWith('/abdi/sekretariat/anggota/daftaranggota')}
 					/>
 					<SidebarMenu
 						href="/abdi/sekretariat/anggota/pelantikan"
@@ -299,7 +334,7 @@
 						href="/abdi/sekretariat/komunitas/daftarkomunitas"
 						icon="mdi:book"
 						anchor="Daftar Komunitas"
-						active={isActive('/abdi/sekretariat/anggota/daftaranggota')}
+						active={isActive('/abdi/sekretariat/komunitas/daftarkomunitas')}
 					/>
 					<SidebarMenu
 						href="/abdi/sekretariat/komunitas/daftaranggota"
@@ -326,30 +361,35 @@
 					href="/abdi/sekretariat/acara"
 					icon="mdi:book"
 					anchor="Acara"
+					active={isActive('/abdi/sekretariat/acara')}
 					hasChildren={false}
 				></SidebarMenu>
 				<SidebarMenu
 					href="/abdi/sekretariat/situs"
 					icon="mdi:book"
 					anchor="Situs"
+					active={isActive('/abdi/sekretariat/situs')}
 					hasChildren={false}
 				></SidebarMenu>
 				<SidebarMenu
 					href="/abdi/sekretariat/tugas"
 					icon="mdi:book"
 					anchor="Tugas"
+					active={isActive('/abdi/sekretariat/tugas')}
 					hasChildren={false}
 				></SidebarMenu>
 				<SidebarMenu
 					href="/abdi/sekretariat/masterdata"
 					icon="mdi:book"
 					anchor="Master Data"
+					active={isActive('/abdi/sekretariat/masterdata')}
 					hasChildren={false}
 				></SidebarMenu>
 				<SidebarMenu
 					href="/abdi/sekretariat/landingpage"
 					icon="mdi:book"
 					anchor="Landinig Page"
+					active={isActive('/abdi/sekretariat/landingpage')}
 					hasChildren={false}
 				></SidebarMenu>
 			</Sidebar>

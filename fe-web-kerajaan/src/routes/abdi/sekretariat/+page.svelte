@@ -1,5 +1,4 @@
 <script lang="ts">
-	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import org from '$lib/asset/icon/org.png';
 	import kom from '$lib/asset/icon/com.png';
 	import situs from '$lib/asset/icon/landmark.png';

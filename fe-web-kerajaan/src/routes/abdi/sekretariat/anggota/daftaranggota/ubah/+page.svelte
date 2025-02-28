@@ -34,7 +34,7 @@
 						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 					/>
 				</div>
-                <!-- <span class="bx--calendar"></span> -->
+				<!-- <span class="bx--calendar"></span> -->
 			</div>
 
 			<div>
@@ -79,19 +79,6 @@
 					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 				</div>
 			</div>
-
-			<div>
-				<p class="mt-5">Deskripsi Tugas:</p>
-				<div class="relative w-full">
-					<textarea
-						placeholder="Masukkan nama"
-						class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg"
-					></textarea>
-					<div class="h-full">
-						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
-					</div>
-				</div>
-			</div>
 		</div>
 
 		<!-- 2 -->
@@ -103,28 +90,24 @@
 					<div class="flex">
 						<div class="mx-2 flex items-center justify-center">
 							<input
-								id="default-radio-1"
+								id="ayah-ya"
 								type="radio"
-								value=""
-								name="default-radio"
-								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+								value="ya"
+								name="ayah-radio"
+								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 							/>
-							<label for="default-radio-1" class="mx-5 ms-2 text-sm font-medium text-gray-900"
-								>Ya</label
-							>
+							<label for="ayah-ya" class="mx-5 ms-2 text-sm font-medium text-gray-900">Ya</label>
 						</div>
 						<div class="mx-2 flex items-center justify-center">
 							<input
-								checked
-								id="default-radio-2"
+								id="ayah-tidak"
 								type="radio"
-								value=""
-								name="default-radio"
-								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+								value="tidak"
+								name="ayah-radio"
+								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+								checked
 							/>
-							<label for="default-radio-2" class="mx-5 ms-2 text-sm font-medium text-black"
-								>Tidak</label
-							>
+							<label for="ayah-tidak" class="mx-5 ms-2 text-sm font-medium text-black">Tidak</label>
 						</div>
 					</div>
 				</div>
@@ -134,7 +117,6 @@
 						placeholder="Masukkan Nama"
 						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 					/>
-					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 				</div>
 			</div>
 
@@ -145,28 +127,24 @@
 					<div class="flex">
 						<div class="mx-2 flex items-center justify-center">
 							<input
-								id="default-radio-1"
+								id="ibu-ya"
 								type="radio"
-								value=""
-								name="default-radio"
-								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+								value="ya"
+								name="ibu-radio"
+								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 							/>
-							<label for="default-radio-1" class="mx-5 ms-2 text-sm font-medium text-gray-900"
-								>Ya</label
-							>
+							<label for="ibu-ya" class="mx-5 ms-2 text-sm font-medium text-gray-900">Ya</label>
 						</div>
 						<div class="mx-2 flex items-center justify-center">
 							<input
-								checked
-								id="default-radio-2"
+								id="ibu-tidak"
 								type="radio"
-								value=""
-								name="default-radio"
-								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+								value="tidak"
+								name="ibu-radio"
+								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+								checked
 							/>
-							<label for="default-radio-2" class="mx-5 ms-2 text-sm font-medium text-black"
-								>Tidak</label
-							>
+							<label for="ibu-tidak" class="mx-5 ms-2 text-sm font-medium text-black">Tidak</label>
 						</div>
 					</div>
 				</div>
@@ -176,7 +154,6 @@
 						placeholder="Masukkan Nama"
 						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 					/>
-					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 				</div>
 			</div>
 
@@ -192,27 +169,29 @@
 				</div>
 			</div>
 
-			<div class="mt-5">
-				<p>Wongso:</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-					/>
-					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+			<div class="flex gap-12">
+				<div class="mt-5 w-full">
+					<p>Wongso:</p>
+					<div class="relative">
+						<input
+							type="text"
+							placeholder="Masukkan Nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						/>
+						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+					</div>
 				</div>
-			</div>
 
-			<div class="mt-5">
-				<p>Pekerjaan(Opsional):</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-					/>
-					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+				<div class="mt-5 w-full">
+					<p>Pekerjaan(Opsional):</p>
+					<div class="relative">
+						<input
+							type="text"
+							placeholder="Masukkan Nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						/>
+						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+					</div>
 				</div>
 			</div>
 
@@ -227,23 +206,9 @@
 					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 				</div>
 			</div>
-
-			<div class="mt-3">
-				<p>Jabatan:</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-					/>
-					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
-				</div>
-				
-			</div>
-			
 		</div>
 	</div>
-	<div class="flex justify-end w-full">
+	<div class="flex w-full justify-end">
 		<button
 			class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
 			>Simpan Data</button
