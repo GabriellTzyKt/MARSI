@@ -16,7 +16,7 @@
 		{
 			id: 2,
 			judul: 'Keraton Ngayogyakarta Hadiningrat',
-			lokasi: 'Yogyakarta, Daerah Istimewa Yogyakarta',
+			lokasi: 'halo',
 			gambar: gambar2
 		},
 		{ id: 3, judul: 'Kadipaten Mangkunagaran', lokasi: 'Surakarta, Jawa Tengah', gambar: gambar3 },
@@ -148,8 +148,9 @@
 		}
 	];
 
-	let filteredData = $derived(situsList.filter((v) => v.judul.toLowerCase()
-	.includes(keyword.toLowerCase())));
+	let filteredData = $derived(
+		situsList.filter((v) => v.judul.toLowerCase().includes(keyword.toLowerCase()))
+	);
 
 	// $effect(() => {
 	// 	displayedCount = filteredData.length
@@ -248,14 +249,13 @@
 		<div class="flex justify-center">
 			<button
 				onclick={loadMore}
-				class="edit flex-shrink-1 mx-auto mb-10 h-[40px] w-[85%] items-center rounded-lg border bg-white shadow-md animate-bounce"
+				class="edit flex-shrink-1 mx-auto mb-10 h-[40px] w-[85%] animate-bounce items-center rounded-lg border bg-white shadow-md"
 			>
 				See More !
 			</button>
 		</div>
 	{/if}
 </section>
-
 
 <!-- Footer -->
 <section class="h-full w-full overflow-hidden">

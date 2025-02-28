@@ -592,7 +592,7 @@ export const dummyAcara = [
     penanggungjawab: 'Grace',
     jenis_acara: "Pesta",
     kapasitas: "10000",
-    status: "Berlangsung"
+    status: "Selesai"
   },
   {
     id: 1,

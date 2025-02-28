@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAcara, dummyAnggota } from '$lib/dummy';
 	import Search from '$lib/table/Search.svelte';
@@ -8,7 +9,9 @@
 
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
-		<button class="bg-badran-bt cursor-pointer rounded-lg px-3 py-2 text-white">+Tambah Data</button
+		<button
+			class="bg-badran-bt cursor-pointer rounded-lg px-3 py-2 text-white"
+			onclick={() => goto('acara/tambah')}>+Tambah Data</button
 		>
 		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
@@ -87,9 +90,9 @@
 						successText={`Berhasil mengarsipkan ${data.nama_acara}!`}
 						link="/abdi/dashboard/organisasi/acara"
 						items={[
-							['Detail', `/abdi/dashboard/organisasi/acara/ubah/${index}`],
-							['Ubah', `/abdi/dashboard/organisasi/acara/edit/${index}`],
-							['Laporan', `/abdi/dashboard/organisasi/acara/laporan/${index}`],
+							['Detail', `/abdi/dashboard/organisasi/acara/detail/`],
+							['Ubah', `/abdi/dashboard/organisasi/acara/ubah/`],
+							['Laporan', `/abdi/dashboard/organisasi/acara/laporan/`],
 							['children', 'Arsip', '']
 						]}
 						id={`id-${index}`}

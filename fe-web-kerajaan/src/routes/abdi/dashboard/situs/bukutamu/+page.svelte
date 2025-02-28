@@ -108,7 +108,7 @@
 					<DropDown
 						text={`Apakah yakin ingin mengarsipkan ${data.nama_acara}?`}
 						successText={`Berhasil mengarsipkan ${data.nama_acara}!`}
-						link="/abdi/dashboard/organisasi/acara"
+						link="/abdi/dashboard/situs/bukutamu"
 						items={[['Detail', `/abdi/dashboard/situs/detail`]]}
 						id={`id-${index}`}
 						{data}
