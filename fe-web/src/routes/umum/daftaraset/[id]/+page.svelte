@@ -154,7 +154,6 @@
 								ontimeupdate={updateRemainingTime}
 							></video>
 
-							<!-- Durasi di atas video -->
 							<div
 								class="absolute bottom-2 right-2 rounded bg-black bg-opacity-60 px-2 py-1 text-sm text-white"
 							>
