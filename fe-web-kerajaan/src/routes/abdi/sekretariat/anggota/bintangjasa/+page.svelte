@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import SekreAbdiInput from '$lib/input/SekreAbdiInput.svelte';
 </script>
 
@@ -33,8 +34,9 @@
 				<p>Abdi yang akan dilantik</p>
 			</div>
 			<div class="flex items-center">
-				<button class="bg-badran-bt cursor-pointer rounded-md px-6 py-2 text-white"
-					>+Tambah Abdi</button
+				<button
+					class="bg-badran-bt cursor-pointer rounded-md px-6 py-2 text-white"
+					onclick={() => goto('bintangjasa/tambahabdi')}>+Tambah Abdi</button
 				>
 			</div>
 		</div>

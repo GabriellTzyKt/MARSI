@@ -13,7 +13,7 @@
 		if (open)
 			timer = setTimeout(() => {
 				open = false;
-				goto('/abdi/sekretariat/anggota/daftaranggota');
+				goto('/abdi/sekretariat/anggota/pelantikan');
 			}, 3000);
 	}
 </script>
@@ -94,6 +94,19 @@
 						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 					/>
 					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+				</div>
+			</div>
+
+			<div>
+				<p class="mt-5">Deskripsi Tugas:</p>
+				<div class="relative w-full">
+					<textarea
+						placeholder="Masukkan nama"
+						class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg"
+					></textarea>
+					<div class="h-full">
+						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -196,29 +209,27 @@
 				</div>
 			</div>
 
-			<div class="flex gap-12">
-				<div class="mt-5 w-full">
-					<p>Wongso:</p>
-					<div class="relative">
-						<input
-							type="text"
-							placeholder="Masukkan Nama"
-							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-						/>
-						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
-					</div>
+			<div class="mt-5">
+				<p>Wongso:</p>
+				<div class="relative">
+					<input
+						type="text"
+						placeholder="Masukkan Nama"
+						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+					/>
+					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 				</div>
+			</div>
 
-				<div class="mt-5 w-full">
-					<p>Pekerjaan(Opsional):</p>
-					<div class="relative">
-						<input
-							type="text"
-							placeholder="Masukkan Nama"
-							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-						/>
-						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
-					</div>
+			<div class="mt-5">
+				<p>Pekerjaan(Opsional):</p>
+				<div class="relative">
+					<input
+						type="text"
+						placeholder="Masukkan Nama"
+						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+					/>
+					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 				</div>
 			</div>
 
@@ -233,18 +244,30 @@
 					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 				</div>
 			</div>
+
+			<div class="mt-3">
+				<p>Jabatan:</p>
+				<div class="relative">
+					<input
+						type="text"
+						placeholder="Masukkan Nama"
+						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+					/>
+					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="flex w-full justify-end">
 		<button
 			class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
-			onclick={setTimer}>Tambah Data</button
+			onclick={setTimer}>Simpan Data</button
 		>
 	</div>
 </div>
 {#if open}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
-		<SuccessModal text="Berhasil menambah abdi"></SuccessModal>
+		<SuccessModal text="Berhasil di Tambah"></SuccessModal>
 	</div>
 {/if}
 

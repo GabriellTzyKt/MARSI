@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummySekreAnggotaOrg } from '$lib/dummy';
 	import Search from '$lib/table/Search.svelte';
@@ -7,7 +8,10 @@
 
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
-		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white">+Tambah Data</button>
+		<button
+			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
+			onclick={() => goto('daftaranggota/tambah')}>+Tambah Data</button
+		>
 		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
 			<select
@@ -84,14 +88,11 @@
 					<DropDown
 						text={`Apakah yakin ingin mengarsipkan abdi?`}
 						successText={`Berhasil mengarsipkan abdi!`}
-						link="/abdi/dashboard/organisasi/daftaranggota"
+						link="/abdi/sekretariat/anggota/daftaranggota"
 						items={[
 							['Ubah', '/abdi/sekretariat/anggota/daftaranggota/ubah'],
-							['History Gelar', '/abdi/sekretariat/anggota/daftaranggota/historygelar'],
-							[
-								'History Bintang Jasa',
-								'/abdi/sekretariat/anggota/daftaranggota/historybintangjasa'
-							],
+							['children', 'History Gelar', ''],
+							['children', 'History Bintang Jasa', ''],
 							['children', 'Non Aktifkan', '']
 						]}
 						id={`id-${index}`}

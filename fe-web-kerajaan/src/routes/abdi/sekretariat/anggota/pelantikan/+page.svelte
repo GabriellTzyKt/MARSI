@@ -1,5 +1,14 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import SekreAbdiInput from '$lib/input/SekreAbdiInput.svelte';
+	import { slide } from 'svelte/transition';
+	import DropPelantikan from './DropPelantikan.svelte';
+	let drop = $state(false);
+	const togle = () => {
+		if (!drop) {
+			drop = true;
+		} else drop = false;
+	};
 </script>
 
 <div class="mt-6 flex h-full w-full flex-col md:h-auto">
@@ -33,162 +42,21 @@
 				<p>Abdi yang akan dilantik</p>
 			</div>
 			<div class="flex items-center">
-				<button class="bg-badran-bt cursor-pointer rounded-md px-6 py-2 text-white"
-					>+Tambah Abdi</button
+				<button
+					class="bg-badran-bt cursor-pointer rounded-md px-6 py-2 text-white"
+					onclick={() => goto('pelantikan/tambahabdi')}>+Tambah Abdi</button
 				>
 			</div>
 		</div>
 		<div class="max-h-[500px] overflow-y-auto">
-			<!-- abdi yang akan dilantik -->
-			<div class="bg-badran/60 mx-3 mb-3 flex flex-col rounded-xl pb-3">
-				<div class="bg-badran/80 flex rounded-t-xl py-3">
-					<p class="ms-3 text-gray-200">Nama Abdi</p>
-				</div>
-				<!-- nama abdi/ id abdi -->
-				<div class="mx-3 mt-3 grid grid-cols-1 gap-4 lg:grid-cols-4">
-					<SekreAbdiInput span="1" placeholder="Nama Abdi/ID Abdi"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Nama Acara"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Dilantik oleh Siapa"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Bukti Pelantikan" img={true}></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang lama"></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang baru"></SekreAbdiInput>
-				</div>
-			</div>
-			<!-- abdi yang akan dilantik -->
-			<div class="bg-badran/60 mx-3 mb-3 flex flex-col rounded-xl pb-3">
-				<div class="bg-badran/80 flex rounded-t-xl py-3">
-					<p class="ms-3 text-gray-200">Nama Abdi</p>
-				</div>
-				<!-- nama abdi/ id abdi -->
-				<div class="mx-3 mt-3 grid grid-cols-1 gap-4 lg:grid-cols-4">
-					<SekreAbdiInput span="1" placeholder="Nama Abdi/ID Abdi"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Nama Acara"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Dilantik oleh Siapa"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Bukti Pelantikan" img={true}></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang lama"></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang baru"></SekreAbdiInput>
-				</div>
-			</div>
-			<!-- abdi yang akan dilantik -->
-			<div class="bg-badran/60 mx-3 mb-3 flex flex-col rounded-xl pb-3">
-				<div class="bg-badran/80 flex rounded-t-xl py-3">
-					<p class="ms-3 text-gray-200">Nama Abdi</p>
-				</div>
-				<!-- nama abdi/ id abdi -->
-				<div class="mx-3 mt-3 grid grid-cols-1 gap-4 lg:grid-cols-4">
-					<SekreAbdiInput span="1" placeholder="Nama Abdi/ID Abdi"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Nama Acara"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Dilantik oleh Siapa"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Bukti Pelantikan" img={true}></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang lama"></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang baru"></SekreAbdiInput>
-				</div>
-			</div>
-			<!-- abdi yang akan dilantik -->
-			<div class="bg-badran/60 mx-3 mb-3 flex flex-col rounded-xl pb-3">
-				<div class="bg-badran/80 flex rounded-t-xl py-3">
-					<p class="ms-3 text-gray-200">Nama Abdi</p>
-				</div>
-				<!-- nama abdi/ id abdi -->
-				<div class="mx-3 mt-3 grid grid-cols-1 gap-4 lg:grid-cols-4">
-					<SekreAbdiInput span="1" placeholder="Nama Abdi/ID Abdi"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Nama Acara"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Dilantik oleh Siapa"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Bukti Pelantikan" img={true}></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang lama"></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang baru"></SekreAbdiInput>
-				</div>
-			</div>
-			<!-- abdi yang akan dilantik -->
-			<div class="bg-badran/60 mx-3 mb-3 flex flex-col rounded-xl pb-3">
-				<div class="bg-badran/80 flex rounded-t-xl py-3">
-					<p class="ms-3 text-gray-200">Nama Abdi</p>
-				</div>
-				<!-- nama abdi/ id abdi -->
-				<div class="mx-3 mt-3 grid grid-cols-1 gap-4 lg:grid-cols-4">
-					<SekreAbdiInput span="1" placeholder="Nama Abdi/ID Abdi"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Nama Acara"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Dilantik oleh Siapa"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Bukti Pelantikan" img={true}></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang lama"></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang baru"></SekreAbdiInput>
-				</div>
-			</div>
-			<!-- abdi yang akan dilantik -->
-			<div class="bg-badran/60 mx-3 mb-3 flex flex-col rounded-xl pb-3">
-				<div class="bg-badran/80 flex rounded-t-xl py-3">
-					<p class="ms-3 text-gray-200">Nama Abdi</p>
-				</div>
-				<!-- nama abdi/ id abdi -->
-				<div class="mx-3 mt-3 grid grid-cols-1 gap-4 lg:grid-cols-4">
-					<SekreAbdiInput span="1" placeholder="Nama Abdi/ID Abdi"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Nama Acara"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Dilantik oleh Siapa"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Bukti Pelantikan" img={true}></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang lama"></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang baru"></SekreAbdiInput>
-				</div>
-			</div>
-			<!-- abdi yang akan dilantik -->
-			<div class="bg-badran/60 mx-3 mb-3 flex flex-col rounded-xl pb-3">
-				<div class="bg-badran/80 flex rounded-t-xl py-3">
-					<p class="ms-3 text-gray-200">Nama Abdi</p>
-				</div>
-				<!-- nama abdi/ id abdi -->
-				<div class="mx-3 mt-3 grid grid-cols-1 gap-4 lg:grid-cols-4">
-					<SekreAbdiInput span="1" placeholder="Nama Abdi/ID Abdi"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Nama Acara"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Dilantik oleh Siapa"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Bukti Pelantikan" img={true}></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang lama"></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang baru"></SekreAbdiInput>
-				</div>
-			</div>
-			<!-- abdi yang akan dilantik -->
-			<div class="bg-badran/60 mx-3 mb-3 flex flex-col rounded-xl pb-3">
-				<div class="bg-badran/80 flex rounded-t-xl py-3">
-					<p class="ms-3 text-gray-200">Nama Abdi</p>
-				</div>
-				<!-- nama abdi/ id abdi -->
-				<div class="mx-3 mt-3 grid grid-cols-1 gap-4 lg:grid-cols-4">
-					<SekreAbdiInput span="1" placeholder="Nama Abdi/ID Abdi"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Nama Acara"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Dilantik oleh Siapa"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Bukti Pelantikan" img={true}></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang lama"></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang baru"></SekreAbdiInput>
-				</div>
-			</div>
-			<!-- abdi yang akan dilantik -->
-			<div class="bg-badran/60 mx-3 mb-3 flex flex-col rounded-xl pb-3">
-				<div class="bg-badran/80 flex rounded-t-xl py-3">
-					<p class="ms-3 text-gray-200">Nama Abdi</p>
-				</div>
-				<!-- nama abdi/ id abdi -->
-				<div class="mx-3 mt-3 grid grid-cols-1 gap-4 lg:grid-cols-4">
-					<SekreAbdiInput span="1" placeholder="Nama Abdi/ID Abdi"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Nama Acara"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Dilantik oleh Siapa"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Bukti Pelantikan" img={true}></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang lama"></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang baru"></SekreAbdiInput>
-				</div>
-			</div>
-			<!-- abdi yang akan dilantik -->
-			<div class="bg-badran/60 mx-3 mb-3 flex flex-col rounded-xl pb-3">
-				<div class="bg-badran/80 flex rounded-t-xl py-3">
-					<p class="ms-3 text-gray-200">Nama Abdi</p>
-				</div>
-				<!-- nama abdi/ id abdi -->
-				<div class="mx-3 mt-3 grid grid-cols-1 gap-4 lg:grid-cols-4">
-					<SekreAbdiInput span="1" placeholder="Nama Abdi/ID Abdi"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Nama Acara"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Dilantik oleh Siapa"></SekreAbdiInput>
-					<SekreAbdiInput span="1" placeholder="Bukti Pelantikan" img={true}></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang lama"></SekreAbdiInput>
-					<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang baru"></SekreAbdiInput>
-				</div>
-			</div>
+			<DropPelantikan nama="Halo"></DropPelantikan>
+			<DropPelantikan nama="Halo"></DropPelantikan>
+			<DropPelantikan nama="Halo"></DropPelantikan>
+			<DropPelantikan nama="Halo"></DropPelantikan>
+			<DropPelantikan nama="Halo"></DropPelantikan>
+			<DropPelantikan nama="Halo"></DropPelantikan>
+			<DropPelantikan nama="Halo"></DropPelantikan>
+			<DropPelantikan nama="Halo"></DropPelantikan>
 		</div>
 	</div>
 </div>

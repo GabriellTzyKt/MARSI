@@ -976,3 +976,85 @@ export const dummyTugas = [
     aksi: "Detail"
   }
 ];
+export const dummyHistoryGelar = [
+  {
+    id: 0,
+    nama_gelar: "Gonardo",
+    nama_pelantik: "Eric",
+    tanggal_dilantik: "12-22-2222",
+    acara: "Upacara Pengabdian",
+    sertifikat: "foto"
+  },
+  {
+    id: 1,
+    nama_gelar: "Rinaldi",
+    nama_pelantik: "Samantha",
+    tanggal_dilantik: "03-15-2023",
+    acara: "Wisuda Nasional",
+    sertifikat: "dokumen"
+  },
+  {
+    id: 2,
+    nama_gelar: "Setiawan",
+    nama_pelantik: "Michael",
+    tanggal_dilantik: "07-10-2021",
+    acara: "Pelantikan Profesi",
+    sertifikat: "digital"
+  },
+  {
+    id: 3,
+    nama_gelar: "Putri",
+    nama_pelantik: "Jessica",
+    tanggal_dilantik: "05-20-2020",
+    acara: "Penghargaan Akademik",
+    sertifikat: "arsip"
+  },
+  {
+    id: 4,
+    nama_gelar: "Fadillah",
+    nama_pelantik: "Jonathan",
+    tanggal_dilantik: "11-11-2019",
+    acara: "Penghargaan Keahlian",
+    sertifikat: "hardcopy"
+  },
+  {
+    id: 5,
+    nama_gelar: "Nugraha",
+    nama_pelantik: "William",
+    tanggal_dilantik: "09-09-2018",
+    acara: "Upacara Wisuda",
+    sertifikat: "scan"
+  },
+  {
+    id: 6,
+    nama_gelar: "Dewi",
+    nama_pelantik: "Amanda",
+    tanggal_dilantik: "01-01-2017",
+    acara: "Pelantikan Jabatan",
+    sertifikat: "softcopy"
+  },
+  {
+    id: 7,
+    nama_gelar: "Prasetyo",
+    nama_pelantik: "Daniel",
+    tanggal_dilantik: "06-30-2016",
+    acara: "Seminar Nasional",
+    sertifikat: "e-sertifikat"
+  },
+  {
+    id: 8,
+    nama_gelar: "Sari",
+    nama_pelantik: "Olivia",
+    tanggal_dilantik: "08-25-2015",
+    acara: "Penghargaan Tahunan",
+    sertifikat: "laminated"
+  },
+  {
+    id: 9,
+    nama_gelar: "Hendrawan",
+    nama_pelantik: "Chris",
+    tanggal_dilantik: "02-14-2014",
+    acara: "Konferensi Ilmiah",
+    sertifikat: "printed"
+  }
+];

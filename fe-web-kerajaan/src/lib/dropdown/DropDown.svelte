@@ -5,16 +5,19 @@
 	import { get, writable } from 'svelte/store';
 	import { openDropdown } from '$lib/store';
 	import Modal from '$lib/popup/Modal.svelte';
+	import HistoryPopUp from '$lib/popup/HistoryPopUp.svelte';
+	import { fade } from 'svelte/transition';
 	// import Modal from '$lib/popup/Modal.svelte';
 	// export const dropId = $state(writable<string | null>(null));
 	let open = $state(false);
 	const dispatcher = createEventDispatcher();
 	let pop = $state(false);
 	// Unique ID for this dropdown
-	const { id, data, items, text, link, successText } = $props();
+	const { id, data, items, text, link, successText, dataG = null, header = null } = $props();
 	let isOpen = $state(false);
 	let temp = $state('');
-
+	let openGelar = $state(false);
+	let openBintang = $state(false);
 	const toggleDropdown = () => {
 		// console.log(data);
 		openDropdown.update((current) => {
@@ -59,13 +62,35 @@
 			{#each items as i, p}
 				<div class="flex">
 					{#if i[0] === 'children'}
-						<a
-							href={i[2]}
-							class="w-full px-4 py-1 {p === 0 ? 'rounded-t-lg' : ''}  {p === items.length - 1
-								? 'rounded-b-lg'
-								: ''} hover:cursor-pointer hover:bg-gray-400"
-							onclick={toglemodal}>{i[1]}</a
-						>
+						{#if i[1] === 'History Gelar'}
+							<a
+								href={i[3]}
+								class="w-full px-4 py-1 {p === 0 ? 'rounded-t-lg' : ''}  {p === items.length - 1
+									? 'rounded-b-lg'
+									: ''} hover:cursor-pointer hover:bg-gray-400"
+								onclick={() => {
+									openGelar = true;
+								}}>{i[1]}</a
+							>
+						{:else if i[1] === 'History Bintang Jasa'}
+							<a
+								href={i[3]}
+								class="w-full px-4 py-1 {p === 0 ? 'rounded-t-lg' : ''}  {p === items.length - 1
+									? 'rounded-b-lg'
+									: ''} hover:cursor-pointer hover:bg-gray-400"
+								onclick={() => {
+									openBintang = true;
+								}}>{i[1]}</a
+							>
+						{:else}
+							<a
+								href={i[2]}
+								class="w-full px-4 py-1 {p === 0 ? 'rounded-t-lg' : ''}  {p === items.length - 1
+									? 'rounded-b-lg'
+									: ''} hover:cursor-pointer hover:bg-gray-400"
+								onclick={toglemodal}>{i[1]}</a
+							>
+						{/if}
 					{:else}
 						<a
 							href={i[1]}
@@ -80,7 +105,17 @@
 	{/if}
 </div>
 <Modal {pop} {successText} {data} {text} {link}></Modal>
-
+{#if openGelar}
+	<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
+		<HistoryPopUp title="History Gelar" bind:value={openGelar} data={dataG} {header}></HistoryPopUp>
+	</div>
+{/if}
+{#if openBintang}
+	<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
+		<HistoryPopUp title="History Bintang Jasa" bind:value={openBintang} data={dataG} {header}
+		></HistoryPopUp>
+	</div>
+{/if}
 <!-- onclick={() => {
     if (open) {
         dispatcher('close');
