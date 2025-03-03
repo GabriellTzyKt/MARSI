@@ -1,10 +1,23 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import { fade } from 'svelte/transition';
 
 	let total = $state(8);
 	let activeTab = $state('upcoming');
-
+	let open = $state(false);
+	let timer: number;
+	function setTimer() {
+		open = true;
+		if (timer) {
+			clearTimeout(timer);
+		}
+		if (open)
+			timer = setTimeout(() => {
+				open = false;
+				goto('/abdi/dashboard/organisasi/acara');
+			}, 3000);
+	}
 	function setActive(tab: string) {
 		activeTab = tab;
 	}
@@ -219,17 +232,17 @@
 		<div class="mt-8 flex w-full justify-center lg:justify-end">
 			<button
 				class="w-50 text-nowrap rounded-lg bg-green-400 px-2 py-2 text-white"
-				onclick={toggle}
+				onclick={setTimer}
 			>
 				Buat acara
 			</button>
 		</div>
 	</div>
 </div>
-{#if success}
+{#if open}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
 		<SucessModal
-			open={success}
+			{open}
 			text="Tamu Berhasil Di Undang!"
 			to="/abdi/dashboard/organisasi/acara"
 			on:close={toggle}

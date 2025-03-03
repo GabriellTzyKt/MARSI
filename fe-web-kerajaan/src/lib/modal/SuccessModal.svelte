@@ -11,7 +11,7 @@
 <!-- svelte-ignore event_directive_deprecated -->
 <div
 	class="fixed left-0 top-0 flex min-h-full min-w-full items-center justify-center bg-black/75"
-	in:fly={{ y: 100, duration: 100 }}
+	in:fade={{ duration: 100 }}
 	out:fade={{ duration: 100 }}
 	onclick={(e) => {
 		e.stopPropagation();
@@ -21,7 +21,7 @@
 	<!-- svelte-ignore event_directive_deprecated -->
 	<div
 		class=" relative flex flex-col items-center justify-center rounded-xl border bg-white"
-		in:fly={{ y: 100, duration: 100 }}
+		in:fade={{ duration: 100 }}
 		out:fade={{ duration: 100 }}
 		onclick={(e) => {
 			e.stopPropagation();

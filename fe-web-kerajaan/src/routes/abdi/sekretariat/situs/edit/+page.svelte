@@ -1,6 +1,21 @@
 <script lang="ts">
 	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
+	import { goto } from '$app/navigation';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	let open = $state(false);
+	let timer: number;
+	function setTimer() {
+		open = true;
+		if (timer) {
+			clearTimeout(timer);
+		}
+		if (open)
+			timer = setTimeout(() => {
+				open = false;
+				goto('/abdi/sekretariat/situs');
+			}, 3000);
+	}
 </script>
 
 <div class="h-full w-full">
@@ -8,20 +23,20 @@
 		<!-- 1 -->
 		<div>
 			<div class="relative mx-auto mb-4 flex w-full items-center justify-center">
-                <div class="relative w-[100px] h-[100px] group">
-                    <!-- svelte-ignore a11y_img_redundant_alt -->
-                    <img src={gambardefault} class="w-full h-full rounded-full" alt="Profile Picture" />
-            
-                    <div class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                        <p class="text-white font-semibold">Ganti Foto</p>
-                    </div>
-                </div>
-            </div>
-            
-            
+				<div class="group relative h-[100px] w-[100px]">
+					<!-- svelte-ignore a11y_img_redundant_alt -->
+					<img src={gambardefault} class="h-full w-full rounded-full" alt="Profile Picture" />
+
+					<div
+						class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+					>
+						<p class="font-semibold text-white">Ganti Foto</p>
+					</div>
+				</div>
+			</div>
 
 			<div>
-				<p>Nama Komunitas:</p>
+				<p>Nama Situs:</p>
 				<div class="relative">
 					<input
 						type="text"
@@ -64,7 +79,7 @@
 			</div>
 
 			<div>
-				<p class="mt-5">Deskripsi Komunitas:</p>
+				<p class="mt-5">Deskripsi Situs:</p>
 				<div class="relative w-full">
 					<textarea
 						placeholder="Masukkan nama"
@@ -79,27 +94,8 @@
 
 		<!-- 2 -->
 		<div>
-			<div class="flexcoba mt-5 flex gap-6">
-				<div class="w-full">
-					<p>No telepon :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-				<div class="w-full">
-					<p>Total Anggota :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-			</div>
-
 			<div class="mt-5">
-				<p>Pembina:</p>
+				<p>Juru Kunci:</p>
 				<div class="relative">
 					<input
 						type="text"
@@ -108,18 +104,17 @@
 					/>
 				</div>
 			</div>
-
 			<div class="flexcoba mt-5 flex gap-6">
 				<div class="w-full">
-					<p>No telepon :</p>
+					<p>Dibangun Oleh :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
+						class="border-blackpx-2 mt-2 w-full rounded-lg border-2 py-2 text-start"
 					/>
 				</div>
 				<div class="w-full">
-					<p>Total Anggota :</p>
+					<p>Tahun Berdiri :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
@@ -130,7 +125,7 @@
 
 			<div class="flexcoba mt-5 flex gap-6">
 				<div class="w-full">
-					<p>No telepon :</p>
+					<p>Pembina :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
@@ -138,7 +133,7 @@
 					/>
 				</div>
 				<div class="w-full">
-					<p>Total Anggota :</p>
+					<p>Pelindung :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
@@ -147,9 +142,20 @@
 				</div>
 			</div>
 
+			<div class="mt-5">
+				<p>Pelindung:</p>
+				<div class="relative">
+					<input
+						type="text"
+						placeholder="Masukkan Pembina"
+						class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
+					/>
+				</div>
+			</div>
+
 			<div class="flexcoba mt-5 flex gap-6">
 				<div class="w-full">
-					<p>No telepon :</p>
+					<p>Jam Buka :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
@@ -157,7 +163,15 @@
 					/>
 				</div>
 				<div class="w-full">
-					<p>Total Anggota :</p>
+					<p>Jam Tutup :</p>
+					<input
+						type="text"
+						placeholder="Masukkan nama"
+						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+					/>
+				</div>
+				<div class="w-full">
+					<p>Jumlah Anggota :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
@@ -167,7 +181,7 @@
 			</div>
 
 			<div class="mt-3">
-				<p>Pembina:</p>
+				<p>Wisata:</p>
 				<div class="relative">
 					<input
 						type="text"
@@ -180,14 +194,15 @@
 	</div>
 
 	<div class="relative w-full">
-		<a href="/abdi/dashboard/situs/detail">
-			<button
-				class="w-50 t-0 absolute right-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
-				>Simpan Data</button
-			>
-		</a>
+		<button
+			class="w-50 t-0 absolute right-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
+			onclick={setTimer}>Simpan Data</button
+		>
 	</div>
 </div>
+{#if open}
+	<SuccessModal text="Situs Berhasil Diedit"></SuccessModal>
+{/if}
 
 <style>
 	@media (max-width: 768px) {

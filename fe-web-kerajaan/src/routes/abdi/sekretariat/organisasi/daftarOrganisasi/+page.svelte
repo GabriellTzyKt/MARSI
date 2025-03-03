@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
-	import { dummySekreKom } from '$lib/dummy';
+	import { dummyAnggota, dummyOrganisasi } from '$lib/dummy';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
 </script>
@@ -10,7 +10,9 @@
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
 		<button
 			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
-			onclick={() => goto('daftarkomunitas/buat')}>+Tambah Data</button
+			onclick={() => {
+				goto('/abdi/sekretariat/organisasi/daftarOrganisasi/buat');
+			}}>+Tambah Data</button
 		>
 		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
@@ -70,29 +72,26 @@
 	<div class="flex w-full">
 		<Table
 			table_header={[
-				['id_komunitas', 'Id Komunitas'],
-				['nama_komunitas', 'Nama Komunitas'],
+				['id_organisasi', 'Id Organisasi'],
+				['nama_organisasi', 'Nama Organisasi'],
 				['tanggal_berdiri', 'Tanggal Berdiri'],
-				['lokasi_komunitas', 'Lokasi Komunitas'],
-
+				['lokasi', 'Lokasi'],
 				['penanggungjawab', 'Penanggung Jawab'],
-
 				['pelindung', 'Pelindung'],
 				['pembina', 'Pembina'],
-
 				['children', 'Aksi']
 			]}
-			table_data={dummySekreKom}
+			table_data={dummyOrganisasi}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
 					<DropDown
-						text={`Apakah yakin ingin mengarsipkan abdi?`}
-						successText={`Berhasil mengarsipkan abdi!`}
-						link="/abdi/sekretariat/komunitas/daftaranggota"
+						text={`apakah anda yakin ingin mengarsip anggota ${data.nama_organisasi}?`}
+						link="/abdi/sekretariat/organisasi/daftarOrganisasi"
+						successText={`berhasil mengarship organisai ${data.nama_organisasi}`}
 						items={[
-							['Edit', '/abdi/sekretariat/komunitas/daftarkomunitas/edit'],
-							['children', 'Non Aktifkan', '']
+							['Ubah', '/abdi/sekretariat/organisasi/daftarOrganisasi/edit    '],
+							['children', 'non-aktifkan']
 						]}
 						id={`id-${index}`}
 						{data}

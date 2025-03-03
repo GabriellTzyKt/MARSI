@@ -9,14 +9,14 @@
 			<img src={gambardefault} class="h-25 w-25 relative ml-5 mr-5 rounded-full" alt="" />
 			<span class="mdi--edit absolute"></span>
 		</div>
-		<div class="flex w-full lg:justify-end justify-center lg:mt-0 mt-5">
-			<a href="/abdi/komunitas/edit"
+		<div class="mt-5 flex w-full justify-center lg:mt-0 lg:justify-end">
+			<a href="/abdi/dashboard/organisasi/edit"
 				><button class="w-50 h-fit items-end rounded-lg bg-yellow-300 px-2 py-2 text-black">
 					Ubah
 				</button></a
 			>
 		</div>
-		<div class="mt-10 grid lg:grid-cols-2 grid-cols-1 gap-4">
+		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<!-- 1 -->
 			<div>
 				<div
@@ -43,7 +43,7 @@
 					<p>Deskripsi Komunitas :</p>
 					<textarea
 						placeholder="Masukkan nama"
-						class="h-32 w-full resize-none rounded-mdpx-3 py-3 text-lg "
+						class="rounded-mdpx-3 h-32 w-full resize-none py-3 text-lg"
 					></textarea>
 				</div>
 			</div>
@@ -70,7 +70,7 @@
 				</div>
 
 				<!-- No Telp + Anggota -->
-				<div class=" flex gap-2 flexcoba">
+				<div class=" flexcoba flex gap-2">
 					<div
 						class="mt-5 flex h-fit w-full flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 					>
@@ -90,13 +90,13 @@
 		<div class="mt-5 h-1 w-full rounded-full bg-gray-300"></div>
 
 		<div class="mt-5 flex w-full">
-			<p class="ml-10 w-full lg:text-center text-start font-bold mt-2">Dokumentasi</p>
+			<p class="ml-10 mt-2 w-full text-start font-bold lg:text-center">Dokumentasi</p>
 			<button class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white">
 				Tambah Gambar
 			</button>
 		</div>
 
-		<div class="mt-5 grid lg:grid-cols-4 grid-cols-2 gap-2">
+		<div class="mt-5 grid grid-cols-2 gap-2 lg:grid-cols-4">
 			<div class="relative">
 				<img src={gambartemp} class="rounded-lg" alt="Gambar" />
 				<span

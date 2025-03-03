@@ -2,7 +2,6 @@
 	import { goto } from '$app/navigation';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 
-	let total = $state(8);
 	let open = $state(false);
 	let timer: number;
 	function setTimer() {
@@ -13,7 +12,7 @@
 		if (open)
 			timer = setTimeout(() => {
 				open = false;
-				goto('/abdi/dashboard/organisasi/daftaranggota');
+				goto('/abdi/sekretariat/organisasi/daftaranggota');
 			}, 3000);
 	}
 </script>

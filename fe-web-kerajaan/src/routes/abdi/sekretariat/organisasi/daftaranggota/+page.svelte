@@ -1,16 +1,20 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
-	import { dummySekreKom } from '$lib/dummy';
+	import { dummyAnggota } from '$lib/dummy';
+	import TambahAnggota from '$lib/popup/TambahAnggota.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
+	import { fade } from 'svelte/transition';
+	let open = $state(false);
 </script>
 
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
 		<button
-			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
-			onclick={() => goto('daftarkomunitas/buat')}>+Tambah Data</button
+			class="bg-badran-bt cursor-pointer rounded-lg px-3 py-2 text-white"
+			onclick={() => {
+				open = true;
+			}}>+Tambah Data</button
 		>
 		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
@@ -70,28 +74,24 @@
 	<div class="flex w-full">
 		<Table
 			table_header={[
-				['id_komunitas', 'Id Komunitas'],
-				['nama_komunitas', 'Nama Komunitas'],
-				['tanggal_berdiri', 'Tanggal Berdiri'],
-				['lokasi_komunitas', 'Lokasi Komunitas'],
-
-				['penanggungjawab', 'Penanggung Jawab'],
-
-				['pelindung', 'Pelindung'],
-				['pembina', 'Pembina'],
-
+				['id_anggota', 'Id Anggota'],
+				['nama_anggota', 'Nama Anggota'],
+				['tanggal_bergabung', 'Tanggal Bergabung'],
+				['jabatan_organisasi', 'Jabatan Organisasi'],
+				['nomor_telepon', 'Nomer Telpon'],
+				['email', 'Email'],
 				['children', 'Aksi']
 			]}
-			table_data={dummySekreKom}
+			table_data={dummyAnggota}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
 					<DropDown
-						text={`Apakah yakin ingin mengarsipkan abdi?`}
-						successText={`Berhasil mengarsipkan abdi!`}
-						link="/abdi/sekretariat/komunitas/daftaranggota"
+						text={`Apakah yakin ingin mengarsipkan ${data.nama_anggota}?`}
+						successText={`Berhasil mengarsipkan ${data.nama_anggota}!`}
+						link="/abdi/sekretariat/organisasi/daftaranggota"
 						items={[
-							['Edit', '/abdi/sekretariat/komunitas/daftarkomunitas/edit'],
+							['Edit', '/abdi/sekretariat/organisasi/daftaranggota/edit'],
 							['children', 'Non Aktifkan', '']
 						]}
 						id={`id-${index}`}
@@ -102,3 +102,8 @@
 		</Table>
 	</div>
 </div>
+{#if open}
+	<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
+		<TambahAnggota bind:value={open}></TambahAnggota>
+	</div>
+{/if}

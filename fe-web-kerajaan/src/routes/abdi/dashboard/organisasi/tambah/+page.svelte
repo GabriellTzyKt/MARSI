@@ -1,6 +1,23 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import jd from '$lib/asset/profile/jdpp.jpg';
 	import Input from '$lib/input/Input.svelte';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+
+	let total = $state(8);
+	let open = $state(false);
+	let timer: number;
+	function setTimer() {
+		open = true;
+		if (timer) {
+			clearTimeout(timer);
+		}
+		if (open)
+			timer = setTimeout(() => {
+				open = false;
+				goto('/abdi/dashboard/organisasi/daftarorganisasi');
+			}, 3000);
+	}
 </script>
 
 <div class="flex w-full flex-col">
@@ -129,9 +146,13 @@
 			</div>
 		</div>
 		<div class="mt-8 flex w-full justify-end">
-			<button class=" bg-badran-bdg w-full rounded-lg px-3 py-2 text-white xl:w-auto"
-				>Buat Organisasi</button
+			<button
+				class=" bg-badran-bdg w-full rounded-lg px-3 py-2 text-white xl:w-auto"
+				onclick={setTimer}>Buat Organisasi</button
 			>
 		</div>
 	</form>
 </div>
+{#if open}
+	<SuccessModal text="Organisasi Berhasil Dibuat"></SuccessModal>
+{/if}

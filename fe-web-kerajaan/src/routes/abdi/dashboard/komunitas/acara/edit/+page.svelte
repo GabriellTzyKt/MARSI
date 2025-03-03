@@ -1,10 +1,27 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import { fade } from 'svelte/transition';
+
 	let total = $state(8);
+	let open = $state(false);
+	let timer: number;
+	function setTimer() {
+		open = true;
+		if (timer) {
+			clearTimeout(timer);
+		}
+		if (open)
+			timer = setTimeout(() => {
+				open = false;
+				goto('/abdi/dashboard/komunitas/acara');
+			}, 3000);
+	}
 </script>
 
 <div class="min-h-full w-full">
 	<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-		<div class="mt-5 grid lg:grid-cols-4 grid-cols-1 gap-12">
+		<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 			<div class="col-span-2">
 				<div class="mt-2 w-full">
 					<p>Nama Acara:</p>
@@ -40,8 +57,8 @@
 				</div>
 			</div>
 
-			<div class="col-span-2 ">
-				<div class="mt-2 flex flexcoba w-full">
+			<div class="col-span-2">
+				<div class="flexcoba mt-2 flex w-full">
 					<div class="flex-1">
 						<p>Kapasitas Acara:</p>
 						<input
@@ -51,8 +68,8 @@
 						/>
 					</div>
 					<div class="ml-10 flex">
-						<div class="w-full items-center text-center mr-10">
-							<p class="lg:mt-0 mt-3 lg:mb-0 mb-3">Jenis Acara</p>
+						<div class="mr-10 w-full items-center text-center">
+							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara</p>
 							<div class="mt-2 flex">
 								<div class="mx-2 flex items-center justify-center">
 									<input
@@ -91,7 +108,7 @@
 						class="w-full rounded-lg border px-2 py-1"
 					/>
 				</div>
-				<div class="mt-2 flex flexcoba w-full">
+				<div class="flexcoba mt-2 flex w-full">
 					<div class="mt-2 lg:flex-1">
 						<p>Kapasitas Acara:</p>
 						<input
@@ -100,7 +117,7 @@
 							class="w-full rounded-lg border px-2 py-1"
 						/>
 					</div>
-					<div class="lg:ml-10 flex-1">
+					<div class="flex-1 lg:ml-10">
 						<div class="mt-2 w-full">
 							<p>Penanggung Jawab:</p>
 							<input
@@ -111,7 +128,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="mt-2 flex flexcoba w-full">
+				<div class="flexcoba mt-2 flex w-full">
 					<div class="mt-2 lg:flex-1">
 						<p>Kapasitas Acara:</p>
 						<input
@@ -120,7 +137,7 @@
 							class="w-full rounded-lg border px-2 py-1"
 						/>
 					</div>
-					<div class="lg:ml-10 flex-1">
+					<div class="flex-1 lg:ml-10">
 						<div class="mt-2 w-full">
 							<p>Penanggung Jawab:</p>
 							<input
@@ -137,7 +154,7 @@
 		<div class="mt-5 h-1 w-full bg-slate-300"></div>
 
 		<div class="mt-8 flex w-full">
-			<p class="my-auto ml-10 w-full lg:text-center text-start font-bold">Undangan</p>
+			<p class="my-auto ml-10 w-full text-start font-bold lg:text-center">Undangan</p>
 			<button class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white">
 				Tambah Undangan
 			</button>
@@ -149,11 +166,12 @@
 			{#each Array(total) as _, i}
 				<div class="col-span-1 w-full">{i + 1}</div>
 				<div class="col-span-2 w-full rounded-lg border px-2 py-1">
-                    <select name="panggilan" id="panggilan" class="w-full">
-                        <option value="volvo">Tn</option>
-                        <option value="saab">Ny</option>
-                      </select>
-                </div>				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
+					<select name="panggilan" id="panggilan" class="w-full">
+						<option value="volvo">Tn</option>
+						<option value="saab">Ny</option>
+					</select>
+				</div>
+				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
 				<div class="col-span-2 w-full rounded-lg border px-2 py-1">Tn</div>
 				<div class="col-span-1">
 					<span class="flex h-8 w-8 items-center justify-center rounded-full bg-red-400 p-2">
@@ -163,15 +181,21 @@
 			{/each}
 		</div>
 
-		<div class="mt-8 flex w-full lg:justify-end justify-center">
+		<div class="mt-8 flex w-full justify-center lg:justify-end">
 			<button
 				class="w-50 text-nowrap rounded-lg bg-green-400 px-2 py-2 text-white"
+				onclick={setTimer}
 			>
 				Ubah acara
 			</button>
 		</div>
 	</div>
 </div>
+{#if open}
+	<div transition:fade={{ duration: 100 }}>
+		<SuccessModal text="Acara Berhasil Diedit"></SuccessModal>
+	</div>
+{/if}
 
 <style>
 	.gg--trash {

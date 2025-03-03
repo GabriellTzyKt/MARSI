@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAcara, dummyAnggota } from '$lib/dummy';
 
@@ -9,7 +10,10 @@
 
 <div class="flex w-full flex-col">
 	<div class="mx-10 flex justify-between">
-		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white">+Tambah Data</button>
+		<button
+			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
+			onclick={() => goto('/abdi/dashboard/komunitas/acara/buat')}>+Tambah Data</button
+		>
 		<div class="flex items-center gap-2">
 			<!-- select -->
 			<select
@@ -69,7 +73,7 @@
 		<Table
 			table_header={[
 				['id_acara', 'Id Acara'],
-				['nama_acaara', 'Nama Acara'],
+				['nama_acara', 'Nama Acara'],
 				['tanggal', 'Tanggal Acara'],
 				['lokasi', 'Lokasi'],
 				['penanggungjawab', 'Penanggung Jawab'],

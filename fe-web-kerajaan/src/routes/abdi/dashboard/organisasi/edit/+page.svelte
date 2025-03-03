@@ -1,6 +1,23 @@
 <script lang="ts">
 	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
+	import { goto } from '$app/navigation';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+
+	let total = $state(8);
+	let open = $state(false);
+	let timer: number;
+	function setTimer() {
+		open = true;
+		if (timer) {
+			clearTimeout(timer);
+		}
+		if (open)
+			timer = setTimeout(() => {
+				open = false;
+				goto('/abdi/dashboard/organisasi/daftarorganisasi');
+			}, 3000);
+	}
 </script>
 
 <div class="h-full w-full">
@@ -124,6 +141,9 @@
 		>
 	</div>
 </div>
+{#if open}
+	<SuccessModal text="Organisasi Berhasail Dirubah"></SuccessModal>
+{/if}
 
 <style>
 	.raphael--edit {

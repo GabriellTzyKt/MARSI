@@ -1,4 +1,21 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import { fade } from 'svelte/transition';
+
+	let open = $state(false);
+	let timer: number;
+	function setTimer() {
+		open = true;
+		if (timer) {
+			clearTimeout(timer);
+		}
+		if (open)
+			timer = setTimeout(() => {
+				open = false;
+				goto('/abdi/dashboard/komunitas/daftaranggota');
+			}, 3000);
+	}
 </script>
 
 <div class="h-full w-full">
@@ -34,7 +51,7 @@
 						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 					/>
 				</div>
-                <!-- <span class="bx--calendar"></span> -->
+				<!-- <span class="bx--calendar"></span> -->
 			</div>
 
 			<div>
@@ -245,10 +262,15 @@
 	<div class="flex w-full justify-end">
 		<button
 			class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
-			>Simpan Data</button
+			onclick={setTimer}>Simpan Data</button
 		>
 	</div>
 </div>
+{#if open}
+	<div transition:fade={{ duration: 100 }}>
+		<SuccessModal text="Anggota berhasil diedit"></SuccessModal>
+	</div>
+{/if}
 
 <style>
 	.raphael--edit {

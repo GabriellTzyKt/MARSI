@@ -9,7 +9,7 @@
 	<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="flex w-full justify-between">
 			<p class="mt-2">Informasi Acara</p>
-			<a href="/abdi/dashboard/komunitas/acara/edit"
+			<a href="/abdi/sekretariat/acara/edit"
 				><button class="w-40 rounded-lg border-2 bg-yellow-500 px-2 py-2">Ubah</button></a
 			>
 		</div>

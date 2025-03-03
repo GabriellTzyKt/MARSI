@@ -1,24 +1,41 @@
 <script lang="ts">
 	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
+	import { goto } from '$app/navigation';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	let open = $state(false);
+	let timer: number;
+	function setTimer() {
+		open = true;
+		if (timer) {
+			clearTimeout(timer);
+		}
+		if (open)
+			timer = setTimeout(() => {
+				open = false;
+				goto('/abdi/sekretariat/organisasi/daftarOrganisasi');
+			}, 3000);
+	}
 </script>
 
 <div class="h-full w-full">
-    <div class="relative mx-auto flex w-full items-center justify-center">
-        <div class="relative group">
-            <img src={gambardefault} class="h-25 w-25 relative ml-5 mr-5 rounded-full" alt="" />
-    
-            <div class="absolute inset-0 flex h-25 w-25 ml-5 items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <p class="text-white font-semibold">Ganti Foto</p>
-            </div>
-        </div>
-    </div>
-    
+	<div class="relative mx-auto flex w-full items-center justify-center">
+		<div class="group relative">
+			<img src={gambardefault} class="h-25 w-25 relative ml-5 mr-5 rounded-full" alt="" />
+
+			<div
+				class="h-25 w-25 absolute inset-0 ml-5 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+			>
+				<p class="font-semibold text-white">Ganti Foto</p>
+			</div>
+		</div>
+	</div>
+
 	<div class="mt-10 grid grid-cols-2 gap-4">
 		<!-- 1 -->
 		<div>
 			<div>
-				<p>Nama Komunitas:</p>
+				<p>Nama Organisasi:</p>
 				<div class="relative">
 					<input
 						type="text"
@@ -54,11 +71,11 @@
 			</div>
 
 			<div>
-				<p class="mt-5">Deskripsi Komunitas:</p>
+				<p class="mt-5">Deskripsi Organisasi:</p>
 				<div class="relative w-full">
 					<textarea
 						placeholder="Masukkan nama"
-						class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg pr-10"
+						class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 pr-10 text-lg"
 					></textarea>
 					<div class="h-full">
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
@@ -91,7 +108,9 @@
 						/>
 					</div>
 				</div>
-                <button class="border rounded-lg bg-blue-600 text-white w-fit h-fit px-4 py-2.5 mt-8"> Permohonan </button>
+				<button class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white">
+					Permohonan
+				</button>
 			</div>
 
 			<div class="mt-5 flex items-center gap-3">
@@ -105,7 +124,9 @@
 						/>
 					</div>
 				</div>
-                <button class="border rounded-lg bg-blue-600 text-white w-fit h-fit px-4 py-2.5 mt-8"> Permohonan </button>
+				<button class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white">
+					Permohonan
+				</button>
 			</div>
 
 			<div class="mt-5 flex gap-12">
@@ -132,10 +153,13 @@
 	<div class="relative w-full">
 		<button
 			class="w-50 t-0 absolute right-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
-			>Simpan Data</button
+			onclick={setTimer}>Simpan Data</button
 		>
 	</div>
 </div>
+{#if open}
+	<SuccessModal text="Sukses diedit"></SuccessModal>
+{/if}
 
 <style>
 	.raphael--edit {

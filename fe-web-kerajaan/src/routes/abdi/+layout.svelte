@@ -291,10 +291,10 @@
 						active={isActive('/abdi/dashboard/situs/bukutamu')}
 					/>
 					<SidebarMenu
-						href="/abdi/dashboard/situs/daftaracara/detail"
+						href="/abdi/dashboard/situs/detail"
 						icon="mdi:book"
-						anchor="Daftar Acara"
-						active={isActive('/abdi/dashboard/situs/daftaracara/detail')}
+						anchor="Detail Situs"
+						active={isActive('/abdi/dashboard/situs/detail')}
 					/>
 				</SidebarMenu>
 			</Sidebar>
@@ -345,7 +345,7 @@
 				</SidebarMenu>
 				<SidebarMenu href="" icon="mdi:people" anchor="Organisasi" hasChildren={true}>
 					<SidebarMenu
-						href="/abdi/sekretariat/organisasi/daftarorganisasi"
+						href="/abdi/sekretariat/organisasi/daftarOrganisasi"
 						icon="mdi:book"
 						anchor="Daftar Organisasi"
 						active={isActive('/abdi/sekretariat/anggota/daftaranggota')}
