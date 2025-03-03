@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { dummyHistoryGelar } from '$lib/dummy';
+	import BuktiLaporan from '$lib/popup/BuktiLaporan.svelte';
 	import HistoryPopUp from '$lib/popup/HistoryPopUp.svelte';
+	import TambahTugas from '$lib/popup/TambahTugas.svelte';
 	let open = $state(false);
 	let openJ = $state(false);
 </script>
@@ -43,3 +45,5 @@
 		]}
 	></HistoryPopUp>
 {/if}
+<!-- <TambahTugas></TambahTugas> -->
+<BuktiLaporan></BuktiLaporan>

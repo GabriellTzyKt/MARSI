@@ -1,15 +1,23 @@
 <script lang="ts">
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyTugas } from '$lib/dummy';
+	import TambahKunjungan from '$lib/popup/TambahKunjungan.svelte';
+	import TambahTugas from '$lib/popup/TambahTugas.svelte';
 
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
+	let open = $state(false);
 </script>
 
 <div class="flex w-full flex-col">
 	<div class="mx-10 flex justify-between">
-		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white">+Tambah Data</button>
+		<button
+			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
+			onclick={() => {
+				open = true;
+			}}>+Tambah Data</button
+		>
 		<div class="flex items-center gap-2">
 			<!-- select -->
 			<select
@@ -85,10 +93,10 @@
 					<DropDown
 						text=" apa yakin mau menghapus acara ini?"
 						successText="berhasil diarsip"
-						link="/abdi/dashboard/komunitas/acara"
+						link="/abdi/sekretariat/tugas"
 						items={[
-							['Bukti', ''],
-							['Ubah', ''],
+							['children', 'Bukti', 'Bukti Laporan'],
+							['children', 'Ubah', 'Ubah Tugas'],
 
 							['children', 'Arsip', '']
 						]}
@@ -103,3 +111,6 @@
 		</Table>
 	</div>
 </div>
+{#if open}
+	<TambahTugas bind:value={open} text="Tambah Tugas"></TambahTugas>
+{/if}

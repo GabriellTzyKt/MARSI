@@ -1069,3 +1069,51 @@ export const dummySekreOrg = [
     
   }
 ]
+export let dummyGelar = [
+  { id: 1, gelar: "Sultan" },
+  { id: 2, gelar: "Raja" },
+  { id: 3, gelar: "Datuk" },
+  { id: 4, gelar: "Tun" },
+  { id: 5, gelar: "Syekh" },
+  { id: 6, gelar: "Gusti" },
+  { id: 7, gelar: "Pangeran" },
+  { id: 8, gelar: "Bendahara" },
+  { id: 9, gelar: "Ratu" },
+  { id: 10, gelar: "Mahapatih" },
+  { id: 11, gelar: "Adipati" },
+  { id: 12, gelar: "Ki" },
+  { id: 13, gelar: "Nyai" },
+  { id: 14, gelar: "Sang" },
+  { id: 15, gelar: "Baginda" }
+];
+export let dummyBintangJasa = [
+  { id: 1, nama: "Bintang Mahaputra" },
+  { id: 2, nama: "Bintang Jasa Utama" },
+  { id: 3, nama: "Bintang Garuda" },
+  { id: 4, nama: "Bintang Sakti" },
+  { id: 5, nama: "Bintang Dharma" }
+];
+
+export let dummyJenisSitus = [
+  { id: 1, jenis: "Pemerintahan" },
+  { id: 2, jenis: "E-Commerce" },
+  { id: 3, jenis: "Pendidikan" },
+  { id: 4, jenis: "Berita" },
+  { id: 5, jenis: "Komunitas" }
+];
+
+export let dummyKategoriSitus = [
+  { id: 1, kategori: "Teknologi" },
+  { id: 2, kategori: "Kesehatan" },
+  { id: 3, kategori: "Hiburan" },
+  { id: 4, kategori: "Sosial" },
+  { id: 5, kategori: "Ekonomi" }
+];
+
+export let dummyPenghargaan = [
+  { id: 1, penghargaan: "Penghargaan Inovasi Digital" },
+  { id: 2, penghargaan: "Website Terbaik" },
+  { id: 3, penghargaan: "Pelopor Keamanan Siber" },
+  { id: 4, penghargaan: "Layanan Publik Digital Terbaik" },
+  { id: 5, penghargaan: "Penghargaan Keunggulan UI/UX" }
+];
