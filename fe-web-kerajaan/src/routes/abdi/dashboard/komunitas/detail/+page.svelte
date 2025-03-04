@@ -100,7 +100,7 @@
 			<div class="relative">
 				<img src={gambartemp} class="rounded-lg" alt="Gambar" />
 				<span
-					class="absolute bottom-0.5 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
+					class="absolute bottom-0.5 right-7 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
 				>
 					<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"
 					></i>
@@ -109,7 +109,7 @@
 			<div class="relative">
 				<img src={gambartemp} class="rounded-lg" alt="Gambar" />
 				<span
-					class="absolute bottom-0.5 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
+					class="absolute bottom-0.5 right-7 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
 				>
 					<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"
 					></i>
@@ -118,7 +118,7 @@
 			<div class="relative">
 				<img src={gambartemp} class="rounded-lg" alt="Gambar" />
 				<span
-					class="absolute bottom-0.5 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
+					class="absolute bottom-0.5 right-7 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
 				>
 					<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"
 					></i>
@@ -127,7 +127,7 @@
 			<div class="relative">
 				<img src={gambartemp} class="rounded-lg" alt="Gambar" />
 				<span
-					class="absolute bottom-0.5 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
+					class="absolute bottom-0.5 right-7 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
 				>
 					<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"
 					></i>

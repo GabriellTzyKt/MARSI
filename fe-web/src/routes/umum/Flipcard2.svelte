@@ -2,7 +2,7 @@
 	let { gambar, kerajaan, lokasi } = $props();
 </script>
 
-<div class=" h-[320px] w-[390px] cursor-pointer rounded-full bg-transparent">
+<div class="lg:h-[300px] h-[200px] xl:w-[335px] lg:w-[250px] w-[300px] cursor-pointer rounded-full bg-transparent">
 	<div
 		class="relative h-full w-full rounded-full"
 	>

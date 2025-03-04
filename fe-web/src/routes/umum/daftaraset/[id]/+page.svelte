@@ -8,9 +8,9 @@
 	const anggota = data.detil_aset;
 	let gambar = anggota.gambartop;
 	let nama = anggota.nama;
-	let lagu = anggota.lagu;
+	let lagu = anggota.lagu
 	let aset = anggota.aset;
-	let vidio = anggota.vidio || '';
+	let vidio = anggota.vidio;
 	let isi = anggota.isi;
 	let kepemilikan = anggota.kepemilikan;
 	let gambar1 = anggota.gambar1;
@@ -19,12 +19,21 @@
 	let gambar4 = anggota.gambar4;
 	let durasiLagu = $state(0);
 	let waktuSekarang = $state(0);
+	let showModalVideo = $state(false);
+
+	function OpenModalVideo() {
+		showModalVideo = true;
+	}
+
+	function closeModalVideo() {
+		showModalVideo = false;
+	}
 
 	let playingState = 'paused';
-	let duration: string = $state('0:00');
-	let videoState = $state('paused');
 	let song = new Audio(lagu);
-	let videoRef: HTMLVideoElement | null = $state(null);
+
+	// svelte-ignore non_reactive_update
+	let videoRef: HTMLVideoElement | null = null;
 
 	function formatTime(time: number) {
 		const minutes = Math.floor(time / 60);
@@ -32,39 +41,6 @@
 			.toString()
 			.padStart(2, '0');
 		return `${minutes}:${seconds}`;
-	}
-
-	function updateRemainingTime() {
-		if (videoRef) {
-			const timeLeft = videoRef.duration - videoRef.currentTime;
-			duration = formatTime(timeLeft);
-		}
-	}
-
-	function setInitialTime() {
-		if (videoRef) {
-			duration = formatTime(videoRef.duration);
-		}
-	}
-
-	function playVideo() {
-		if (videoRef) {
-			videoRef.play();
-			videoState = 'playing';
-		}
-	}
-
-	function pauseVideo() {
-		if (videoState === 'playing') {
-			if (videoRef) {
-				videoRef.pause();
-				videoState = 'paused';
-			}
-		}
-	}
-
-	function toggleVideo() {
-		videoState === 'paused' ? playVideo() : pauseVideo();
 	}
 
 	function togglePlaying() {
@@ -143,22 +119,15 @@
 						</div>
 					{/if}
 
-					{#if lagu == ''}
+					{#if vidio !== ''}
 						<div class="relative">
 							<!-- Video -->
+							<!-- svelte-ignore a11y_media_has_caption -->
 							<video
 								bind:this={videoRef}
 								src={vidio}
 								class="h-auto w-full rounded-lg object-cover"
-								onloadedmetadata={setInitialTime}
-								ontimeupdate={updateRemainingTime}
 							></video>
-
-							<div
-								class="absolute bottom-2 right-2 rounded bg-black bg-opacity-60 px-2 py-1 text-sm text-white"
-							>
-								{duration}
-							</div>
 						</div>
 						<div class="mt-4 flex justify-center gap-1 lg:gap-4">
 							<span class="material-symbols--arrow-circle-left-rounded self-center"></span>
@@ -174,25 +143,17 @@
 						{nama}
 
 						{#if vidio !== ''}
-							<button onclick={toggleVideo} class="group ml-5 flex items-center justify-center">
+							<button onclick={OpenModalVideo} class="group ml-5 flex items-center justify-center">
 								<span
 									class="bg-customKrem relative flex h-10 w-10 items-center justify-center rounded-full border-2 p-2 transition-all duration-500 ease-in-out group-hover:w-[150px]"
 								>
-									{#if videoState == 'paused'}
-										<p
-											class="text-xs opacity-0 transition-opacity delay-200 duration-300 ease-in-out group-hover:opacity-100"
-										>
-											Putar Video
-										</p>
-									{/if}
+									<!-- svelte-ignore node_invalid_placement_ssr -->
+									<p
+										class="text-xs opacity-0 transition-opacity delay-200 duration-300 ease-in-out group-hover:opacity-100"
+									>
+										Putar Video
+									</p>
 
-									{#if videoState == 'playing'}
-										<p
-											class="text-xs opacity-0 transition-opacity delay-200 duration-300 ease-in-out group-hover:opacity-100"
-										>
-											Pause Video
-										</p>
-									{/if}
 
 									<i class="iconoir--play absolute left-2 text-2xl text-white"></i>
 								</span>
@@ -255,11 +216,43 @@
 	</div>
 </section>
 
+{#if showModalVideo}
+	<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+		<div class="relative max-h-[80vh] w-[80vw] overflow-hidden rounded-lg p-5">
+			<!-- svelte-ignore a11y_media_has_caption -->
+			<video
+				bind:this={videoRef}
+				src={vidio}
+				class="relative max-h-[80vh] w-[80vw] rounded-lg object-cover"
+				controls
+			>
+			</video>
+
+			<!-- Close Button -->
+			<!-- svelte-ignore a11y_consider_explicit_label -->
+			<button onclick={closeModalVideo} class="absolute right-4 top-4 z-10 rounded-full p-2 shadow">
+				<span class="carbon--close-outline"></span>
+			</button>
+
+		</div>
+	</div>
+{/if}
+
+
+
 <section class="h-full w-full overflow-hidden">
 	<Footer></Footer>
 </section>
 
 <style>
+	.carbon--close-outline {
+		display: inline-block;
+		width: 24px;
+		height: 24px;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23bba5a5' d='M16 2C8.2 2 2 8.2 2 16s6.2 14 14 14s14-6.2 14-14S23.8 2 16 2m0 26C9.4 28 4 22.6 4 16S9.4 4 16 4s12 5.4 12 12s-5.4 12-12 12'/%3E%3Cpath fill='%23bba5a5' d='M21.4 23L16 17.6L10.6 23L9 21.4l5.4-5.4L9 10.6L10.6 9l5.4 5.4L21.4 9l1.6 1.6l-5.4 5.4l5.4 5.4z'/%3E%3C/svg%3E");
+	}
 	@media (max-width: 768px) {
 		.edit {
 			margin-top: 50%;

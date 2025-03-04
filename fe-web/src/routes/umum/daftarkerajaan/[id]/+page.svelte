@@ -7,6 +7,7 @@
 
 	const currentDate = new Date();
 	let showModal = $state(false);
+	let showModalVideo = $state(false);
 
 	function formatDate(date: Date): string {
 		const day = String(date.getDate()).padStart(2, '0');
@@ -23,7 +24,18 @@
 		showModal = false;
 	}
 
+	function OpenModalVideo() {
+		showModalVideo = true;
+	}
+
+	function closeModalVideo() {
+		showModalVideo = false;
+	}
+
 	let formattedDate = formatDate(currentDate);
+
+	// svelte-ignore non_reactive_update
+		let videoRef: HTMLVideoElement | null = null;
 
 	const { data } = $props();
 	console.log('Data yang diterima:', data);
@@ -35,6 +47,8 @@
 	let nama_kasunanan = anggota.nama_kasunanan;
 	let isi = anggota.isi_singkat;
 	let lokasi = anggota.lokasi;
+	let alamat = anggota.alamat;
+	let vidio = anggota.vidio;
 	let bendera = anggota.bendera;
 	let gambar1 = anggota.gambar1;
 	let gambar2 = anggota.gambar2;
@@ -74,22 +88,28 @@
 </section>
 
 <section class="bg-customBg2 relative h-fit w-full md:pt-10">
-	<div class="edit">
-		<div class="form-container absolute mx-auto px-4 lg:mb-20">
-			<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-				<div>
-					<img src={gambar1} class="h-auto w-full rounded-lg object-cover" alt="" />
-					<div class="mt-4 flex justify-center gap-1 lg:gap-4">
-						<span class="material-symbols--arrow-circle-left-rounded self-center"></span>
-						<img src={gambar2} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
-						<img src={gambar3} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
-						<img src={gambar4} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
-						<span class="material-symbols--arrow-circle-right self-center"></span>
-					</div>
+	<div class="form-container absolute mx-auto px-4 lg:mb-20 mb-5">
+		<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+			<div>
+				<!-- svelte-ignore a11y_media_has_caption -->
+				<video bind:this={videoRef} src={vidio} class="h-auto w-full rounded-lg object-cover"
+				></video>
+				<div class="mt-4 flex justify-center gap-1 lg:gap-4">
+					<span class="material-symbols--arrow-circle-left-rounded self-center"></span>
+					<img src={gambar2} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
+					<img src={gambar3} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
+					<img src={gambar4} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
+					<span class="material-symbols--arrow-circle-right self-center"></span>
 				</div>
-				<div>
-					<div class="group flex items-center">
-						<p class="items-center text-start text-xl font-semibold">{nama}</p>
+			</div>
+			<div>
+				<!-- svelte-ignore a11y_missing_attribute -->
+				<div class="group flex items-center">
+					<p class="items-center text-start text-xl font-semibold">{nama}</p>
+					<!-- svelte-ignore a11y_invalid_attribute -->
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<a onclick={OpenModalVideo}>
 						<span
 							class="bg-customKrem relative ml-5 flex h-10 w-10 items-center justify-center rounded-full border-2 p-2 transition-all duration-500 ease-in-out group-hover:w-[150px]"
 						>
@@ -100,183 +120,201 @@
 							</p>
 							<i class="iconoir--play absolute left-2 text-2xl text-white"></i>
 						</span>
-					</div>
-					<div class="mt-5 flex items-center">
-						<div
-							class="flex h-10 w-10 items-center justify-center rounded-full border bg-yellow-600"
-						>
-							<span class="ph--scroll"></span>
-						</div>
-						<p class="ml-2">Tahun berdiri : {tahun}</p>
-					</div>
-					<div class="mt-5 flex items-center">
-						<div
-							class="flex h-10 w-10 items-center justify-center rounded-full border bg-yellow-600"
-						>
-							<span class="tabler--flag"></span>
-						</div>
-						<p class="ml-2 flex items-center">
-							Bendera Kerajaan : <img src={bendera} alt="" class="ml-2 h-6" />
-						</p>
-					</div>
-					<div class="mt-5 flex items-center">
-						<div
-							class="flex h-10 w-10 items-center justify-center rounded-full border bg-yellow-600"
-						>
-							<span class="material-symbols--shield-outline-rounded"></span>
-						</div>
-						<p class="ml-2 flex items-center">
-							Lambang Kerajaan : <img src={lambang_kerajaan} alt="" class="ml-2 h-6" />
-						</p>
-					</div>
-					<div class="mt-5 flex items-center">
-						<div
-							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
-						>
-							<span class="bx--map text-xl"></span>
-						</div>
-						<p class="ml-3 items-center text-start">Lokasi : {lokasi}</p>
-					</div>
-					<p class="mt-3 text-start">{nama_kasunanan}</p>
-					<p class="mt-3 text-start text-sm">{isi}</p>
-					<p class="mt-3 text-center lg:text-start">Navigasi</p>
-					<div class="duar mt-3 flex gap-4">
-						<!-- svelte-ignore a11y_consider_explicit_label -->
-						<button class="group relative flex items-center justify-center">
-							<!-- svelte-ignore a11y_no_static_element_interactions -->
-							<span
-								class="relative flex h-12 w-12 items-center justify-center rounded-full border-2 bg-blue-600 p-2 transition-all duration-500 ease-in-out group-hover:w-[250px]"
-								onmouseenter={() => (hover1 = true)}
-								onmouseleave={() => (hover1 = false)}
-							>
-								<p
-									class="text-md ml-7 px-2 py-2 text-white opacity-0 transition-opacity delay-300 duration-300 ease-in-out group-hover:opacity-100"
-								>
-									Kunjungi Web Kerajaan ➜
-								</p>
-								<i class="ri--link absolute left-2 text-2xl text-white group-hover:hidden"></i>
-							</span>
-						</button>
-
-						<button class="group relative flex items-center justify-center">
-							<!-- svelte-ignore a11y_no_static_element_interactions -->
-							<span
-								class="relative flex h-12 w-12 items-center justify-center rounded-full border-2 bg-red-600 p-2 transition-all duration-500 ease-in-out group-hover:w-[250px]"
-								onmouseenter={() => (hover2 = true)}
-								onmouseleave={() => (hover2 = false)}
-							>
-								<p
-									class="text-md ml-7 px-2 py-2 text-white opacity-0 transition-opacity delay-300 duration-300 ease-in-out group-hover:opacity-100"
-								>
-									Kunjungi Web Kerajaan ➜
-								</p>
-								<img
-									src={rumah}
-									alt=""
-									class="absolute left-2 h-[75%] w-[75%] items-center object-contain pr-1 group-hover:hidden"
-								/>
-							</span>
-						</button>
-
-						<button class="group relative flex items-center justify-center">
-							<!-- svelte-ignore a11y_no_static_element_interactions -->
-							<span
-								class="relative flex h-12 w-12 items-center justify-center rounded-full border-2 bg-yellow-600 p-2 transition-all duration-500 ease-in-out group-hover:w-[250px]"
-								onmouseenter={() => (hover3 = true)}
-								onmouseleave={() => (hover3 = false)}
-							>
-								<p
-									class="text-md ml-7 px-2 py-2 text-white opacity-0 transition-opacity delay-300 duration-300 ease-in-out group-hover:opacity-100"
-								>
-									Kunjungi Web Kerajaan ➜
-								</p>
-								<img
-									src={keris}
-									alt=""
-									class="absolute left-2 h-[75%] w-[75%] items-center object-contain pr-1 group-hover:hidden"
-								/>
-							</span>
-						</button>
-
-						<button class="group relative flex items-center justify-center">
-							<!-- svelte-ignore a11y_no_static_element_interactions -->
-							<!-- svelte-ignore a11y_click_events_have_key_events -->
-							<span
-								class="relative flex h-12 w-12 items-center justify-center rounded-full border-2 bg-gray-600 p-2 transition-all duration-500 ease-in-out group-hover:w-[250px]"
-								onmouseenter={() => (hover4 = true)}
-								onmouseleave={() => (hover4 = false)}
-								onclick={OpenModal}
-							>
-								<p
-									class="text-md ml-7 px-2 py-2 text-white opacity-0 transition-opacity delay-300 duration-300 ease-in-out group-hover:opacity-100"
-								>
-									Kunjungi Web Kerajaan ➜
-								</p>
-								<i class="ph--crown absolute left-2 text-2xl text-white group-hover:hidden"></i>
-							</span>
-						</button>
-					</div>
-					<!-- Teks -->
-					<div class="relative">
-						{#if hover1 === true}
-							<p class="absolute left-0 text-xs text-blue-600">
-								Temukan informasi resmi, berita terkini, dan pengumuman penting langsung dari sumber
-								terpercaya
-							</p>
-						{/if}
-						{#if hover2 === true}
-							<p class="absolute left-0 text-xs text-red-600">
-								Jelajahi situs kerajaan dengan tampilan yang menarik dan informasi lengkap seputar
-								sejarah dan budaya kerajaan
-							</p>
-						{/if}
-						{#if hover3 === true}
-							<p class="absolute left-0 text-xs text-yellow-600">
-								Telusuri lebih banyak lagi aset aset kebudayaan yang dimiliki kejayaan yang ada di
-								Indonesia
-							</p>
-						{/if}
-						{#if hover4 === true}
-							<p class="absolute left-0 text-xs text-gray-600">
-								Lihat semua raja yang pernah memimpin kerajaan ini
-							</p>
-						{/if}
-					</div>
-
-					<!-- Acara Sorotan -->
-					<div></div>
+					</a>
 				</div>
-			</div>
-			<div>
-				<p class="mb-5 mt-5 text-start text-2xl font-semibold text-black">Acara Sorotan Kerajaan</p>
-			</div>
+				<div class="mt-5 flex items-center">
+					<div class="flex h-10 w-10 items-center justify-center rounded-full border bg-yellow-600">
+						<span class="ph--scroll"></span>
+					</div>
+					<p class="ml-2">Tahun berdiri : {tahun}</p>
+				</div>
+				<div class="mt-5 flex items-center">
+					<div class="flex h-10 w-10 items-center justify-center rounded-full border bg-yellow-600">
+						<span class="tabler--flag"></span>
+					</div>
+					<p class="ml-2 flex items-center">
+						Bendera Kerajaan : <img src={bendera} alt="" class="ml-2 h-6" />
+					</p>
+				</div>
+				<div class="mt-5 flex items-center">
+					<div class="flex h-10 w-10 items-center justify-center rounded-full border bg-yellow-600">
+						<span class="material-symbols--shield-outline-rounded"></span>
+					</div>
+					<p class="ml-2 flex items-center">
+						Lambang Kerajaan : <img src={lambang_kerajaan} alt="" class="ml-2 h-6" />
+					</p>
+				</div>
+				<div class="mt-5 flex items-center">
+					<div
+						class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
+					>
+						<span class="bx--map text-xl"></span>
+					</div>
+					<p class="ml-3 items-center text-start">Lokasi : {alamat} , {lokasi}</p>
+				</div>
+				<p class="mt-3 text-start">{nama_kasunanan}</p>
+				<p class="mt-3 text-start text-sm">{isi}</p>
+				<p class="mt-3 text-center lg:text-start">Navigasi</p>
+				<div class="duar mt-3 flex flex-col gap-4 lg:flex-row">
+					<!-- svelte-ignore a11y_consider_explicit_label -->
+					<button class="group relative flex items-center justify-center">
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<span
+							class="relative flex h-12 w-12 items-center justify-center rounded-full border-2 bg-blue-600 p-2 transition-all duration-500 ease-in-out group-hover:w-[250px]"
+							onmouseenter={() => (hover1 = true)}
+							onmouseleave={() => (hover1 = false)}
+						>
+							<p
+								class="text-md ml-7 text-white opacity-0 transition-opacity delay-300 duration-300 ease-in-out group-hover:opacity-100"
+							>
+								Kunjungi Web Kerajaan ➜
+							</p>
+							<i class="ri--link absolute left-2 text-2xl text-white group-hover:hidden"></i>
+						</span>
+					</button>
 
-			<div class="ml-6 grid grid-cols-1 gap-8 lg:grid-cols-3">
-				{#each selectedFlip as item}
-					<Flipcard2
-						gambar={item.gambar}
-						kerajaan={item.kerajaan}
-						lokasi={item.lokasi}
-					/>
-				{/each}
+					<button class="group relative flex items-center justify-center">
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<span
+							class="relative flex h-12 w-12 items-center justify-center rounded-full border-2 bg-red-600 p-2 transition-all duration-500 ease-in-out group-hover:w-[250px]"
+							onmouseenter={() => (hover2 = true)}
+							onmouseleave={() => (hover2 = false)}
+						>
+							<p
+								class="text-md ml-7 text-white opacity-0 transition-opacity delay-300 duration-300 ease-in-out group-hover:opacity-100"
+							>
+								Kunjungi Web Kerajaan ➜
+							</p>
+							<img
+								src={rumah}
+								alt=""
+								class="absolute left-2 h-[75%] w-[75%] items-center object-contain pr-1 group-hover:hidden"
+							/>
+						</span>
+					</button>
+
+					<button class="group relative flex items-center justify-center">
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<span
+							class="relative flex h-12 w-12 items-center justify-center rounded-full border-2 bg-yellow-600 p-2 transition-all duration-500 ease-in-out group-hover:w-[250px]"
+							onmouseenter={() => (hover3 = true)}
+							onmouseleave={() => (hover3 = false)}
+						>
+							<p
+								class="text-md ml-7 text-white opacity-0 transition-opacity delay-300 duration-300 ease-in-out group-hover:opacity-100"
+							>
+								Kunjungi Web Kerajaan ➜
+							</p>
+							<img
+								src={keris}
+								alt=""
+								class="absolute left-2 h-[75%] w-[75%] items-center object-contain pr-1 group-hover:hidden"
+							/>
+						</span>
+					</button>
+
+					<button class="group relative flex items-center justify-center">
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<span
+							class="relative flex h-12 w-12 items-center justify-center rounded-full border-2 bg-gray-600 p-2 transition-all duration-500 ease-in-out hover:w-[250px]"
+							onmouseenter={() => (hover4 = true)}
+							onmouseleave={() => (hover4 = false)}
+							onclick={OpenModal}
+						>
+							<p
+								class="text-md ml-7 text-white opacity-0 transition-opacity delay-300 duration-300 ease-in-out group-hover:opacity-100"
+							>
+								Kunjungi Web Kerajaan ➜
+							</p>
+							<i class="ph--crown absolute left-2 text-2xl text-white group-hover:hidden"></i>
+						</span>
+					</button>
+				</div>
+				<!-- Teks -->
+				<div class="relative">
+					{#if hover1 === true}
+						<p class="left-1/6 absolute mt-2 text-xs font-bold text-blue-600 lg:left-0">
+							Temukan informasi resmi, berita terkini, dan pengumuman penting langsung dari sumber
+							terpercaya
+						</p>
+					{/if}
+					{#if hover2 === true}
+						<p class="left-1/6 absolute mt-2 text-xs font-bold text-red-600 lg:left-0">
+							Jelajahi situs kerajaan dengan tampilan yang menarik dan informasi lengkap seputar
+							sejarah dan budaya kerajaan
+						</p>
+					{/if}
+					{#if hover3 === true}
+						<p class="left-1/6 absolute mt-2 text-xs font-bold text-yellow-600 lg:left-0">
+							Telusuri lebih banyak lagi aset aset kebudayaan yang dimiliki kejayaan yang ada di
+							Indonesia
+						</p>
+					{/if}
+					{#if hover4 === true}
+						<p class="left-1/6 absolute mt-2 text-xs font-bold text-gray-600 lg:left-0">
+							Lihat semua raja yang pernah memimpin kerajaan ini
+						</p>
+					{/if}
+				</div>
+
+				<!-- Acara Sorotan -->
+				<div></div>
 			</div>
-			<p class="text-md mt-10 text-start text-gray-300">Last Updated : {formattedDate}</p>
 		</div>
+		<div>
+			<p class="mb-5 mt-12 text-center text-2xl font-semibold text-black lg:text-start">
+				Acara Sorotan Kerajaan
+			</p>
+		</div>
+
+		<div
+			class="mx-auto flex flex-col items-center gap-2 pl-6 lg:ml-8 lg:mr-0 mr-5 lg:grid lg:grid-cols-3 xl:grid xl:grid-cols-3"
+		>
+			{#each selectedFlip as item}
+				<Flipcard2 gambar={item.gambar} kerajaan={item.kerajaan} lokasi={item.lokasi} />
+			{/each}
+		</div>
+		<p class="text-md mt-10 text-start text-gray-300">Last Updated : {formattedDate}</p>
 	</div>
 </section>
+
+{#if showModalVideo}
+	<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+		<div class="relative max-h-[80vh] w-[80vw] overflow-hidden rounded-lg p-5">
+			<!-- svelte-ignore a11y_media_has_caption -->
+			<video
+				bind:this={videoRef}
+				src={vidio}
+				class="relative max-h-[80vh] w-[80vw] rounded-lg object-cover"
+				controls
+			>
+			</video>
+
+			<!-- Close Button -->
+			<!-- svelte-ignore a11y_consider_explicit_label -->
+			<button onclick={closeModalVideo} class="absolute right-4 top-4 z-10 rounded-full p-2 shadow">
+				<span class="carbon--close-outline"></span>
+			</button>
+
+		</div>
+	</div>
+{/if}
 
 {#if showModal}
 	<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
 		<div class="max-h-[90vh] w-[70%] overflow-y-auto rounded-lg bg-white p-5 shadow-lg">
 			<div class="flex justify-between">
-				<h2 class="text-xl font-bold">List Raja Keraton Kasunanan Sarukarta</h2>
+				<h2 class="font-bold lg:text-xl">List Raja Keraton Kasunanan Sarukarta</h2>
 				<!-- svelte-ignore a11y_consider_explicit_label -->
 				<button onclick={closeModal}>
 					<span class="carbon--close-outline items-center"></span>
 				</button>
 			</div>
-			<div class="mt-2 h-[50px] rounded-lg border-2 bg-yellow-300 justify-between flex items-center">
-				<p class="ml-3"> Sri Susuhunan Pakubuwana XIII (2004 - Sekarang) </p>
+			<div
+				class="mt-2 flex h-[50px] items-center justify-between rounded-lg border-2 bg-yellow-300"
+			>
+				<p class="ml-3 text-xs lg:text-lg">Sri Susuhunan Pakubuwana XIII (2004 - Sekarang)</p>
 				<span class="formkit--arrowdown mr-3"></span>
 			</div>
 		</div>
@@ -324,12 +362,13 @@
 		.duar {
 			justify-content: center;
 		}
-
+		/* 
 		.edit {
 			margin-top: 50%;
 			margin-bottom: 10px;
-		}
+		} */
 	}
+
 	.ri--link {
 		display: inline-block;
 		width: 32px;
@@ -396,7 +435,6 @@
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath fill='%23000' d='M236 200a12 12 0 0 1-24 0a84.09 84.09 0 0 0-84-84H61l27.52 27.51a12 12 0 0 1-17 17l-48-48a12 12 0 0 1 0-17l48-48a12 12 0 0 1 17 17L61 92h67a108.12 108.12 0 0 1 108 108'/%3E%3C/svg%3E");
 	}
 
-	/* Mengatur Section agar form container berada di tengah */
 	section {
 		display: flex;
 		flex-direction: column;
@@ -409,9 +447,9 @@
 		position: static;
 		padding: 28px;
 		border-radius: 10px;
-		width: 90%; /* Menyesuaikan lebar form */
+		width: 95%;
 		height: 90%;
 		text-align: center;
-		margin-top: -250px; /* Memberikan ruang antara gambar dan form */
+		margin-top: -250px;
 	}
 </style>
