@@ -1,9 +1,16 @@
 <script>
 	import Input from '$lib/input/Input.svelte';
 	import g1 from '$lib/asset/kerajaan/aboutUs1.png';
+	import { goto } from '$app/navigation';
 </script>
 
 <div class="my-6 me-6 ms-6 flex w-full flex-col">
+	<div class="my-2">
+		<button
+			onclick={() => goto('landingpage/mobile')}
+			class="bg-badran-bt cursor-pointer rounded-full px-8 py-2 text-white">Setting Mobile</button
+		>
+	</div>
 	<div class="mb-3 mt-2">
 		<p class="text-2xl">Bagian 1 - Halaman Landasan</p>
 	</div>

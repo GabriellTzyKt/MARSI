@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
-	import { dummySekreAnggotaOrg } from '$lib/dummy';
+	import { dummySekreAnggotaOrg, dummyHistoryGelar } from '$lib/dummy';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
 </script>
@@ -96,7 +96,15 @@
 							['children', 'Non Aktifkan', '']
 						]}
 						id={`id-${index}`}
-						{data}
+						data={dummyHistoryGelar}
+						dataG={dummyHistoryGelar}
+						header={[
+							['nama_gelar', 'Nama Gelar'],
+							['nama_pelantik', 'Nama Pelantik'],
+							['tanggal_dilantik', 'Tanggal Dilantik'],
+							['acara', 'Acara'],
+							['children', 'Sertifikat']
+						]}
 					></DropDown>
 				{/if}
 			{/snippet}
