@@ -27,8 +27,10 @@
 			return 'Acara';
 		} else if (page.route.id === '/admin/acara/tambahacara/detail/[id]') {
 			return 'Acara';
-		} else if (page.route.id?.startsWith("/admin/suratDokumen")){
+		} else if (page.route.id?.startsWith('/admin/suratDokumen')) {
 			return 'Arsip';
+		} else if (page.route.id === '/admin/landingPage') {
+			return 'Landing Page';
 		}
 	});
 	let { children } = $props();
@@ -42,7 +44,7 @@
 
 <header class="w-full lg:flex lg:h-full lg:min-w-full">
 	<div
-		class="test2 width_head1 flex items-center justify-between bg-customGold p-2 lg:w-[16.7%] lg:justify-center"
+		class="test2 width_head1 bg-customGold flex items-center justify-between p-2 lg:w-[16.7%] lg:justify-center"
 	>
 		<div class="buttonshow lg:hidden">
 			<button
@@ -57,7 +59,7 @@
 		</div>
 	</div>
 	{#if $sidebarActive}
-		<div class="mobile-sidebar-options flex w-full flex-col bg-customYellow p-2 lg:hidden">
+		<div class="mobile-sidebar-options bg-customYellow flex w-full flex-col p-2 lg:hidden">
 			<Sidebar>
 				<SidebarMenu
 					href="/admin/beranda"
@@ -104,47 +106,47 @@
 </header>
 
 <div class="flex h-fit min-w-full">
-	<div class="test hidden min-h-screen w-fit bg-customYellow lg:block lg:w-[16.7%]">
+	<div class="test bg-customYellow hidden min-h-screen w-fit lg:block lg:w-[16.7%]">
 		<Sidebar>
-            <SidebarMenu
-                href="/admin/beranda"
-                icon="mdi:home"
-                anchor="Beranda"
-                active={isActive('/admin/beranda')}
-            />
-            <SidebarMenu href="#" icon="mdi:people" anchor="Keanggotaan" hasChildren={true}>
-                <SidebarMenu
-                    href="/admin/keanggotaan/daftaranggota"
-                    icon="mdi:book"
-                    anchor="Daftar Anggota"
-                    active={isActive('/admin/keanggotaan/daftaranggota')}
-                />
-                <SidebarMenu
-                    href="/admin/keanggotaan/gelar"
-                    icon="mdi:crown"
-                    anchor="Gelar"
-                    active={isActive('/admin/keanggotaan/gelar')}
-                />
-            </SidebarMenu>
-            <SidebarMenu
-                href="/admin/acara"
-                icon="mdi:calendar"
-                anchor="Acara"
-                active={isActive('/admin/acara')}
-            />
-            <SidebarMenu
-                href="/admin/landing"
-                icon="mdi:globe"
-                anchor="Landing page"
-                active={isActive('/admin/landing')}
-            />
 			<SidebarMenu
-                href="/admin/suratDokumen"
-                icon="mdi:home"
-                anchor="Surat Dokumen"
-                active={isActive('/admin/suratDokumen')}
-            />
-        </Sidebar>
+				href="/admin/beranda"
+				icon="mdi:home"
+				anchor="Beranda"
+				active={isActive('/admin/beranda')}
+			/>
+			<SidebarMenu href="#" icon="mdi:people" anchor="Keanggotaan" hasChildren={true}>
+				<SidebarMenu
+					href="/admin/keanggotaan/daftaranggota"
+					icon="mdi:book"
+					anchor="Daftar Anggota"
+					active={isActive('/admin/keanggotaan/daftaranggota')}
+				/>
+				<SidebarMenu
+					href="/admin/keanggotaan/gelar"
+					icon="mdi:crown"
+					anchor="Gelar"
+					active={isActive('/admin/keanggotaan/gelar')}
+				/>
+			</SidebarMenu>
+			<SidebarMenu
+				href="/admin/acara"
+				icon="mdi:calendar"
+				anchor="Acara"
+				active={isActive('/admin/acara')}
+			/>
+			<SidebarMenu
+				href="/admin/landingPage"
+				icon="mdi:globe"
+				anchor="Landing page"
+				active={isActive('/admin/landingPage')}
+			/>
+			<SidebarMenu
+				href="/admin/suratDokumen"
+				icon="mdi:home"
+				anchor="Surat Dokumen"
+				active={isActive('/admin/suratDokumen')}
+			/>
+		</Sidebar>
 	</div>
 
 	<main class="flex min-h-full w-full flex-1 bg-gray-100 p-5">

@@ -1584,3 +1584,97 @@ export const dummyAcara = [
     status: "Selesai"
   }
 ]
+
+// untuk dummy dokumen
+export const dummyDocs = [
+  {
+    id: 0,
+    id_dokumen: "DA-01",
+    nama_dokumen: "Surat hak Milik Tanah",
+    asal_kerajaan: "Kerajaan Jogja",
+    jenis_dokumen: "Akte",
+    kategori: "terima",
+    dokumentasi: "foto",
+  },
+  {
+    id: 1,
+    id_dokumen: "DA-02",
+    nama_dokumen: "Akta Kelahiran",
+    asal_kerajaan: "Kerajaan Solo",
+    jenis_dokumen: "Akta",
+    kategori: "terima",
+    dokumentasi: "salinan",
+  },
+  {
+    id: 2,
+    id_dokumen: "DA-03",
+    nama_dokumen: "Surat Nikah",
+    asal_kerajaan: "Kerajaan Bali",
+    jenis_dokumen: "Surat",
+    kategori: "terima",
+    dokumentasi: "foto",
+  },
+  {
+    id: 3,
+    id_dokumen: "DA-04",
+    nama_dokumen: "Surat Wasiat",
+    asal_kerajaan: "Kerajaan Makassar",
+    jenis_dokumen: "Surat",
+    kategori: "terima",
+    dokumentasi: "salinan",
+  },
+  {
+    id: 4,
+    id_dokumen: "DA-05",
+    nama_dokumen: "Surat Keterangan Tanah",
+    asal_kerajaan: "Kerajaan Aceh",
+    jenis_dokumen: "Surat",
+    kategori: "terima",
+    dokumentasi: "foto",
+  },
+  {
+    id: 5,
+    id_dokumen: "DA-06",
+    nama_dokumen: "Surat Perjanjian Kerja",
+    asal_kerajaan: "Kerajaan Palembang",
+    jenis_dokumen: "Surat",
+    kategori: "terima",
+    dokumentasi: "salinan",
+  },
+  {
+    id: 6,
+    id_dokumen: "DA-07",
+    nama_dokumen: "Akta Pendirian Perusahaan",
+    asal_kerajaan: "Kerajaan Madura",
+    jenis_dokumen: "Akta",
+    kategori: "terima",
+    dokumentasi: "foto",
+  },
+  {
+    id: 7,
+    id_dokumen: "DA-08",
+    nama_dokumen: "Surat Kuasa",
+    asal_kerajaan: "Kerajaan Minangkabau",
+    jenis_dokumen: "Surat",
+    kategori: "terima",
+    dokumentasi: "salinan",
+  },
+  {
+    id: 8,
+    id_dokumen: "DA-09",
+    nama_dokumen: "Surat Keterangan Domisili",
+    asal_kerajaan: "Kerajaan Batak",
+    jenis_dokumen: "Surat",
+    kategori: "terima",
+    dokumentasi: "foto",
+  },
+  {
+    id: 9,
+    id_dokumen: "DA-10",
+    nama_dokumen: "Surat Keterangan Kematian",
+    asal_kerajaan: "Kerajaan Cirebon",
+    jenis_dokumen: "Surat",
+    kategori: "terima",
+    dokumentasi: "salinan",
+  }
+];
