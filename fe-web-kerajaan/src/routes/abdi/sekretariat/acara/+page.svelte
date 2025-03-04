@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAcara, dummyAnggota } from '$lib/dummy';
 
@@ -9,7 +10,9 @@
 
 <div class="flex w-full flex-col">
 	<div class="mx-10 flex justify-between">
-		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white">+Tambah Data</button>
+		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white" onclick={() => goto('acara/buat')}
+			>+Tambah Data</button
+		>
 		<div class="flex items-center gap-2">
 			<!-- select -->
 			<select
@@ -87,9 +90,9 @@
 						successText="berhasil diarsip"
 						link="/abdi/dashboard/komunitas/acara"
 						items={[
-							['Detail', ''],
-							['Edit', ''],
-							['Laporan', ''],
+							['Detail', '/abdi/sekretariat/acara/detail'],
+							['Edit', '/abdi/sekretariat/acara/edit'],
+							['Laporan', '/abdi/sekretariat/acara/laporan'],
 							['children', 'Non Aktifkan'],
 							['children', 'Hapus', '']
 						]}

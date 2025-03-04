@@ -568,51 +568,51 @@ export const dummydata = [
   },
 ];
 export const dummyOrganisasi = [
-  {
-    "id_organisasi": 1,
-    "nama_organisasi": "Persatuan Pemuda Nusantara",
-    "tanggal_berdiri": "12-05-2000",
-    "lokasi": "Jakarta, Indonesia",
-    "penanggungjawab": "Budi Santoso",
-    "pelindung": "Dr. Hendra Wijaya",
-    "pembina": "Prof. Rina Kusuma"
+ {
+    id_organisasi: 1,
+    nama_organisasi: "Persatuan Pemuda Nusantara",
+    tanggal_berdiri: "12-05-2000",
+    lokasi: "Jakarta, Indonesia",
+    penanggungjawab: "Budi Santoso",
+    pelindung: "Dr. Hendra Wijaya",
+    pembina: "Prof. Rina Kusuma",
   },
   {
-    "id_organisasi": 2,
-    "nama_organisasi": "Laskar Budaya Indonesia",
-    "tanggal_berdiri": "25-08-1998",
-    "lokasi": "Yogyakarta, Indonesia",
-    "penanggungjawab": "Siti Rahmawati",
-    "pelindung": "Ir. Suparno",
-    "pembina": "Dr. Widya Kartika"
+    id_organisasi: 2,
+    nama_organisasi: "Laskar Budaya Indonesia",
+    tanggal_berdiri: "25-08-1998",
+    lokasi: "Yogyakarta, Indonesia",
+    penanggungjawab: "Siti Rahmawati",
+    pelindung: "Ir. Suparno",
+    pembina: "Dr. Widya Kartika",
   },
   {
-    "id_organisasi": 3,
-    "nama_organisasi": "Forum Inovasi Teknologi",
-    "tanggal_berdiri": "10-11-2010",
-    "lokasi": "Bandung, Indonesia",
-    "penanggungjawab": "Andi Prasetyo",
-    "pelindung": "Prof. Dimas Wibowo",
-    "pembina": "Dr. Sri Handayani"
+    id_organisasi: 3,
+    nama_organisasi: "Forum Inovasi Teknologi",
+    tanggal_berdiri: "10-11-2010",
+    lokasi: "Bandung, Indonesia",
+    penanggungjawab: "Andi Prasetyo",
+    pelindung: "Prof. Dimas Wibowo",
+    pembina: "Dr. Sri Handayani",
   },
   {
-    "id_organisasi": 4,
-    "nama_organisasi": "Komunitas Hijau Lestari",
-    "tanggal_berdiri": "05-06-2005",
-    "lokasi": "Surabaya, Indonesia",
-    "penanggungjawab": "Lina Marlina",
-    "pelindung": "Dr. Fajar Ramadhan",
-    "pembina": "Prof. Agus Sutanto"
+    id_organisasi: 4,
+    nama_organisasi: "Komunitas Hijau Lestari",
+    tanggal_berdiri: "05-06-2005",
+    lokasi: "Surabaya, Indonesia",
+    penanggungjawab: "Lina Marlina",
+    pelindung: "Dr. Fajar Ramadhan",
+    pembina: "Prof. Agus Sutanto",
   },
   {
-    "id_organisasi": 5,
-    "nama_organisasi": "Gerakan Sosial Muda",
-    "tanggal_berdiri": "20-07-2012",
-    "lokasi": "Medan, Indonesia",
-    "penanggungjawab": "Rizky Fahmi",
-    "pelindung": "Ir. Bambang Setiawan",
-    "pembina": "Dr. Farida Hasan"
-  }
+    id_organisasi: 5,
+    nama_organisasi: "Gerakan Sosial Muda",
+    tanggal_berdiri: "20-07-2012",
+    lokasi: "Medan, Indonesia",
+    penanggungjawab: "Rizky Fahmi",
+    pelindung: "Ir. Bambang Setiawan",
+    pembina: "Dr. Farida Hasan",
+  },
 ]
 export const dummyBukuTamu = [
   {
@@ -975,4 +975,145 @@ export const dummyTugas = [
     status: "TB",
     aksi: "Detail"
   }
+];
+export const dummyHistoryGelar = [
+  {
+    id: 0,
+    nama_gelar: "Gonardo",
+    nama_pelantik: "Eric",
+    tanggal_dilantik: "12-22-2222",
+    acara: "Upacara Pengabdian",
+    sertifikat: "foto"
+  },
+  {
+    id: 1,
+    nama_gelar: "Rinaldi",
+    nama_pelantik: "Samantha",
+    tanggal_dilantik: "03-15-2023",
+    acara: "Wisuda Nasional",
+    sertifikat: "dokumen"
+  },
+  {
+    id: 2,
+    nama_gelar: "Setiawan",
+    nama_pelantik: "Michael",
+    tanggal_dilantik: "07-10-2021",
+    acara: "Pelantikan Profesi",
+    sertifikat: "digital"
+  },
+  {
+    id: 3,
+    nama_gelar: "Putri",
+    nama_pelantik: "Jessica",
+    tanggal_dilantik: "05-20-2020",
+    acara: "Penghargaan Akademik",
+    sertifikat: "arsip"
+  },
+  {
+    id: 4,
+    nama_gelar: "Fadillah",
+    nama_pelantik: "Jonathan",
+    tanggal_dilantik: "11-11-2019",
+    acara: "Penghargaan Keahlian",
+    sertifikat: "hardcopy"
+  },
+  {
+    id: 5,
+    nama_gelar: "Nugraha",
+    nama_pelantik: "William",
+    tanggal_dilantik: "09-09-2018",
+    acara: "Upacara Wisuda",
+    sertifikat: "scan"
+  },
+  {
+    id: 6,
+    nama_gelar: "Dewi",
+    nama_pelantik: "Amanda",
+    tanggal_dilantik: "01-01-2017",
+    acara: "Pelantikan Jabatan",
+    sertifikat: "softcopy"
+  },
+  {
+    id: 7,
+    nama_gelar: "Prasetyo",
+    nama_pelantik: "Daniel",
+    tanggal_dilantik: "06-30-2016",
+    acara: "Seminar Nasional",
+    sertifikat: "e-sertifikat"
+  },
+  {
+    id: 8,
+    nama_gelar: "Sari",
+    nama_pelantik: "Olivia",
+    tanggal_dilantik: "08-25-2015",
+    acara: "Penghargaan Tahunan",
+    sertifikat: "laminated"
+  },
+  {
+    id: 9,
+    nama_gelar: "Hendrawan",
+    nama_pelantik: "Chris",
+    tanggal_dilantik: "02-14-2014",
+    acara: "Konferensi Ilmiah",
+    sertifikat: "printed"
+  }
+];
+export const dummySekreOrg = [
+  {
+    id: 0,
+    id_organisasi: "001-O",
+    nama_organisasi: "Organisasi Pandawara",
+    tanggal_berdiri: '20-02-2003',
+    lokasi_organisasi: "Jember",
+    penanggungjawab: "Sri Binti Jardono",
+    
+  }
+]
+export let dummyGelar = [
+  { id: 1, gelar: "Sultan" },
+  { id: 2, gelar: "Raja" },
+  { id: 3, gelar: "Datuk" },
+  { id: 4, gelar: "Tun" },
+  { id: 5, gelar: "Syekh" },
+  { id: 6, gelar: "Gusti" },
+  { id: 7, gelar: "Pangeran" },
+  { id: 8, gelar: "Bendahara" },
+  { id: 9, gelar: "Ratu" },
+  { id: 10, gelar: "Mahapatih" },
+  { id: 11, gelar: "Adipati" },
+  { id: 12, gelar: "Ki" },
+  { id: 13, gelar: "Nyai" },
+  { id: 14, gelar: "Sang" },
+  { id: 15, gelar: "Baginda" }
+];
+export let dummyBintangJasa = [
+  { id: 1, nama: "Bintang Mahaputra" },
+  { id: 2, nama: "Bintang Jasa Utama" },
+  { id: 3, nama: "Bintang Garuda" },
+  { id: 4, nama: "Bintang Sakti" },
+  { id: 5, nama: "Bintang Dharma" }
+];
+
+export let dummyJenisSitus = [
+  { id: 1, jenis: "Pemerintahan" },
+  { id: 2, jenis: "E-Commerce" },
+  { id: 3, jenis: "Pendidikan" },
+  { id: 4, jenis: "Berita" },
+  { id: 5, jenis: "Komunitas" }
+];
+
+export let dummyKategoriSitus = [
+  { id: 1, kategori: "Teknologi" },
+  { id: 2, kategori: "Kesehatan" },
+  { id: 3, kategori: "Hiburan" },
+  { id: 4, kategori: "Sosial" },
+  { id: 5, kategori: "Ekonomi" }
+];
+
+export let dummyPenghargaan = [
+  { id: 1, penghargaan: "Penghargaan Inovasi Digital" },
+  { id: 2, penghargaan: "Website Terbaik" },
+  { id: 3, penghargaan: "Pelopor Keamanan Siber" },
+  { id: 4, penghargaan: "Layanan Publik Digital Terbaik" },
+  { id: 5, penghargaan: "Penghargaan Keunggulan UI/UX" }
 ];

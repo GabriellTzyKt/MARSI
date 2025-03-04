@@ -84,13 +84,13 @@
 			return 'Edit Acara';
 		} else if (page.route.id === '/abdi/sekretariat/acara/buat') {
 			return 'Buat Acara';
-		}  else if (page.route.id === '/abdi/sekretariat/anggota/daftaranggota') {
+		} else if (page.route.id === '/abdi/sekretariat/anggota/daftaranggota') {
 			return 'Daftar Anggota';
-		}  else if (page.route.id === '/abdi/sekretariat/anggota/pelantikan') {
+		} else if (page.route.id === '/abdi/sekretariat/anggota/pelantikan') {
 			return 'Pelantikan Abdi';
-		}  else if (page.route.id === '/abdi/sekretariat/anggota/bintangjasa') {
+		} else if (page.route.id === '/abdi/sekretariat/anggota/bintangjasa') {
 			return 'Bintang Jasa';
-		}  else if (page.route.id === '/abdi/sekretariat/komunitas/daftarkomunitas') {
+		} else if (page.route.id === '/abdi/sekretariat/komunitas/daftarkomunitas') {
 			return 'Daftar Komunitas';
 		} else if (page.route.id === '/abdi/sekretariat/komunitas/daftaranggota') {
 			return 'Daftar Anggota';
@@ -100,7 +100,15 @@
 			return 'Daftar Situs';
 		} else if (page.route.id === '/abdi/sekretariat/tugas') {
 			return 'Daftar Tugas';
-		} 
+		} else if (page.route.id === '/abdi/dashboard/situs/daftaracara/buat') {
+			return 'Buat Acara di Situs';
+		} else if (page.route.id === '/abdi/dashboard/komunitas/acara') {
+			return 'Daftar Acara di Komunitas';
+		} else if (page.route.id === '/abdi/sekretariat/landingpage') {
+			return 'Edit Landing Page';
+		} else if (page.route.id === '/abdi/sekretariat/landingpage/mobile') {
+			return 'Fitur Mobile';
+		}
 	});
 	let { children } = $props();
 
@@ -291,10 +299,10 @@
 						active={isActive('/abdi/dashboard/situs/bukutamu')}
 					/>
 					<SidebarMenu
-						href="/abdi/dashboard/situs/daftaracara/detail"
+						href="/abdi/dashboard/situs/detail"
 						icon="mdi:book"
-						anchor="Daftar Acara"
-						active={isActive('/abdi/dashboard/situs/daftaracara/detail')}
+						anchor="Detail Situs"
+						active={isActive('/abdi/dashboard/situs/detail')}
 					/>
 				</SidebarMenu>
 			</Sidebar>
@@ -345,7 +353,7 @@
 				</SidebarMenu>
 				<SidebarMenu href="" icon="mdi:people" anchor="Organisasi" hasChildren={true}>
 					<SidebarMenu
-						href="/abdi/sekretariat/organisasi/daftarorganisasi"
+						href="/abdi/sekretariat/organisasi/daftarOrganisasi"
 						icon="mdi:book"
 						anchor="Daftar Organisasi"
 						active={isActive('/abdi/sekretariat/anggota/daftaranggota')}

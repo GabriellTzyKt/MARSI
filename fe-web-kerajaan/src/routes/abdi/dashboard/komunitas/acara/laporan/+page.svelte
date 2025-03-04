@@ -9,10 +9,12 @@
 	<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="flex w-full justify-between">
 			<p class="mt-2">Informasi Acara</p>
-			<a href='/abdi/komunitas/acara/edit'><button class="w-40 rounded-lg border-2 bg-yellow-500 px-2 py-2">Ubah</button></a>
+			<a href="/abdi/dashboard/komunitas/acara/edit"
+				><button class="w-40 rounded-lg border-2 bg-yellow-500 px-2 py-2">Ubah</button></a
+			>
 		</div>
 
-		<div class="mt-5 grid lg:grid-cols-4 grid-cols-2 gap-12">
+		<div class="mt-5 grid grid-cols-2 gap-12 lg:grid-cols-4">
 			<div class="col-span-2">
 				<div class="mt-2 w-full">
 					<p>Nama Acara:</p>
@@ -55,7 +57,7 @@
 				</div>
 			</div>
 
-			<div class="lg:col-span-1 col-span-2">
+			<div class="col-span-2 lg:col-span-1">
 				<div class="mt-2 w-full">
 					<p>Nama Acara:</p>
 					<input
@@ -82,7 +84,7 @@
 				</div>
 			</div>
 
-			<div class="lg:col-span-1 col-span-2">
+			<div class="col-span-2 lg:col-span-1">
 				<div class="mt-2 w-full">
 					<p>Nama Acara:</p>
 					<input
@@ -114,11 +116,11 @@
 
 		<!-- bawah -->
 
-		<p class="mt-5 text-start text-xl font-bold text-blue-600 mb-5">Daftar Undangan</p>
+		<p class="mb-5 mt-5 text-start text-xl font-bold text-blue-600">Daftar Undangan</p>
 		<div class="grid grid-cols-8 gap-2">
 			{#each Array(total) as _, i}
-				<div class="col-span-1 w-full">{i+1}</div>
-				<div class="col-span-1 w-full rounded-lg border px-1 lg:px-2 py-1">Tn</div>
+				<div class="col-span-1 w-full">{i + 1}</div>
+				<div class="col-span-1 w-full rounded-lg border px-1 py-1 lg:px-2">Tn</div>
 				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
 				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
 			{/each}
@@ -130,7 +132,7 @@
 			<div>
 				<p class="mt-5 text-start text-2xl font-bold text-blue-700">Laporan Acara</p>
 			</div>
-			<div class="grid lg:grid-cols-3 grid-cols-1 gap-2">
+			<div class="grid grid-cols-1 gap-2 lg:grid-cols-3">
 				<div class="col-span-1 mt-5 h-full w-full rounded-lg border-2 border-gray-500">
 					<p class="ml-5 mt-5 text-xl font-bold text-blue-700">Peserta</p>
 					<p class="ml-5 mt-5">Jumlah Orang Hadir</p>
@@ -147,21 +149,24 @@
 					/>
 					<p class="ml-5 mt-5">Bukti Foto</p>
 					<div class="relative ml-3 w-[90%]">
-					  <input
-						type="text"
-						placeholder="Unggah Bukti Foto"
-						class="w-full rounded-lg border-2 border-gray-400 px-2 py-2" 
-					  />
-					  <span class="pajamas--media absolute right-2 opacity-55 mt-2.5">
-					  </span>
+						<input
+							type="text"
+							placeholder="Unggah Bukti Foto"
+							class="w-full rounded-lg border-2 border-gray-400 px-2 py-2"
+						/>
+						<span class="pajamas--media absolute right-2 mt-2.5 opacity-55"> </span>
 					</div>
 				</div>
 
 				<!-- 2 -->
-				<div class="col-span-1 lg:col-span-2 mt-5 h-full w-full rounded-lg border-2 border-gray-500">
+				<div
+					class="col-span-1 mt-5 h-full w-full rounded-lg border-2 border-gray-500 lg:col-span-2"
+				>
 					<div class="flex items-center justify-between">
 						<p class="ml-5 text-xl font-bold text-blue-700">RAB</p>
-						<button class="px-15 mb-6 mr-10 mt-5 rounded-lg border bg-blue-500 py-2 lg:ml-0 ml-7 text-white">
+						<button
+							class="px-15 mb-6 ml-7 mr-10 mt-5 rounded-lg border bg-blue-500 py-2 text-white lg:ml-0"
+						>
 							Tambah
 						</button>
 					</div>
@@ -171,39 +176,78 @@
 						</p>
 					</div>
 					<!-- Component Kotak Bawah -->
-					<div class="h-fit py-3 mx-auto mt-4 w-[95%] rounded-lg border-2 border-gray-400">
-						<div class="mx-auto mt-4 h-fit w-[95%] rounded-lg border-2 border-gray-400 grid grid-cols-3 px-3 py-2 gap-2">
-							<input class="col-span-2 w-full mt-2 h-5 py-4 rounded-lg border-2 border-black px-3" type="text" placeholder="Keterangan">
-							<input class="col-span-1 w-full mt-2 h-5 py-4 rounded-lg mb-2 border-2 border-black px-3" type="text" placeholder="Jumlah Uang">
+					<div class="mx-auto mt-4 h-fit w-[95%] rounded-lg border-2 border-gray-400 py-3">
+						<div
+							class="mx-auto mt-4 grid h-fit w-[95%] grid-cols-3 gap-2 rounded-lg border-2 border-gray-400 px-3 py-2"
+						>
+							<input
+								class="col-span-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
+								type="text"
+								placeholder="Keterangan"
+							/>
+							<input
+								class="col-span-1 mb-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
+								type="text"
+								placeholder="Jumlah Uang"
+							/>
 						</div>
-						<div class="mx-auto mt-4 h-fit w-[95%] rounded-lg border-2 border-gray-400 grid grid-cols-3 px-3 py-2 gap-2">
-							<input class="col-span-2 w-full mt-2 h-5 py-4 rounded-lg border-2 border-black px-3" type="text" placeholder="Keterangan">
-							<input class="col-span-1 w-full mt-2 h-5 py-4 rounded-lg mb-2 border-2 border-black px-3" type="text" placeholder="Jumlah Uang">
+						<div
+							class="mx-auto mt-4 grid h-fit w-[95%] grid-cols-3 gap-2 rounded-lg border-2 border-gray-400 px-3 py-2"
+						>
+							<input
+								class="col-span-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
+								type="text"
+								placeholder="Keterangan"
+							/>
+							<input
+								class="col-span-1 mb-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
+								type="text"
+								placeholder="Jumlah Uang"
+							/>
 						</div>
-						<div class="mx-auto mt-4 h-fit w-[95%] rounded-lg border-2 border-gray-400 grid grid-cols-3 px-3 py-2 gap-2">
-							<input class="col-span-2 w-full mt-2 h-5 py-4 rounded-lg border-2 border-black px-3" type="text" placeholder="Keterangan">
-							<input class="col-span-1 w-full mt-2 h-5 py-4 rounded-lg mb-2 border-2 border-black px-3" type="text" placeholder="Jumlah Uang">
+						<div
+							class="mx-auto mt-4 grid h-fit w-[95%] grid-cols-3 gap-2 rounded-lg border-2 border-gray-400 px-3 py-2"
+						>
+							<input
+								class="col-span-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
+								type="text"
+								placeholder="Keterangan"
+							/>
+							<input
+								class="col-span-1 mb-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
+								type="text"
+								placeholder="Jumlah Uang"
+							/>
 						</div>
-						<div class="mx-auto mt-4 h-fit w-[95%] rounded-lg border-2 border-gray-400 grid grid-cols-3 px-3 py-2 gap-2">
-							<input class="col-span-2 w-full mt-2 h-5 py-4 rounded-lg border-2 border-black px-3" type="text" placeholder="Keterangan">
-							<input class="col-span-1 w-full mt-2 h-5 py-4 rounded-lg mb-2 border-2 border-black px-3" type="text" placeholder="Jumlah Uang">
+						<div
+							class="mx-auto mt-4 grid h-fit w-[95%] grid-cols-3 gap-2 rounded-lg border-2 border-gray-400 px-3 py-2"
+						>
+							<input
+								class="col-span-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
+								type="text"
+								placeholder="Keterangan"
+							/>
+							<input
+								class="col-span-1 mb-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
+								type="text"
+								placeholder="Jumlah Uang"
+							/>
 						</div>
 					</div>
 				</div>
-
 			</div>
 		</div>
 
 		<div class="mt-12 h-1 w-full bg-slate-300"></div>
 
 		<div class="mt-5 flex w-full justify-between">
-			<p class="w-full font-bold mt-2 text-blue-600">Dokumentasi Acara</p>
+			<p class="mt-2 w-full font-bold text-blue-600">Dokumentasi Acara</p>
 			<button class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white">
 				Tambah Gambar
 			</button>
 		</div>
 
-		<div class="mt-5 grid lg:grid-cols-4 grid-cols-2 gap-2">
+		<div class="mt-5 grid grid-cols-2 gap-2 lg:grid-cols-4">
 			<div class="relative">
 				<img src={gambartemp} class="rounded-lg" alt="Gambar" />
 				<span
@@ -241,7 +285,6 @@
 				</span>
 			</div>
 		</div>
-
 	</div>
 </div>
 

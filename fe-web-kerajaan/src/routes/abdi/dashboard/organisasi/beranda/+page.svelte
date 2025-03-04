@@ -13,7 +13,7 @@
 				<h5 class="mb-2 mt-2 text-center text-2xl font-bold tracking-tight text-black">
 					Sinau batik
 				</h5>
-				<a href="/abdi/dashboard/organisasi/edit">
+				<a href="/abdi/dashboard/organisasi/detail">
 					<button
 						class="absolute right-0 mr-3 mt-8 w-20 rounded-lg bg-blue-500 px-2 py-1 text-white"
 					>

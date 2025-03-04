@@ -1,5 +1,21 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+
 	let total = $state(8);
+	let open = $state(false);
+	let timer: number;
+	function setTimer() {
+		open = true;
+		if (timer) {
+			clearTimeout(timer);
+		}
+		if (open)
+			timer = setTimeout(() => {
+				open = false;
+				goto('/abdi/sekretariat/acara');
+			}, 3000);
+	}
 </script>
 
 <div class="min-h-full w-full">
@@ -165,14 +181,20 @@
 		</div>
 
 		<div class="mt-8 flex w-full justify-center lg:justify-end">
-			<a href="/abdi/sekretariat/acara/detail">
-				<button class="w-50 text-nowrap rounded-lg bg-green-400 px-2 py-2 text-white">
+			<a href="">
+				<button
+					class="w-50 text-nowrap rounded-lg bg-green-400 px-2 py-2 text-white"
+					onclick={setTimer}
+				>
 					Ubah acara
 				</button>
 			</a>
 		</div>
 	</div>
 </div>
+{#if open}
+	<SuccessModal text="acara berhasil diedit"></SuccessModal>
+{/if}
 
 <style>
 	.gg--trash {

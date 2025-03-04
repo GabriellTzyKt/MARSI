@@ -1,4 +1,21 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import { fade } from 'svelte/transition';
+
+	let open = $state(false);
+	let timer: number;
+	function setTimer() {
+		open = true;
+		if (timer) {
+			clearTimeout(timer);
+		}
+		if (open)
+			timer = setTimeout(() => {
+				open = false;
+				goto('/abdi/sekretariat/anggota/daftaranggota');
+			}, 3000);
+	}
 </script>
 
 <div class="min-h-full w-full">
@@ -221,10 +238,15 @@
 	<div class="flex w-full justify-end">
 		<button
 			class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
-			>Tambah Data</button
+			onclick={setTimer}>Tambah Data</button
 		>
 	</div>
 </div>
+{#if open}
+	<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
+		<SuccessModal text="Berhasil menambah abdi"></SuccessModal>
+	</div>
+{/if}
 
 <style>
 	.raphael--edit {
