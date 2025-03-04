@@ -77,7 +77,7 @@
 				<div>
 					<p class="text-xl">Gambar Section</p>
 				</div>
-				<div class=" flex max-h-40 max-w-[1400px] gap-3 overflow-x-auto whitespace-nowrap">
+				<div class=" flex max-h-40 max-w-[1380px] gap-3 overflow-x-auto whitespace-nowrap">
 					<div class="flex h-32 min-w-40 shrink-0">
 						<div class="flex h-auto w-full items-center justify-center rounded-xl bg-gray-500">
 							<svg
