@@ -11,3 +11,4 @@ export const colors: Record<any,string> = {
     Selesai: '#A1A1A1',
     Ditolak: '#E58D8D'
 }
+

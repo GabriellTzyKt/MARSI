@@ -18,14 +18,14 @@
 		} 
 	});
 
-	let { judul, lokasi, gambar, id } = $props();
+	let { judul, lokasi, gambar, id, tahun } = $props();
 </script>
 
 <div class="grid grid-cols-1 gap-6">
 	<div class="w-xl flex h-full flex-col justify-between rounded shadow-lg min-h-[350px]">
 		<img class="h-64 w-full object-cover text-center" src={gambar} alt="Sunset in the mountains" />
 		<div class="flex flex-col flex-grow mx-6 py-4">
-			<div class="mb-2 text-xl font-bold md:truncate">{judul}</div>
+			<div class="mb-2 text-xl font-bold md:truncate">{judul} ({tahun})</div>
 			<div class="flex flex-col lg:flex-row lg:justify-between flex-grow">
 				<div class="flex items-center justify-start lg:self-center">
 					<span class="bx--map mr-3"></span>

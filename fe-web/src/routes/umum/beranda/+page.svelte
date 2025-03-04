@@ -11,7 +11,6 @@
 	import gambar3 from '../../../asset/umum/img_3.png';
 	import gambar4 from '../../../asset/umum/img_4.png';
 	import gambar5 from '../../../asset/umum/image-bg.png';
-	import { page } from '$app/state';
 
 	let hoveredIcons = new Set();
 

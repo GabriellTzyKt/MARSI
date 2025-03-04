@@ -27,6 +27,8 @@
 			return 'Acara';
 		} else if (page.route.id === '/admin/acara/tambahacara/detail/[id]') {
 			return 'Acara';
+		} else if (page.route.id?.startsWith("/admin/suratDokumen")){
+			return 'Arsip';
 		}
 	});
 	let { children } = $props();
@@ -135,6 +137,12 @@
                 icon="mdi:globe"
                 anchor="Landing page"
                 active={isActive('/admin/landing')}
+            />
+			<SidebarMenu
+                href="/admin/suratDokumen"
+                icon="mdi:home"
+                anchor="Surat Dokumen"
+                active={isActive('/admin/suratDokumen')}
             />
         </Sidebar>
 	</div>

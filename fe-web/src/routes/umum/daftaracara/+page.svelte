@@ -2,159 +2,100 @@
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '../nav/Navbar.svelte';
 	import gambarHeader from '../../../asset/umum/acara_header.png';
-	import gambar from '../../../asset/umum/acara_1.png';
-	import gambar2 from '../../../asset/umum/gbr_2.png';
-	import gambar3 from '../../../asset/umum/gbr_3.png';
-	import gambar4 from '../../../asset/umum/gbr_4.png';
 	import Cardshow from '../Cardshow.svelte';
 
-	let value = $state(6);
-	let displayedCount = $state(6);
+	let value = $state<number>(6);
+	let selectedDaerah = $state<string>('');
+	let selectKepemilikan = $state<string>('');
+	// $inspect(selectedDaerah)
+	let displayedCount = $state<number>(6);
 	let keyword = $state('');
 
-	const situsList = [
-		{ id: 1, judul: 'KItab Malam 1 Suro', lokasi: 'Keraton Kasunanan Surakarta', gambar },
-		{
-			id: 2,
-			judul: 'Keraton Ngayogyakarta Hadiningrat',
-			lokasi: 'Yogyakarta, Daerah Istimewa Yogyakarta',
-			gambar: gambar2
-		},
-		{ id: 3, judul: 'Kadipaten Mangkunagaran', lokasi: 'Surakarta, Jawa Tengah', gambar: gambar3 },
-		{
-			id: 4,
-			judul: 'Keraton Kasunanan Surakarta',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar4
-		},
-		{
-			id: 5,
-			judul: 'Keraton Kasunanan Surakarta',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar4
-		},
-		{
-			id: 6,
-			judul: 'Keraton Kasunanan Surakarta 6',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar4
-		},
-		{
-			id: 7,
-			judul: 'Keraton Kasunanan Surakarta 7',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar4
-		},
-		{
-			id: 8,
-			judul: 'Keraton Kasunanan Surakarta 8',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar4
-		},
-		{
-			id: 9,
-			judul: 'Keraton Kasunanan Surakarta 9',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar4
-		},
-		{
-			id: 10,
-			judul: 'Keraton Kasunanan Surakarta 10',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar
-		},
-		{
-			id: 11,
-			judul: 'Keraton Kasunanan Surakarta 11',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar
-		},
-		{
-			id: 12,
-			judul: 'Keraton Kasunanan Surakarta 12',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar
-		},
-		{
-			id: 13,
-			judul: 'Keraton Kasunanan Surakarta 13',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar
-		},
-		{
-			id: 14,
-			judul: 'Keraton Kasunanan Surakarta 14',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar
-		},
-		{
-			id: 15,
-			judul: 'Keraton Kasunanan Surakarta 15',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar
-		},
-		{
-			id: 16,
-			judul: 'Keraton Kasunanan Surakarta 16',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar
-		},
-		{
-			id: 17,
-			judul: 'Keraton Kasunanan Surakarta 17',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar
-		},
-		{
-			id: 18,
-			judul: 'Keraton Kasunanan Surakarta 18',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar
-		},
-		{
-			id: 19,
-			judul: 'Keraton Kasunanan Surakarta 19',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar
-		},
-		{
-			id: 20,
-			judul: 'Keraton Kasunanan Surakarta 20',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar
-		},
-		{
-			id: 21,
-			judul: 'Keraton Kasunanan Surakarta 21',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar
-		},
-		{
-			id: 22,
-			judul: 'Keraton Kasunanan Surakarta 22',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar
-		},
-		{
-			id: 23,
-			judul: 'Keraton Kasunanan Surakarta 23',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar
-		},
-		{
-			id: 24,
-			judul: 'Keraton Kasunanan Surakarta 24',
-			lokasi: 'Surakarta, Jawa Tengah',
-			gambar: gambar
+	let selectedLokasi: string = $state('');
+	let sortOrder: string = $state('');
+
+	let latitude: number | null = null;
+	let longitude: number | null = null;
+	let userLocation: string | null = $state(' ');
+
+	const { data } = $props()
+	const dataGet = data.detil_acara
+	console.log('Acara : ', dataGet)
+
+	function handleSortChange(event: Event) {
+		const target = event.target as HTMLSelectElement;
+		selectedLokasi = target.value;
+
+		if (selectedLokasi === 'lokasi') {
+			getLocation();
+		} else if (selectedLokasi === ' ') {
+			selectedDaerah = '';
+			userLocation = ' ';
+			sortOrder = ' ';
+			selectKepemilikan = '';
+			displayedCount = value;
+		} else if (selectedLokasi === 'tahun-asc'){
+			sortOrder = 'asc'
+		} else if (selectedLokasi === 'tahun-desc'){
+			sortOrder = 'desc'
 		}
-	];
+	}
 
-	let filteredData = $derived(situsList.filter((v) => v.judul.toLowerCase()
-	.includes(keyword.toLowerCase())));
+	function getLocation() {
+		if ('geolocation' in navigator) {
+			navigator.geolocation.getCurrentPosition(
+				(position) => {
+					latitude = position.coords.latitude;
+					longitude = position.coords.longitude;
+					getCity(latitude, longitude);
+				},
+				(error) => {
+					console.error('Error getting location:', error);
+				}
+			);
+		} else {
+			console.error('Geolocation is not supported by this browser.');
+		}
+	}
 
-	// $effect(() => {
-	// 	displayedCount = filteredData.length
-	// });
+	async function getCity(lat: number, lon: number) {
+		const response = await fetch(
+			`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
+		);
+		const data = await response.json();
+		console.log('User Location Before : ', userLocation);
+		if (data.address) {
+			userLocation =
+				data.address.city || data.address.town || data.address.village || 'Tidak diketahui';
+			alert(`Mencari kerajaan di daerah : ${userLocation}`);
+			selectedDaerah = userLocation || '';
+		}
+		console.log('User Location After : ', userLocation);
+	}
+
+	function updateDisplayedCount() {
+		displayedCount = value;
+	}
+
+	function updateFilteredData() {
+		const filteredData = dataGet.filter((v) => {
+			const isDaerahMatch = selectedDaerah
+				? v.daerah.toLowerCase().includes(selectedDaerah.toLowerCase())
+				: true;
+			const isKeywordMatch = v.nama_tempat.toLowerCase().includes(keyword.toLowerCase());
+
+			return isDaerahMatch && isKeywordMatch;
+		});
+
+		if (sortOrder === 'asc') {
+            filteredData.sort((a, b) => Number(a.tahun) - Number(b.tahun));
+        } else if (sortOrder === 'desc') {
+            filteredData.sort((a, b) => Number(b.tahun) - Number(a.tahun));
+        }
+
+		console.log('Filtered Data:', filteredData);
+		return filteredData;
+	}
 
 	function loadMore() {
 		displayedCount += value;
@@ -201,49 +142,98 @@
 		</div>
 	</div>
 
-	<div class="ml-11 flex justify-between">
-		<div class="flex justify-start">
-			<p>Show :</p>
-			<details class="dropdown border-rounded ml-3 border">
-				<summary class="no-arrow w-[50px] text-center"> {value} </summary>
-				<ul class="bg-base-100 rounded-box z-[1] w-fit p-2 shadow">
-					<li>
-						<button
-							onclick={() => {
-								value = 6;
-								displayedCount = 6;
-							}}>6</button
-						>
-					</li>
-					<li>
-						<button
-							onclick={() => {
-								value = 8;
-								displayedCount = 8;
-							}}>8</button
-						>
-					</li>
-				</ul>
-			</details>
-			<p class="ml-2">Entries</p>
+	<div class="ml-11 flex lg:justify-between lg:flex-row flex-col lg:gap-y-0 gap-y-2">
+		<div class="relative flex items-center gap-x-2">
+			<p>Sort By :</p>
+			<select
+				id="sortSelect"
+				class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+				onchange={handleSortChange}
+			>
+				<option value=" " selected>None</option>
+				<option value="lokasi">Lokasi</option>
+				<option value="tahun-asc">Tahun ( Ascending )</option>
+				<option value="tahun-desc">Tahun ( Descending )</option>
+				<option value="era">Era</option>
+				<option value="popularity">Popularity</option>
+			</select>
 		</div>
-		<p class="me-12">{displayedCount} / {situsList.length}</p>
+		<div class="relative flex items-center gap-x-2">
+			<p>Show :</p>
+			<select
+				bind:value
+				onchange={() => updateDisplayedCount()}
+				class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+			>
+				<option disabled selected>None</option>
+				<option value={6}>6</option>
+				<option value={8}>8</option>
+			</select>
+			<p>Entries</p>
+		</div>
+		<!-- Belom Nyoba Di Filter, masih nunggu datanya apa aja biar pasti -->
+		<div class="relative flex items-center gap-x-2">
+			<p>Kepemilikan :</p>
+			<select
+				id="sortSelect"
+				bind:value={selectKepemilikan}
+				class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+			>
+				<option value="">None</option>
+				<option value="kerajaan">Kerajaan</option>
+				<option value="kekaisaran">Kekaisaran</option>
+			</select>
+		</div>
+		<!--  -->
+		<div class="relative mr-11 flex items-center gap-x-2">
+			<p>Daerah :</p>
+			{#if (selectedDaerah === ' ' && userLocation === ' ') || (selectedDaerah !== ' ' && userLocation === ' ') || (selectedDaerah === ' ')}
+				<select
+					bind:value={selectedDaerah}
+					class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+				>
+					<option value="">None</option>
+					<option value="surakarta">Surakarta</option>
+					<option value="yogyakarta">Yogyakarta</option>
+					<option value="Surabaya">Surabaya</option>
+				</select>
+			{:else if userLocation !== ' '}
+				<select
+					bind:value={userLocation}
+					onchange={handleSortChange}
+					disabled
+					class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+				>
+					<option value="">None</option>
+					<option value="surakarta">Surakarta</option>
+					<option value="yogyakarta">Yogyakarta</option>
+					<option value="Surabaya">Surabaya</option>
+				</select>
+			{/if}
+		</div>
 	</div>
 
+
 	<div class="relative mb-20 ml-10 mr-10 mt-10 grid grid-cols-1 gap-x-4 gap-y-10 md:grid-cols-2">
-		{#each filteredData.slice(0, displayedCount) as situs}
-			<Cardshow judul={situs.judul} lokasi={situs.lokasi} gambar={situs.gambar} id={situs.id} />
+		{#each updateFilteredData().slice(0, displayedCount) as situs}
+			<Cardshow
+				judul={situs.nama_tempat}
+				lokasi={situs.kepemilikan}
+				gambar={situs.gambar1}
+				id={situs.id}
+				tahun={situs.tahun}
+			/>
 		{/each}
 	</div>
 
-	{#if displayedCount >= situsList.length || keyword.trim() !== ''}
+	{#if updateFilteredData().length <= displayedCount || updateFilteredData().length < 6}
 		<button
 			onclick={loadMore}
 			class="mb-10 me-10 ml-10 hidden h-[40px] w-[95%] items-center rounded-lg border bg-white shadow-md"
 		>
 			See More !
 		</button>
-	{:else if displayedCount < situsList.length}
+	{:else}
 		<div class="flex justify-center">
 			<button
 				onclick={loadMore}
@@ -265,8 +255,5 @@
 			display: flex;
 			justify-content: center;
 		}
-	}
-	.no-arrow {
-		list-style: none;
 	}
 </style>
