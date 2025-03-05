@@ -31,6 +31,8 @@
 			return 'Arsip';
 		} else if (page.route.id === '/admin/landingPage') {
 			return 'Landing Page';
+		} else if (page.route.id === '/admin/managemen') {
+			return 'Managemen Admin';
 		}
 	});
 	let { children } = $props();
@@ -145,6 +147,12 @@
 				icon="mdi:home"
 				anchor="Surat Dokumen"
 				active={isActive('/admin/suratDokumen')}
+			/>
+			<SidebarMenu
+				href="/admin/managemen"
+				icon="mdi:home"
+				anchor="Managemen Admin"
+				active={isActive('/admin/managemen')}
 			/>
 		</Sidebar>
 	</div>
