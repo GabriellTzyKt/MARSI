@@ -35,7 +35,7 @@
 
 <div class="test flex w-full flex-col">
 	<div class="flex flex-row">
-		<a href="/admin/keanggotaan/daftaranggota"
+		<a href="/admin/suratDokumen"
 			><button class="custom-button bg-customRed">⭠ Kembali</button></a
 		>
 		<p class="ml-5 mt-6 text-3xl font-bold underline">Ubah Dokumen</p>
