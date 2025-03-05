@@ -307,7 +307,11 @@
 				</SidebarMenu>
 			</Sidebar>
 		{/if}
+<<<<<<< HEAD
 
+=======
+		
+>>>>>>> adam
 		{#if page.route.id?.startsWith('/abdi/sekretariat')}
 			<Sidebar>
 				<SidebarMenu
