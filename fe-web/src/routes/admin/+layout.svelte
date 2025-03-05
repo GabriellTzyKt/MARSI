@@ -147,6 +147,12 @@
 				active={isActive('/admin/landingPage')}
 			/>
 			<SidebarMenu
+				href="/admin/biodata"
+				icon="mdi:globe"
+				anchor="Biodata Kerajaan"
+				active={isActive('/admin/biodata')}
+			/>
+			<SidebarMenu
 				href="/admin/suratDokumen"
 				icon="mdi:home"
 				anchor="Surat Dokumen"
