@@ -127,7 +127,7 @@
 
 			<div class="w-full justify-end flex">
 				<button class="bg-customGold mt-2 rounded-lg border px-6 py-2 text-white">
-					Tambah
+					Ubah
 				</button>
 			</div>
 
