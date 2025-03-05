@@ -29,6 +29,8 @@
 			return 'Acara';
 		} else if (page.route.id?.startsWith('/admin/suratDokumen')) {
 			return 'Arsip';
+		} else if (page.route.id?.startsWith('/admin/biodata')) {
+			return 'Biodata Kerajaan';
 		} else if (page.route.id === '/admin/landingPage') {
 			return 'Landing Page';
 		} else if (page.route.id === '/admin/managemen') {
@@ -141,6 +143,12 @@
 				icon="mdi:globe"
 				anchor="Landing page"
 				active={isActive('/admin/landingPage')}
+			/>
+			<SidebarMenu
+				href="/admin/biodata"
+				icon="mdi:globe"
+				anchor="Biodata Kerajaan"
+				active={isActive('/admin/biodata')}
 			/>
 			<SidebarMenu
 				href="/admin/suratDokumen"
