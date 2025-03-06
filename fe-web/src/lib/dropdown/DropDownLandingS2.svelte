@@ -73,12 +73,14 @@
 					></textarea>
 				</div>
 			</div>
-			<div class="my-4 flex flex-col">
+			<div class="my-4 flex w-full flex-col justify-center">
 				<div>
 					<p class="text-xl">Gambar Section</p>
 				</div>
-				<div class=" flex max-h-40 max-w-[1378px] gap-3 overflow-x-auto whitespace-nowrap">
-					<div class="flex h-32 min-w-40 shrink-0">
+				<div
+					class=" flex max-h-40 w-full max-w-[1000px] justify-center gap-3 overflow-x-auto whitespace-nowrap"
+				>
+					<div class="flex h-32 min-w-40 shrink-0 justify-center">
 						<div class="flex h-auto w-full items-center justify-center rounded-xl bg-gray-500">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
