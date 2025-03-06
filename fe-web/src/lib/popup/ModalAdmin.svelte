@@ -21,7 +21,7 @@
 	class="fixed left-0 top-0 flex min-h-full min-w-full items-center justify-center bg-black/75"
 	transition:fade={{ duration: 200 }}
 >
-	<div class="flex w-full max-w-[824px] flex-col border bg-white">
+	<div class="flex max-h-screen w-full max-w-[824px] flex-col overflow-y-auto border bg-white">
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div class="flex items-center justify-between px-8 py-4">
@@ -42,7 +42,7 @@
 			</div>
 		</div>
 		<div class="mb-4 flex h-[2px] w-full bg-[#CFCFCF]"></div>
-		<div class="grid w-full grid-cols-1 gap-4 px-8 md:grid-cols-6">
+		<div class="grid max-h-screen w-full grid-cols-1 gap-4 overflow-auto px-8 md:grid-cols-6">
 			<!-- nama lengkap -->
 			<div class="flex flex-col md:col-span-full">
 				<div class="">
