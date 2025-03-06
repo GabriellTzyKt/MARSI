@@ -27,14 +27,16 @@
 			return 'Acara';
 		} else if (page.route.id === '/admin/acara/tambahacara/detail/[id]') {
 			return 'Acara';
-		} else if (page.route.id?.startsWith('/admin/suratDokumen')) {
+		} else if (page.route.id === '/admin/suratDokumen') {
+			return 'Dokumen';
+		} else if (page.route.id === '/admin/suratDokumen/ubah' || page.route.id === '/admin/suratDokumen/tambah') {
 			return 'Arsip';
-		} else if (page.route.id?.startsWith('/admin/biodata')) {
-			return 'Biodata Kerajaan';
-		} else if (page.route.id === '/admin/landingPage') {
+		}  else if (page.route.id === '/admin/landingPage') {
 			return 'Landing Page';
 		} else if (page.route.id === '/admin/managemen') {
 			return 'Managemen Admin';
+		} else if (page.route.id?.startsWith('/admin/biodata')) {
+			return 'Biodata Kerajaan';
 		}
 	});
 	let { children } = $props();
@@ -155,6 +157,12 @@
 				icon="mdi:home"
 				anchor="Surat Dokumen"
 				active={isActive('/admin/suratDokumen')}
+			/>
+			<SidebarMenu
+				href="/admin/biodata"
+				icon="mdi:home"
+				anchor="Biodata Kerajaan"
+				active={page.route.id?.startsWith('/admin/biodata')}
 			/>
 			<SidebarMenu
 				href="/admin/managemen"

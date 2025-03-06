@@ -41,6 +41,7 @@
 		}
 	}
 
+	// pakai API Geolocation untuk dapet latitude longitude
 	function getLocation() {
 		if ('geolocation' in navigator) {
 			navigator.geolocation.getCurrentPosition(
@@ -49,9 +50,6 @@
 					longitude = position.coords.longitude;
 					getCity(latitude, longitude);
 				},
-				(error) => {
-					console.error('Error getting location:', error);
-				}
 			);
 		} else {
 			console.error('Geolocation is not supported by this browser.');
@@ -59,14 +57,16 @@
 	}
 
 	async function getCity(lat: number, lon: number) {
+		// pakai bantuan API dari openstreetmap untuk mendapat lokasi
 		const response = await fetch(
 			`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
 		);
 		const data = await response.json();
+		console.log("data",data)
 		console.log('User Location Before : ', userLocation);
 		if (data.address) {
 			userLocation =
-				data.address.city || data.address.town || data.address.village || 'Tidak diketahui';
+				data.address.city || data.address.village || data.address.country || 'Tidak diketahui';
 			alert(`Mencari kerajaan di daerah : ${userLocation}`);
 			selectedDaerah = userLocation || '';
 		}
@@ -88,8 +88,10 @@
 			return isDaerahMatch && isKeywordMatch && isTipeMatch;
 		});
 
+		// kalau hasilnya > 0 maka swap
 		if (sortOrder === 'asc') {
             filteredData.sort((a, b) => Number(a.tahun) - Number(b.tahun));
+		// kalau hasilnya < 0 maka swap
         } else if (sortOrder === 'desc') {
             filteredData.sort((a, b) => Number(b.tahun) - Number(a.tahun));
         }

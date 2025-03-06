@@ -35,7 +35,7 @@
 
 <div class="test flex w-full flex-col">
 	<div class="flex flex-row">
-		<a href="/admin/keanggotaan/daftaranggota"
+		<a href="/admin/suratDokumen"
 			><button class="custom-button bg-customRed">⭠ Kembali</button></a
 		>
 		<p class="ml-5 mt-6 text-3xl font-bold underline">Ubah Dokumen</p>
@@ -43,7 +43,7 @@
 
 	<div class="form-container flex flex-col">
 		<form>
-			<div class="input-group flex flex-col gap-1">
+			<div class="flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Nama Dokumen</label>
 				<input
 					class="input-field rounded-lg border p-2"
@@ -54,7 +54,7 @@
 				/>
 			</div>
 
-			<div class="input-group mt-2 flex flex-col gap-1">
+			<div class="mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nomor_telepon">Asal Kerajaan</label>
 				<select
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -65,7 +65,7 @@
 				</select>
 			</div>
 
-			<div class="input-group mt-2 flex flex-col gap-1">
+			<div class="mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nomor_telepon">Jenis Dokumen</label>
 				<select
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -76,7 +76,7 @@
 				</select>
 			</div>
 
-			<div class="input-group mt-2 flex flex-col gap-1">
+			<div class=" mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nomor_telepon">Kategori</label>
 				<select
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -87,7 +87,7 @@
 				</select>
 			</div>
 
-			<div class="input-group mt-2 flex w-full flex-col gap-1">
+			<div class="mt-2 flex w-full flex-col gap-1">
 				<label class="text-md self-start text-left" for="fileInput">Dokumen</label>
 				<div class="h-full w-full overflow-x-auto rounded-lg border-2 border-black px-2 py-2">
 					<div class="flex flex-row gap-x-5">
