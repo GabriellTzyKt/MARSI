@@ -100,6 +100,14 @@
 			return 'Daftar Situs';
 		} else if (page.route.id === '/abdi/sekretariat/tugas') {
 			return 'Daftar Tugas';
+		} else if (page.route.id === '/abdi/dashboard/situs/daftaracara/buat') {
+			return 'Buat Acara di Situs';
+		} else if (page.route.id === '/abdi/dashboard/komunitas/acara') {
+			return 'Daftar Acara di Komunitas';
+		} else if (page.route.id === '/abdi/sekretariat/landingpage') {
+			return 'Edit Landing Page';
+		} else if (page.route.id === '/abdi/sekretariat/landingpage/mobile') {
+			return 'Fitur Mobile';
 		}
 	});
 	let { children } = $props();

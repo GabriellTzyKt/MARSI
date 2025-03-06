@@ -110,7 +110,7 @@
 				</div>
 				<div class="flexcoba mt-2 flex w-full">
 					<div class="mt-2 lg:flex-1">
-						<p>Kapasitas Acara:</p>
+						<p>Tanggal Mulai:</p>
 						<input
 							type="text"
 							placeholder="Masukkan Nama"
@@ -119,7 +119,7 @@
 					</div>
 					<div class="flex-1 lg:ml-10">
 						<div class="mt-2 w-full">
-							<p>Penanggung Jawab:</p>
+							<p>Tanggal Selesai:</p>
 							<input
 								type="text"
 								placeholder="Masukkan Nama"
@@ -130,7 +130,7 @@
 				</div>
 				<div class="flexcoba mt-2 flex w-full">
 					<div class="mt-2 lg:flex-1">
-						<p>Kapasitas Acara:</p>
+						<p>Waktu Mulai:</p>
 						<input
 							type="text"
 							placeholder="Masukkan Nama"
@@ -139,7 +139,7 @@
 					</div>
 					<div class="flex-1 lg:ml-10">
 						<div class="mt-2 w-full">
-							<p>Penanggung Jawab:</p>
+							<p>Waktu Selesai:</p>
 							<input
 								type="text"
 								placeholder="Masukkan Nama"

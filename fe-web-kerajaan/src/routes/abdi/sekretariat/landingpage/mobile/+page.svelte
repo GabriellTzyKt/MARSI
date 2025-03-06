@@ -1,0 +1,213 @@
+<script lang="ts"></script>
+
+<div class="mx-6 flex w-full flex-col">
+	<div class=" my-4 flex">
+		<p class="text-2xl font-[600]">Pilih Fitur yang Anda Butuhkan</p>
+	</div>
+	<div class="grid w-full grid-cols-1 gap-4 rounded-lg border p-4 lg:grid-cols-3">
+		<!-- roe 1 -->
+		<div class="flex flex-col gap-4 justify-self-center lg:place-self-start">
+			<!-- penanggalan -->
+			<div class="flex flex-col items-center lg:items-start">
+				<div class="">
+					<p class="text-xl font-[500]">Penanggalan</p>
+				</div>
+				<div class="mt-2 flex flex-row gap-4">
+					<div class="flex gap-1">
+						<input type="radio" name="penanggalan" id="" />
+						<p>Ya</p>
+					</div>
+					<div class="flex gap-1">
+						<input type="radio" name="penanggalan" id="" />
+						<p>Tidak</p>
+					</div>
+				</div>
+			</div>
+			<!-- tambahan penanggalan -->
+			<div class=" flex flex-col items-center gap-2 lg:items-start">
+				<div>
+					<p class="text-xl font-[500]">
+						Tambahan Penanggalan <span class="text-sm text-gray-500">(pilih salah satu)</span>
+					</p>
+				</div>
+				<div class="grid grid-cols-2 gap-2">
+					<div class="flex">
+						<input type="radio" name="tambahan_penanggalan" class="me-2" id="" />
+						<p>Penanggalan Jawa</p>
+					</div>
+					<div class="flex">
+						<input type="radio" name="tambahan_penanggalan" class="me-2" id="" />
+						<p>Penanggalan Cina</p>
+					</div>
+					<div class="flex">
+						<input type="radio" name="tambahan_penanggalan" class="me-2" id="" />
+						<p>Penanggalan Hindu</p>
+					</div>
+					<div class="flex">
+						<input type="radio" name="tambahan_penanggalan" class="me-2" id="" />
+						<p>Penanggalan Arab</p>
+					</div>
+				</div>
+			</div>
+			<div class="flex flex-col items-center gap-1 lg:items-start">
+				<div>
+					<p class="text-xl font-[500]">Tugas Pribadi</p>
+				</div>
+				<div class="mt-2 flex flex-row gap-4">
+					<div class="flex gap-1">
+						<input type="radio" name="pribadi" id="" />
+						<p>Ya</p>
+					</div>
+					<div class="flex gap-1">
+						<input type="radio" name="pribadi" id="" />
+						<p>Tidak</p>
+					</div>
+				</div>
+			</div>
+			<div class="mb-6 flex flex-col items-center gap-1 lg:mb-0 lg:items-start">
+				<div>
+					<p class="text-xl font-[500]">Tugas Acara</p>
+				</div>
+				<div class="mt-2 flex flex-row gap-4">
+					<div class="flex gap-1">
+						<input type="radio" name="acara" id="" />
+						<p>Ya</p>
+					</div>
+					<div class="flex gap-1">
+						<input type="radio" name="acara" id="" />
+						<p>Tidak</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- row 2 -->
+		<div class="flex flex-col gap-4 justify-self-center">
+			<!-- situs kerajaan -->
+			<div class="flex flex-col items-center lg:items-start">
+				<div class="">
+					<p class="text-xl font-[500]">Situs Kerajaan</p>
+				</div>
+				<div class="mt-2 flex flex-row gap-4">
+					<div class="flex gap-1">
+						<input type="radio" name="situs_kerajaan" id="" />
+						<p>Ya</p>
+					</div>
+					<div class="flex gap-1">
+						<input type="radio" name="situs_kerajaan" id="" />
+						<p>Tidak</p>
+					</div>
+				</div>
+			</div>
+			<!-- chek in situs -->
+			<div class="flex flex-col items-center lg:items-start">
+				<div class="">
+					<p class="text-xl font-[500]">Check In Situs</p>
+				</div>
+				<div class="mt-2 flex flex-row gap-4">
+					<div class="flex gap-1">
+						<input type="radio" name="check_in_situs" id="" />
+						<p>Ya</p>
+					</div>
+					<div class="flex gap-1">
+						<input type="radio" name="check_in_situs" id="" />
+						<p>Tidak</p>
+					</div>
+				</div>
+			</div>
+			<!-- acara kerajaan-->
+			<div class="flex flex-col items-center lg:items-start">
+				<div class="">
+					<p class="text-xl font-[500]">Acara Kerajaan</p>
+				</div>
+				<div class="mt-2 flex flex-row gap-4">
+					<div class="flex gap-1">
+						<input type="radio" name="acara_kerajaan" id="" />
+						<p>Ya</p>
+					</div>
+					<div class="flex gap-1">
+						<input type="radio" name="acara_kerajaan" id="" />
+						<p>Tidak</p>
+					</div>
+				</div>
+			</div>
+			<!-- grup chat-->
+			<div class="mb-6 flex flex-col items-center lg:mb-0 lg:items-start">
+				<div class="">
+					<p class="text-xl font-[500]">Grup Chat</p>
+				</div>
+				<div class="mt-2 flex flex-row gap-4">
+					<div class="flex gap-1">
+						<input type="radio" name="grup_chat" id="" />
+						<p>Ya</p>
+					</div>
+					<div class="flex gap-1">
+						<input type="radio" name="grup_chat" id="" />
+						<p>Tidak</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- row 3 -->
+		<div class="flex flex-col gap-4 justify-self-center">
+			<!-- grup chat-->
+			<div class="flex flex-col items-center lg:items-start">
+				<div class="">
+					<p class="text-xl font-[500]">Forum</p>
+				</div>
+				<div class="mt-2 flex flex-row gap-4">
+					<div class="flex gap-1">
+						<input type="radio" name="forum" id="" />
+						<p>Ya</p>
+					</div>
+					<div class="flex gap-1">
+						<input type="radio" name="forum" id="" />
+						<p>Tidak</p>
+					</div>
+				</div>
+			</div>
+			<!-- profil -->
+			<div class=" flex flex-col items-center gap-2 lg:items-start">
+				<div>
+					<p class="text-xl font-[500]">
+						Profil <span class="text-sm text-gray-500">(pilih sesuai kebutuhan)</span>
+					</p>
+				</div>
+				<div class=" grid grid-cols-2 items-center gap-2">
+					<div class="flex">
+						<input type="radio" name="profil" class="me-2" id="" />
+						<p>Semua</p>
+					</div>
+					<div class="flex">
+						<input type="radio" name="profil" class="me-2" id="" />
+						<p>Profil dan Riwayat Kelompok</p>
+					</div>
+					<div class="flex">
+						<input type="radio" name="profil" class="me-2" id="" />
+						<p>Profil dan Riwayat Acara</p>
+					</div>
+					<div class="flex">
+						<input type="radio" name="profil" class="me-2" id="" />
+						<p>Profil Saja</p>
+					</div>
+				</div>
+			</div>
+			<!-- Permohonan-->
+			<div class="flex flex-col items-center lg:items-start">
+				<div class="">
+					<p class="text-xl font-[500]">Permohonan</p>
+				</div>
+				<div class="mt-2 flex flex-row gap-4">
+					<div class="flex gap-1">
+						<input type="radio" name="permohonan" id="" />
+						<p>Ya</p>
+					</div>
+					<div class="flex gap-1">
+						<input type="radio" name="permohonan" id="" />
+						<p>Tidak</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,16 +1,17 @@
 <script lang="ts">
-
-    let total = $state(8)
+	let total = $state(8);
 </script>
 
 <div class="min-h-full w-full">
 	<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="flex w-full justify-between">
 			<p class="mt-2">Informasi Acara</p>
-			<a href='/abdi/dashboard/komunitas/acara/edit'><button class="w-40 rounded-lg border-2 bg-yellow-500 px-2 py-2">Ubah</button></a>
+			<a href="/abdi/dashboard/komunitas/acara/edit"
+				><button class="w-40 rounded-lg border-2 bg-yellow-500 px-2 py-2">Ubah</button></a
+			>
 		</div>
 
-		<div class="mt-5 grid lg:grid-cols-4 grid-cols-2 gap-12">
+		<div class="mt-5 grid grid-cols-2 gap-12 lg:grid-cols-4">
 			<div class="col-span-2">
 				<div class="mt-2 w-full">
 					<p>Nama Acara:</p>
@@ -53,9 +54,9 @@
 				</div>
 			</div>
 
-			<div class="lg:col-span-1 col-span-2">
+			<div class="col-span-2 lg:col-span-1">
 				<div class="mt-2 w-full">
-					<p>Nama Acara:</p>
+					<p>Jenis Acara:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -63,7 +64,7 @@
 					/>
 				</div>
 				<div class="mt-2 w-full">
-					<p>Penanggung Jawab:</p>
+					<p>Tanggal Mulai:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -71,7 +72,7 @@
 					/>
 				</div>
 				<div class="mt-2 w-full">
-					<p>Penanggung Jawab:</p>
+					<p>Jam Mulai:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -80,9 +81,9 @@
 				</div>
 			</div>
 
-			<div class="lg:col-span-1 col-span-2">
+			<div class="col-span-2 lg:col-span-1">
 				<div class="mt-2 w-full">
-					<p>Nama Acara:</p>
+					<p>Kapasitas Acara:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -90,7 +91,7 @@
 					/>
 				</div>
 				<div class="mt-2 w-full">
-					<p>Penanggung Jawab:</p>
+					<p>Tanggal Selesai:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -98,7 +99,7 @@
 					/>
 				</div>
 				<div class="mt-2 w-full">
-					<p>Penanggung Jawab:</p>
+					<p>Jam Selesai:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -112,10 +113,10 @@
 
 		<!-- bawah -->
 
-		<p class="mt-5 text-start text-xl font-bold text-blue-600 mb-5">Daftar Undangan</p>
+		<p class="mb-5 mt-5 text-start text-xl font-bold text-blue-600">Daftar Undangan</p>
 		<div class="grid grid-cols-8 gap-2">
 			{#each Array(total) as _, i}
-				<div class="col-span-1 w-full">{i+1}</div>
+				<div class="col-span-1 w-full">{i + 1}</div>
 				<div class="col-span-1 w-full rounded-lg border px-2 py-1">Tn</div>
 				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
 				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
@@ -125,6 +126,4 @@
 </div>
 
 <style>
-
-	
 </style>

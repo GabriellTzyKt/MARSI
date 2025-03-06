@@ -79,7 +79,7 @@
 			class="block border-b px-4 py-2"
 			on:click={() => (menuOpen = !menuOpen)}>Aset Kerajaan</a
 		>
-		<a href="/umum/acara" class="block px-4 py-2" on:click={() => (menuOpen = !menuOpen)}>Acara</a>
+		<a href="/umum/daftaracara" class="block px-4 py-2" on:click={() => (menuOpen = !menuOpen)}>Acara</a>
 	</div>
 </nav>
 
