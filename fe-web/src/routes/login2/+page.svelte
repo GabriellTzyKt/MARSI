@@ -18,9 +18,11 @@
 		}
 	});
 
-	let inputt = $state('Masukkan Email/notelp Anda');
+	let inputt = $state('');
+	if (form?.email) {
+		inputt = form.email.toString();
+	}
 	let tipe = $state('password');
-	let password = $state('password');
 
 	let notelp = $state('08963333333333');
 
@@ -51,18 +53,9 @@
 							type="text"
 							name="emailno"
 							id="emailno"
+							placeholder="Masukkan Email/notelp Anda"
 							class="bg-input border-none py-2"
 							bind:value={inputt}
-							onfocus={() => {
-								if (inputt === 'Masukkan Email/notelp Anda') {
-									inputt = '';
-								}
-							}}
-							onblur={() => {
-								if (inputt === '') {
-									inputt = 'Masukkan Email/notelp Anda';
-								}
-							}}
 						/>
 						{#if form?.errors.notelporEmail}
 							{#each form.errors.notelporEmail as e}
@@ -80,18 +73,8 @@
 									type={tipe}
 									name="pass"
 									id="pass"
-									bind:value={password}
+									placeholder="password"
 									class="bg-input w-full border-none focus:outline-none"
-									onfocus={() => {
-										if (password === 'password') {
-											password = '';
-										}
-									}}
-									onblur={() => {
-										if (password === '') {
-											password = 'password';
-										}
-									}}
 								/>
 							</div>
 							<!-- svelte-ignore a11y_click_events_have_key_events -->

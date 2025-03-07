@@ -6,6 +6,7 @@ import { redirect } from "@sveltejs/kit";
 
 export const actions: Actions = {
     register: async ({ cookies, request }) => {
+        
         const User = z.object({
             notelporEmail: z.string()
                 .min(5, { message: "Minimal 5 karakter" })
@@ -34,14 +35,15 @@ export const actions: Actions = {
         })
 
         const data = await request.formData()
+        const email = data.get('emailno')
         const validation = User.safeParse({
             notelporEmail: data.get("emailno"),
             pass: data.get("pass")
         })
         if (!validation.success) {
-            return { errors: validation.error.flatten().fieldErrors, success: false  }
+            return { errors: validation.error.flatten().fieldErrors, success: false, email  }
         }
-        return {errors: false ,success: true}
+        return {errors: false ,success: true, email}
         console.log(data)
     }
 };
