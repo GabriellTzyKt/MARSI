@@ -142,7 +142,7 @@
 						<DropDown
 							text=" apa yakin mau mengarsip Bintang Jasa ini?"
 							successText="berhasil diarsip"
-							ubahm="Bintang JAsa"
+							ubahm="Bintang Jasa"
 							link="/abdi/sekretariat/masterdata"
 							items={[
 								['children', 'Ubah'],

@@ -173,11 +173,7 @@
 							}}
 						>
 							<a href="" class="bg-sc w-full py-3 font-[650] text-white">
-								{#if txtlogin === 'Email'}
-									Nomer Telepon
-								{:else}
-									Email
-								{/if}
+								<p class="flex text-lg">Google</p>
 							</a>
 						</div>
 						<div class="batas mb-3 mt-3"></div>

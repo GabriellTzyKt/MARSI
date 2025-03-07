@@ -3,6 +3,24 @@
 	import img from '../../asset/profile/jdpp.jpg';
 
 	let { judulSection } = $props();
+
+	let files: { name: string; url: string }[] = $state([]);
+
+	function handleFileChange(event: Event) {
+		const input = event.target as HTMLInputElement;
+		if (input.files) {
+			const file = input.files[0];
+			if (file) {
+				const fileurl = URL.createObjectURL(file);
+
+				files = [...files, { name: file.name, url: fileurl }];
+			}
+		}
+	}
+	function rmfile(index: number) {
+		files = files.filter((_, i) => i !== index);
+	}
+
 	let value = $state(false);
 	function toggle() {
 		if (!value) value = true;
@@ -73,13 +91,22 @@
 					></textarea>
 				</div>
 			</div>
-			<div class="my-4 flex flex-col">
-				<div>
-					<p class="text-xl">Gambar Section</p>
+			<div class="my-4 flex w-full flex-col items-center justify-center">
+				<div class="flex w-full">
+					<p class="text-left text-xl">Gambar Section</p>
 				</div>
 				<div class=" flex max-h-40 max-w-[1050px] gap-3 overflow-x-auto whitespace-nowrap">
 					<div class="flex h-32 min-w-40 shrink-0">
-						<div class="flex h-auto w-full items-center justify-center rounded-xl bg-gray-500">
+						<label
+							class="relative flex h-auto w-full items-center justify-center rounded-xl bg-gray-500"
+						>
+							<!-- Input file yang disembunyikan -->
+							<input
+								type="file"
+								class="absolute inset-0 cursor-pointer opacity-0"
+								onchange={handleFileChange}
+							/>
+
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								fill="none"
@@ -94,168 +121,34 @@
 									d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
 								/>
 							</svg>
-						</div>
+						</label>
 					</div>
-					<!-- items -->
-					<div class="relative flex h-32 min-w-40 shrink-0">
-						<img src={img} class="h-auto w-full rounded-xl" alt="" />
-						<div class="absolute right-2 top-2 rounded-xl bg-red-500 p-2">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="white"
-								class="size-4"
+					{#each files as file, i}
+						<!-- items -->
+						<div class="relative flex h-32 min-w-40 shrink-0">
+							<img src={file.url} class="h-auto w-full rounded-xl" alt="" />
+							<!-- svelte-ignore a11y_no_static_element_interactions -->
+							<div
+								class="absolute right-2 top-2 rounded-xl bg-red-500 p-2"
+								onclick={() => rmfile(i)}
 							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-								/>
-							</svg>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="white"
+									class="size-4"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+									/>
+								</svg>
+							</div>
 						</div>
-					</div>
-					<!-- items -->
-					<div class="relative flex h-32 min-w-40 shrink-0">
-						<img src={img} class="h-auto w-full rounded-xl" alt="" />
-						<div class="absolute right-2 top-2 rounded-xl bg-red-500 p-2">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="white"
-								class="size-4"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-								/>
-							</svg>
-						</div>
-					</div>
-					<!-- items -->
-					<div class="relative flex h-32 min-w-40 shrink-0">
-						<img src={img} class="h-auto w-full rounded-xl" alt="" />
-						<div class="absolute right-2 top-2 rounded-xl bg-red-500 p-2">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="white"
-								class="size-4"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-								/>
-							</svg>
-						</div>
-					</div>
-					<!-- items -->
-					<div class="relative flex h-32 min-w-40 shrink-0">
-						<img src={img} class="h-auto w-full rounded-xl" alt="" />
-						<div class="absolute right-2 top-2 rounded-xl bg-red-500 p-2">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="white"
-								class="size-4"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-								/>
-							</svg>
-						</div>
-					</div>
-					<!-- items -->
-					<div class="relative flex h-32 min-w-40 shrink-0">
-						<img src={img} class="h-auto w-full rounded-xl" alt="" />
-						<div class="absolute right-2 top-2 rounded-xl bg-red-500 p-2">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="white"
-								class="size-4"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-								/>
-							</svg>
-						</div>
-					</div>
-					<!-- items -->
-					<div class="relative flex h-32 min-w-40 shrink-0">
-						<img src={img} class="h-auto w-full rounded-xl" alt="" />
-						<div class="absolute right-2 top-2 rounded-xl bg-red-500 p-2">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="white"
-								class="size-4"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-								/>
-							</svg>
-						</div>
-					</div>
-					<!-- items -->
-					<div class="relative flex h-32 min-w-40 shrink-0">
-						<img src={img} class="h-auto w-full rounded-xl" alt="" />
-						<div class="absolute right-2 top-2 rounded-xl bg-red-500 p-2">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="white"
-								class="size-4"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-								/>
-							</svg>
-						</div>
-					</div>
-					<!-- items -->
-					<div class="relative flex h-32 min-w-40 shrink-0">
-						<img src={img} class="h-auto w-full rounded-xl" alt="" />
-						<div class="absolute right-2 top-2 rounded-xl bg-red-500 p-2">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="white"
-								class="size-4"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-								/>
-							</svg>
-						</div>
-					</div>
+					{/each}
 					<!-- items -->
 					<div class="relative flex h-32 min-w-40 shrink-0">
 						<img src={img} class="h-auto w-full rounded-xl" alt="" />
@@ -277,7 +170,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="mt-4 flex items-center gap-2">
+				<div class="mt-4 flex w-full items-center justify-start gap-2">
 					<input type="checkbox" name="" id="" />
 					<p class="text-xl">Background Logo MARSI</p>
 				</div>

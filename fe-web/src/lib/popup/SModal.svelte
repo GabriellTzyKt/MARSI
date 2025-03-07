@@ -27,8 +27,8 @@
 			e.stopPropagation();
 		}}
 	>
-		<div class="mt-8 p-2">
-			<img src={check} class="h-auto w-24" alt="" />
+		<div class="mt-8 md:p-2">
+			<img src={check} class="h-auto w-12 md:w-24" alt="" />
 		</div>
 		<div class="mx-28 mb-8 mt-8">
 			<p class="text-xl">{text}</p>
