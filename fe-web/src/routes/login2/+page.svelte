@@ -13,7 +13,7 @@
 			open = true;
 			setTimeout(() => {
 				open = false;
-				goto('/admin');
+				goto('/admin/beranda');
 			}, 2000);
 		}
 	});
@@ -141,7 +141,7 @@
 						</div>
 						<div class="mb-3 flex items-center justify-between">
 							<div class="mb-2 mt-2 flex items-center gap-2">
-								<input type="checkbox" id="rm" />
+								<input type="checkbox" id="rm" value="yes" name="remember_me" />
 								<label for="rm">Remember Me</label>
 							</div>
 							<div>

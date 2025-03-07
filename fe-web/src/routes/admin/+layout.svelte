@@ -29,9 +29,12 @@
 			return 'Acara';
 		} else if (page.route.id === '/admin/suratDokumen') {
 			return 'Dokumen';
-		} else if (page.route.id === '/admin/suratDokumen/ubah' || page.route.id === '/admin/suratDokumen/tambah') {
+		} else if (
+			page.route.id === '/admin/suratDokumen/ubah' ||
+			page.route.id === '/admin/suratDokumen/tambah'
+		) {
 			return 'Arsip';
-		}  else if (page.route.id === '/admin/landingPage') {
+		} else if (page.route.id === '/admin/landingPage') {
 			return 'Landing Page';
 		} else if (page.route.id === '/admin/managemen') {
 			return 'Managemen Admin';
@@ -39,8 +42,8 @@
 			return 'Biodata Kerajaan';
 		}
 	});
-	let { children } = $props();
-
+	const { children, data } = $props();
+	console.log(data);
 	let sidebarActive = writable(false);
 
 	const toggleSidebar = () => {
@@ -105,7 +108,13 @@
 	<div class="width_head2 hidden items-center justify-between lg:flex lg:w-[83.3%]">
 		<p class="ml-5 p-5 text-3xl font-bold text-black">{pageTitle}</p>
 		<div class="mr-5 flex items-center rounded-md border-2 border-blue-600 p-2">
-			<span class="ml-5 text-black">Admin MARSI</span>
+			<span class="ml-5 text-black"
+				>{#if data}
+					{data.hasil}
+				{:else}
+					Admin MARSI
+				{/if}</span
+			>
 			<img src={imageprofile} alt="duar" class="ml-5 mr-5 h-10 w-10 rounded-full" />
 		</div>
 	</div>
