@@ -34,7 +34,7 @@
 				</div>
 			</div>
 
-			<div class="mt-5 flex gap-12">
+			<div class="mt-5 flex lg:flex-row flex-col gap-2">
 				<div class="w-full">
 					<p>Tempat Lahir :</p>
 					<input
@@ -60,13 +60,13 @@
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 pr-9"
 					/>
 					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 				</div>
 			</div>
 
-			<div class="mt-5 flex gap-12">
+			<div class="mt-5 flex lg:flex-row flex-col gap-2">
 				<div class="w-full">
 					<p>No telepon :</p>
 					<input
@@ -97,16 +97,15 @@
 				</div>
 			</div>
 
-			<div>
-				<p class="mt-5">Deskripsi Tugas:</p>
-				<div class="relative w-full">
-					<textarea
-						placeholder="Masukkan nama"
-						class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg"
-					></textarea>
-					<div class="h-full">
-						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
-					</div>
+			<div class="mt-3">
+				<p>Jabatan:</p>
+				<div class="relative">
+					<input
+						type="text"
+						placeholder="Masukkan Nama"
+						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+					/>
+					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 				</div>
 			</div>
 		</div>
@@ -114,7 +113,7 @@
 		<!-- 2 -->
 		<div>
 			<div>
-				<div class="flex justify-between">
+				<div class="flex lg:flex-row flex-col lg:gap-y-0 gap-y-2 justify-between">
 					<p>(Nama Ayah)</p>
 					<p>Ayah seorang abdi?</p>
 					<div class="flex">
@@ -156,10 +155,10 @@
 			</div>
 
 			<div>
-				<div class="mt-5 flex justify-between">
+				<div class="mt-5 flex  lg:flex-row flex-col lg:gap-y-0 gap-y-2 justify-between">
 					<p>(Nama Ibu)</p>
 					<p>Ibu seorang abdi?</p>
-					<div class="flex">
+					<div class="flex ">
 						<div class="mx-2 flex items-center justify-center">
 							<input
 								id="default-radio-1"
@@ -209,51 +208,58 @@
 				</div>
 			</div>
 
-			<div class="mt-5">
-				<p>Wongso:</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-					/>
-					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+			<div class="flex lg:flex-row flex-col gap-2">
+				<div class="mt-5 w-full">
+					<p>Wongso:</p>
+					<div class="relative">
+						<input
+							type="text"
+							placeholder="Masukkan Nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						/>
+						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+					</div>
+				</div>
+
+				<div class="mt-5 w-full">
+					<p>Pekerjaan(Opsional):</p>
+					<div class="relative">
+						<input
+							type="text"
+							placeholder="Masukkan Nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						/>
+						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+					</div>
 				</div>
 			</div>
 
-			<div class="mt-5">
-				<p>Pekerjaan(Opsional):</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-					/>
-					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
-				</div>
-			</div>
-
-			<div class="mt-5">
-				<p>Agama(Opsional):</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-					/>
-					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+			<div class="flex">
+				<div class="mt-5 lg:w-[50%] w-[100%]">
+					<p>Agama(Opsional):</p>
+					<div class="relative">
+						<input
+							type="text"
+							placeholder="Masukkan Nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						/>
+						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+					</div>
 				</div>
 			</div>
 
 			<div class="mt-3">
-				<p>Jabatan:</p>
+				<p>Deskripsi Tugas:</p>
 				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-					/>
-					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+					<div class="relative w-full">
+						<textarea
+							placeholder="Masukkan nama"
+							class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg"
+						></textarea>
+						<div class="h-full">
+							<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

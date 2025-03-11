@@ -187,7 +187,7 @@
 				</div>
 			</div>
 
-			<div class="flex gap-12">
+			<div class="flex gap-2">
 				<div class="mt-5 w-full">
 					<p>Wongso:</p>
 					<div class="relative">
@@ -213,15 +213,17 @@
 				</div>
 			</div>
 
-			<div class="mt-5">
-				<p>Agama(Opsional):</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-					/>
-					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+			<div class="flex lg:w-[50%] w-[100%]">
+				<div class="mt-5 w-full">
+					<p>Agama(Opsional):</p>
+					<div class="relative">
+						<input
+							type="text"
+							placeholder="Masukkan Nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						/>
+						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+					</div>
 				</div>
 			</div>
 		</div>

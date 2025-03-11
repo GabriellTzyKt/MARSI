@@ -32,9 +32,50 @@
 	let lambangUrl: string | null = $state(null);
 	let videoName: string | null = $state(' No Video Selected ');
 
+	import { writable } from 'svelte/store';
+
+	let results = writable<string[]>([]);
+	let showDropdown = writable(false);
+
+	const API_KEY = 'pk.def50126ee21d7c7b667386e05fc8bcb'; // Ganti dengan API Key LocationIQ
+
+	async function fetchLocations() {
+		if (!lokasi.trim()) return; // Cegah pencarian kosong
+
+		const url = `https://us1.locationiq.com/v1/search.php?key=${API_KEY}&q=${encodeURIComponent(lokasi)}&format=json&limit=5`;
+
+		try {
+			const res = await fetch(url);
+			const data = await res.json();
+
+			if (data && Array.isArray(data)) {
+				// Ambil display_name dari hasil pencarian
+				const extractedNames = data.map((item: any) => item.display_name);
+				console.log(data)
+
+				results.set(extractedNames);
+				showDropdown.set(extractedNames.length > 0);
+			}
+		} catch (error) {
+			console.error('Error fetching data:', error);
+		}
+	}
+
+	function handleKeyDown(event: KeyboardEvent) {
+		if (event.key === 'Enter') {
+			fetchLocations();
+		}
+	}
+
+	function selectLocation(name: string) {
+		lokasi = name;
+		results.set([]);
+		showDropdown.set(false);
+	}
+
 	let open = $state(false);
 	let timer: number;
-	let value = $state(false)
+	let value = $state(false);
 	function setTimer() {
 		open = true;
 		if (timer) {
@@ -50,7 +91,7 @@
 
 	const { data } = $props();
 	const dataGet = data.detil_kerajaan;
-	let dataubah = $state(dataGet)
+	let dataubah = $state(dataGet);
 
 	function OpenModal() {
 		showModal = true;
@@ -118,13 +159,13 @@
 		// Toggle antara asc dan desc
 		sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
 		arrowDirection = sortOrder === 'asc' ? 'mingcute--arrow-down-fill' : 'mingcute--arrow-up-fill';
-		console.log(sortOrder, "direction", arrowDirection)
+		console.log(sortOrder, 'direction', arrowDirection);
 		updateFilteredData();
 	}
 
 	function toggleExpand(index: number) {
 		isExpand[index] = !isExpand[index];
-		isExpand = [...isExpand]; 
+		isExpand = [...isExpand];
 	}
 </script>
 
@@ -142,14 +183,24 @@
 		/>
 
 		<div class="flex flex-grow gap-4">
-			<div class="w-full flex-col">
-				<label class="text-md mt-5 self-start text-left" for="nama"> Lokasi </label>
+			<div class="relative w-full flex-col">
+				<label class="text-md mt-5 self-start text-left" for="nama">Lokasi</label>
 				<input
 					class="input-field w-full rounded-lg border p-2 pr-8"
 					type="text"
 					id="nama"
 					bind:value={lokasi}
+					onkeydown={handleKeyDown}
+					placeholder="Cari lokasi..."
 				/>
+			
+				{#if $showDropdown}
+					<ul class="dropdown">
+						{#each $results as name}
+							<li onclick={() => selectLocation(name)}>{name}</li>
+						{/each}
+					</ul>
+				{/if}
 			</div>
 
 			<div class="w-full flex-col">
@@ -371,7 +422,7 @@
 			<div class="flex items-center justify-end gap-2">
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-				<p class="cursor-pointer flex items-center" onclick={toggleSort}>
+				<p class="flex cursor-pointer items-center" onclick={toggleSort}>
 					Sort By: Date <span class={arrowDirection}></span>
 				</p>
 				<button
@@ -386,7 +437,7 @@
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<div
-						class="flex mb-5 cursor-pointer flex-col overflow-hidden rounded-lg border-2 bg-yellow-300 transition-all duration-300"
+						class="mb-5 flex cursor-pointer flex-col overflow-hidden rounded-lg border-2 bg-yellow-300 transition-all duration-300"
 						onclick={() => toggleExpand(index)}
 					>
 						<div class="mr-5 flex h-[50px] w-full items-center justify-between gap-2 px-3">
@@ -445,7 +496,7 @@
 										<div class="mt-5 flex justify-end gap-4">
 											<button
 												class="flex items-center gap-2 rounded-lg bg-red-500 px-5 py-2 text-white"
-												onclick={ () => value = true }
+												onclick={() => (value = true)}
 											>
 												<span class="tabler--trash"></span> Hapus Data
 											</button>
@@ -605,7 +656,10 @@
 					<label class="ml-2" for="textsamping">Masih Berkuasa Sampai Sekarang?</label>
 				</div>
 
-				<button class="bg-customGold w-fit self-end rounded-lg px-3 py-2 text-white" onclick={setTimer}>
+				<button
+					class="bg-customGold w-fit self-end rounded-lg px-3 py-2 text-white"
+					onclick={setTimer}
+				>
 					Tambah Data
 				</button>
 			</div>
@@ -614,11 +668,26 @@
 {/if}
 
 {#if open}
-	<SModal text='Biodata kerajaan berhasil ditambah!'></SModal>
+	<SModal text="Biodata kerajaan berhasil ditambah!"></SModal>
 {/if}
 
-
 <style>
+    .dropdown {
+        position: absolute;
+        background: white;
+        border: 1px solid #ccc;
+        width: 100%;
+        max-height: 150px;
+        overflow-y: auto;
+        border-radius: 5px;
+    }
+    .dropdown li {
+        padding: 8px;
+        cursor: pointer;
+    }
+    .dropdown li:hover {
+        background: #f0f0f0;
+    }
 	.mingcute--arrow-up-fill {
 		display: inline-block;
 		width: 24px;

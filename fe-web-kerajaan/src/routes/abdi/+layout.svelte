@@ -130,6 +130,7 @@
 			return 'Master Data';
 		}
 	});
+	
 	let { children } = $props();
 
 	let sidebarActive = writable(false);
