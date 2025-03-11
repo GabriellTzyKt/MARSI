@@ -59,7 +59,7 @@
 
 			<div class="col-span-2 lg:col-span-1">
 				<div class="mt-2 w-full">
-					<p>Nama Acara:</p>
+					<p>Jenis Acara:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -67,7 +67,7 @@
 					/>
 				</div>
 				<div class="mt-2 w-full">
-					<p>Penanggung Jawab:</p>
+					<p>Tanggal Mulai:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -75,7 +75,7 @@
 					/>
 				</div>
 				<div class="mt-2 w-full">
-					<p>Penanggung Jawab:</p>
+					<p>Jam Mulai:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -86,7 +86,7 @@
 
 			<div class="col-span-2 lg:col-span-1">
 				<div class="mt-2 w-full">
-					<p>Nama Acara:</p>
+					<p>Kapasitas Acara:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -94,7 +94,7 @@
 					/>
 				</div>
 				<div class="mt-2 w-full">
-					<p>Penanggung Jawab:</p>
+					<p>Tanggal Selesai:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -102,7 +102,7 @@
 					/>
 				</div>
 				<div class="mt-2 w-full">
-					<p>Penanggung Jawab:</p>
+					<p>Jam Selesai:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"

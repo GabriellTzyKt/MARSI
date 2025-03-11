@@ -11,7 +11,7 @@
 		<button
 			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
 			onclick={() => {
-				goto('/abdi/sekretariat/organisasi/daftarOrganisasi/buat');
+				goto('/abdi/sekretariat/organisasi/daftarorganisasi/buat');
 			}}>+Tambah Data</button
 		>
 		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
@@ -87,10 +87,10 @@
 				{#if header === 'Aksi'}
 					<DropDown
 						text={`apakah anda yakin ingin mengarsip anggota ${data.nama_organisasi}?`}
-						link="/abdi/sekretariat/organisasi/daftarOrganisasi"
+						link="/abdi/sekretariat/organisasi/daftarorganisasi"
 						successText={`berhasil mengarship organisai ${data.nama_organisasi}`}
 						items={[
-							['Ubah', '/abdi/sekretariat/organisasi/daftarOrganisasi/edit    '],
+							['Ubah', '/abdi/sekretariat/organisasi/daftarorganisasi/edit    '],
 							['children', 'non-aktifkan']
 						]}
 						id={`id-${index}`}

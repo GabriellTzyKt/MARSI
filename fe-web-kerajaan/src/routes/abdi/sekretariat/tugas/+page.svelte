@@ -96,7 +96,7 @@
 						link="/abdi/sekretariat/tugas"
 						items={[
 							['children', 'Bukti', 'Bukti Laporan'],
-							['children', 'Ubah', 'Ubah Tugas'],
+							['children', 'Ubah Tugas', 'Ubah Tugas'],
 
 							['children', 'Arsip', '']
 						]}
@@ -112,5 +112,6 @@
 	</div>
 </div>
 {#if open}
-	<TambahTugas bind:value={open} text="Tambah Tugas"></TambahTugas>
+	<TambahTugas bind:value={open} text="Tambah Tugas" successText="Tugas Berhasil Ditambah"
+	></TambahTugas>
 {/if}

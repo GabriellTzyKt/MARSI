@@ -139,14 +139,7 @@
 						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 					/>
 				</div>
-				<div class="w-full">
-					<p>Total Anggota :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
+				<div class="w-full"></div>
 			</div>
 		</div>
 	</div>

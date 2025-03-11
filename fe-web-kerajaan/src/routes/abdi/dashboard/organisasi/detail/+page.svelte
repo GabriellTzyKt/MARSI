@@ -40,7 +40,7 @@
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
-					<p>Deskripsi Komunitas :</p>
+					<p>Deskripsi Organisasi :</p>
 					<textarea
 						placeholder="Masukkan nama"
 						class="rounded-mdpx-3 h-32 w-full resize-none py-3 text-lg"
@@ -80,7 +80,7 @@
 					<div
 						class="mt-5 flex h-fit w-full flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 					>
-						<p>Total Anggota :</p>
+						<p>Jumlah Anggota :</p>
 						<input type="text" placeholder="Masukkan nama" class="h-full" />
 					</div>
 				</div>

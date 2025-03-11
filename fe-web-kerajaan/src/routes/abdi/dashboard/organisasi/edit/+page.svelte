@@ -29,7 +29,7 @@
 		<!-- 1 -->
 		<div>
 			<div>
-				<p>Nama Komunitas:</p>
+				<p>Nama Organisasi:</p>
 				<div class="relative">
 					<input
 						type="text"
@@ -65,7 +65,7 @@
 			</div>
 
 			<div>
-				<p class="mt-5">Deskripsi Komunitas:</p>
+				<p class="mt-5">Deskripsi Organisasi:</p>
 				<div class="relative w-full">
 					<textarea
 						placeholder="Masukkan nama"
@@ -123,7 +123,7 @@
 					/>
 				</div>
 				<div class="w-full">
-					<p>Total Anggota :</p>
+					<p>Jumlah Anggota :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
@@ -137,7 +137,7 @@
 	<div class="relative w-full">
 		<button
 			class="w-50 t-0 absolute right-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
-			>Simpan Data</button
+			onclick={setTimer}>Simpan Data</button
 		>
 	</div>
 </div>

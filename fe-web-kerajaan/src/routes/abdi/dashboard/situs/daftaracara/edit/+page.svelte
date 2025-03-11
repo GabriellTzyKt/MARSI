@@ -19,7 +19,6 @@
 </script>
 
 <div class="min-h-screen w-full">
-	
 	<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 		<div class="col-span-2">
 			<div class="mt-2 w-full">
@@ -28,18 +27,18 @@
 			</div>
 
 			<div class="mt-3 w-full">
+				<p>Penanggung Jawab Acara:</p>
+				<input type="text" placeholder="Masukkan Nama" class="w-full rounded-lg border px-2 py-1" />
+			</div>
+			<div class="mt-3 w-full">
+				<p>Penyelenggara Acara:</p>
+				<input type="text" placeholder="Masukkan Nama" class="w-full rounded-lg border px-2 py-1" />
+			</div>
+			<div class="mt-3 w-full">
 				<p>Lokasi Acara:</p>
 				<input type="text" placeholder="Masukkan Nama" class="w-full rounded-lg border px-2 py-1" />
 			</div>
 			<div class="mt-3 w-full">
-				<p>Tujuan Acara:</p>
-				<input type="text" placeholder="Masukkan Nama" class="w-full rounded-lg border px-2 py-1" />
-			</div>
-            <div class="mt-3 w-full">
-				<p>Tujuan Acara:</p>
-				<input type="text" placeholder="Masukkan Nama" class="w-full rounded-lg border px-2 py-1" />
-			</div>
-            <div class="mt-3 w-full">
 				<p>Tujuan Acara:</p>
 				<input type="text" placeholder="Masukkan Nama" class="w-full rounded-lg border px-2 py-1" />
 			</div>
@@ -91,7 +90,7 @@
 
 			<div class="flexcoba mt-2 flex w-full">
 				<div class="mt-2 lg:flex-1">
-					<p>Kapasitas Acara:</p>
+					<p>Tanggal Mulai:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -100,7 +99,7 @@
 				</div>
 				<div class="flex-1 lg:ml-10">
 					<div class="mt-2 w-full">
-						<p>Penanggung Jawab:</p>
+						<p>Tanggal Selesai:</p>
 						<input
 							type="text"
 							placeholder="Masukkan Nama"
@@ -111,7 +110,7 @@
 			</div>
 			<div class="flexcoba mt-2 flex w-full">
 				<div class="mt-2 lg:flex-1">
-					<p>Kapasitas Acara:</p>
+					<p>Waktu Mulai:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -120,7 +119,7 @@
 				</div>
 				<div class="flex-1 lg:ml-10">
 					<div class="mt-2 w-full">
-						<p>Penanggung Jawab:</p>
+						<p>Waktu Selesai:</p>
 						<input
 							type="text"
 							placeholder="Masukkan Nama"
@@ -129,13 +128,13 @@
 					</div>
 				</div>
 			</div>
-            <div class="mt-2 w-full">
-                <p>Deskripsi Acara:</p>
-                <textarea
-                    placeholder="Masukkan Deskripsi Acara"
-                    class="h-25 w-full resize-none rounded-md border px-3 py-1 text-lg"
-                ></textarea>
-            </div>
+			<div class="mt-2 w-full">
+				<p>Deskripsi Acara:</p>
+				<textarea
+					placeholder="Masukkan Deskripsi Acara"
+					class="h-25 w-full resize-none rounded-md border px-3 py-1 text-lg"
+				></textarea>
+			</div>
 		</div>
 	</div>
 

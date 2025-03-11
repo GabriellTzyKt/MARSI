@@ -70,13 +70,15 @@
 			return 'Tambah Abdi';
 		} else if (page.route.id === '/abdi/sekretariat/anggota/daftaranggota/ubah') {
 			return 'Edit Abdi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/buat') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/buat') {
 			return 'Tambah Organisasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi') {
+			return 'Daftar Organisasi';
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/edit') {
 			return 'Edit Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/komunitas/daftarkomunitas/buat') {
 			return 'Tambah Komunitas';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/edit') {
 			return 'Edit Komunitas';
 		} else if (page.route.id === '/abdi/sekretariat/acara/detail') {
 			return 'Detail Acara';
@@ -108,6 +110,22 @@
 			return 'Edit Landing Page';
 		} else if (page.route.id === '/abdi/sekretariat/landingpage/mobile') {
 			return 'Fitur Mobile';
+		} else if (page.route.id === '/abdi/dashboard/situs/daftaracara/edit') {
+			return 'Ubah Acara Situs';
+		} else if (page.route.id === '/abdi/sekretariat/komunitas/daftarkomunitas/edit') {
+			return 'Edit Komunitas';
+		} else if (page.route.id === '/abdi/sekretariat/situs/buat') {
+			return 'Buat Situs';
+		} else if (page.route.id === '/abdi/sekretariat/situs/detail') {
+			return 'Detail Situs';
+		} else if (page.route.id === '/abdi/sekretariat/situs/edit') {
+			return 'Edit Situs';
+		} else if (page.route.id === '/abdi/sekretariat/situs/bukutamu') {
+			return 'Buku Tamu Situs';
+		} else if (page.route.id === '/abdi/sekretariat/masterdata') {
+			return 'Master Data';
+		} else if (page.route.id === '/abdi/sekretariat/landingpage/aset') {
+			return 'Tambah Aset';
 		}
 	});
 	let { children } = $props();
@@ -353,7 +371,7 @@
 				</SidebarMenu>
 				<SidebarMenu href="" icon="mdi:people" anchor="Organisasi" hasChildren={true}>
 					<SidebarMenu
-						href="/abdi/sekretariat/organisasi/daftarOrganisasi"
+						href="/abdi/sekretariat/organisasi/daftarorganisasi"
 						icon="mdi:book"
 						anchor="Daftar Organisasi"
 						active={isActive('/abdi/sekretariat/anggota/daftaranggota')}
@@ -396,7 +414,7 @@
 				<SidebarMenu
 					href="/abdi/sekretariat/landingpage"
 					icon="mdi:book"
-					anchor="Landinig Page"
+					anchor="Landing Page"
 					active={isActive('/abdi/sekretariat/landingpage')}
 					hasChildren={false}
 				></SidebarMenu>
