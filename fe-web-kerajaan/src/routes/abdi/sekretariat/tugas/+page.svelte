@@ -11,14 +11,14 @@
 </script>
 
 <div class="flex w-full flex-col">
-	<div class="mx-10 flex justify-between">
+	<div class="mx-4 flex flex-col justify-center gap-4 lg:mx-10 lg:flex-row lg:justify-between">
 		<button
 			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
 			onclick={() => {
 				open = true;
 			}}>+Tambah Data</button
 		>
-		<div class="flex items-center gap-2">
+		<div class="flex flex-col items-center justify-center gap-2 lg:flex-row lg:justify-start">
 			<!-- select -->
 			<select
 				name="Organisasi"
@@ -73,7 +73,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="mx-10 flex">
+	<div class="mx-4 flex lg:mx-10">
 		<Table
 			table_header={[
 				['id_tugas', 'Id Tugas'],

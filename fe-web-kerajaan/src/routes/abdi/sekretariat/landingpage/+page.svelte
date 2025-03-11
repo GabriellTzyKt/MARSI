@@ -8,13 +8,13 @@
 	<div class="flex gap-4">
 		<div class="my-2">
 			<button
-				onclick={() => goto('landingpage/mobile')}
+				onclick={() => goto('/abdi/sekretariat/landingpage/mobile')}
 				class="bg-badran-bt cursor-pointer rounded-full px-8 py-2 text-white">Setting Mobile</button
 			>
 		</div>
 		<div class="my-2">
 			<button
-				onclick={() => goto('landingpage/aset')}
+				onclick={() => goto('/abdi/sekretariat/landingpage/aset')}
 				class="bg-badran-bt cursor-pointer rounded-full px-8 py-2 text-white"
 				>Setting CMS Situs</button
 			>

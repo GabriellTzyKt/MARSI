@@ -118,7 +118,7 @@
 			return 'Ubah Acara Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftaranggota') {
 			return 'Daftar Anggota Organisasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi') {
 			return 'Daftar Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/acara/laporan') {
 			return 'Laporan';
@@ -309,7 +309,7 @@
 					</SidebarMenu>
 					<SidebarMenu href="" icon="mdi:people" anchor="Organisasi" hasChildren={true}>
 						<SidebarMenu
-							href="/abdi/sekretariat/organisasi/daftarOrganisasi"
+							href="/abdi/sekretariat/organisasi/daftarorganisasi"
 							icon="mdi:book"
 							anchor="Daftar Organisasi"
 							active={page.route.id?.startsWith('/abdi/sekretariat/anggota/daftaranggota')}
