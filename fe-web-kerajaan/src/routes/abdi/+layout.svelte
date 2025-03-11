@@ -164,34 +164,34 @@
 				/>
 
 				<SidebarMenu
-					href="abdi/komunitas/beranda"
+					href="/abdi/dashboard/komunitas/beranda"
 					icon="mdi:people"
 					anchor="Komunitas"
 					hasChildren={true}
 				>
 					<SidebarMenu
-						href="/abdi/komunitas/detail"
+						href="/abdi/dashboard/komunitas/detail"
 						icon="mdi:book"
 						anchor="Detail komunitas"
-						active={isActive('/abdi/komunitas/detail')}
+						active={isActive('/abdi/dashboard/komunitas/detail')}
 					/>
 					<SidebarMenu
-						href="/abdi/komunitas/daftaranggota"
+						href="/abdi/dashboard/komunitas/daftaranggota"
 						icon="mdi:crown"
 						anchor="Daftar Anggota"
-						active={isActive('/abdi/komunitas/daftaranggota')}
+						active={isActive('/abdi/dashboard/komunitas/daftaranggota')}
 					/>
 					<SidebarMenu
 						href="/abdi/komunitas/acara/detail"
 						icon="mdi:crown"
 						anchor="Gelar"
-						active={isActive('/abdi/komunitas/acara/detail')}
+						active={isActive('/abdi/dashboard/komunitas/acara/detail')}
 					/>
 					<SidebarMenu
-						href="/abdi/komunitas/acara"
+						href="/abdi/dashboard/komunitas/acara"
 						icon="mdi:crown"
 						anchor="Acara"
-						active={isActive('/abdi/komunitas/acara')}
+						active={isActive('/abdi/dashboard/komunitas/acara')}
 					/>
 				</SidebarMenu>
 			</Sidebar>
