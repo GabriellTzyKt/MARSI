@@ -167,16 +167,16 @@
 					/>
 				</div>
 			</div>
-		</div>
-	</div>
 
-	<div class="relative w-full">
-		<a href="/abdi/dashboard/situs/detail">
-			<button
-				class="w-50 t-0 absolute right-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
-				>Simpan Data</button
-			>
-		</a>
+			<div class="relative w-full items-end flex justify-end">
+                <a href="/abdi/dashboard/situs/detail">
+                    <button
+                        class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
+                        >Simpan Data</button
+                    >
+                </a>
+            </div>
+		</div>
 	</div>
 </div>
 

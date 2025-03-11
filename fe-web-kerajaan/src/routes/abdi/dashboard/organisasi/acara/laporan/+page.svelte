@@ -237,6 +237,11 @@
 				</div>
 			</div>
 		</div>
+		<div class="w-full flex justify-end mt-3">
+			<button class="mt-8 w-fit rounded-lg bg-green-500 px-8 py-2 text-white">
+				Simpan Laporan
+			</button>
+		</div>
 
 		<div class="mt-12 h-1 w-full bg-slate-300"></div>
 

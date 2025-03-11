@@ -144,6 +144,7 @@
 </div>
 {#if open}
 	<DeleteModal
+	choose = "arsip"
 		bind:value={open}
 		text="Apaakah Anda Ingin Mengarsip Titik Kerajaan?"
 		successText="Berhasil diarsip!"

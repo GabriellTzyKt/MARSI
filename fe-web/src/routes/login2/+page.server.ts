@@ -40,14 +40,14 @@ export const actions: Actions = {
             notelporEmail: data.get("emailno"),
             pass: data.get("pass")
         })
-         console.log(data)
+        console.log(data)
         if (!validation.success) {
             console.log(validation.error.flatten().fieldErrors)
             return { errors: validation.error.flatten().fieldErrors, success: false, email  }
         }
         cookies.set("userSession", JSON.stringify({ nama: "eric" }), {
             path: '/',
-            maxAge: 60 * 10,
+            maxAge: 60 * 100000,
             sameSite: 'strict'
          })
         

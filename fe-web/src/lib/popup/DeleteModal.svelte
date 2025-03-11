@@ -8,7 +8,7 @@
 	import SucessModal from './SucessModal.svelte';
 	import SModal from './SModal.svelte';
 
-	let { value = $bindable(), text, successText } = $props();
+	let { value = $bindable(), text, successText, choose } = $props();
 	let open = $state(false);
 	let timer: number;
 	function setTimer() {
@@ -61,12 +61,21 @@
 					>
 				</div>
 				<div class="flex">
-					<button
-						class="btn-setuju rounded-xl px-8 py-3 font-[500] text-white hover:cursor-pointer hover:ring hover:ring-gray-600"
-						onclick={() => {
-							setTimer();
-						}}>Iya, arispkan</button
-					>
+					{#if choose == 'arsip'}
+						<button
+							class="btn-setuju rounded-xl px-8 py-3 font-[500] text-white hover:cursor-pointer hover:ring hover:ring-gray-600"
+							onclick={() => {
+								setTimer();
+							}}>Iya, arispkan</button
+						>
+					{:else if choose == 'delete'}
+						<button
+							class="btn-setuju rounded-xl px-8 py-3 font-[500] text-white hover:cursor-pointer hover:ring hover:ring-gray-600"
+							onclick={() => {
+								setTimer();
+							}}>Iya, hapus</button
+						>
+					{/if}
 				</div>
 			</div>
 		</div>

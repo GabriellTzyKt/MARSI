@@ -38,7 +38,7 @@
 		<a href="/admin/suratDokumen"
 			><button class="custom-button bg-customRed">⭠ Kembali</button></a
 		>
-		<p class="ml-5 mt-6 text-3xl font-bold underline">Ubah Dokumen</p>
+		<p class="ml-5 mt-6 text-3xl font-bold underline">Tambah Dokumen</p>
 	</div>
 
 	<div class="form-container flex flex-col">

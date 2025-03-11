@@ -10,8 +10,8 @@
 			alt="awawwa"
 		/>
 	</div>
-	<div class="px-6 py-4">
-		<h1 class="text-nowrap text-2xl">{header}</h1>
+	<div class="px-6 py-4 text-center">
+		<h1 class="text-2xl">{header}</h1>
 		<div class="flex flex-col">
 			<div class="flex h-fit w-full justify-center lg:justify-end mt-5">
 				<a

@@ -1,5 +1,6 @@
 import { data_flipcard } from "$lib/dummy";
 import type { PageServerLoad } from "./$types";
+export const ssr = false;
 
 function getRandomIDs(count: number, max: number): number[] {
     let ids = new Set<number>();

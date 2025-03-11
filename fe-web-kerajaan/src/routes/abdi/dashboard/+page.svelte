@@ -11,7 +11,7 @@
 	<div class="">
 		<p class="text-xl font-[600]">Menu Manajemen</p>
 	</div>
-	<div class="mt-4 grid grid-cols-1 items-center justify-center gap-4 md:grid-cols-3">
+	<div class="mt-4 grid md:grid-cols-2 sm:grid-cols-1 items-center justify-center gap-4 lg:grid-cols-3">
 		<a href="/abdi/dashboard/organisasi/beranda">
 			<div
 				class="an border-badran-bt mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer"

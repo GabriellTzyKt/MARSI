@@ -20,8 +20,8 @@
 <section class="h-fit w-full">
 	<div class="relative">
 		<img src={gambarAtas} alt="" class="min-h-screen w-full object-cover" />
-		<div class="absolute top-[25%] flex h-full w-full flex-col text-center">
-			<p class="items-center text-2xl lg:text-8xl text-white">Maha Menteri</p>
+		<div class="absolute lg:top-[25%] top-[35%] flex h-full w-full flex-col text-center">
+			<p class="items-center sm:text-2xl md:text-8xl text-white">Maha Menteri</p>
 			<div>
 				<p class="mt-4 items-center text-2xl lg:text-8xl text-white">Keraton Surakarta</p>
 				<p class="mt-4 items-center text-2xl text-white">
@@ -86,7 +86,7 @@
 <section class="h-auto w-full bg-slate-200 py-5">
 	<div class="mb-3 flex w-full items-center justify-between px-5">
 		<p class="w-full items-center self-center text-lg font-bold text-blue-500">Situs Bersejarah</p>
-		<div class="flex h-fit w-full justify-center lg:justify-end">
+		<div class="flex h-fit w-full justify-center md:justify-end">
 			<a
 				href="/situs"
 				class="my-2 flex items-center gap-2 rounded-full border-2 px-2 py-1 text-blue-500"
@@ -158,9 +158,9 @@
 <section class="h-auto w-full bg-slate-200 py-5">
 	<div class="mb-3 flex w-full items-center justify-between px-5">
 		<p class="w-full items-center self-center text-lg font-bold text-blue-500">Acara</p>
-		<div class="flex h-fit w-full justify-center lg:justify-end">
+		<div class="flex h-fit w-full justify-center md:justify-end">
 			<a
-				href="/"
+				href="/acara"
 				class="my-2 flex items-center gap-2 rounded-full border-2 px-2 py-1 text-blue-500"
 			>
 				Lihat Semua
@@ -229,9 +229,9 @@
 <section class="h-auto w-full bg-slate-200 py-5">
 	<div class="mb-3 flex w-full items-center justify-between px-5">
 		<p class=" w-full items-center self-center text-lg font-bold text-blue-500">Organisasi</p>
-		<div class="flex h-fit w-full justify-center lg:justify-end">
+		<div class="flex h-fit w-full justify-center md:justify-end">
 			<a
-				href="/"
+				href="/kelompok"
 				class="my-2 flex items-center gap-2 rounded-full border-2 px-2 py-1 text-blue-500"
 			>
 				Lihat Semua
@@ -255,10 +255,10 @@
 <!-- 6 -->
 <section class="h-auto w-full bg-slate-200 py-5">
 	<div class="mb-3 flex w-full items-center justify-between px-5">
-		<p class=" w-full items-center self-center text-lg font-bold text-blue-500">Acara</p>
-		<div class="flex h-fit w-full justify-center lg:justify-end">
+		<p class=" w-full items-center self-center text-lg font-bold text-blue-500">Komunitas</p>
+		<div class="flex h-fit w-full justify-center md:justify-end">
 			<a
-				href="/"
+				href="/kelompok"
 				class="my-2 flex items-center gap-2 rounded-full border-2 px-2 py-1 text-blue-500"
 			>
 				Lihat Semua

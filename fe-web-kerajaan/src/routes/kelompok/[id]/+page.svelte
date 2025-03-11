@@ -30,7 +30,9 @@
 	<div class="mx-auto max-w-6xl px-4">
 		<div class="form-container">
 			<div class="relative flex w-full items-center justify-center pt-10 text-center">
-				<span class="solar--arrow-left-outline absolute left-8"></span>
+				<a href="/kelompok">
+					<span class="solar--arrow-left-outline absolute left-8"></span>
+				</a>
 				<p class="text-xl font-semibold">{nama_kegiatan}</p>
 			</div>
 			<div class="grid grid-cols-1 gap-8 px-10 py-10 md:grid-cols-2">
@@ -43,9 +45,9 @@
 					<div class="mt-5">
 						<Marquee>
 							<div class="grid grid-cols-3 items-center">
-								<img src={gambar2} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
-								<img src={gambar3} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
-								<img src={gambar4} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
+								<img src={gambar2} class="col-span-1 m-1 h-24 w-fit lg:h-fit" alt="" />
+								<img src={gambar3} class="col-span-1 m-1 h-24 w-fit lg:h-fit" alt="" />
+								<img src={gambar4} class="col-span-1 m-1 h-24 w-fit lg:h-fit" alt="" />
 							</div>
 						</Marquee>
 					</div>
@@ -79,21 +81,21 @@
 						<p class="text-md ml-4">Pelindung : {pelindung}</p>
 					</div>
 
-                    <div class="mt-5 flex items-center">
+					<div class="mt-5 flex items-center">
 						<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
 							<span class="ic--baseline-email flex-shrink-0"></span>
 						</span>
 						<p class="text-md ml-4">Email : {email}</p>
 					</div>
 
-                    <div class="mt-5 flex items-center">
+					<div class="mt-5 flex items-center">
 						<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
 							<span class="mdi--telephone flex-shrink-0"></span>
 						</span>
 						<p class="text-md ml-4">Telepon : {nomor_telepon}</p>
 					</div>
 
-                    <div class="mt-5 flex items-center">
+					<div class="mt-5 flex items-center">
 						<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
 							<span class="typcn--group flex-shrink-0"></span>
 						</span>
@@ -114,24 +116,23 @@
 </section>
 
 <style>
+	.typcn--group {
+		display: inline-block;
+		width: 18px;
+		height: 18px;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M12 14c1.381 0 2.631-.56 3.536-1.465C16.44 11.631 17 10.381 17 9s-.56-2.631-1.464-3.535C14.631 4.56 13.381 4 12 4s-2.631.56-3.536 1.465C7.56 6.369 7 7.619 7 9s.56 2.631 1.464 3.535A5 5 0 0 0 12 14m8 1a2.495 2.495 0 0 0 2.5-2.5c0-.69-.279-1.315-.732-1.768A2.5 2.5 0 0 0 20 10a2.495 2.495 0 0 0-2.5 2.5A2.496 2.496 0 0 0 20 15m0 .59c-1.331 0-2.332.406-2.917.968C15.968 15.641 14.205 15 12 15c-2.266 0-3.995.648-5.092 1.564C6.312 15.999 5.3 15.59 4 15.59c-2.188 0-3.5 1.09-3.5 2.182c0 .545 1.312 1.092 3.5 1.092c.604 0 1.146-.051 1.623-.133l-.04.27c0 1 2.406 2 6.417 2c3.762 0 6.417-1 6.417-2l-.02-.255c.463.073.995.118 1.603.118c2.051 0 3.5-.547 3.5-1.092c0-1.092-1.373-2.182-3.5-2.182M4 15c.69 0 1.315-.279 1.768-.732A2.5 2.5 0 0 0 6.5 12.5A2.495 2.495 0 0 0 4 10a2.496 2.496 0 0 0-2.5 2.5A2.495 2.495 0 0 0 4 15'/%3E%3C/svg%3E");
+	}
 
-.typcn--group {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M12 14c1.381 0 2.631-.56 3.536-1.465C16.44 11.631 17 10.381 17 9s-.56-2.631-1.464-3.535C14.631 4.56 13.381 4 12 4s-2.631.56-3.536 1.465C7.56 6.369 7 7.619 7 9s.56 2.631 1.464 3.535A5 5 0 0 0 12 14m8 1a2.495 2.495 0 0 0 2.5-2.5c0-.69-.279-1.315-.732-1.768A2.5 2.5 0 0 0 20 10a2.495 2.495 0 0 0-2.5 2.5A2.496 2.496 0 0 0 20 15m0 .59c-1.331 0-2.332.406-2.917.968C15.968 15.641 14.205 15 12 15c-2.266 0-3.995.648-5.092 1.564C6.312 15.999 5.3 15.59 4 15.59c-2.188 0-3.5 1.09-3.5 2.182c0 .545 1.312 1.092 3.5 1.092c.604 0 1.146-.051 1.623-.133l-.04.27c0 1 2.406 2 6.417 2c3.762 0 6.417-1 6.417-2l-.02-.255c.463.073.995.118 1.603.118c2.051 0 3.5-.547 3.5-1.092c0-1.092-1.373-2.182-3.5-2.182M4 15c.69 0 1.315-.279 1.768-.732A2.5 2.5 0 0 0 6.5 12.5A2.495 2.495 0 0 0 4 10a2.496 2.496 0 0 0-2.5 2.5A2.495 2.495 0 0 0 4 15'/%3E%3C/svg%3E");
-}
-
-.mdi--telephone {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25c1.12.37 2.32.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57c.11.35.03.74-.25 1.02z'/%3E%3C/svg%3E");
-}
+	.mdi--telephone {
+		display: inline-block;
+		width: 18px;
+		height: 18px;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25c1.12.37 2.32.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57c.11.35.03.74-.25 1.02z'/%3E%3C/svg%3E");
+	}
 
 	.ic--baseline-email {
 		display: inline-block;

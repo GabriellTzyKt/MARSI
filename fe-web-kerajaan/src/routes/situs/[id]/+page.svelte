@@ -32,27 +32,31 @@
 <section class="bg-gray-100 pb-10 pt-20">
 	<div class="mx-auto max-w-6xl px-4">
 		<div class="form-container">
-			<div class="flex items-center justify-between self-center pt-10 text-center gap-5">
-				<span class="solar--arrow-left-outline ml-8"></span>
+			<div class="flex items-center justify-between gap-5 self-center pt-10 text-center">
+				<a href="/situs">
+					<span class="solar--arrow-left-outline ml-8"></span>
+				</a>
 				<p class="text-center text-xl font-semibold">{nama}</p>
-				<p class="mr-5 h-fit w-fit rounded-full border md:text-center bg-red-300 px-2 py-2 lg:text-end">
+				<p
+					class="mr-5 h-fit w-fit rounded-full border bg-red-300 px-2 py-2 md:text-center lg:text-end"
+				>
 					Milik : {pemilik}
 				</p>
 			</div>
-			<div class="min-h-screen grid grid-cols-1 gap-8 px-10 py-10 md:grid-cols-2">
+			<div class="grid min-h-screen grid-cols-1 gap-8 px-10 py-10 md:grid-cols-2">
 				<div class="h-fit">
 					<img
 						src={gambar1}
-						class="mt-12 lg:h-[50%] lg:w-[500px] w-[300px] h-[30%] self-center rounded-lg object-cover"
+						class="mt-12 h-[30%] w-[300px] self-center rounded-lg object-cover lg:h-[50%] lg:w-[500px]"
 						alt="foto 1"
 					/>
 
 					<div class="mt-5">
 						<Marquee>
 							<div class="grid grid-cols-3 items-center">
-								<img src={gambar2} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
-								<img src={gambar3} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
-								<img src={gambar4} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
+								<img src={gambar2} class="col-span-1 m-1 h-24 w-fit lg:h-fit" alt="" />
+								<img src={gambar3} class="col-span-1 m-1 h-24 w-fit lg:h-fit" alt="" />
+								<img src={gambar4} class="col-span-1 m-1 h-24 w-fit lg:h-fit" alt="" />
 							</div>
 						</Marquee>
 					</div>

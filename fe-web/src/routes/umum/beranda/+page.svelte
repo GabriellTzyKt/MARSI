@@ -1,7 +1,5 @@
 <script lang="ts">
-	import bgTemp from '../../../asset/bg_webumum.png';
 	import Flipcard from '../Flipcard.svelte';
-	import Mapicon from '../Mapicon.svelte';
 	import candi from '../../../asset/umum/candi.png';
 	import candi2 from '../../../asset/umum/candi2.png';
 	import gbr from '../../../asset/umum/gbr.png';
@@ -11,8 +9,24 @@
 	import gambar3 from '../../../asset/umum/img_3.png';
 	import gambar4 from '../../../asset/umum/img_4.png';
 	import gambar5 from '../../../asset/umum/image-bg.png';
+	import type { LatLngExpression } from 'leaflet';
+	import Leaflet from '$lib/Leaflet.svelte';
+	import Marker from '$lib/Marker.svelte';
+	import Popup from '$lib/Popup.svelte';
+	import gambar from '$lib/logo_popup_umum.png';
 
-	let hoveredIcons = new Set();
+	const initialView: LatLngExpression = [-2.5489, 118.0149]; // Pusat Indonesia (biar tampilan awal pas)
+
+	// Lokasi marker di beberapa wilayah Indonesia
+	const markerLocations: Array<{ latLng: LatLngExpression; text: string; location: string }> = [
+		{ latLng: [5.5483, 95.3238], text: 'Keraton Surakarta', location: 'Sumatera' }, // Sumatera (Aceh)
+		// { latLng: [-0.7893, 113.9213], text: 'Keraton Surakarta 2', location: 'Kalimantan' }, // Kalimantan
+		{ latLng: [-7.2504, 112.7688], text: 'Keraton Surakarta 3', location: 'Jawa' }, // Jawa (Surabaya)
+		{ latLng: [-7.2504, 112.77], text: 'Keraton Surakarta 4', location: 'Jawa lagi' }, // Jawa (Surabaya)
+		{ latLng: [-6.2088, 106.8456], text: 'Keraton Surakarta 5', location: 'Jakarta' }, // Jakarta
+		{ latLng: [-8.3405, 115.3], text: 'Keraton Surakarta 6', location: 'Bali' }, // Bali
+		{ latLng: [-3.3194, 114.5908], text: 'Keraton Surakarta 7', location: 'Kalsel' } // Kalimantan Selatan
+	];
 
 	let { data } = $props();
 	console.log(data);
@@ -25,35 +39,21 @@
 		<div class="text-center">
 			<p class="mt-20 text-5xl font-[600]">MAJELIS AGUNG RAJA SULTAN INDONESIA</p>
 		</div>
-		<div class="relative mt-10 w-full">
-			<img src={bgTemp} class="mb-10 mr-10 mt-10 h-auto w-auto" alt="" />
+		<div class=" z-0 h-screen w-[80%] py-6">
+			<Leaflet view={initialView} zoom={4.5}>
+				{#each markerLocations as { latLng, text, location }}
+					<Marker {latLng} width={20} height={20}>
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+							><path
+								fill="#fa0404"
+								d="M12 2C7.589 2 4 5.589 4 9.995C3.971 16.44 11.696 21.784 12 22c0 0 8.029-5.56 8-12c0-4.411-3.589-8-8-8m0 12c-2.21 0-4-1.79-4-4s1.79-4 4-4s4 1.79 4 4s-1.79 4-4 4"
+							/></svg
+						>
 
-			<Mapicon
-				id="icon1"
-				text="Keraton Kasunanan Surakarta"
-				location="Surakarta, Jawa Tengah"
-				link="#"
-				position="absolute top-[20%] left-[20%] translate-x-[-50%] translate-y-[-50%]"
-				{hoveredIcons}
-			></Mapicon>
-
-			<Mapicon
-				id="icon2"
-				text="Keraton Kasunanan Surakarta"
-				location="Surakarta, Jawa Tengah"
-				link="#"
-				position="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]"
-				{hoveredIcons}
-			></Mapicon>
-
-			<Mapicon
-				id="icon3"
-				text="Keraton Kasunanan Surakarta"
-				location="Surakarta, Jawa Tengah"
-				link="#"
-				position="absolute bottom-[20%] right-[20%] translate-x-[-50%] translate-y-[-50%]"
-				{hoveredIcons}
-			></Mapicon>
+						<Popup {text} {location} link="https://example.com" image={gambar} />
+					</Marker>
+				{/each}
+			</Leaflet>
 		</div>
 	</div>
 </section>

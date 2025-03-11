@@ -62,7 +62,7 @@
 		<a {href} class="flex items-center space-x-2">
 			<Icon
 				{icon}
-				class="text-lg text-gray-700 transition-colors duration-300 hover:text-blue-600"
+				class="text-md text-gray-700 transition-colors duration-300 hover:text-blue-600"
 			/>
 			<span class="font-semibold text-gray-800">{anchor}</span>
 		</a>
@@ -78,11 +78,11 @@
 	{#if hasChildren && $display === ' '}
 		<div
 			transition:fly={{ x: -20, duration: 300 }}
-			class="ml-7 mt-2 flex-col p-2 text-black {active ? 'active-class' : ' border-l-gray-400'}"
+			class="ml-3 mt-2 flex-col p-2 text-black {active ? 'active-class' : ' border-l-gray-400'}"
 			onclick={reveal}
 			onmouseleave={hide}
 		>
-			<div class="space-y-2">
+			<div class="space-y-2 text-xs lg:text-md">
 				{@render children()}
 			</div>
 		</div>
