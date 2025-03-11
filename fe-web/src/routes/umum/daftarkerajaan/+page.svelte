@@ -18,8 +18,9 @@
 	let longitude: number | null = null;
 	let userLocation: string | null = $state(' ');
 
+
 	const { data } = $props();
-	// console.log('Data yang diterima ( Umum Kerajaan ):', data);
+	console.log('Data yang diterima ( Umum Kerajaan ):', data);
 	const dataGet = data.detil_kerajaan
 
 	function handleSortChange(event: Event) {

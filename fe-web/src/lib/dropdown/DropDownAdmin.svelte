@@ -7,6 +7,16 @@
 	let open = $state(false);
 	let value = $state(false);
 	let edit = $state(false);
+	let isAktif = $state(true);
+
+	function isAktiforNon(event: Event) {
+		event.stopPropagation();
+		if (isAktif == true) {
+			isAktif = false;
+		} else {
+			isAktif = true;
+		}
+	}
 
 	function toggle() {
 		if (!open) open = true;
@@ -23,18 +33,21 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<div class="mx-2 flex cursor-pointer justify-between gap-3 p-4" onclick={() => toggle()}>
 		<div class="flex items-center">
-			<img src={jd} class="h-auto w-28 rounded-full" alt="" />
+			<img src={jd} class="h-auto max-w-[55px] rounded-full" alt="" />
 		</div>
 		<div class="flex grow flex-col justify-center gap-4">
 			<div>
-				<p class="text-lg font-[600]">Eric Yoel</p>
+				<p class="ml-2 text-lg font-[600]">Eric Yoel</p>
 			</div>
-			<div class="flex w-full items-center justify-between">
+			<div class="flex w-full items-center justify-between text-nowrap px-2">
 				<div>
-					<p class="text-md">Super Admin</p>
+					<p class="text-md mr-5">Super Admin</p>
 				</div>
-				<div class="rounded-md bg-green-500 px-5 py-1">
-					<p class="font-[500]">Aktif</p>
+				<div
+					class="status cursor-pointer rounded-md px-3 py-1 {isAktif ? 'aktif' : 'non-aktif'}"
+					onclick={isAktiforNon}
+				>
+					<p class="font-[500]">{isAktif ? 'Aktif' : 'Non-Aktif'}</p>
 				</div>
 			</div>
 		</div>
@@ -130,6 +143,7 @@
 {#if value}
 	<DeleteModal
 		bind:value
+		choose="arsip"
 		text="Apakah Adna Ingin Mengarsip Admin?"
 		successText="Admin Berhasil Dihapus"
 	></DeleteModal>
@@ -137,3 +151,17 @@
 {#if edit}
 	<ModalAdmin textM="Ubah" bind:value={edit}></ModalAdmin>
 {/if}
+
+<style>
+	.aktif {
+		background-color: #22c55e; 
+	}
+
+	.non-aktif {
+		background-color: #ef4444;
+	}
+
+	.status {
+		transition: background-color 0.4s ease-in-out;
+	}
+</style>

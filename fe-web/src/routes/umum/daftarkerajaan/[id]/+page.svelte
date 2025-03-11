@@ -4,10 +4,19 @@
 	import keris from '../../../../asset/umum/keris.png';
 	import rumah from '../../../../asset/umum/rumah.png';
 	import Flipcard2 from '../../Flipcard2.svelte';
+	import gambartemp from '../../../../asset/gambarsementara.jpg';
 
 	const currentDate = new Date();
 	let showModal = $state(false);
 	let showModalVideo = $state(false);
+
+
+	let isExpand: boolean[] = $state([]);
+
+	function toggleExpand(index: number) {
+		isExpand[index] = !isExpand[index];
+		isExpand = [...isExpand];
+	}
 
 	function formatDate(date: Date): string {
 		const day = String(date.getDate()).padStart(2, '0');
@@ -35,7 +44,7 @@
 	let formattedDate = formatDate(currentDate);
 
 	// svelte-ignore non_reactive_update
-		let videoRef: HTMLVideoElement | null = null;
+	let videoRef: HTMLVideoElement | null = null;
 
 	const { data } = $props();
 	console.log('Data yang diterima:', data);
@@ -61,6 +70,7 @@
 	let hover4 = $state(false);
 
 	const selectedFlip = data.detil_flip;
+	const showRaja = data.show_raja;
 </script>
 
 <Navbar></Navbar>
@@ -88,7 +98,7 @@
 </section>
 
 <section class="bg-customBg2 relative h-fit w-full md:pt-10">
-	<div class="form-container absolute mx-auto px-4 lg:mb-20 mb-5">
+	<div class="form-container absolute mx-auto mb-5 px-4 lg:mb-20">
 		<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 			<div>
 				<!-- svelte-ignore a11y_media_has_caption -->
@@ -269,7 +279,7 @@
 		</div>
 
 		<div
-			class="mx-auto flex flex-col items-center gap-2 pl-6 lg:ml-8 lg:mr-0 mr-5 lg:grid lg:grid-cols-3 xl:grid xl:grid-cols-3"
+			class="mx-auto mr-5 flex flex-col items-center gap-2 pl-6 lg:ml-8 lg:mr-0 lg:grid lg:grid-cols-3 xl:grid xl:grid-cols-3"
 		>
 			{#each selectedFlip as item}
 				<Flipcard2 gambar={item.gambar} kerajaan={item.kerajaan} lokasi={item.lokasi} />
@@ -296,7 +306,6 @@
 			<button onclick={closeModalVideo} class="absolute right-4 top-4 z-10 rounded-full p-2 shadow">
 				<span class="carbon--close-outline"></span>
 			</button>
-
 		</div>
 	</div>
 {/if}
@@ -304,19 +313,79 @@
 {#if showModal}
 	<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
 		<div class="max-h-[90vh] w-[70%] overflow-y-auto rounded-lg bg-white p-5 shadow-lg">
-			<div class="flex justify-between">
+			<div class="flex justify-between mb-5">
 				<h2 class="font-bold lg:text-xl">List Raja Keraton Kasunanan Sarukarta</h2>
 				<!-- svelte-ignore a11y_consider_explicit_label -->
 				<button onclick={closeModal}>
 					<span class="carbon--close-outline items-center"></span>
 				</button>
 			</div>
-			<div
-				class="mt-2 flex h-[50px] items-center justify-between rounded-lg border-2 bg-yellow-300"
-			>
-				<p class="ml-3 text-xs lg:text-lg">Sri Susuhunan Pakubuwana XIII (2004 - Sekarang)</p>
-				<span class="formkit--arrowdown mr-3"></span>
-			</div>
+			{#each showRaja as raja, index}
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<div
+						class="flex mb-5 cursor-pointer flex-col overflow-hidden rounded-lg border-2 bg-yellow-300 transition-all duration-300"
+						onclick={() => toggleExpand(index)}
+					>
+						<div class="mr-5 flex h-[50px] w-full items-center justify-between gap-2 px-3">
+							<p class="text-xs lg:text-lg">
+								{raja.nama_lenkgap} ({raja.tahun_awal_jabatan} - {raja.tahun_akhir_jabatan})
+							</p>
+							<div
+								class="flex h-[24px] w-[24px] items-center justify-center rounded-full border bg-red-500"
+							>
+								<span
+									class="formkit--arrowdown transition-transform duration-300"
+									class:rotate-180={isExpand[index]}
+								></span>
+							</div>
+						</div>
+						{#if isExpand[index]}
+							<div class="border-t-2 border-black bg-white p-4">
+								<div class="flex w-full gap-8">
+									<img src={gambartemp} class="h-[25%] w-[25%]" alt="" />
+									<div class="w-full flex-col">
+										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+											<p class="text-md px-2 py-2">
+												Nama Lengkap Raja : <span class="font-bold">{raja.nama_lenkgap}</span>
+											</p>
+										</div>
+										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+											<p class="text-md px-2 py-2">
+												Tanggal Lahir : <span class="font-bold">{raja.tanggal}</span>
+											</p>
+										</div>
+										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+											<p class="text-md px-2 py-2">
+												Kota Kelahiran : <span class="font-bold">{raja.kota_kelahiran}</span>
+											</p>
+										</div>
+										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+											<p class="text-md px-2 py-2">
+												Wangsa : <span class="font-bold">{raja.wangsa}</span>
+											</p>
+										</div>
+										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+											<p class="text-md px-2 py-2">
+												Nama Ayah : <span class="font-bold">{raja.nama_ayah}</span>
+											</p>
+										</div>
+										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+											<p class="text-md px-2 py-2">
+												Nama Ibu : <span class="font-bold">{raja.nama_ibu}</span>
+											</p>
+										</div>
+										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+											<p class="text-md px-2 py-2">
+												Agama : <span class="font-bold">{raja.agama}</span>
+											</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						{/if}
+					</div>
+				{/each}
 		</div>
 	</div>
 {/if}

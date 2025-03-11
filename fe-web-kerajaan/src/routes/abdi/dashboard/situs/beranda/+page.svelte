@@ -6,7 +6,7 @@
 <div class="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-12 mx-auto overflow-auto">
 	{#each Array(total) as _}
 		<div class="relative h-full">
-			<a href="/" class="block h-60 w-60 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+			<a href="/abdi/dashboard/situs/detail" class="block h-60 w-60 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 				<div class="mx-auto flex w-full items-center justify-center">
 					<img src={gambartemp} class="h-25 w-25 ml-5 mr-5 rounded-full" alt="" />
 				</div>

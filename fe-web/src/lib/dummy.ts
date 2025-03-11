@@ -977,6 +977,15 @@ export const tempdata = [
     gambar2: gambar2,
     gambar3: gambar3,
     gambar4: gambar4,
+    nama_lenkgap : "Gusti Raden Mas Suryo Partono",
+    tanggal : '28 Juni 1948',
+    kota_kelahiran : 'Surakarta, Indonesia',
+    wangsa : 'mataram',
+    nama_ayah : 'Sri Susuhunan Pakubawana XII',
+    nama_ibu : 'KRAy. Pradapaningrum/K.R.Ageng',
+    agama : 'islam',
+    tahun_awal_jabatan : '2004',
+    tahun_akhir_jabatan : '2024',
   },
   {
     id: 2,
@@ -995,6 +1004,7 @@ export const tempdata = [
     gambar2: gambar2,
     gambar3: gambar3,
     gambar4: gambar4,
+    
   },
   {
     id: 3,

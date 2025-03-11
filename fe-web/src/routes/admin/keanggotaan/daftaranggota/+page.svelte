@@ -52,7 +52,6 @@
 					link="/admin/keanggotaan/daftaranggota"
 					{index}
 					items={[
-						['Detail', `/admin/keanggotaan/daftaranggota/tambahanggota/${data.id}`],
 						['Ubah', `/admin/keanggotaan/daftaranggota/ubahanggota/${data.id}`],
 						['children', 'Arsipkan']
 					]}

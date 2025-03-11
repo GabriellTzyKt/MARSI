@@ -1,4 +1,6 @@
 <script lang="ts">
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
+	import SModal from '$lib/popup/SModal.svelte';
 	import gambartemp from '../../../../asset/gambarsementara.jpg';
 
 	let nama = $state('');
@@ -29,6 +31,20 @@
 	let benderaUrl: string | null = $state(null);
 	let lambangUrl: string | null = $state(null);
 	let videoName: string | null = $state(' No Video Selected ');
+
+	let open = $state(false);
+	let timer: number;
+	let value = $state(false)
+	function setTimer() {
+		open = true;
+		if (timer) {
+			clearTimeout(timer);
+		}
+		timer = setTimeout(() => {
+			open = false;
+			showModal = false;
+		}, 3000);
+	}
 
 	let isExpand: boolean[] = $state([]);
 
@@ -429,6 +445,7 @@
 										<div class="mt-5 flex justify-end gap-4">
 											<button
 												class="flex items-center gap-2 rounded-lg bg-red-500 px-5 py-2 text-white"
+												onclick={ () => value = true }
 											>
 												<span class="tabler--trash"></span> Hapus Data
 											</button>
@@ -448,6 +465,15 @@
 		</div>
 	</div>
 </div>
+
+{#if value}
+	<DeleteModal
+		bind:value
+		choose="delete"
+		text="Apakah Anda Ingin Menghapus Biodata Raja?"
+		successText="Biodata Raja Berhasil Dihapus"
+	></DeleteModal>
+{/if}
 
 {#if showModal}
 	<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -579,13 +605,18 @@
 					<label class="ml-2" for="textsamping">Masih Berkuasa Sampai Sekarang?</label>
 				</div>
 
-				<button class="bg-customGold w-fit self-end rounded-lg px-3 py-2 text-white">
+				<button class="bg-customGold w-fit self-end rounded-lg px-3 py-2 text-white" onclick={setTimer}>
 					Tambah Data
 				</button>
 			</div>
 		</div>
 	</div>
 {/if}
+
+{#if open}
+	<SModal text='Biodata kerajaan berhasil ditambah!'></SModal>
+{/if}
+
 
 <style>
 	.mingcute--arrow-up-fill {

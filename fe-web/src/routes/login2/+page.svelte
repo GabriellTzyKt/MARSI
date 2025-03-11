@@ -156,7 +156,7 @@
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div class="mt-3 flex items-center justify-center text-center">
-							<a href="" class="bg-sc w-full py-3 font-[650] text-white">
+							<a href=" " class="bg-sc w-full py-3 font-[650] text-white">
 								<p class="flex items-center justify-center text-lg">
 									<svg
 										xmlns="http://www.w3.org/2000/svg"

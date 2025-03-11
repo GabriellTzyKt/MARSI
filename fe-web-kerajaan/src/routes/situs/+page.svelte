@@ -16,7 +16,7 @@
 			<div class="relative">
 				<select
 					bind:value
-					class="block w-full rounded border border-gray-300 bg-white px-5 py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+					class="block w-full rounded border border-gray-300 bg-white pr-2 pl-4 py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
 					<option>Keterangan</option>
 					<option>Opsi 1</option>

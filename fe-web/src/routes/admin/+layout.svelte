@@ -15,13 +15,9 @@
 	const pageTitle = $derived.by(() => {
 		if (page.route.id === '/admin/beranda') {
 			return 'Selamat Datang';
-		} else if (page.route.id === '/admin/keanggotaan/daftaranggota') {
+		} else if (page.route.id?.startsWith('/admin/keanggotaan/daftaranggota')) {
 			return 'Keanggotaan';
-		} else if (page.route.id === '/admin/keanggotaan/daftaranggota/tambahanggota') {
-			return 'Keanggotaan';
-		} else if (page.route.id === '/admin/keanggotaan/gelar') {
-			return 'Keanggotaan';
-		} else if (page.route.id === '/admin/acara') {
+		}  else if (page.route.id === '/admin/acara') {
 			return 'Acara';
 		} else if (page.route.id == '/admin/acara/tambahacara') {
 			return 'Acara';
@@ -63,8 +59,9 @@
 				aria-label="Toggle sidebar"
 			></button>
 		</div>
-		<div class="mx-auto flex items-center justify-center self-center">
-			<img src={image} alt="Deskripsi Gambar" class="ml-2 h-20 w-20 lg:h-32 lg:w-32" />
+		<div class="mx-auto flex items-center justify-center self-center gap-2">
+			<img src={image} alt="Deskripsi Gambar" class="h-10 w-10 lg:h-20 lg:w-20" />
+			<p class="text-3xl text-white"> MARSI </p>
 		</div>
 	</div>
 	{#if $sidebarActive}
@@ -82,12 +79,6 @@
 						icon="mdi:book"
 						anchor="Daftar Anggota"
 						active={isActive('/admin/keanggotaan/daftaranggota')}
-					/>
-					<SidebarMenu
-						href="/admin/keanggotaan/gelar"
-						icon="mdi:crown"
-						anchor="Gelar"
-						active={isActive('/admin/keanggotaan/gelar')}
 					/>
 				</SidebarMenu>
 				<SidebarMenu
@@ -129,25 +120,19 @@
 				anchor="Beranda"
 				active={isActive('/admin/beranda')}
 			/>
-			<SidebarMenu href="#" icon="mdi:people" anchor="Keanggotaan" hasChildren={true}>
-				<SidebarMenu
-					href="/admin/keanggotaan/daftaranggota"
-					icon="mdi:book"
-					anchor="Daftar Anggota"
-					active={isActive('/admin/keanggotaan/daftaranggota')}
-				/>
-				<SidebarMenu
-					href="/admin/keanggotaan/gelar"
-					icon="mdi:crown"
-					anchor="Gelar"
-					active={isActive('/admin/keanggotaan/gelar')}
-				/>
-			</SidebarMenu>
+
+			<SidebarMenu
+				href="/admin/keanggotaan/daftaranggota"
+				icon="mdi:book"
+				anchor="Daftar Anggota"
+				active={page.route.id?.startsWith('/admin/keanggotaan/daftaranggota')}
+			></SidebarMenu>
+
 			<SidebarMenu
 				href="/admin/acara"
 				icon="mdi:calendar"
 				anchor="Acara"
-				active={isActive('/admin/acara')}
+				active={page.route.id?.startsWith('/admin/acara')}
 			/>
 			<SidebarMenu
 				href="/admin/landingPage"
@@ -165,7 +150,7 @@
 				href="/admin/suratDokumen"
 				icon="mdi:home"
 				anchor="Surat Dokumen"
-				active={isActive('/admin/suratDokumen')}
+				active={page.route.id?.startsWith('/admin/suratDokumen')}
 			/>
 			<SidebarMenu
 				href="/admin/biodata"
