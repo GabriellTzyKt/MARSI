@@ -69,7 +69,7 @@
 					/>
 				</div>
 				<div class="w-full">
-					<p>Total Anggota :</p>
+					<p>Kepemilikan :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"

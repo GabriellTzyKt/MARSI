@@ -12,7 +12,7 @@
 				<span class="mdi--edit absolute"></span>
 			</div>
 			<div>
-				<p>Nama Komunitas:</p>
+				<p>Nama Situs:</p>
 				<div class="relative">
 					<input
 						type="text"
@@ -24,7 +24,7 @@
 			</div>
 
 			<div>
-				<p class="mt-5">Alamat:</p>
+				<p class="mt-5">Email:</p>
 				<div class="relative">
 					<input
 						type="text"
@@ -45,7 +45,7 @@
 					/>
 				</div>
 				<div class="w-full">
-					<p>Total Anggota :</p>
+					<p>Kepemilikan :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
@@ -55,7 +55,7 @@
 			</div>
 
 			<div>
-				<p class="mt-5">Deskripsi Komunitas:</p>
+				<p class="mt-5">Deskripsi Situs:</p>
 				<div class="relative w-full">
 					<textarea
 						placeholder="Masukkan nama"
@@ -72,7 +72,7 @@
 		<div>
 			<div class="flexcoba mt-5 flex gap-6">
 				<div class="w-full">
-					<p>No telepon :</p>
+					<p>Dibangun Oleh :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
@@ -80,7 +80,7 @@
 					/>
 				</div>
 				<div class="w-full">
-					<p>Total Anggota :</p>
+					<p>Tanggal Berdiri :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
@@ -90,7 +90,7 @@
 			</div>
 
 			<div class="mt-5">
-				<p>Pembina:</p>
+				<p>Alamat:</p>
 				<div class="relative">
 					<input
 						type="text"
@@ -102,7 +102,7 @@
 
 			<div class="flexcoba mt-5 flex gap-6">
 				<div class="w-full">
-					<p>No telepon :</p>
+					<p>Juru Kunci :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
@@ -110,7 +110,7 @@
 					/>
 				</div>
 				<div class="w-full">
-					<p>Total Anggota :</p>
+					<p>Jenis Situs :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
@@ -121,7 +121,7 @@
 
 			<div class="flexcoba mt-5 flex gap-6">
 				<div class="w-full">
-					<p>No telepon :</p>
+					<p>Pembina :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
@@ -129,7 +129,7 @@
 					/>
 				</div>
 				<div class="w-full">
-					<p>Total Anggota :</p>
+					<p>Pelindung :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
@@ -140,7 +140,7 @@
 
 			<div class="flexcoba mt-5 flex gap-6">
 				<div class="w-full">
-					<p>No telepon :</p>
+					<p>Jam Buka :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
@@ -148,7 +148,7 @@
 					/>
 				</div>
 				<div class="w-full">
-					<p>Total Anggota :</p>
+					<p>Jam Tutup :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"
@@ -158,7 +158,7 @@
 			</div>
 
 			<div class="mt-3">
-				<p>Pembina:</p>
+				<p>Wisata:</p>
 				<div class="relative">
 					<input
 						type="text"

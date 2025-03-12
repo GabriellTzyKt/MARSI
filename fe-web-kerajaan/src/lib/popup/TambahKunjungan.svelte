@@ -3,15 +3,15 @@
 </script>
 
 <div
-	class="lg:grid-cols-15 mt-5 grid lg:h-fit h-[550px] w-full grid-cols-5 gap-2 rounded-lg border-2 border-gray-100 bg-gray-300 px-2"
+	class="lg:grid-cols-15 mt-5 grid h-[550px] w-full grid-cols-5 gap-2 rounded-lg border-2 border-gray-100 bg-gray-300 px-2 lg:h-fit"
 >
-	<div class="lg:col-span-5 col-span-7 mt-5 lg:mb-5">
+	<div class="col-span-7 mt-5 lg:col-span-5 lg:mb-5">
 		<div class="flex flex-col">
 			<div class="relative flex items-center">
 				<input
 					type="text"
 					class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
-					placeholder="Nama Kunjungan"
+					placeholder="Nama Pengunjung"
 				/>
 				<span class="line-md--pencil absolute right-2"></span>
 			</div>
@@ -29,7 +29,7 @@
 	<div class="col-span-7 mb-5 mt-5">
 		<div class="flex flex-col">
 			<div class="grid grid-cols-1 gap-2 lg:grid-cols-7">
-				<div class="relative flex items-center col-span-3 lg:col-span-4">
+				<div class="relative col-span-3 flex items-center lg:col-span-4">
 					<input
 						type="text"
 						class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"

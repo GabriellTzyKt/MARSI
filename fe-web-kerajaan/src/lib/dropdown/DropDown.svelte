@@ -109,7 +109,7 @@
 									openm = true;
 								}}>{i[1]}</a
 							>
-						{:else if i[2] === 'Ubah Tugas'}
+						{:else if i[1] === 'Ubah Tugas'}
 							<a
 								href={i[3]}
 								class="w-full px-4 py-1 {p === 0 ? 'rounded-t-lg' : ''}  {p === items.length - 1
@@ -165,7 +165,7 @@
 {/if}
 {#if openUT}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
-		<TambahTugas bind:value={openUT} successText="Tugas Berhasil Diubah" text="Ubah Tugas"
+		<TambahTugas bind:value={openUT} text="Ubah Tugas" successText="Tugas Berhasil Diubah"
 		></TambahTugas>
 	</div>
 {/if}

@@ -7,7 +7,22 @@
 	import Input from './Input.svelte';
 	import { goto } from '$app/navigation';
 	import Footer from '$lib/footer/Footer.svelte';
+	import Bracode from '$lib/popup/Bracode.svelte';
 	let chose: number | null = $state(null);
+	let open = $state(false);
+	let timer: number;
+	function setTimer() {
+		open = true;
+		if (timer) {
+			clearTimeout(timer);
+		}
+		if (open)
+			timer = setTimeout(() => {
+				open = false;
+				goto('/profile');
+			}, 3000);
+	}
+
 	const toggle = (id: number) => {
 		chose = chose === id ? null : id;
 	};
@@ -226,7 +241,12 @@
 		</div>
 		<div class="mt-4 flex flex-row justify-end">
 			<div class="">
-				<button class="rounded-lg border border-gray-500 px-3 py-2 shadow-2xl">Barcode</button>
+				<button
+					class="rounded-lg border border-gray-500 px-3 py-2 shadow-2xl"
+					onclick={() => {
+						open = true;
+					}}>Barcode</button
+				>
 			</div>
 			<div class="ms-4">
 				<button
@@ -413,3 +433,6 @@
 	</div>
 </div>
 <Footer></Footer>
+{#if open}
+	<Bracode bind:value={open}></Bracode>
+{/if}

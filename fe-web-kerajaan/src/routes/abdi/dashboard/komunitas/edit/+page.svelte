@@ -122,7 +122,7 @@
 					/>
 				</div>
 				<div class="w-full">
-					<p>Total Anggota :</p>
+					<p>Jumlah Anggota :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"

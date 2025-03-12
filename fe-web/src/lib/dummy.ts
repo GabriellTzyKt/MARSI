@@ -1716,3 +1716,62 @@ export const dummyDocs = [
     dokumentasi: "salinan",
   }
 ];
+export const dummyGelar = [
+  {
+    id_gelar: "G-001",
+    gelar: "Raja",
+  },
+  {
+    id_gelar: "G-002",
+    gelar: "Sultan",
+  },
+  {
+    id_gelar: "G-003",
+    gelar: "Pangeran",
+  },
+];
+
+export const dummyJenisKerajaan = [
+  {
+    id_jenis: "JK-001",
+    jenis: "Kesultanan",
+  },
+  {
+    id_jenis: "JK-002",
+    jenis: "Kerajaan Hindu",
+  },
+  {
+    id_jenis: "JK-003",
+    jenis: "Kerajaan Buddha",
+  },
+];
+
+export const dummyDokumen = [
+  {
+    id_dokumen: "D-001",
+    nama: "Prasasti Mulawarman",
+  },
+  {
+    id_dokumen: "D-002",
+    nama: "Kitab Negarakertagama",
+  },
+  {
+    id_dokumen: "D-003",
+    nama: "Undang-Undang Kerajaan",
+  },
+];
+
+export const dummyRoleAdmin = [
+  {
+    id_role: "RA-001",
+    role: "Super Admin",
+  },
+  {
+    id_role: "RA-002",
+    role: "Editor",
+  },
+  {
+    id_role: "RA-003",
+    role: "Viewer",
+  },
+];

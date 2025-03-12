@@ -13,7 +13,7 @@
 		if (open)
 			timer = setTimeout(() => {
 				open = false;
-				goto('/abdi/sekretariat/organisasi/daftarOrganisasi');
+				goto('/abdi/sekretariat/organisasi/daftarorganisasi');
 			}, 3000);
 	}
 </script>
@@ -139,7 +139,7 @@
 					/>
 				</div>
 				<div class="w-full">
-					<p>Total Anggota :</p>
+					<p>Jumlah Anggota :</p>
 					<input
 						type="text"
 						placeholder="Masukkan nama"

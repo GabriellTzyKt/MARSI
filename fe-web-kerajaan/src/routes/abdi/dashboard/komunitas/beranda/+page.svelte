@@ -3,7 +3,9 @@
 	let total = $state(16);
 </script>
 
-<div class="mx-auto grid gap-12 overflow-auto sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+<div
+	class="mx-auto grid gap-12 overflow-auto sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+>
 	{#each Array(total) as _}
 		<div class="relative h-full">
 			<div class="block h-60 w-60 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">

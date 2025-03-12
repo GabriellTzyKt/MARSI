@@ -17,7 +17,7 @@
 			return 'Selamat Datang';
 		} else if (page.route.id?.startsWith('/admin/keanggotaan/daftaranggota')) {
 			return 'Keanggotaan';
-		}  else if (page.route.id === '/admin/acara') {
+		} else if (page.route.id === '/admin/acara') {
 			return 'Acara';
 		} else if (page.route.id == '/admin/acara/tambahacara') {
 			return 'Acara';
@@ -36,6 +36,10 @@
 			return 'Managemen Admin';
 		} else if (page.route.id?.startsWith('/admin/biodata')) {
 			return 'Biodata Kerajaan';
+		} else if (page.route.id === '/admin/masterData') {
+			return 'Master Data';
+		} else if (page.route.id === '/admin/pendaftaranKerajaan') {
+			return 'Pendaftaran Kerajaan';
 		}
 	});
 	const { children, data } = $props();
@@ -59,9 +63,9 @@
 				aria-label="Toggle sidebar"
 			></button>
 		</div>
-		<div class="mx-auto flex items-center justify-center self-center gap-2">
+		<div class="mx-auto flex items-center justify-center gap-2 self-center">
 			<img src={image} alt="Deskripsi Gambar" class="h-10 w-10 lg:h-20 lg:w-20" />
-			<p class="text-3xl text-white"> MARSI </p>
+			<p class="text-3xl text-white">MARSI</p>
 		</div>
 	</div>
 	{#if $sidebarActive}
@@ -82,6 +86,12 @@
 					/>
 				</SidebarMenu>
 				<SidebarMenu
+					href="/admin/masterData"
+					icon="mdi:globe"
+					anchor="Master Data"
+					active={isActive('/admin/masterData')}
+				/>
+				<SidebarMenu
 					href="/admin/acara"
 					icon="mdi:calendar"
 					anchor="Acara"
@@ -92,6 +102,12 @@
 					icon="mdi:globe"
 					anchor="Landing page"
 					active={isActive('/admin/landing')}
+				/>
+				<SidebarMenu
+					href="/admin/pendaftaranKerajaan"
+					icon="mdi:home"
+					anchor="Pendaftaran Kerajaan"
+					active={isActive('/admin/endaftaranKerajaan')}
 				/>
 			</Sidebar>
 		</div>
@@ -140,6 +156,12 @@
 				anchor="Landing page"
 				active={isActive('/admin/landingPage')}
 			/>
+			<SidebarMenu
+				href="/admin/masterData"
+				icon="mdi:globe"
+				anchor="Master Data"
+				active={isActive('/admin/masterData')}
+			/>
 			<!-- <SidebarMenu
 				href="/admin/biodata"
 				icon="mdi:globe"
@@ -163,6 +185,12 @@
 				icon="mdi:home"
 				anchor="Managemen Admin"
 				active={isActive('/admin/managemen')}
+			/>
+			<SidebarMenu
+				href="/admin/pendaftaranKerajaan"
+				icon="mdi:home"
+				anchor="Pendaftaran Kerajaan"
+				active={isActive('/admin/endaftaranKerajaan')}
 			/>
 		</Sidebar>
 	</div>
