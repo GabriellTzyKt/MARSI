@@ -20,7 +20,7 @@
 </script>
 
 <div class="min-h-full w-full">
-	<div class="mt-10 grid grid-cols-2 gap-4">
+	<div class="mt-10 grid-cols-1 grid lg:rid-cols-2 gap-4">
 		<!-- 1 -->
 		<div>
 			<div>

@@ -140,8 +140,12 @@
 			return 'Daftar Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/komunitas/daftarkomunitas/edit') {
 			return 'Edit Komunitas';
+		}  else if (page.route.id === '/abdi/sekretariat/organisasi/daftaranggota/edit') {
+			return 'Edit Anggota';
+		} else if (page.route.id === '/abdi/sekretariat/landingpage/aset') {
+			return 'Tambah Aset';
 		}
-
+		
 		
 	});
 

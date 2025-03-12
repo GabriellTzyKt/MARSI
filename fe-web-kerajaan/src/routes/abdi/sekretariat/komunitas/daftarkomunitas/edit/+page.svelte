@@ -32,7 +32,7 @@
 		</div>
 	</div>
 
-	<div class="mt-10 grid grid-cols-2 gap-4">
+	<div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-4">
 		<!-- 1 -->
 		<div>
 			<div>
@@ -130,7 +130,7 @@
 				</button>
 			</div>
 
-			<div class="mt-5 flex gap-12">
+			<div class="mt-5 flex lg:flex-row flex-col gap-4">
 				<div class="w-full">
 					<p>No telepon :</p>
 					<input
@@ -151,9 +151,9 @@
 		</div>
 	</div>
 
-	<div class="relative w-full">
+	<div class="relative w-full flex lg:justify-end justify-center">
 		<button
-			class="w-50 t-0 absolute right-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
+			class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
 			onclick={setTimer}>Simpan Data</button
 		>
 	</div>
