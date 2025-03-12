@@ -37,7 +37,7 @@
 	let results = writable<string[]>([]);
 	let showDropdown = writable(false);
 
-	const API_KEY = 'pk.def50126ee21d7c7b667386e05fc8bcb'; // Ganti dengan API Key LocationIQ
+	const API_KEY = 'pk.def50126ee21d7c7b667386e05fc8bcb'; 
 
 	async function fetchLocations() {
 		if (!lokasi.trim()) return; // Cegah pencarian kosong
@@ -49,7 +49,6 @@
 			const data = await res.json();
 
 			if (data && Array.isArray(data)) {
-				// Ambil display_name dari hasil pencarian
 				const extractedNames = data.map((item: any) => item.display_name);
 				console.log(data)
 

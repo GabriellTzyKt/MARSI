@@ -18,13 +18,13 @@
 		<div class="mt-5 flex w-full justify-center lg:mt-0 lg:justify-end">
 			<a href="/abdi/sekretariat/situs/edit"
 				><button class="w-50 h-fit items-end rounded-lg bg-yellow-300 px-2 py-2 text-black">
-					Ubah
+					Edit Situs
 				</button></a
 			>
 		</div>
 		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-4">
 			<!-- 1 -->
-			<div class=" col-span-2">
+			<div class="col-span-2">
 				<div
 					class="flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
@@ -58,70 +58,74 @@
 			</div>
 
 			<!-- 2 -->
-			<div class="grid-cols-5">
-				<div
-					class="flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
-				>
-					<p>Nama Situs:</p>
-					<input type="text" placeholder="Masukkan Nama" />
+			<div class="col-span-2">
+				<div class="flex w-full flex-col lg:flex-row gap-3">
+					<div
+						class="flex h-fit w-full flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
+					>
+						<p>Dibangun Oleh:</p>
+						<input type="text" placeholder="Masukkan Nama" />
+					</div>
+					<div
+						class="flex h-fit w-full flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
+					>
+						<p>Dibangun Oleh:</p>
+						<input type="text" placeholder="Masukkan Nama" />
+					</div>
 				</div>
-				<div
-					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
-				>
-					<p>Alamat :</p>
-					<input type="text" placeholder="Masukkan Alamat" />
-				</div>
-				<div
-					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
-				>
-					<p>Email :</p>
-					<input type="text" placeholder="Masukkan Email" />
-				</div>
-				<div
-					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
-				>
-					<p>Email :</p>
-					<input type="text" placeholder="Masukkan Email" />
-				</div>
-				<div
-					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
-				>
-					<p>Email :</p>
-					<input type="text" placeholder="Masukkan Email" />
-				</div>
-			</div>
 
-			<!-- 3 -->
-			<div class="grid-cols-5">
-				<div
-					class="flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
-				>
-					<p>Nama Situs:</p>
-					<input type="text" placeholder="Masukkan Nama" />
+				<div class="mt-5 flex w-full flex-col lg:flex-row gap-3">
+					<div
+						class="flex h-fit w-full flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
+					>
+						<p>Pembina :</p>
+						<input type="text" placeholder="Masukkan Nama" />
+					</div>
+					<div
+						class="flex h-fit w-full flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
+					>
+						<p>Pelindung :</p>
+						<input type="text" placeholder="Masukkan Nama" />
+					</div>
 				</div>
+
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
-					<p>Alamat :</p>
+					<p>Juru Kunci :</p>
 					<input type="text" placeholder="Masukkan Alamat" />
 				</div>
-				<div
-					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
-				>
-					<p>Email :</p>
-					<input type="text" placeholder="Masukkan Email" />
+
+				<div class="flex w-full mt-5 flex-col gap-1 lg:flex-row">
+					<div class="flex h-fit w-[32.7%] flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm">
+						<p>Jam Buka:</p>
+						<input type="text" placeholder="Masukkan Nama" />
+					</div>
+					<div class="flex h-fit w-[32.7%] flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm">
+						<p>Jam Tutup:</p>
+						<input type="text" placeholder="Masukkan Nama" />
+					</div>
+					<div class="flex h-fit w-[32.7%] flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm">
+						<p>Jumlah Anggota:</p>
+						<input type="text" placeholder="Masukkan Nama" />
+					</div>
 				</div>
-				<div
-					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
-				>
-					<p>Email :</p>
-					<input type="text" placeholder="Masukkan Email" />
-				</div>
-				<div
-					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
-				>
-					<p>Email :</p>
-					<input type="text" placeholder="Masukkan Email" />
+				
+				
+
+				<div class="mt-5 flex w-full flex-col lg:flex-row gap-3">
+					<div
+						class="flex h-fit w-full flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
+					>
+						<p>No telepon :</p>
+						<input type="text" placeholder="Masukkan Nama" />
+					</div>
+					<div
+						class="flex h-fit w-full flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
+					>
+						<p>Kepemilikan :</p>
+						<input type="text" placeholder="Masukkan Nama" />
+					</div>
 				</div>
 			</div>
 		</div>
