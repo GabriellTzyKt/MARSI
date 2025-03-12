@@ -110,7 +110,7 @@
 					<input
 						type="text"
 						placeholder="Masukkan nama"
-						class="border-blackpx-2 mt-2 w-full rounded-lg border-2 py-2 text-start"
+						class="border-blackpx-2 mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 					/>
 				</div>
 				<div class="w-full">

@@ -113,34 +113,28 @@
 		<!-- 2 -->
 		<div>
 			<div>
-				<div class="flex lg:flex-row flex-col lg:gap-y-0 gap-y-2 justify-between">
+				<div class="flex justify-between">
 					<p>(Nama Ayah)</p>
 					<p>Ayah seorang abdi?</p>
 					<div class="flex">
 						<div class="mx-2 flex items-center justify-center">
 							<input
-								id="default-radio-1"
+								id="radio-ayah-ya"
 								type="radio"
-								value=""
-								name="default-radio"
-								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+								name="radio-ayah"
+								class="h-4 w-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
 							/>
-							<label for="default-radio-1" class="mx-5 ms-2 text-sm font-medium text-gray-900"
-								>Ya</label
-							>
+							<label for="radio-ayah-ya" class="mx-2 text-sm font-medium text-gray-900">Ya</label>
 						</div>
 						<div class="mx-2 flex items-center justify-center">
 							<input
-								checked
-								id="default-radio-2"
+								id="radio-ayah-tidak"
 								type="radio"
-								value=""
-								name="default-radio"
-								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+								name="radio-ayah"
+								class="h-4 w-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
+								checked
 							/>
-							<label for="default-radio-2" class="mx-5 ms-2 text-sm font-medium text-black"
-								>Tidak</label
-							>
+							<label for="radio-ayah-tidak" class="mx-2 text-sm font-medium text-black">Tidak</label>
 						</div>
 					</div>
 				</div>
@@ -155,34 +149,28 @@
 			</div>
 
 			<div>
-				<div class="mt-5 flex  lg:flex-row flex-col lg:gap-y-0 gap-y-2 justify-between">
+				<div class="mt-5 flex justify-between">
 					<p>(Nama Ibu)</p>
 					<p>Ibu seorang abdi?</p>
-					<div class="flex ">
+					<div class="flex">
 						<div class="mx-2 flex items-center justify-center">
 							<input
-								id="default-radio-1"
+								id="radio-ibu-ya"
 								type="radio"
-								value=""
-								name="default-radio"
-								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+								name="radio-ibu"
+								class="h-4 w-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
 							/>
-							<label for="default-radio-1" class="mx-5 ms-2 text-sm font-medium text-gray-900"
-								>Ya</label
-							>
+							<label for="radio-ibu-ya" class="mx-2 text-sm font-medium text-gray-900">Ya</label>
 						</div>
 						<div class="mx-2 flex items-center justify-center">
 							<input
-								checked
-								id="default-radio-2"
+								id="radio-ibu-tidak"
 								type="radio"
-								value=""
-								name="default-radio"
-								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+								name="radio-ibu"
+								class="h-4 w-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
+								checked
 							/>
-							<label for="default-radio-2" class="mx-5 ms-2 text-sm font-medium text-black"
-								>Tidak</label
-							>
+							<label for="radio-ibu-tidak" class="mx-2 text-sm font-medium text-black">Tidak</label>
 						</div>
 					</div>
 				</div>

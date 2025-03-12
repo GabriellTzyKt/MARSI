@@ -152,7 +152,7 @@
 	<div class="relative w-full">
 		<button
 			class="w-50 t-0 absolute right-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
-			onclick={setTimer}>Simpan Data</button
+			onclick={setTimer}>Buat Organisasi</button
 		>
 	</div>
 </div>

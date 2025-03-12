@@ -38,7 +38,7 @@
 			return 'Biodata Kerajaan';
 		} else if (page.route.id === '/admin/masterData') {
 			return 'Master Data';
-		} else if (page.route.id === '/admin/pendaftaranKerajaan') {
+		} else if (page.route.id?.startsWith('/admin/pendaftaranKerajaan')) {
 			return 'Pendaftaran Kerajaan';
 		}
 	});
@@ -190,7 +190,7 @@
 				href="/admin/pendaftaranKerajaan"
 				icon="mdi:home"
 				anchor="Pendaftaran Kerajaan"
-				active={isActive('/admin/endaftaranKerajaan')}
+				active={page.route.id?.startsWith('/admin/pendaftaranKerajaan')}
 			/>
 		</Sidebar>
 	</div>
