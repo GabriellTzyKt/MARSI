@@ -37,6 +37,10 @@ import gambar1_flip from '../asset/umum/kerajaan_1.png';
 import gambar2_flip from '../asset/umum/kerajaan_2.png';
 import gambar3_flip from '../asset/umum/kerajaan_3.png';
 
+// untuk dokumentasi
+
+import jd from "../asset/profile/jdpp.jpg"
+
 export const data_showraja = [
   {
     id: 1,
@@ -1775,3 +1779,15 @@ export const dummyRoleAdmin = [
     role: "Viewer",
   },
 ];
+export const dummyKerajaan = [
+  {
+    id_kerajaan: "KR-100B",
+    nama: "Kerajaan Sultan Agung",
+    era: "Kolonial",
+    lokasi: "Surabaya, Jalan Raya Rungkut Kidul no 35",
+    tanggal_berdiri: "20-02-1745",
+    jenis: "Kasunanan",
+    nama_raja: "Sri Susuhunan Pakubuwana XIII",
+    dokumentasi : [jd,jd,jd,jd,jd,]
+  }
+]
