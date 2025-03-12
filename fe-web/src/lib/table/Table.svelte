@@ -18,10 +18,11 @@
 				<th class="rounded-tl-xl px-2 py-3 text-left">No</th>
 				{#each table_header as header, i}
 					{#if typeof header === 'string'}
-						<th class="py-3 pe-2 text-left">{header}</th>
+						<th class={`py-3 pe-2 text-left ${header[2]}`}>{header}</th>
 					{:else}
-						<th class="py-3 pe-2 text-left" class:rounded-tr-xl={i === table_header.length - 1}
-							>{header[1]}</th
+						<th
+							class={`py-3 pe-2 text-left ${header[2]}`}
+							class:rounded-tr-xl={i === table_header.length - 1}>{header[1]}</th
 						>
 					{/if}
 				{/each}
