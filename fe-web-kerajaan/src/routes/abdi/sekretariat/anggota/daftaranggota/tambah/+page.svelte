@@ -184,8 +184,8 @@
 				</div>
 			</div>
 
-			<div class="flex gap-12">
-				<div class="mt-5 w-full">
+			<div class="flex gap-2">
+				<div class="mt-5 w-[50%]">
 					<p>Wongso:</p>
 					<div class="relative">
 						<input
@@ -197,7 +197,7 @@
 					</div>
 				</div>
 
-				<div class="mt-5 w-full">
+				<div class="mt-5 w-[50%]">
 					<p>Pekerjaan(Opsional):</p>
 					<div class="relative">
 						<input
@@ -212,7 +212,7 @@
 
 			<div class="mt-5">
 				<p>Agama(Opsional):</p>
-				<div class="relative">
+				<div class="relative lg:w-[50%] w-full">
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
