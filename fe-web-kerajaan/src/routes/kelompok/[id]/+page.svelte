@@ -29,10 +29,13 @@
 <section class="bg-gray-100 pb-10 pt-20">
 	<div class="mx-auto max-w-6xl px-4">
 		<div class="form-container">
-			<div class="relative flex w-full items-center justify-center pt-10 text-center">
+			<div class="flex justify-start p-2">
+				<!-- svelte-ignore a11y_consider_explicit_label -->
 				<a href="/kelompok">
-					<span class="solar--arrow-left-outline absolute left-8"></span>
+					<span class="solar--arrow-left-outline"></span>
 				</a>
+			</div>
+			<div class="relative flex w-full items-center justify-center pt-10 text-center">
 				<p class="text-xl font-semibold">{nama_kegiatan}</p>
 			</div>
 			<div class="grid grid-cols-1 gap-8 px-10 py-10 md:grid-cols-2">
