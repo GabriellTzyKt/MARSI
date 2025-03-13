@@ -49,7 +49,7 @@
 			class=" grid grid-cols-6 rounded-b-xl border-x border-b border-gray-500 bg-white pb-6"
 			transition:slide={{ duration: 150 }}
 		>
-			<div class="col-span-5 me-4 ms-4 mt-6 flex flex-col">
+			<div class="col-span-full me-4 ms-4 mt-6 flex flex-col md:col-span-5">
 				<div class="">
 					<p class="text-xl">Judul Page</p>
 				</div>
@@ -110,26 +110,30 @@
 			<div class="col-span-2 ms-4 mt-4 w-full">
 				<p class="text-lg">Logo Kerajaan:</p>
 			</div>
-			<div class="col-span-4 ms-2.5 mt-4 w-full">
+			<div class="col-span-4 ms-2.5 mt-4 hidden w-full md:flex">
 				<p class="text-lg">Nama Kerajaan:</p>
 			</div>
-			<div class="col-span-full ms-4 mt-4 grid grid-cols-6 grid-rows-5">
-				<div class="col-span-2 row-span-5 flex h-full w-full">
-					<img src={img} class="h-full w-auto" alt="" />
+			<div class="col-span-full ms-4 mt-4 grid grid-cols-1 md:grid-cols-6 md:grid-rows-5">
+				<div class="flex w-full items-center justify-center md:col-span-2 md:row-span-5">
+					<img src={img} class="w-54 h-auto" alt="" />
 				</div>
-				<div class="col-span-4 mt-4 flex">
+
+				<div class="mt-4 flex md:col-span-4 md:hidden">
+					<p class="text-lg">Nama Kerajaan:</p>
+				</div>
+				<div class="mt-4 flex md:col-span-4">
 					<p class="text-lg">Lokasi Kerajaan:</p>
 				</div>
-				<div class="col-span-4 mt-4 flex">
+				<div class="mt-4 flex md:col-span-4">
 					<p class="text-lg">Longitude:</p>
 				</div>
-				<div class="col-span-4 mt-4 flex">
+				<div class="mt-4 flex md:col-span-4">
 					<p class="text-lg">Latitude:</p>
 				</div>
-				<div class="col-span-4 mt-4 flex">
+				<div class="mt-4 flex md:col-span-4">
 					<p class="text-lg">URL Link:</p>
 				</div>
-				<div class="col-span-4 flex w-full pe-4">
+				<div class="flex w-full pe-4 md:col-span-4">
 					<input
 						type="text"
 						class=" w-full rounded-lg border border-gray-400 py-2 shadow-xl focus:border-gray-400 focus:outline-none focus:ring-0"
@@ -144,7 +148,7 @@
 </div>
 {#if open}
 	<DeleteModal
-	choose = "arsip"
+		choose="arsip"
 		bind:value={open}
 		text="Apaakah Anda Ingin Mengarsip Titik Kerajaan?"
 		successText="Berhasil diarsip!"

@@ -74,7 +74,7 @@
 		<div
 			class="absolute {items.length <= 3
 				? '-bottom-10'
-				: '-bottom-38'} z-9999 right-16 flex flex-col rounded-xl bg-white"
+				: '-bottom-38'} z-9999 right-32 flex flex-col rounded-xl bg-white md:right-16"
 		>
 			{#each items as i, p}
 				<div class="flex">

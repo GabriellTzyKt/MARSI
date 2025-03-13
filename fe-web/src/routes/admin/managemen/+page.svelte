@@ -7,7 +7,7 @@
 	let open = $state(false);
 </script>
 
-<div class="mx-6 flex w-full flex-col">
+<div class="flex w-full flex-col md:mx-6">
 	<div class="flex flex-col justify-center gap-4 md:flex-row md:justify-between md:gap-0">
 		<div class="flex justify-center">
 			<p class="text-2xl font-[550]">Role Administrasi</p>
