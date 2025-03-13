@@ -130,13 +130,13 @@
 			return 'Buku Tamu';
 		} else if (page.route.id === '/abdi/sekretariat/masterdata') {
 			return 'Master Data';
-		}  else if (page.route.id === '/abdi/sekretariat/situs/edit') {
+		} else if (page.route.id === '/abdi/sekretariat/situs/edit') {
 			return 'Edit Situs';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/edit') {
 			return 'Edit Organisasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/buat') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/buat') {
 			return 'Tambah Organisasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi') {
 			return 'Daftar Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/komunitas/daftarkomunitas/edit') {
 			return 'Edit Komunitas';
@@ -325,10 +325,10 @@
 					</SidebarMenu>
 					<SidebarMenu href="" icon="mdi:people" anchor="Organisasi" hasChildren={true}>
 						<SidebarMenu
-							href="/abdi/sekretariat/organisasi/daftarOrganisasi"
+							href="/abdi/sekretariat/organisasi/daftarorganisasi"
 							icon="mdi:book"
 							anchor="Daftar Organisasi"
-							active={page.route.id?.startsWith('/abdi/sekretariat/anggota/daftarOrganisasi')}
+							active={page.route.id?.startsWith('/abdi/sekretariat/anggota/daftarorganisasi')}
 						/>
 						<SidebarMenu
 							href="/abdi/sekretariat/organisasi/daftaranggota"
@@ -551,10 +551,10 @@
 				</SidebarMenu>
 				<SidebarMenu href="" icon="mdi:people" anchor="Organisasi" hasChildren={true}>
 					<SidebarMenu
-						href="/abdi/sekretariat/organisasi/daftarOrganisasi"
+						href="/abdi/sekretariat/organisasi/daftarorganisasi"
 						icon="mdi:book"
 						anchor="Daftar Organisasi"
-						active={page.route.id?.startsWith('/abdi/sekretariat/anggota/daftarOrganisasi')}
+						active={page.route.id?.startsWith('/abdi/sekretariat/anggota/daftarorganisasi')}
 					/>
 					<SidebarMenu
 						href="/abdi/sekretariat/organisasi/daftaranggota"

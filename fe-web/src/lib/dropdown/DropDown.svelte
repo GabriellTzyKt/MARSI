@@ -11,7 +11,16 @@
 	const dispatcher = createEventDispatcher();
 	let pop = $state(false);
 	// Unique ID for this dropdown
-	const { id, data, index, tipe, items, text, link, successText } = $props();
+	const {
+		id = null,
+		data = null,
+		index = '',
+		tipe = '',
+		items = null,
+		text = '',
+		link = '',
+		successText = ''
+	} = $props();
 	let isOpen = $state(false);
 	let temp = $state('');
 
