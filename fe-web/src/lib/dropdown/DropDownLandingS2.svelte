@@ -2,7 +2,7 @@
 	import { slide } from 'svelte/transition';
 	import img from '../../asset/profile/jdpp.jpg';
 
-	let { judulSection } = $props();
+	let { judulSection, name_header, name_deskripsi, name_checkbox } = $props();
 
 	let files: { name: string; url: string }[] = $state([]);
 
@@ -71,7 +71,7 @@
 					<input
 						type="text"
 						class="w-full rounded-lg border border-gray-400 py-2 pe-2 ps-2 shadow-xl focus:border-gray-400 focus:outline-none focus:ring-0"
-						name=""
+						name={name_header}
 						placeholder="John Doe"
 						id=""
 					/>
@@ -83,7 +83,7 @@
 				</div>
 				<div class="mt-1">
 					<textarea
-						name=""
+						name={name_deskripsi}
 						class="w-full rounded-lg border border-gray-400 p-2 shadow-xl focus:border-gray-400 focus:outline-none focus:ring-0"
 						id=""
 						placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur qui maxime eligendi veritatis ducimus hic harum magni ea, dignissimos accusamus inventore. Totam laborum repellendus incidunt quo nesciunt, aut accusamus asperiores."
@@ -171,7 +171,7 @@
 					</div>
 				</div>
 				<div class="mt-4 flex w-full items-center justify-start gap-2">
-					<input type="checkbox" name="" id="" />
+					<input type="checkbox" name={name_checkbox} id="" />
 					<p class="text-xl">Background Logo MARSI</p>
 				</div>
 			</div>
