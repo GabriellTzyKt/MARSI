@@ -454,8 +454,8 @@
 						</div>
 						{#if isExpand[index]}
 							<div class="border-t-2 border-black bg-white p-4">
-								<div class="flex w-full gap-8">
-									<img src={gambartemp} class="h-[25%] w-[25%]" alt="" />
+								<div class="flex lg:flex-row flex-col w-full gap-8">
+									<img src={gambartemp} class="lg:h-[25%] lg:w-[25%] h-[70%] w-[70%] self-center" alt="" />
 									<div class="w-full flex-col">
 										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
 											<p class="text-md px-2 py-2">

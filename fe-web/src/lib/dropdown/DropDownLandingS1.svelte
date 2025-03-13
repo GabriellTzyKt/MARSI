@@ -110,12 +110,15 @@
 			<div class="col-span-2 ms-4 mt-4 w-full">
 				<p class="text-lg">Logo Kerajaan:</p>
 			</div>
-			<div class="col-span-4 ms-2.5 mt-4 w-full">
+			<!-- <div class="col-span-4 ms-2.5 mt-4 w-full">
 				<p class="text-lg">Nama Kerajaan:</p>
-			</div>
-			<div class="col-span-full ms-4 mt-4 grid grid-cols-6 grid-rows-5">
+			</div> -->
+			<div class="col-span-full ms-4 mt-4 grid grid-cols-1 lg:grid-cols-6 grid-rows-5">
 				<div class="col-span-2 row-span-5 flex h-full w-full">
 					<img src={img} class="h-full w-auto" alt="" />
+				</div>
+				<div class="col-span-4 mt-4 flex">
+					<p class="text-lg">Nama Kerajaan:</p>
 				</div>
 				<div class="col-span-4 mt-4 flex">
 					<p class="text-lg">Lokasi Kerajaan:</p>

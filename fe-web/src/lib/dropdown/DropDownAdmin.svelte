@@ -31,7 +31,7 @@
 	class="flex w-full max-w-[800px] flex-col place-self-start rounded-lg border border-[#76768033] bg-white shadow-2xl"
 >
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<div class="mx-2 flex cursor-pointer justify-between gap-3 p-4" onclick={() => toggle()}>
+	<div class="mx-2 flex lg:flex-row flex-col cursor-pointer justify-between gap-3 p-4" onclick={() => toggle()}>
 		<div class="flex items-center">
 			<img src={jd} class="h-auto max-w-[55px] rounded-full" alt="" />
 		</div>
