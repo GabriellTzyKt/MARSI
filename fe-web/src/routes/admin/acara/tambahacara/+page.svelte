@@ -1,16 +1,46 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
+	import { scaleUtc } from 'd3';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
+	let { form } = $props();
+	let sucess = $state(false);
+	let errors = $state(form?.errors);
+	console.log(errors);
+	const date = new Date();
+	$inspect(date);
+	function parseDate(d: Date) {
+		const day = String(d.getDate()).padStart(2, '0');
+		const month = String(d.getMonth()).padStart(2, '0');
+		const year = String(d.getFullYear());
+		return `${year}-${month}-${day}`;
+	}
+	let timer: Number;
+	onMount(() => {
+		if (form?.success) {
+			sucess = true;
+			if (timer) {
+				clearTimeout(timer);
+			}
+			if (sucess)
+				timer = setTimeout(() => {
+					sucess = false;
+					goto('/admin/acara');
+				}, 3000);
+		}
+	});
 	let nama = $state('');
-	let tanggal_acara = $state('');
+	// format yyyy-mm-dd
+	let tanggal_acara = $state(parseDate(date));
+
 	let lokasi_acara = $state('');
 	let nama_kerajaan = $state('');
 	let jenis_acara = $state('');
 	let kapasitas = $state('');
 	let penanggungjawab = ['Kerajaan Kraton', 'Kerajaan Betawi', 'Kerajaan Sunda'];
 
-	let sucess = $state(false);
 	const toggle = () => {
 		if (sucess) {
 			sucess = false;
@@ -24,42 +54,60 @@
 	<a href="/admin/acara"><button class="custom-button bg-customRed">⭠ Kembali</button></a>
 	<p class="ml-5 mt-6 text-3xl font-bold underline">Tambah Acara</p>
 	<div class="form-container flex flex-col">
-		<form>
+		<form action="?/submit" method="post">
 			<div class="input-group flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Nama Acara</label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"
+					name="nama_acara"
 					id="nama"
 					bind:value={nama}
 					placeholder="Upacara bendera"
 				/>
+				{#if errors}
+					{#each errors.namaAcara as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+				{/if}
 			</div>
 			<div class="input-group mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nomor_telepon">Tanggal Acara</label>
 				<input
 					class="input-field rounded-lg border p-2"
-					type="text"
+					type="date"
+					name="tanggal"
 					id="nomor_telepon"
 					bind:value={tanggal_acara}
-					placeholder="22-12-2025"
 				/>
+				{#if errors}
+					{#each errors.tanggal as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+				{/if}
 			</div>
 			<div class="input-group mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Lokasi Acara</label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"
+					name="lokasi_acara"
 					id="nomor_telepon"
 					bind:value={lokasi_acara}
 					placeholder="Surabaya"
 				/>
+				{#if errors}
+					{#each errors.lokasi as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+				{/if}
 			</div>
 			<div class="input-group mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Penanggung Jawab</label>
 				<select
 					class="input-field rounded-lg border p-2"
 					id="nama"
+					name="penanggungjawab"
 					bind:value={penanggungjawab[0]}
 					placeholder="azaza@gmail.com"
 				>
@@ -67,16 +115,27 @@
 						<option value={p}>{p}</option>
 					{/each}
 				</select>
+				{#if errors}
+					{#each errors.penanggungjawab as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+				{/if}
 			</div>
 			<div class="input-group mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Jenis Acara</label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"
+					name="jenis_acara"
 					id="nama"
 					bind:value={jenis_acara}
 					placeholder="Upacara Adat"
 				/>
+				{#if errors}
+					{#each errors.jenisAcara as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+				{/if}
 			</div>
 			<div class="input-group mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Kapasitas</label>
@@ -84,10 +143,16 @@
 					class="input-field rounded-lg border p-2"
 					type="number"
 					id="nama"
+					name="kapasitas"
 					bind:value={kapasitas}
 					placeholder="10000"
 				/>
-				<button class="custom-button bg-customYellow w-40 self-end text-right" onclick={toggle}>
+				{#if errors}
+					{#each errors.kapasitas as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+				{/if}
+				<button type="submit" class="custom-button bg-customYellow w-40 self-end text-right">
 					Tambah
 				</button>
 			</div>
