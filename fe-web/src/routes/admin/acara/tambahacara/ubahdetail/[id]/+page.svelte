@@ -16,7 +16,7 @@
 		return `${year}-${month}-${day}`;
 	}
 	const errors = $state(form?.errors);
-	console.log(errors);
+
 	let timer: Number;
 	onMount(() => {
 		if (form?.success) {
@@ -38,6 +38,7 @@
 	let penanggungjawab = $state(acara.penanggungjawab);
 	let jenis_acara = $state(acara.jenis_acara);
 	let kapasitas = $state(acara.kapasitas);
+
 	let pdummy = $state([
 		acara.penanggungjawab,
 		'Kerjaaan Mataram',

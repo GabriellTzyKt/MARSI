@@ -4,7 +4,30 @@
 	import ModalAdmin from '$lib/popup/ModalAdmin.svelte';
 	import { text } from 'd3';
 	import jd from '../../../asset/profile/jdpp.jpg';
+	import { onMount } from 'svelte';
+	import SModal from '$lib/popup/SModal.svelte';
+	let { form } = $props();
 	let open = $state(false);
+	let valo = $state(false);
+	let error = $state();
+	let timer: number;
+	let data = $state();
+	onMount(() => {
+		if (form?.errors) {
+			error = form.errors;
+			data = form.formData;
+		}
+		if (form?.success) {
+			open = false;
+			valo = true;
+			timer = setTimeout(() => {
+				valo = false;
+			}, 3000);
+		} else {
+			open = true;
+			valo = false;
+		}
+	});
 </script>
 
 <div class="flex w-full flex-col md:mx-6">
@@ -105,5 +128,11 @@
 	</div>
 </div>
 {#if open}
-	<ModalAdmin textM="Tambah" bind:value={open}></ModalAdmin>
+	<form action="?/tambah" method="post">
+		<ModalAdmin textM="Tambah" bind:value={open} bind:open={valo} errors={error} {data}
+		></ModalAdmin>
+	</form>
+{/if}
+{#if valo}
+	<SModal text="Admin Berhasil Ditambah"></SModal>
 {/if}

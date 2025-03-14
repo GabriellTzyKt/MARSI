@@ -2,18 +2,18 @@
 	import { fade } from 'svelte/transition';
 	import xbutton from '../../asset/icons/xbutton.png';
 	import SModal from './SModal.svelte';
-	let { value = $bindable(), textM } = $props();
-	let open = $state(false);
+	let { value = $bindable(), textM, open = $bindable(), errors = null, data = null } = $props();
+
 	let timer: number;
-	function setTimer() {
-		open = true;
-		if (timer) {
-			clearTimeout(timer);
-		}
+
+	if (open) {
 		timer = setTimeout(() => {
 			value = false;
 			open = false;
 		}, 3000);
+		clearTimeout(timer);
+	}
+	if (data) {
 	}
 </script>
 
@@ -52,10 +52,16 @@
 					<input
 						type="text"
 						class="w-full rounded-lg border border-gray-300 focus:outline-none"
-						name=""
+						name="nama_lengkap"
 						placeholder="Jane Doe"
 						id=""
+						value={data ? data.nama_lengkap : ''}
 					/>
+					{#if errors}
+						{#each errors.nama_lengkap as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
 				</div>
 			</div>
 			<!-- Email -->
@@ -67,10 +73,16 @@
 					<input
 						type="email"
 						class="w-full rounded-lg border border-gray-300 focus:outline-none"
-						name=""
+						name="email"
 						placeholder="....@gmail.com"
 						id=""
+						value={data ? data.email : ''}
 					/>
+					{#if errors}
+						{#each errors.email as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
 				</div>
 			</div>
 			<!-- No Telp -->
@@ -82,11 +94,17 @@
 					<input
 						type="phone"
 						class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none"
-						name=""
+						name="no_telp"
 						placeholder="xxxxxxxxxxxxxxxxxxx"
 						id=""
+						value={data ? data.no_telp : ''}
 					/>
 				</div>
+				{#if errors}
+					{#each errors.no_telp as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+				{/if}
 			</div>
 			<!-- Tanggal Lahir -->
 			<div class="flex flex-col md:col-span-2">
@@ -97,11 +115,17 @@
 					<input
 						type="date"
 						class="w-full rounded-lg border border-gray-300 text-gray-500 focus:outline-none"
-						name=""
+						name="tgl_lahir"
 						placeholder="Jane Doe"
 						id=""
+						value={data ? data.tgl_lahir : ''}
 					/>
 				</div>
+				{#if errors}
+					{#each errors.tgl_lahir as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+				{/if}
 			</div>
 			<!-- kota Kelahiran -->
 			<div class="flex flex-col md:col-span-4">
@@ -112,10 +136,16 @@
 					<input
 						type="text"
 						class="sha w-full rounded-lg border border-gray-300 text-gray-500 focus:outline-none"
-						name=""
+						name="kota_lahir"
 						placeholder="Surabaya"
 						id=""
+						value={data ? data.kota_lahir : ''}
 					/>
+					{#if errors}
+						{#each errors.kota_lahir as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
 				</div>
 			</div>
 			<!-- Afiliasi -->
@@ -127,27 +157,19 @@
 					<input
 						type="text"
 						class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none"
-						name=""
+						name="afiliasi"
 						placeholder="MARSI"
 						id=""
+						value={data ? data.afiliasi : ''}
 					/>
+					{#if errors}
+						{#each errors.afiliasi as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
 				</div>
 			</div>
-			<!-- Afiliasi -->
-			<div class="flex flex-col md:col-span-full">
-				<div class="">
-					<p>Afiliasi</p>
-				</div>
-				<div>
-					<input
-						type="text"
-						class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none"
-						name=""
-						placeholder="MARSI"
-						id=""
-					/>
-				</div>
-			</div>
+
 			<!-- Role Admin -->
 			<div class="flex flex-col md:col-span-full">
 				<div class="">
@@ -155,31 +177,30 @@
 				</div>
 				<div>
 					<select
-						name="Super Admin"
+						name="admin_role"
 						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-500 focus:outline-none"
 						id=""
 					>
-						<option value="MARSI">Super Admin</option>
-						<option value="Kerajaan">Admin Kerajaan</option>
+						<option value="super_admin">Super Admin</option>
+						<option value="admin_kerajaan">Admin Kerajaan</option>
 					</select>
+					{#if errors}
+						{#each errors.admin_role as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
 				</div>
 			</div>
 			<div class="flex w-full md:col-span-full md:justify-end">
 				<div class="mb-4 w-full md:w-auto">
-					<button
-						class="w-full rounded-md bg-[#C1A411] px-8 py-2 text-white"
-						onclick={() => {
-							setTimer();
-						}}>{textM} Data</button
+					<button class="w-full rounded-md bg-[#C1A411] px-8 py-2 text-white" type="submit"
+						>{textM} Data</button
 					>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-{#if open}
-	<SModal text={textM === 'Ubah' ? 'Admin Berhasil Diubah!' : 'Admin Berhasil Ditambah!'}></SModal>
-{/if}
 
 <style>
 	input,

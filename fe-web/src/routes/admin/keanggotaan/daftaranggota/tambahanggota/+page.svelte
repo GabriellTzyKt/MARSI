@@ -1,7 +1,23 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-
+	let { form } = $props();
+	let success = $state(false);
+	let timer: Number;
+	onMount(() => {
+		if (form?.success) {
+			success = true;
+			if (timer) {
+				clearTimeout(timer);
+			}
+			timer = setTimeout(() => {
+				success = false;
+				goto('/admin/keanggotaan/daftaranggota');
+			}, 3000);
+		}
+	});
 	let nama = $state('');
 	let nomortelp = $state('');
 	let email = $state('');
@@ -9,8 +25,14 @@
 	let jenis_kerajaan = $state('');
 	let gelar = $state('');
 
-	let success = $state(false);
-
+	if (form?.formData) {
+		nama = form.formData.nama_anggota;
+		nomortelp = form.formData.no_telp;
+		email = form.formData.email;
+		jenis_kerajaan = form.formData.jenis_kerajaan;
+		nama_kerajaan = form.formData.nama_kerajaan;
+		gelar = form.formData.gelar;
+	}
 	let toggle = () => {
 		if (!success) {
 			success = true;
@@ -27,26 +49,38 @@
 	</div>
 
 	<div class="form-container flex flex-col">
-		<form>
+		<form method="post" action="?/tambah">
 			<div class="input-group flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Nama Anggota</label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"
 					id="nama"
+					name="nama_anggota"
 					bind:value={nama}
 					placeholder="John Doe"
 				/>
+				{#if form?.errors}
+					{#each form.errors.nama_anggota as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+				{/if}
 			</div>
 			<div class="input-group mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nomor_telepon">Nomor Telepon</label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"
+					name="no_telp"
 					id="nomor_telepon"
 					bind:value={nomortelp}
 					placeholder="911"
 				/>
+				{#if form?.errors}
+					{#each form.errors.no_telp as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+				{/if}
 			</div>
 			<div class="input-group mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Email</label>
@@ -54,9 +88,15 @@
 					class="input-field rounded-lg border p-2"
 					type="text"
 					id="nama"
+					name="email"
 					bind:value={email}
 					placeholder="azaza@gmail.com"
 				/>
+				{#if form?.errors}
+					{#each form.errors.email as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+				{/if}
 			</div>
 			<div class="input-group mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Jenis Kerajaan</label>
@@ -64,9 +104,15 @@
 					class="input-field rounded-lg border p-2"
 					type="text"
 					id="nama"
+					name="jenis_kerajaan"
 					bind:value={jenis_kerajaan}
 					placeholder="Kerajaan A"
 				/>
+				{#if form?.errors}
+					{#each form.errors.jenis_kerajaan as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+				{/if}
 			</div>
 			<div class="input-group mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Nama Kerajaan</label>
@@ -74,9 +120,15 @@
 					class="input-field rounded-lg border p-2"
 					type="text"
 					id="nama"
+					name="nama_kerajaan"
 					bind:value={nama_kerajaan}
 					placeholder="Kerajaan A"
 				/>
+				{#if form?.errors}
+					{#each form.errors.nama_kerajaan as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+				{/if}
 			</div>
 			<div class="input-group mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Gelar</label>
@@ -84,10 +136,16 @@
 					class="input-field rounded-lg border p-2"
 					type="text"
 					id="nama"
+					name="gelar"
 					bind:value={gelar}
 					placeholder="Radja"
 				/>
-				<button class="custom-button bg-customYellow w-40 self-end text-right" onclick={toggle}>
+				{#if form?.errors}
+					{#each form.errors.gelar as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+				{/if}
+				<button class="custom-button bg-customYellow w-40 self-end text-right" type="submit">
 					Tambah
 				</button>
 			</div>
@@ -131,7 +189,7 @@
 		padding: 20px;
 		border-radius: 10px;
 		width: auto;
-		height: 600px;
+		height: auto;
 		text-align: center;
 	}
 

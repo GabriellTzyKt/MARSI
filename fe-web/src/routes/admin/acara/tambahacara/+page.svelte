@@ -39,6 +39,14 @@
 	let nama_kerajaan = $state('');
 	let jenis_acara = $state('');
 	let kapasitas = $state('');
+
+	if (form?.FormData) {
+		nama = form.FormData.namaAcara;
+		tanggal_acara = form.FormData.tanggal;
+		lokasi_acara = form.FormData.lokasi;
+		jenis_acara = form.FormData.jenisAcara;
+		kapasitas = form.FormData.kapasitas;
+	}
 	let penanggungjawab = ['Kerajaan Kraton', 'Kerajaan Betawi', 'Kerajaan Sunda'];
 
 	const toggle = () => {
@@ -196,7 +204,7 @@
 		padding: 20px;
 		border-radius: 10px;
 		width: auto;
-		height: 600px;
+		height: auto;
 		text-align: center;
 	}
 

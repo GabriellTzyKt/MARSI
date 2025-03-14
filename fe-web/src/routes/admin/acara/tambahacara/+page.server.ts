@@ -4,7 +4,14 @@ import { z } from "zod";
 export const actions: Actions = {
     submit: async ({request}) => {
         const data = await request.formData()
-        console.log(data)
+        let form = {
+            namaAcara: "",
+            tanggal: "",
+            lokasi: "",
+            penanggungjawab: "",
+            jenisAcara: "",
+            kapasitas: null
+        }
         const ver = z.object({
             namaAcara:
                 z.string({ message: "namaUpacara Harus berupa String" })
@@ -26,7 +33,8 @@ export const actions: Actions = {
                     .max(255, { message: "Mencapai Batas maximum kata (255)" }),
             kapasitas:
                 z.number({ message: "Tolong masukkan Input berupa angka" })
-                    .min(1, { message: "Minimal ada 1 orang kapasitas" }),
+                    .min(1, { message: "Minimal ada 1 orang kapasitas" })
+                    .nonnegative({ message: "Tidak Boleh negatif" }),
             
             
         })
@@ -36,6 +44,14 @@ export const actions: Actions = {
         const penanggungjawab = data.get("penanggungjawab")
         const jenis_acara = data.get("jenis_acara")
         const kapasitas = Number(data.get("kapasitas"))
+        form = {
+            namaAcara: nama_acara,
+            tanggal: tanggal,
+            lokasi: lokasi_acara,
+            penanggungjawab: penanggungjawab,
+            jenisAcara: jenis_acara,
+            kapasitas: kapasitas
+        }
         const validation =  ver.safeParse({
             namaAcara: nama_acara,
             tanggal: tanggal,
@@ -45,9 +61,9 @@ export const actions: Actions = {
             kapasitas: kapasitas
         })
         if (!validation.success) {
-            return { errors: validation.error.flatten().fieldErrors, success: false}
+            return { errors: validation.error.flatten().fieldErrors, success: false, FormData: form}
         }
-        return {errors: "Success", success: true}
+        return {errors: "Success", success: true,  FormData: form}
   } 
 };
 

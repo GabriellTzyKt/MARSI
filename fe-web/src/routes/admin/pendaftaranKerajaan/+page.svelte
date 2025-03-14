@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyKerajaan } from '$lib/dummy';
 	import Table from '$lib/table/Table.svelte';
@@ -9,7 +10,10 @@
 		class="flex flex-col items-center justify-center gap-3 xl:flex-row xl:justify-between xl:gap-0"
 	>
 		<div class="flex">
-			<button class="font[600] rounded-md bg-[#F9D48B] px-6 py-2 shadow-lg">+Tambah Data</button>
+			<button
+				class="font[600] rounded-md bg-[#F9D48B] px-3 py-2 shadow-lg"
+				onclick={() => goto('pendaftaranKerajaan/tambah')}>+Tambah Data</button
+			>
 		</div>
 		<div
 			class="grid grid-cols-1 items-center justify-center gap-4 lg:grid-cols-2 xl:items-start xl:justify-start 2xl:grid-cols-4"
