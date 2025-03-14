@@ -181,7 +181,7 @@
 			placeholder="John Doe"
 		/>
 
-		<div class="flex flex-grow gap-4">
+		<div class="flex lg:flex-row flex-col flex-grow gap-4">
 			<div class="relative w-full flex-col">
 				<label class="text-md mt-5 self-start text-left" for="nama">Lokasi</label>
 				<input
@@ -193,7 +193,7 @@
 					placeholder="Cari lokasi..."
 				/>
 			
-				{#if $showDropdown}
+				{#if $showDropdown && lokasi !== ""}
 					<ul class="dropdown">
 						{#each $results as name}
 							<li onclick={() => selectLocation(name)}>{name}</li>
@@ -418,7 +418,7 @@
 
 		<div class="w-full">
 			<p class="mt-8 text-center text-2xl font-bold">History Raja</p>
-			<div class="flex items-center justify-end gap-2">
+			<div class="flex items-center justify-between mt-2 lg:justify-end gap-2">
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 				<p class="flex cursor-pointer items-center" onclick={toggleSort}>

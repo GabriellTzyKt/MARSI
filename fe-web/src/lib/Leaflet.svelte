@@ -58,15 +58,6 @@
 	setContext('map', {
 		getMap: () => map
 	});
-
-	// reactive statement, jadi stiap ada perubahan map,bound,zoom atau view dia akan berubah
-	// $: if (map) {
-	// 	if (bounds) {
-	// 		map.fitBounds(bounds);
-	// 	} else if (view && zoom) {
-	// 		map.setView(view, zoom);
-	// 	}
-	// }
 </script>
 
 <div class="h-full w-full" bind:this={mapElement}>

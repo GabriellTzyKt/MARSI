@@ -50,7 +50,7 @@
 							/></svg
 						>
 
-						<Popup {text} {location} link="https://example.com" image={gambar} />
+						<Popup {text} {location} link="" image={gambar} />
 					</Marker>
 				{/each}
 			</Leaflet>

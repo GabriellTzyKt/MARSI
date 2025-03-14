@@ -13,7 +13,7 @@
 		if (open)
 			timer = setTimeout(() => {
 				open = false;
-				goto('/abdi/sekretariat/organisasi/daftarorganisasi');
+				goto('/abdi/sekretariat/organisasi/daftarOrganisasi');
 			}, 3000);
 	}
 </script>
