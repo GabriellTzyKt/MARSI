@@ -11,6 +11,14 @@ export const load: PageServerLoad = async ({params}) => {
 export const actions: Actions = {
     submit: async ({request}) => {
         const data = await request.formData()
+        let form = {
+            namaAcara: "",
+            tanggal: "",
+            lokasi: "",
+            penanggungjawab: "",
+            jenisAcara: "",
+            kapasitas: null
+        }
         const ver = z.object({
             namaAcara:
                 z.string({ message: "nama Acara Harus berupa String" })
@@ -42,17 +50,22 @@ export const actions: Actions = {
         const penanggungjawab = data.get("penanggungjawab")
         const jenis_acara = data.get("jenis_acara")
         const kapasitas = Number(data.get("kapasitas"))
-        const validation =  ver.safeParse({
+
+        form = {
             namaAcara: nama_acara,
             tanggal: tanggal,
             lokasi: lokasi_acara,
             penanggungjawab: penanggungjawab,
             jenisAcara: jenis_acara,
             kapasitas: kapasitas
+            
+        }
+        const validation =  ver.safeParse({
+            ...form
         })
         if (!validation.success) {
-            return { errors: validation.error.flatten().fieldErrors, success: false}
+            return { errors: validation.error.flatten().fieldErrors, success: false, FormData: form}
         }
-        return {errors: "Success", success: true}
+        return {errors: "Success", success: true,  FormData: form}
     }
 };
