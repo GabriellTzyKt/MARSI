@@ -50,10 +50,10 @@
 	};
 </script>
 
-<div class="test flex w-full flex-col">
+<div class="test flex w-full h-fit flex-col">
 	<a href="/admin/acara"><button class="custom-button bg-customRed">⭠ Kembali</button></a>
 	<p class="ml-5 mt-6 text-3xl font-bold underline">Tambah Acara</p>
-	<div class="form-container flex flex-col">
+	<div class="form-container h-fit flex flex-col">
 		<form action="?/submit" method="post">
 			<div class="input-group flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Nama Acara</label>
@@ -196,7 +196,7 @@
 		padding: 20px;
 		border-radius: 10px;
 		width: auto;
-		height: 600px;
+		height: auto;
 		text-align: center;
 	}
 

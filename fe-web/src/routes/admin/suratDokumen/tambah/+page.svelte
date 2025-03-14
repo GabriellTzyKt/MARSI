@@ -1,12 +1,48 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	let nama = $state('');
+	let jenisDokumen = $state(' ');
+	let asalKerajaan = $state(' ');
+	let kategori = $state(' ');
 
 	let success = $state(false);
 	let uploadedFiles: File[] = [];
 	let uploadedFileUrls: string[] = $state([]);
+	let timer: Number;
+
+	onMount(() => {
+		if (form?.success) {
+			success = true;
+			if (timer) {
+				clearTimeout(timer);
+			}
+			if (success)
+				timer = setTimeout(() => {
+					success = false;
+					goto('/admin/suratDokumen');
+				}, 3000);
+		} else {
+			if (form?.values) {
+				nama = String(form?.values?.namaDokumen);
+				jenisDokumen = String(form?.values?.jenisDokumen);
+				asalKerajaan = String(form?.values?.asalKerajaan);
+				kategori = String(form?.values?.kategori);
+				// uploadedFileUrls = form?.values?.urlfoto
+				// 	? Array.isArray(form.values.urlfoto)
+				// 		? form.values.urlfoto.map(String)
+				// 		: [String(form.values.urlfoto)]
+				// 	: [];
+			}
+		}
+	});
+
+	let { form } = $props();
+	console.log('dataform : ', form?.values);
 
 	let toggle = () => {
 		if (!success) {
@@ -35,56 +71,81 @@
 
 <div class="test flex w-full flex-col">
 	<div class="flex flex-row">
-		<a href="/admin/suratDokumen"
-			><button class="custom-button bg-customRed">⭠ Kembali</button></a
-		>
+		<a href="/admin/suratDokumen"><button class="custom-button bg-customRed">⭠ Kembali</button></a>
 		<p class="ml-5 mt-6 text-3xl font-bold underline">Tambah Dokumen</p>
 	</div>
 
 	<div class="form-container flex flex-col">
-		<form>
+		<form method="post" action="?/submit" enctype="multipart/form-data">
 			<div class="flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Nama Dokumen</label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"
 					id="nama"
+					name="nama"
 					bind:value={nama}
 					placeholder="John Doe"
 				/>
+				{#if form?.errors}
+					{#each form.errors.namaDokumen as error1}
+						<p class="text-left text-red-500">{error1}</p>
+					{/each}
+				{/if}
 			</div>
 
 			<div class="mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nomor_telepon">Asal Kerajaan</label>
 				<select
+					bind:value={asalKerajaan}
+					name="asalKerajaan"
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
-					<option value=" " selected disabled>None</option>
+					<option value=" " disabled>None</option>
 					<option value="kerajaanA">Kerajaan A </option>
 					<option value="kerajaanB">Kerajaan B</option>
 				</select>
+				{#if form?.errors}
+					{#each form.errors.asalKerajaan as error2}
+						<p class="text-left text-red-500">{error2}</p>
+					{/each}
+				{/if}
 			</div>
 
 			<div class="mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nomor_telepon">Jenis Dokumen</label>
 				<select
+					bind:value={jenisDokumen}
+					name="jenisDokumen"
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
-					<option value=" " selected disabled>None</option>
+					<option value=" " disabled>None</option>
 					<option value="dokumenA">Dokumen A </option>
 					<option value="dokumenB">Dokumen B</option>
 				</select>
+				{#if form?.errors}
+					{#each form.errors.jenisDokumen as error3}
+						<p class="text-left text-red-500">{error3}</p>
+					{/each}
+				{/if}
 			</div>
 
 			<div class=" mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nomor_telepon">Kategori</label>
 				<select
+					bind:value={kategori}
+					name="kategori"
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
-					<option value=" " selected disabled>None</option>
+					<option value=" " disabled>None</option>
 					<option value="kategoriA">Kategori A </option>
 					<option value="kategoriB">Kategori B</option>
 				</select>
+				{#if form?.errors}
+					{#each form.errors.kategori as error4}
+						<p class="text-left text-red-500">{error4}</p>
+					{/each}
+				{/if}
 			</div>
 
 			<div class="mt-2 flex w-full flex-col gap-1">
@@ -98,6 +159,7 @@
 								type="file"
 								id="fileInput"
 								class="hidden"
+								name="uploadfile"
 								onchange={handleFileChange}
 								multiple
 								accept="image/*"
@@ -123,24 +185,25 @@
 						{/each}
 					</div>
 				</div>
+				{#if form?.errors}
+					{#each form.errors.urlfoto as error5}
+						<p class="text-left text-red-500">{error5}</p>
+					{/each}
+				{/if}
 			</div>
 
-			<div class="w-full justify-end flex">
-				<button class="bg-customGold mt-2 rounded-lg border px-6 py-2 text-white">
+			<div class="flex w-full justify-end">
+				<button class="bg-customGold mt-2 rounded-lg border px-6 py-2 text-white" type="submit">
 					Tambah
 				</button>
 			</div>
-
 		</form>
 	</div>
 </div>
 
 {#if success}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
-		<SucessModal
-			open={success}
-			text="Anggota Berhasil Ditambahkan"
-			to="/admin/keanggotaan/daftaranggota"
+		<SucessModal open={success} text="Dokumen berhasil ditambahkan!" to="/admin/suratDokumen"
 		></SucessModal>
 	</div>
 {/if}
