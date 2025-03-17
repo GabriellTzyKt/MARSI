@@ -6,8 +6,10 @@
 	import ModalAdmin from '$lib/popup/ModalAdmin.svelte';
 	let open = $state(false);
 	let value = $state(false);
-	let edit = $state(false);
+	// let edit = $state(false);
 	let isAktif = $state(true);
+	let valo = $state(false);
+	let { data = null, edit = $bindable(), error = null } = $props();
 
 	function isAktiforNon(event: Event) {
 		event.stopPropagation();
@@ -149,12 +151,14 @@
 	></DeleteModal>
 {/if}
 {#if edit}
-	<ModalAdmin textM="Ubah" bind:value={edit}></ModalAdmin>
+	<form action="?/ubah" method="POST">
+		<ModalAdmin textM="Ubah" bind:value={edit} bind:open={valo} errors={error} {data}></ModalAdmin>
+	</form>
 {/if}
 
 <style>
 	.aktif {
-		background-color: #22c55e; 
+		background-color: #22c55e;
 	}
 
 	.non-aktif {

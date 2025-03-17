@@ -9,6 +9,7 @@
 	let { form } = $props();
 	let open = $state(false);
 	let valo = $state(false);
+	let edit = $state(false);
 	let error = $state();
 	let timer: number;
 	let data = $state();
@@ -16,16 +17,26 @@
 		if (form?.errors) {
 			error = form.errors;
 			data = form.formData;
-		}
-		if (form?.success) {
-			open = false;
+			if (form.type === 'add') {
+				open = true;
+			} else {
+				edit = true;
+			}
+			valo = false;
+		} else if (form?.success) {
+			if (form.type === 'add') {
+				open = false;
+			} else {
+				edit = false;
+			}
 			valo = true;
 			timer = setTimeout(() => {
 				valo = false;
 			}, 3000);
 		} else {
-			open = true;
+			open = false;
 			valo = false;
+			edit = false;
 		}
 	});
 </script>
@@ -51,7 +62,9 @@
 	</div>
 	<div class="grid w-full auto-rows-min grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
 		<!-- container -->
-		<DropDownAdmin></DropDownAdmin>
+
+		<DropDownAdmin bind:edit {error} {data}></DropDownAdmin>
+
 		<DropDownAdmin></DropDownAdmin>
 		<DropDownAdmin></DropDownAdmin>
 		<DropDownAdmin></DropDownAdmin>
