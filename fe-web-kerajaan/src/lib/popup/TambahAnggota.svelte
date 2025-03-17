@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { flip } from 'svelte/animate';
-	import xbutton from '../asset/icon/xbutton.png'
+	import xbutton from '../asset/icon/xbutton.png';
 
 	let { value = $bindable(), open = $bindable(), errors = null, data = null } = $props();
 </script>
@@ -64,7 +64,7 @@
 				></textarea>
 			</div>
 			{#if errors}
-				{#each errors.deskripsitugas as a}
+				{#each errors.deskripsi as a}
 					<p class="text-left text-red-500">{a}</p>
 				{/each}
 			{/if}
