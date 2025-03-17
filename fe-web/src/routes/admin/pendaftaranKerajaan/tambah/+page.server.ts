@@ -8,25 +8,29 @@ export const actions: Actions = {
 
         console.log(formData)
 
-        const userName = formData.get('username');
-        const password = formData.get('password');
+        const namaKerajaan = formData.get('nama');
+        const provinsi = formData.get('provinsi')
 
-        try {
-            const result = await fetch(env.BASE_URL + "/login", {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: userName,
-                    password: password,
-                    expiresInMins: 30
-                }),
-            });
+        console.log("nama kerajaan" , namaKerajaan)
+        console.log("provinsi" , provinsi)
+    //     const password = formData.get('password');
 
-            const resultJSON = await result.json();
-        }
-        catch (error) {
-            if (error instanceof Error) console.error(error.message);
+    //     try {
+    //         const result = await fetch(env.BASE_URL + "/login", {
+    //             method: 'POST',
+    //             headers: { 'Content-Type': 'application/json' },
+    //             body: JSON.stringify({
+    //                 username: userName,
+    //                 password: password,
+    //                 expiresInMins: 30
+    //             }),
+    //         });
 
-        }
+    //         const resultJSON = await result.json();
+    //     }
+    //     catch (error) {
+    //         if (error instanceof Error) console.error(error.message);
+
+    //     }
     }
 }

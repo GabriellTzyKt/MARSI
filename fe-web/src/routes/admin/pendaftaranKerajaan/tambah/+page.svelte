@@ -90,6 +90,7 @@
 				class="input-field rounded-lg border p-2 pr-8"
 				type="text"
 				id="nama"
+				name="nama"
 				bind:value={nama}
 				placeholder="John Doe"
 			/>
@@ -98,7 +99,7 @@
 				<div class="w-full flex-col lg:w-2/4">
 					<label class="text-md self-start text-left" for="provinsi">Provnsi Kerajaan</label>
 					<select
-						bind:value={provinsi}
+						bind:value={provinsi} name="provinsi"
 						id="provinsi" class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 					>
 						<option value="" selected disabled>Pilih Provinsi</option>
@@ -145,6 +146,7 @@
 					<input
 						class="input-field w-full rounded-lg border p-2"
 						type="date"
+						name="tanggalberdiri"
 						id="tanggalberdiri"
 						bind:value={tanggal}
 						placeholder="John Doe"
@@ -178,7 +180,7 @@
 				<div class="w-full flex-col lg:w-2/4">
 					<label class="text-md self-start text-left" for="jenis">Jenis Kerajaan</label>
 					<select
-						bind:value={jenis_kerajaan} id="jenis"
+						bind:value={jenis_kerajaan} id="jenis" name="jenis"
 						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 					>
 						<option value="" selected disabled>Pilih Jenis Kerajaan</option>
@@ -187,12 +189,13 @@
 				</div>
 
 				<div class="w-full flex-col">
-					<label class="text-md mt-5 self-start text-left" for="nama"> Nama Raja Sekarang </label>
+					<label class="text-md mt-5 self-start text-left" for="namaRaja"> Nama Raja Sekarang </label>
 					<div class="relative flex">
 						<input
 							class="input-field w-full rounded-lg border p-2 pr-8"
 							type="search"
-							id="nama"
+							id="namaRaja"
+							name="namaRaja"
 							bind:value={nama_raja}
 							placeholder="John Doe"
 						/>
@@ -203,6 +206,7 @@
 			<label class="text-md self-start text-left" for="deskripsi">Deskripsi Kerajaan : </label>
 			<textarea
 				bind:value={deskripsi}
+				name="deskripsi"
 				class="input-field h-[100px] rounded-lg border p-2 pr-8"
 				id="deskripsi"
 				placeholder="John Doe"
@@ -220,6 +224,7 @@
 								<input
 									type="file"
 									id="fileInput"
+									name="fileInput"
 									class="hidden"
 									onchange={(e) => handleFileChange(e, 'dokumen')}
 									multiple
@@ -260,6 +265,7 @@
 						<input
 							type="file"
 							id="fileBendera"
+							name="fileBendera"
 							class="hidden"
 							accept="image/*"
 							onchange={(e) => handleFileChange(e, 'bendera')}
@@ -288,6 +294,7 @@
 						<input
 							type="file"
 							id="fileLambang"
+							name="fileLambang"
 							class="hidden"
 							accept="image/*"
 							onchange={(e) => handleFileChange(e, 'lambang')}
@@ -310,7 +317,7 @@
 
 			<button
 				class="bg-customGold mt-5 self-center rounded-lg px-5 py-2 font-bold text-white lg:mt-0 lg:self-end"
-				onclick={setTimer}
+				onclick={setTimer} type="submit"
 			>
 				Daftarkan
 			</button>

@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { flip } from 'svelte/animate';
+	import xbutton from '../asset/icon/xbutton.png'
 
-	let { value = $bindable() } = $props();
+	let { value = $bindable(), open = $bindable(), errors = null, data = null } = $props();
 </script>
 
 <div class="fixed left-0 top-0 flex min-h-full min-w-full items-center justify-center bg-black/75">
@@ -9,31 +10,62 @@
 		class="w-100 relative mt-3 min-h-fit rounded-lg border-2 border-gray-500 bg-white p-3 lg:ml-5"
 	>
 		<div class="flex flex-col">
-			<p>Tambah Anggota</p>
+			<div class="flex justify-between">
+				<p>Tambah Anggota</p>
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<div
+					onclick={() => {
+						value = false;
+					}}
+				>
+					<img
+						src={xbutton}
+						alt="x-button"
+						class="h-8 w-auto rounded-full p-2 hover:cursor-pointer hover:bg-gray-400"
+					/>
+				</div>
+			</div>
 			<div class="h-1 rounded-lg bg-black"></div>
 
 			<p class="ml-5 mt-5">Nama Anggota</p>
 			<div class="relative ml-5 w-[90%]">
 				<input
 					type="text"
+					name="namaanggota"
 					placeholder="Nama Anggota"
+					value={data ? data.namaanggota : ''}
 					class="w-full rounded-lg border-2 border-gray-400 px-2 py-2 pr-8"
 				/>
 				<span class="icon-park-twotone--search absolute right-2 mt-2.5 opacity-55"> </span>
 			</div>
+			{#if errors}
+				{#each errors.namaanggota as a}
+					<p class="text-left text-red-500">{a}</p>
+				{/each}
+			{/if}
 
 			<p class="ml-5 mt-5">Deskripsi Tugas</p>
 			<div class="relative ml-5 w-[90%]">
 				<textarea
 					placeholder="Nama Anggota"
+					name="deskripsitugas"
 					class="w-full rounded-lg border-2 border-gray-400 px-2 py-2 pr-8"
+					value={data ? data.deskripsi : ''}
 				></textarea>
 			</div>
+			{#if errors}
+				{#each errors.deskripsitugas as a}
+					<p class="text-left text-red-500">{a}</p>
+				{/each}
+			{/if}
 
 			<p class="ml-5 mt-5">Pilih Jabatan</p>
 			<div class="relative ml-5 w-[90%]">
 				<select
 					id="jabatan"
+					name="jabatan"
+					value={data ? data.jabatan : ''}
 					class="block w-full rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 text-sm text-gray-900"
 				>
 					<option selected disabled>Pilih Jabatan</option>
@@ -42,13 +74,16 @@
 					<option value="DE">...</option>
 				</select>
 			</div>
+			{#if errors}
+				{#each errors.jabatan as a}
+					<p class="text-left text-red-500">{a}</p>
+				{/each}
+			{/if}
 
 			<div class="mt-2 flex w-full justify-end">
 				<button
 					class="mr-5 w-40 text-nowrap rounded-lg border-2 bg-green-500 py-1 text-white"
-					onclick={() => {
-						value = false;
-					}}
+					type="submit"
 				>
 					Tambah Anggota
 				</button>
