@@ -32,6 +32,8 @@
 			<div
 				onclick={() => {
 					value = false;
+					data = null;
+					errors = null;
 				}}
 			>
 				<img

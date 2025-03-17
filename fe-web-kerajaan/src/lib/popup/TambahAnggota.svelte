@@ -4,9 +4,18 @@
 	let { value = $bindable() } = $props();
 </script>
 
-<div class="fixed left-0 top-0 flex min-h-full min-w-full items-center justify-center bg-black/75">
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<div
+	class="fixed left-0 top-0 flex min-h-full min-w-full items-center justify-center bg-black/75"
+	onclick={() => {
+		value = false;
+	}}
+>
 	<div
 		class="w-100 relative mt-3 min-h-fit rounded-lg border-2 border-gray-500 bg-white p-3 lg:ml-5"
+		onclick={(e) => e.stopPropagation()}
 	>
 		<div class="flex flex-col">
 			<p>Tambah Anggota</p>

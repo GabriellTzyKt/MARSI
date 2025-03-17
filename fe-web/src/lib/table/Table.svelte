@@ -8,7 +8,6 @@
 	}
 
 	let { table_data, table_header, children }: IProps = $props();
-	console.log(table_data);
 </script>
 
 <div class="mt-4 flex w-full flex-col overflow-x-auto rounded-xl">

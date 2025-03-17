@@ -3,7 +3,8 @@
 	import Table from '$lib/table/Table.svelte';
 	import CustomBtn from './CustomBtn.svelte';
 	let opt = ['Gelar', 'Jenis Kerajaan', 'Dokumen', 'Role Admin'];
-
+	let { data } = $props();
+	const data_role = data.role;
 	let select = $state('Gelar');
 	function change(p: string) {
 		select = p;
@@ -135,19 +136,23 @@
 				{/snippet}
 			</Table>
 		{:else if select === 'Role Admin'}
-			<Table
-				table_header={[
-					['role', 'Role', 'justify-start flex grow'],
-					['children', 'Aksi', 'text-right pe-48']
-				]}
-				table_data={dummyRoleAdmin}
-			>
-				{#snippet children({ header, data, index })}
-					{#if header === 'Aksi'}
-						<CustomBtn></CustomBtn>
-					{/if}
-				{/snippet}
-			</Table>
+			{#if !data_role}
+				<p>Loading...</p>
+			{:else}
+				<Table
+					table_header={[
+						['nama_role', 'Role', 'justify-start flex grow'],
+						['children', 'Aksi', 'text-right pe-48']
+					]}
+					table_data={data_role}
+				>
+					{#snippet children({ header, data, index })}
+						{#if header === 'Aksi'}
+							<CustomBtn></CustomBtn>
+						{/if}
+					{/snippet}
+				</Table>
+			{/if}
 		{/if}
 	</div>
 </div>
