@@ -97,15 +97,15 @@
 				</div>
 
 				<div class="flex w-full mt-5 flex-col gap-1 lg:flex-row">
-					<div class="flex h-fit w-[32.7%] flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm">
+					<div class="flex h-fit lg:w-[32.7%] w-[100%] lg:mt-0 mt-3 flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm">
 						<p>Jam Buka:</p>
 						<input type="text" placeholder="Masukkan Nama" />
 					</div>
-					<div class="flex h-fit w-[32.7%] flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm">
+					<div class="flex h-fit lg:w-[32.7%] w-[100%] lg:mt-0 mt-3  flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm">
 						<p>Jam Tutup:</p>
 						<input type="text" placeholder="Masukkan Nama" />
 					</div>
-					<div class="flex h-fit w-[32.7%] flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm">
+					<div class="flex h-fit lg:w-[32.7%] w-[100%] lg:mt-0 mt-3  flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm">
 						<p>Jumlah Anggota:</p>
 						<input type="text" placeholder="Masukkan Nama" />
 					</div>

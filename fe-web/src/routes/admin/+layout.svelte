@@ -77,37 +77,61 @@
 					anchor="Beranda"
 					active={isActive('/admin/beranda')}
 				/>
-				<SidebarMenu href="#" icon="mdi:people" anchor="Keanggotaan" hasChildren={true}>
-					<SidebarMenu
-						href="/admin/keanggotaan/daftaranggota"
-						icon="mdi:book"
-						anchor="Daftar Anggota"
-						active={isActive('/admin/keanggotaan/daftaranggota')}
-					/>
-				</SidebarMenu>
+	
+				<SidebarMenu
+					href="/admin/keanggotaan/daftaranggota"
+					icon="mdi:book"
+					anchor="Daftar Anggota"
+					active={page.route.id?.startsWith('/admin/keanggotaan/daftaranggota')}
+				></SidebarMenu>
+	
+				<SidebarMenu
+					href="/admin/acara"
+					icon="mdi:calendar"
+					anchor="Acara"
+					active={page.route.id?.startsWith('/admin/acara')}
+				/>
+				<SidebarMenu
+					href="/admin/landingPage"
+					icon="mdi:globe"
+					anchor="Landing page"
+					active={isActive('/admin/landingPage')}
+				/>
 				<SidebarMenu
 					href="/admin/masterData"
 					icon="mdi:globe"
 					anchor="Master Data"
 					active={isActive('/admin/masterData')}
 				/>
+				<!-- <SidebarMenu
+					href="/admin/biodata"
+					icon="mdi:globe"
+					anchor="Biodata Kerajaan"
+					active={isActive('/admin/biodata')}
+				/> -->
 				<SidebarMenu
-					href="/admin/acara"
-					icon="mdi:calendar"
-					anchor="Acara"
-					active={isActive('/admin/acara')}
+					href="/admin/suratDokumen"
+					icon="mdi:home"
+					anchor="Surat Dokumen"
+					active={page.route.id?.startsWith('/admin/suratDokumen')}
 				/>
 				<SidebarMenu
-					href="/admin/landing"
-					icon="mdi:globe"
-					anchor="Landing page"
-					active={isActive('/admin/landing')}
+					href="/admin/biodata"
+					icon="mdi:home"
+					anchor="Biodata Kerajaan"
+					active={page.route.id?.startsWith('/admin/biodata')}
+				/>
+				<SidebarMenu
+					href="/admin/managemen"
+					icon="mdi:home"
+					anchor="Managemen Admin"
+					active={isActive('/admin/managemen')}
 				/>
 				<SidebarMenu
 					href="/admin/pendaftaranKerajaan"
 					icon="mdi:home"
 					anchor="Pendaftaran Kerajaan"
-					active={isActive('/admin/endaftaranKerajaan')}
+					active={page.route.id?.startsWith('/admin/pendaftaranKerajaan')}
 				/>
 			</Sidebar>
 		</div>

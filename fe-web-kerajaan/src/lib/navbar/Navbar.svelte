@@ -49,6 +49,7 @@
 			<a href="/situs" class:underline={page.route.id?.startsWith('/situs')}>Situs</a>
 			<a href="/acara" class:underline={page.route.id?.startsWith('/acara')}>Acara</a>
 			<a href="/kelompok" class:underline={page.route.id?.startsWith('/kelompok')}>Kelompok</a>
+			<a href="/sabdi" class:underline={page.route.id === '/sabdi'}>Abdi</a>
 		</div>
 	{/if}
 </section>

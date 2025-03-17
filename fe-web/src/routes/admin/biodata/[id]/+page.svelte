@@ -181,7 +181,7 @@
 			placeholder="John Doe"
 		/>
 
-		<div class="flex flex-grow gap-4">
+		<div class="flex lg:flex-row flex-col flex-grow gap-4">
 			<div class="relative w-full flex-col">
 				<label class="text-md mt-5 self-start text-left" for="nama">Lokasi</label>
 				<input
@@ -193,9 +193,11 @@
 					placeholder="Cari lokasi..."
 				/>
 			
-				{#if $showDropdown}
+				{#if $showDropdown && lokasi !== ""}
 					<ul class="dropdown">
 						{#each $results as name}
+							<!-- svelte-ignore a11y_click_events_have_key_events -->
+							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 							<li onclick={() => selectLocation(name)}>{name}</li>
 						{/each}
 					</ul>
@@ -418,7 +420,7 @@
 
 		<div class="w-full">
 			<p class="mt-8 text-center text-2xl font-bold">History Raja</p>
-			<div class="flex items-center justify-end gap-2">
+			<div class="flex items-center justify-between mt-2 lg:justify-end gap-2">
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 				<p class="flex cursor-pointer items-center" onclick={toggleSort}>
@@ -454,8 +456,8 @@
 						</div>
 						{#if isExpand[index]}
 							<div class="border-t-2 border-black bg-white p-4">
-								<div class="flex w-full gap-8">
-									<img src={gambartemp} class="h-[25%] w-[25%]" alt="" />
+								<div class="flex lg:flex-row flex-col w-full gap-8">
+									<img src={gambartemp} class="lg:h-[25%] lg:w-[25%] h-[70%] w-[70%] self-center" alt="" />
 									<div class="w-full flex-col">
 										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
 											<p class="text-md px-2 py-2">

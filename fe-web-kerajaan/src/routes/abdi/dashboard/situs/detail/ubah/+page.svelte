@@ -168,7 +168,7 @@
 				</div>
 			</div>
 
-			<div class="relative w-full items-end flex justify-end">
+			<div class="relative w-full items-end flex lg:justify-end justify-center">
                 <a href="/abdi/dashboard/situs/detail">
                     <button
                         class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"

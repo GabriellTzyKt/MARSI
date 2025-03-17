@@ -2,17 +2,32 @@
 	import { goto } from '$app/navigation';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAnggota, dummyOrganisasi } from '$lib/dummy';
+	import TambahAnggota from '$lib/popup/TambahAnggota.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
+	import { fade } from 'svelte/transition';
+
+	let { form } = $props();
+
+	let open = $state(false);
+	let valo = $state(false);
+	let error = $state();
+	let data = $state();
+
+	let toggle = () => {
+		if (!open) {
+			open = true;
+		} else open = false;
+		console.log(open);
+	};
+
+
 </script>
 
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
-		<button
-			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
-			onclick={() => {
-				goto('/abdi/dashboard/organisasi/tambah');
-			}}>+Tambah Data</button
+		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white" onclick={toggle}
+			>+Tambah Data</button
 		>
 		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
@@ -101,3 +116,12 @@
 		</Table>
 	</div>
 </div>
+
+{#if open}
+	<form action="?/tambah" method="post">
+		<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
+			<TambahAnggota bind:value={open} bind:open={valo} errors={error} data></TambahAnggota>
+		</div>
+	</form>
+{/if}
+

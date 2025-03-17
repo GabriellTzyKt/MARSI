@@ -5,7 +5,7 @@
 
 <div class="mt-6 flex h-full w-full flex-col md:h-auto">
 	<!-- tanggal & btn lantik -->
-	<div class="mx-6 flex justify-between">
+	<div class="mx-6 flex justify-between gap-2">
 		<div class="flex flex-col">
 			<div>
 				<p class="text-gray-500">Pilih Tanggal</p>
@@ -34,9 +34,11 @@
 				<p>Abdi yang akan dilantik</p>
 			</div>
 			<div class="flex items-center">
-				<button class="bg-badran-bt cursor-pointer rounded-md px-6 py-2 text-white"
-					>+Tambah Abdi</button
-				>
+				<a href="/abdi/sekretariat/anggota/bintangjasa/tambahabdi">
+					<button class="bg-badran-bt cursor-pointer rounded-md px-6 py-2 text-white"
+						>+Tambah Abdi</button
+					>
+				</a>
 			</div>
 		</div>
 		<div class="max-h-[500px] overflow-y-auto">

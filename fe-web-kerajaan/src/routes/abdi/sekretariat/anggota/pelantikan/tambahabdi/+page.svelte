@@ -19,7 +19,7 @@
 </script>
 
 <div class="min-h-full w-full">
-	<div class="mt-10 grid grid-cols-2 gap-4">
+	<div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-4">
 		<!-- 1 -->
 		<div>
 			<div>
@@ -34,7 +34,7 @@
 				</div>
 			</div>
 
-			<div class="mt-5 flex gap-12">
+			<div class="mt-5 flex lg:flex-row flex-col gap-12">
 				<div class="w-full">
 					<p>Tempat Lahir :</p>
 					<input
@@ -66,7 +66,7 @@
 				</div>
 			</div>
 
-			<div class="mt-5 flex gap-12">
+			<div class="mt-5 flex lg:flex-row flex-col gap-12">
 				<div class="w-full">
 					<p>No telepon :</p>
 					<input

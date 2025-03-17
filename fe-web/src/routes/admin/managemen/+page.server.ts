@@ -159,6 +159,7 @@ export const actions: Actions = {
             afiliasi,
             admin_role
          }
+         console.log(formData)
         const verif = ver.safeParse({...formData})
         console.log(verif.error?.flatten().fieldErrors)
         if (!verif.success) {
