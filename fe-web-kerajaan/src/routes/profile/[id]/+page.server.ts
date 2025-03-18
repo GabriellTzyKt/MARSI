@@ -1,6 +1,7 @@
 import { accounts } from "$lib/dummy";
 import { date, z } from "zod";
 import type { Actions, PageServerLoad } from "./$types";
+import { fail } from "@sveltejs/kit";
 
 
 export const load: PageServerLoad = async ({params}) => {
@@ -102,7 +103,7 @@ export const actions: Actions = {
         }
         const verif = ver.safeParse({ ...form })
         if (!verif.success) {
-            return {errors: verif.error.flatten().fieldErrors, success: false, FormData: form}
+            return fail(500,{errors: verif.error.flatten().fieldErrors, success: false, FormData: form})
         }
          return {errors: "no error", success: true, FormData: form}
     }

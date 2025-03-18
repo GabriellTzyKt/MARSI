@@ -20,7 +20,7 @@ export const actions: Actions = {
             deskripsi: "",
             jabatan: "",
         }
-
+    
         const ver = z.object({
             namaanggota: z.string().trim().min(1, "Minimal 1 anggota!"),
             deskripsi: z.string().trim().min(1, "Deskripsi harus diisi!"),
@@ -45,6 +45,7 @@ export const actions: Actions = {
                 formData: form, type: "add"
             };
         }
+
 
         return { errors: "Success", success: true, formData: form, type: "add" };
     }

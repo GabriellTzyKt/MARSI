@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAnggota, dummyOrganisasi } from '$lib/dummy';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import TambahAnggota from '$lib/popup/TambahAnggota.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
@@ -49,8 +51,9 @@
 
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
-		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white" onclick={toggle}
-			>+Tambah Data</button
+		<button
+			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
+			onclick={toggle}>+Tambah Data</button
 		>
 		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
@@ -141,9 +144,29 @@
 </div>
 
 {#if open}
-	<form action="?/tambah" method="post">
+	<form
+		action="?/tambah"
+		method="post"
+		use:enhance={() => {
+			return async ({ result }) => {
+				if (result.type === 'success') {
+					valo = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						valo = false;
+					}, 3000);
+					open = false;
+				} else if (result.type === 'failure') {
+					error = result.data?.errors || '';
+				}
+			};
+		}}
+	>
 		<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
 			<TambahAnggota bind:value={open} bind:open={valo} errors={error} {data2} {dataambil}></TambahAnggota>
 		</div>
 	</form>
+{/if}
+{#if valo}
+	<SuccessModal text="Anggota berhasil Ditambah!"></SuccessModal>
 {/if}

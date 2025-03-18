@@ -9,22 +9,11 @@
 	import { goto } from '$app/navigation';
 	import DropDownRunes from '$lib/dropdown/dropdownrunes.svelte';
 	import { onMount } from 'svelte';
+	import { enhance } from '$app/forms';
 	let { form, data } = $props();
 
 	console.log(form?.errors);
-	onMount(() => {
-		if (form?.success) {
-			open = true;
-			if (timer) {
-				clearTimeout(timer);
-			}
-			if (open)
-				timer = setTimeout(() => {
-					open = false;
-					goto('/profile');
-				}, 3000);
-		}
-	});
+	onMount(() => {});
 	let open = $state(false);
 	let timer: number;
 	let ayahAbdi = $state('');
@@ -63,7 +52,19 @@
 </script>
 
 <Navbar></Navbar>
-<form action="?/ubah" onsubmit={(e) => cekRadio(e)} method="post">
+<form
+	action="?/ubah"
+	onsubmit={(e) => cekRadio(e)}
+	method="post"
+	use:enhance={() => {
+		return async ({ result }) => {
+			console.log(result.data.errors);
+			if (result.type === 'success') {
+			} else if (result.type === 'failure') {
+			}
+		};
+	}}
+>
 	<div class=" mt-18 flex justify-center">
 		<p class=" text-2xl font-[500]">Ubah Profil</p>
 	</div>
