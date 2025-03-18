@@ -213,7 +213,7 @@
 					<div class="mt-2 lg:flex-1">
 						<p>Waktu Mulai:</p>
 						<input
-							type="text"
+							type="time"
 							name="waktu_mulai"
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
@@ -228,7 +228,7 @@
 						<div class="mt-2 w-full">
 							<p>Waktu Selesai:</p>
 							<input
-								type="text"
+								type="time"
 								name="waktu_selesai"
 								placeholder="Masukkan Nama"
 								class="w-full rounded-lg border px-2 py-1"
@@ -279,27 +279,12 @@
 						<option value="Tuan">Tn</option>
 						<option value="Nyonya">Ny</option>
 					</select>
-					{#if error}
-						{#each error.panggilan as e}
-							<p class="text-left text-red-500">- {e}</p>
-						{/each}
-					{/if}
 				</div>
 				<div class="col-span-3 flex flex-col">
 					<input class=" w-full rounded-lg border px-2 py-1" name="nama_lengkap" type="phone" />
-					{#if error}
-						{#each error.nama_lengkap as e}
-							<p class="text-left text-red-500">- {e}</p>
-						{/each}
-					{/if}
 				</div>
 				<div class="col-span-2 flex flex-col">
 					<input class=" w-full rounded-lg border px-2 py-1" type="text" name="no_telp" />
-					{#if error}
-						{#each error.no_telp as e}
-							<p class="text-left text-red-500">- {e}</p>
-						{/each}
-					{/if}
 				</div>
 				<div class="col-span-1 flex">
 					<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
@@ -308,7 +293,17 @@
 				</div>
 			{/each}
 			<div class="col-span-full">
-				<p class="text-red-500"></p>
+				{#if error}
+					{#each error.panggilan as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+					{#each error.no_telp as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+					{#each error.nama_lengkap as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+				{/if}
 			</div>
 		</div>
 

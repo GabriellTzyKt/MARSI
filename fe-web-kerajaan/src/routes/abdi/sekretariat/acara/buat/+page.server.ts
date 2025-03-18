@@ -1,16 +1,23 @@
 import { fail, type Actions } from "@sveltejs/kit";
-import { z } from "zod";
+import { union, z } from "zod";
 
 
 export const actions: Actions = {
     tambah: async ({ request }) => {
         const today = new Date().toISOString().split("T")[0]
-
-        const data = await request.formData()
+   
+        const date_hours = String(new Date().getHours()).padStart(2,"0")
+        const date_min = String(new Date().getMinutes()).padStart(2,"0")
+        const time_now = `${date_hours}:${date_min}`
+        const data = await request.formData()   
         console.log(data)
+        // console.log(today_time_hour + ":" + today_time_min)
+        // console.log(date + ":" + date_min)
         const data_selesai = String(data.get("tanggal_selesai"))
         const data_mulai = String(data.get("tanggal_mulai"))
-        console.log(data_selesai)
+        const data_waktu_mulai = String(data.get("waktu_mulai"))
+        const data_waktu_selesai = String(data.get("waktu_selesai"))
+        
         const ver = z.object({
             nama_acara:
                 z.string({ message: "Field Nama Acara harus diisi" })
@@ -55,23 +62,62 @@ export const actions: Actions = {
                        
                     }, { message: "Tanggal Selesai tidak boleh kurang dengan tanggal mulai" }),
             
-            panggilan: z.string().nullable(),
-            nama_lengkap: z.string().nullable(),
-            no_telp: z.string({ message: "Field Nomer Telpon ini harus diisi" })
-                
-                .min(10, "Nomer Telpon minimal harus 10 digit")
-                .max(15, "Nomer Telpon Maximal 15 digit")
-                .regex(/^d+$/, "Harus Berupa digit atau nomer").nullable()
+            panggilan: z.union([
+                z.string({ message: "Field Panggilan harus diisi" }).nonempty("Minimal 1 huruf / tidak boleh kosong"),
+                z.array(
+                    z.string({message:"Field Panggilan harus diisi"}).nonempty("Minimal 1 huruf / tidak boleh kosong")
+                )
+            ]).transform((val)=> (Array.isArray(val)? val: [val])),
+            nama_lengkap: z.union([
+                z.string({ message: "Field Panggilan harus diisi" }).nonempty("Minimal 1 huruf / tidak boleh kosong"),
+                z.array(
+                    z.string({message:"Field Panggilan harus diisi"}).nonempty("Minimal 1 huruf / tidak boleh kosong")
+                )
+            ]).transform((val) => (Array.isArray(val) ? val : [val])),
+            
+            no_telp:
+                z.array(
+                z.string()
+                .min(10, "Nomor telepon minimal harus 10 digit")
+                .max(15, "Nomor telepon maksimal 15 digit")
+                        .regex(/^\d+$/, "Harus berupa angka")
+                    
+            ).nonempty({ message: "Minimal satu nomor telepon harus diisi" })
+                // z.string({ message: "Field Nomer Telpon ini harus diisi" })              
+                //     .min(10, "Nomer Telpon minimal harus 10 digit")
+                //     .max(15, "Nomer Telpon Maximal 15 digit")                   
+                //     .regex(/^d+$/, "Harus Berupa digit atau nomer")
+                //     .array()
+                // z.union([
+                //     z.string({ message: "Field Nomer Telpon ini harus diisi" })
+                // .min(10, "Nomer Telpon minimal harus 10 digit")
+                // .max(15, "Nomer Telpon Maximal 15 digit")
+                // .regex(/^\d+$/, "Harus Berupa digit atau nomer"),
+                // z.array(
+                //     z.string({ message: "Field Nomer Telpon ini harus diisi" })
+                //         .min(10, "Nomer Telpon minimal harus 10 digit")
+                //         .max(15, "Nomer Telpon Maximal 15 digit")
+                //         .regex(/^\d+$/, "Harus Berupa digit atau nomer")
+                        
+                // )
+                // ]).transform((val)=>(Array.isArray(val)? val: [val]))
                 ,
             waktu_mulai:
                 z.string({ message: "Field Waktu Mulai harus diisi" })
-                    .nonempty("Minimal 1 huruf / tidak boleh kosong"),
+                    .nonempty("tidak boleh kosong")
+                    .refine(() => {
+                         return data_waktu_mulai >= time_now
+                    },{message:"Waktu Mulai gaboleh kurang dari Waktu Sekarang"}),
+            
             waktu_selesai:
                 z.string({ message: "Field Waktu Selesai harus diisi" })
-                    .nonempty("Minimal 1 huruf / tidak boleh kosong"),
+                    .nonempty("tidak boleh kosong")
+                    .refine(() => {
+                        return data_waktu_selesai >= data_waktu_mulai
+                   },{message:"Waktu Selesai gaboleh kurang dari Waktu Selesai"}),
             deskripsi_acara:
                 z.string({ message: "Field Deskripsi Acara harus diisi" })
-                    .nonempty("Minimal 1 huruf / tidak boleh kosong"),
+                    .nonempty("tidak boleh kosong"),
             
             
         })
@@ -95,6 +141,7 @@ export const actions: Actions = {
         }
         const verif = ver.safeParse({ ...formData })
         if (!verif.success) {
+            console.log(verif.error.flatten().fieldErrors)
             return fail(500, { errors: verif.error.flatten().fieldErrors, formData})
         }   
         return { errors: "success", formData}
