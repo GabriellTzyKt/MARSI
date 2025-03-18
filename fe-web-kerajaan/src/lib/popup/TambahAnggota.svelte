@@ -12,7 +12,6 @@
 
     let keyword = $state(data2 ? data2.namaanggota : '');
 	let showDropdown = $state(false);
-	let timer: number;
 
 
 	function updateFilteredData() {

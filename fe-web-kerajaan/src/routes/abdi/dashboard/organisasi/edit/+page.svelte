@@ -4,18 +4,23 @@
 	import { goto } from '$app/navigation';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import { onMount } from 'svelte';
+	import { enhance } from '$app/forms';
+	import { resolveRoute } from '$app/paths';
 
-	let namaOrganisasi = $state(' ');
-	let alamat = $state(' ');
-	let email = $state(' ');
-	let deskripsiOrganisasi = $state(' ');
-	let penanggungjawab = $state(' ');
-	let pembina = $state(' ');
-	let pelindung = $state(' ');
-	let notelepon = $state(' ');
-	let jumlahanggota = $state(' ');
+	let namaOrganisasi = $state('');
+	let alamat = $state('');
+	let email = $state('');
+	let deskripsiOrganisasi = $state('');
+	let penanggungjawab = $state('');
+	let pembina = $state('');
+	let pelindung = $state('');
+	let notelepon = $state('');
+	let jumlahanggota = $state('');
+
+	let error: any = $state('');
 
 	let { form } = $props();
+	console.log('form data', form);
 
 	if (form?.formData) {
 		namaOrganisasi = form.formData.namaOrganisasi;
@@ -30,23 +35,29 @@
 	}
 
 	let success = $state(false);
-	let timer: Number;
-	onMount(() => {
-		if (form?.success) {
-			success = true;
-			if (timer) {
-				clearTimeout(timer);
-			}
-			timer = setTimeout(() => {
-				success = false;
-				goto('/abdi/dashboard/organisasi/detail');
-			}, 3000);
-		}
-	});
+	let timer: any;
+
 </script>
 
 <div class="h-full w-full">
-	<form method="post" action="?/edit">
+	<form
+		method="post"
+		action="?/edit"
+		use:enhance={() => {
+			return async ({ result }) => {
+				console.log(result);
+				if (result.type === 'success') {
+					success = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						success = false;
+					}, 3000);
+				} else if (result.type === 'failure') {
+					error = result?.data?.errors;
+				}
+			};
+		}}
+	>
 		<div class="relative mx-auto flex w-full items-center justify-center">
 			<img src={gambardefault} class="h-25 w-25 relative ml-5 mr-5 rounded-full" alt="" />
 			<span class="mdi--edit absolute"></span>
@@ -67,8 +78,8 @@
 						/>
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 					</div>
-					{#if form?.errors}
-						{#each form.errors.namaOrganisasi as a}
+					{#if error}
+						{#each error.namaOrganisasi as a}
 							<p class="text-left text-red-500">{a}</p>
 						{/each}
 					{/if}
@@ -87,8 +98,8 @@
 						/>
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 					</div>
-					{#if form?.errors}
-						{#each form.errors.alamat as a}
+					{#if error}
+						{#each error.alamat as a}
 							<p class="text-left text-red-500">{a}</p>
 						{/each}
 					{/if}
@@ -107,8 +118,8 @@
 						/>
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 					</div>
-					{#if form?.errors}
-						{#each form.errors.email as a}
+					{#if error}
+						{#each error.email as a}
 							<p class="text-left text-red-500">{a}</p>
 						{/each}
 					{/if}
@@ -128,8 +139,8 @@
 							<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 						</div>
 					</div>
-					{#if form?.errors}
-						{#each form.errors.deskripsiOrganisasi as a}
+					{#if error}
+						{#each error.deskripsiOrganisasi as a}
 							<p class="text-left text-red-500">{a}</p>
 						{/each}
 					{/if}
@@ -150,8 +161,8 @@
 							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
 						/>
 					</div>
-					{#if form?.errors}
-						{#each form.errors.penanggungjawab as a}
+					{#if error}
+						{#each error.penanggungjawab as a}
 							<p class="text-left text-red-500">{a}</p>
 						{/each}
 					{/if}
@@ -169,8 +180,8 @@
 							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
 						/>
 					</div>
-					{#if form?.errors}
-						{#each form.errors.pembina as a}
+					{#if error}
+						{#each error.pembina as a}
 							<p class="text-left text-red-500">{a}</p>
 						{/each}
 					{/if}
@@ -188,8 +199,8 @@
 							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
 						/>
 					</div>
-					{#if form?.errors}
-						{#each form.errors.pelindung as a}
+					{#if error}
+						{#each error.pelindung as a}
 							<p class="text-left text-red-500">{a}</p>
 						{/each}
 					{/if}
@@ -206,8 +217,8 @@
 							placeholder="Masukkan nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 						/>
-						{#if form?.errors}
-							{#each form.errors.notelepon as a}
+						{#if error}
+							{#each error.notelepon as a}
 								<p class="text-left text-red-500">{a}</p>
 							{/each}
 						{/if}
@@ -223,8 +234,8 @@
 							id="jumlahanggota"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 						/>
-						{#if form?.errors}
-							{#each form.errors.jumlahanggota as a}
+						{#if error}
+							{#each error.jumlahanggota as a}
 								<p class="text-left text-red-500">{a}</p>
 							{/each}
 						{/if}

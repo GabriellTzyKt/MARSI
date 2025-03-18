@@ -1,5 +1,4 @@
-import { fail } from "@sveltejs/kit";
-import { error, type Actions } from "@sveltejs/kit";
+import { error, fail, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
 
 
@@ -8,10 +7,10 @@ export const actions: Actions = {
         const data = await request.formData();
 
         let form = {
-            namaOrganisasi: "",
+            namakomunitas: "",
             alamat: "",
             email: "",
-            deskripsiOrganisasi: "",
+            deskripsikomunitas: "",
             penanggungjawab: "",
             pembina: "",
             pelindung: "",
@@ -20,11 +19,11 @@ export const actions: Actions = {
         }
 
         const ver = z.object({
-            namaOrganisasi: z.string().trim().min(1, "Isi Nama organisasi"),
+            namakomunitas: z.string().trim().min(1, "Isi Nama komunitas"),
             alamat: z.string().trim().min(1, "Alamat harus diisi!"),
             email: z.string().email("Email Tidak Valid").
                 trim().min(1, "Email harus diisi!"),
-            deskripsiOrganisasi: z.string().trim().min(1, "Deskripsi harus terisi!"),
+            deskripsikomunitas: z.string().trim().min(1, "Deskripsi harus terisi!"),
             penanggungjawab: z.string().trim().min(1, "Isi penanggungjawab!"),
             pembina: z.string().trim().min(1, "Isi pembina!"),
             pelindung: z.string().trim().min(1, "Isi pelindung!"),
@@ -41,10 +40,10 @@ export const actions: Actions = {
         });
 
         form = {
-            namaOrganisasi: data.get("namaorganisasi") ?? "",
+            namakomunitas: data.get("namakomunitas") ?? "",
             alamat: data.get("alamat") ?? "",
             email: data.get("email") ?? "",
-            deskripsiOrganisasi: data.get("deskripsiorganisasi") ?? "",
+            deskripsikomunitas: data.get("deskripsikomunitas") ?? "",
             penanggungjawab: data.get("penanggungjawab") ?? "",
             pembina: data.get("pembina") ?? "",
             pelindung: data.get("pelindung") ?? "",

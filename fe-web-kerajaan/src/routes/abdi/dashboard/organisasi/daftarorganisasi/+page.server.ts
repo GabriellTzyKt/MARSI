@@ -1,4 +1,4 @@
-import type { Actions } from "@sveltejs/kit";
+import { fail, type Actions } from "@sveltejs/kit";
 import { dummySekreAnggotaOrg } from '$lib/dummy'
 import { string, z } from "zod";
 import type { PageServerLoad } from "./$types";
@@ -16,10 +16,11 @@ export const actions: Actions = {
         const data = await request.formData();
 
         let form = {
-            namaanggota: "",
-            deskripsi: "",
-            jabatan: "",
+            namaanggota : "",
+            deskripsi : "",
+            jabatan : ""
         }
+
     
         const ver = z.object({
             namaanggota: z.string().trim().min(1, "Minimal 1 anggota!"),
@@ -40,12 +41,11 @@ export const actions: Actions = {
 
         if (!validation.success) {
             console.log(validation.error.flatten().fieldErrors)
-            return {
+            return fail(406,{
                 errors: validation.error.flatten().fieldErrors, success: false,
                 formData: form, type: "add"
-            };
+            });
         }
-
 
         return { errors: "Success", success: true, formData: form, type: "add" };
     }
