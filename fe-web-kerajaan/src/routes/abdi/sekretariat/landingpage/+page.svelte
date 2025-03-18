@@ -1,7 +1,12 @@
-<script>
+<script lang="ts">
 	import Input from '$lib/input/Input.svelte';
 	import g1 from '$lib/asset/kerajaan/aboutUs1.png';
 	import { goto } from '$app/navigation';
+	import { enhance } from '$app/forms';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	let error = $state();
+	let timer: number;
+	let open = $state(false);
 </script>
 
 <div class="my-6 me-6 ms-6 flex w-full flex-col">
@@ -24,7 +29,24 @@
 	<div class="mb-3 mt-2">
 		<p class="text-2xl">Bagian 1 - Halaman Landasan</p>
 	</div>
-	<form action="">
+	<form
+		action="?/tambahLanding"
+		method="post"
+		use:enhance={() => {
+			return async ({ result }) => {
+				if (result.type === 'success') {
+					open = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						open = false;
+					}, 3000);
+				}
+				if (result.type === 'failure') {
+					error = result.data?.errors;
+				}
+			};
+		}}
+	>
 		<div class="grid w-full grid-cols-1 gap-4 xl:grid-cols-4">
 			<!-- judul halaman -->
 			<div class=" flex flex-col xl:col-span-3">
@@ -32,7 +54,12 @@
 					<p>Judul Halaman</p>
 				</div>
 				<div class="mt-1">
-					<Input type="text" value="Maha Mentri Keraton Surabaya"></Input>
+					<Input type="text" name="judul_halaman" value="Maha Mentri Keraton Surabaya"></Input>
+					{#if error?.judul_halaman}
+						{#each error.judul_halaman as e}
+							<p class="text-left text-red-500">{e}</p>
+						{/each}
+					{/if}
 				</div>
 			</div>
 			<div></div>
@@ -43,12 +70,17 @@
 				</div>
 				<div class="mt-1">
 					<textarea
-						name=""
+						name="deskripsi_halaman"
 						class="min-h-[200px] w-full rounded-lg border border-gray-500 bg-white focus:outline-none"
 						placeholder="Deskripsi singkat"
 						rows="5"
 						id=""
 					></textarea>
+					{#if error}
+						{#each error.deskripsi_halaman as e}
+							<p class="text-left text-red-500">{e}</p>
+						{/each}
+					{/if}
 				</div>
 			</div>
 			<!-- isi halaman 1 -->
@@ -106,12 +138,17 @@
 				</div>
 				<div class="mt-1">
 					<textarea
-						name=""
+						name="deskripsi_1"
 						class="min-h-[200px] w-full rounded-lg border border-gray-500 bg-white focus:outline-none"
 						placeholder="Deskripsi singkat"
 						rows="5"
 						id=""
 					></textarea>
+					{#if error}
+						{#each error.deskripsi_1 as e}
+							<p class="text-left text-red-500">{e}</p>
+						{/each}
+					{/if}
 				</div>
 			</div>
 			<!-- isi halaman 1 -->
@@ -159,12 +196,17 @@
 				</div>
 				<div class="mt-1">
 					<textarea
-						name=""
+						name="deskripsi_2"
 						class="min-h-[200px] w-full rounded-lg border border-gray-500 bg-white focus:outline-none"
 						placeholder="Deskripsi singkat"
 						rows="5"
 						id=""
 					></textarea>
+					{#if error?.deskripsi_2}
+						{#each error.deskripsi_2 as e}
+							<p class="text-left text-red-500">{e}</p>
+						{/each}
+					{/if}
 				</div>
 			</div>
 			<!-- isi halaman 2 -->
@@ -212,12 +254,17 @@
 				</div>
 				<div class="mt-1">
 					<textarea
-						name=""
+						name="deskripsi_3"
 						class="min-h-[200px] w-full rounded-lg border border-gray-500 bg-white focus:outline-none"
 						placeholder="Deskripsi singkat"
 						rows="5"
 						id=""
 					></textarea>
+					{#if error?.deskripsi_3}
+						{#each error.deskripsi_3 as e}
+							<p class="text-left text-red-500">{e}</p>
+						{/each}
+					{/if}
 				</div>
 			</div>
 			<!-- isi halaman 3-->
@@ -257,5 +304,15 @@
 				</div>
 			</div>
 		</div>
+		<div class="mt-2 flex w-full justify-center lg:justify-end">
+			<button
+				type="submit"
+				class=" bg-badran-bdg w-full rounded-lg py-2 text-white lg:w-auto lg:px-6"
+				>Simpan Data</button
+			>
+		</div>
 	</form>
 </div>
+{#if open}
+	<SuccessModal text="Landing Page Berhasil Diubah"></SuccessModal>
+{/if}
