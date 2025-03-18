@@ -7,15 +7,48 @@
 	import TambahAnggota from '$lib/popup/TambahAnggota.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	let { form } = $props();
+	let { form, data } = $props();
+	let dataambil = data.detil_anggota;
+	console.log(dataambil);
 
 	let open = $state(false);
 	let valo = $state(false);
 	let error = $state();
 	let data = $state();
 	let timer: number;
+	let data2 = $state();
+
+	let toggle = () => {
+		if (!open) {
+			open = true;
+		} else open = false;
+		console.log(open);
+	};
+
+	onMount(() => {
+		if (form?.errors) {
+			error = form.errors;
+			data2 = form.formData;
+			if (form.type === 'add') {
+				open = true;
+			}
+			valo = false;
+		} else if (form?.success) {
+			if (form.type === 'add') {
+				open = false;
+			}
+			valo = true;
+			timer = setTimeout(() => {
+				valo = false;
+			}, 3000);
+		} else {
+			open = false;
+			valo = false;
+		}
+	});
 </script>
 
 <div class="flex w-full flex-col">
@@ -135,7 +168,8 @@
 		}}
 	>
 		<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
-			<TambahAnggota bind:value={open} bind:open={valo} errors={error} data></TambahAnggota>
+			<TambahAnggota bind:value={open} bind:open={valo} errors={error} {data2} {dataambil}
+			></TambahAnggota>
 		</div>
 	</form>
 {/if}
