@@ -29,7 +29,7 @@ export const actions: Actions = {
 
         form = {
             namaanggota: String(data.get("namaanggota") || "").trim(),
-            deskripsi: String(data.get("deskripsi") || "").trim(),
+            deskripsi: String(data.get("deskripsitugas") || "").trim(),
             jabatan: String(data.get("jabatan") || "").trim(),
         };
 

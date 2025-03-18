@@ -27,15 +27,7 @@
 		showDropdown = false;
 	}
 
-	if (open) {
-		timer = setTimeout(() => {
-			value = false;
-			open = false;
-		}, 3000);
-		clearTimeout(timer);
-	}
-	if (data2) {
-	}
+
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
