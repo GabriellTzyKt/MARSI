@@ -126,6 +126,7 @@
 					timer = setTimeout(() => {
 						valo = false;
 					}, 3000);
+					error = null;
 					open = false;
 				} else if (result.type === 'failure') {
 					error = result.data?.errors || '';
