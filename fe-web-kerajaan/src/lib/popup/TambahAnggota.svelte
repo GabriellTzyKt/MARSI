@@ -1,8 +1,41 @@
 <script lang="ts">
 	import { flip } from 'svelte/animate';
-	import xbutton from '../asset/icon/xbutton.png'
+	import xbutton from '../asset/icon/xbutton.png';
 
-	let { value = $bindable(), open = $bindable(), errors = null, data = null } = $props();
+	let {
+		value = $bindable(),
+		open = $bindable(),
+		errors = null,
+		data2 = null,
+		dataambil
+	} = $props();
+
+    let keyword = $state(data2 ? data2.namaanggota : '');
+	let showDropdown = $state(false);
+	let timer: number;
+
+
+	function updateFilteredData() {
+		if (!keyword.trim()) return []; 
+		return dataambil.filter((v: any) =>
+			v.asma_timur.toLowerCase().includes(keyword.toLowerCase())
+		);
+	}
+
+	function selectItem(item: string) {
+		keyword = item;
+		showDropdown = false;
+	}
+
+	if (open) {
+		timer = setTimeout(() => {
+			value = false;
+			open = false;
+		}, 3000);
+		clearTimeout(timer);
+	}
+	if (data2) {
+	}
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -26,6 +59,8 @@
 				<div
 					onclick={() => {
 						value = false;
+						data2 = null;
+						errors = null;
 					}}
 				>
 					<img
@@ -41,16 +76,30 @@
 			<div class="relative ml-5 w-[90%]">
 				<input
 					type="text"
-					name="namaanggota"
+					bind:value={keyword}
 					placeholder="Nama Anggota"
-					value={data ? data.namaanggota : ''}
+					name="namaanggota"
 					class="w-full rounded-lg border-2 border-gray-400 px-2 py-2 pr-8"
-				/>
+					onfocus={() => showDropdown = true}  >
+
+				{#if showDropdown && updateFilteredData().length > 0}
+					<ul class="absolute z-10 w-full bg-white border border-gray-400 rounded-lg shadow-lg max-h-40 overflow-y-auto">
+						{#each updateFilteredData() as item}
+							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+							<li 
+								class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+								onclick={() => selectItem(item.asma_timur)}
+							>
+								{item.asma_timur}
+							</li>
+						{/each}
+					</ul>
+				{/if}
 				<span class="icon-park-twotone--search absolute right-2 mt-2.5 opacity-55"> </span>
 			</div>
 			{#if errors}
 				{#each errors.namaanggota as a}
-					<p class="text-left text-red-500">{a}</p>
+					<p class="ml-5 text-left text-red-500">{a}</p>
 				{/each}
 			{/if}
 
@@ -60,12 +109,12 @@
 					placeholder="Nama Anggota"
 					name="deskripsitugas"
 					class="w-full rounded-lg border-2 border-gray-400 px-2 py-2 pr-8"
-					value={data ? data.deskripsi : ''}
+					value={data2 ? data2.deskripsi : ''}
 				></textarea>
 			</div>
 			{#if errors}
-				{#each errors.deskripsitugas as a}
-					<p class="text-left text-red-500">{a}</p>
+				{#each errors.deskripsi as a}
+					<p class="ml-5 text-left text-red-500">{a}</p>
 				{/each}
 			{/if}
 
@@ -74,7 +123,7 @@
 				<select
 					id="jabatan"
 					name="jabatan"
-					value={data ? data.jabatan : ''}
+					value={data2 ? data2.jabatan : ''}
 					class="block w-full rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 text-sm text-gray-900"
 				>
 					<option selected disabled>Pilih Jabatan</option>
@@ -85,7 +134,7 @@
 			</div>
 			{#if errors}
 				{#each errors.jabatan as a}
-					<p class="text-left text-red-500">{a}</p>
+					<p class="ml-5 text-left text-red-500">{a}</p>
 				{/each}
 			{/if}
 

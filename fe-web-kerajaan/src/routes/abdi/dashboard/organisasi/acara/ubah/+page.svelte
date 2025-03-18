@@ -1,195 +1,302 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+
+	let namaacara = $state(' ');
+	let lokasiacara = $state(' ');
+	let tujuanacara = $state(' ');
+	let deskripsiacara = $state(' ');
+	let kapasitasacara = $state(' ');
+	let jenis_acara = $state(' ');
+	let penanggungjawab = $state(' ');
+	let waktumulai = $state(' ');
+	let waktuselesai = $state(' ');
+	let tanggalmulai = $state(' ');
+	let tanggalselesai = $state(' ');
+
+	let { form } = $props();
+
+	if (form?.formData) {
+		namaacara = form.formData.namaacara;
+		lokasiacara = form.formData.lokasiacara;
+		tujuanacara = form.formData.tujuanacara;
+		deskripsiacara = form.formData.deskripsiacara;
+		penanggungjawab = form.formData.penanggungjawab;
+		jenis_acara = form.formData.jenis_acara;
+		kapasitasacara = form.formData.kapasitascara;
+		waktumulai = form.formData.waktumulai;
+		waktuselesai = form.formData.waktuselesai;
+		tanggalmulai = form.formData.tanggalmulai;
+		tanggalselesai = form.formData.tanggalselesai;
+	}
 
 	let total = $state(8);
 	let open = $state(false);
-	let timer: number;
-	function setTimer() {
-		open = true;
-		if (timer) {
-			clearTimeout(timer);
-		}
-		if (open)
+
+	let success = $state(false);
+	let timer: Number;
+	onMount(() => {
+		if (form?.success) {
+			success = true;
+			if (timer) {
+				clearTimeout(timer);
+			}
 			timer = setTimeout(() => {
-				open = false;
-				goto('/abdi/dashboard/organisasi/acara');
+				success = false;
+				goto('/abdi/dashboard/organisasi/detail');
 			}, 3000);
-	}
+		}
+	});
 </script>
 
 <div class="min-h-full w-full">
-	<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-		<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
-			<div class="col-span-2">
-				<div class="mt-2 w-full">
-					<p>Nama Acara:</p>
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="w-full rounded-lg border px-2 py-1"
-					/>
-				</div>
-
-				<div class="mt-2 w-full">
-					<p>Lokasi Acara:</p>
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="w-full rounded-lg border px-2 py-1"
-					/>
-				</div>
-				<div class="mt-2 w-full">
-					<p>Tujuan Acara:</p>
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="w-full rounded-lg border px-2 py-1"
-					/>
-				</div>
-				<div class="mt-2 w-full">
-					<p>Deskripsi Acara:</p>
-					<textarea
-						placeholder="Masukkan Deskripsi Acara"
-						class="h-32 w-full resize-none rounded-md border px-3 py-3 text-lg"
-					></textarea>
-				</div>
-			</div>
-
-			<div class="col-span-2">
-				<div class="flexcoba mt-2 flex w-full">
-					<div class="flex-1">
-						<p>Kapasitas Acara:</p>
+	<form method="post" action="?/edit">
+		<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+			<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
+				<div class="col-span-2">
+					<div class="mt-2 w-full">
+						<p>Nama Acara:</p>
 						<input
 							type="text"
+							bind:value={namaacara}
+							name="namaacara"
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
 						/>
+						{#if form?.errors}
+							{#each form.errors.namaacara as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
 					</div>
-					<div class="ml-10 flex">
-						<div class="mr-10 w-full items-center text-center">
-							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara</p>
-							<div class="mt-2 flex">
-								<div class="mx-2 flex items-center justify-center">
-									<input
-										id="default-radio-1"
-										type="radio"
-										value=""
-										name="default-radio"
-										class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-									/>
-									<label for="default-radio-1" class="mx-5 ms-2 text-sm font-medium text-gray-900"
-										>Private</label
-									>
+
+					<div class="mt-2 w-full">
+						<p>Lokasi Acara:</p>
+						<input
+							type="text"
+							name="lokasiacara"
+							bind:value={lokasiacara}
+							placeholder="Masukkan Nama"
+							class="w-full rounded-lg border px-2 py-1"
+						/>
+						{#if form?.errors}
+							{#each form.errors.lokasiacara as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+					<div class="mt-2 w-full">
+						<p>Tujuan Acara:</p>
+						<input
+							type="text"
+							name="tujuanacara"
+							bind:value={tujuanacara}
+							placeholder="Masukkan Nama"
+							class="w-full rounded-lg border px-2 py-1"
+						/>
+						{#if form?.errors}
+							{#each form.errors.tujuanacara as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+					<div class="mt-2 w-full">
+						<p>Deskripsi Acara:</p>
+						<textarea
+							placeholder="Masukkan Deskripsi Acara"
+							name="deskripsiacara"
+							bind:value={deskripsiacara}
+							class="h-32 w-full resize-none rounded-md border px-3 py-3 text-lg"
+						></textarea>
+						{#if form?.errors}
+							{#each form.errors.deskripsiacara as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
+
+				<div class="col-span-2">
+					<div class="flexcoba mt-2 flex w-full">
+						<div class="flex-1">
+							<p>Kapasitas Acara:</p>
+							<input
+								name="kapasitasacara"
+								type="text"
+								bind:value={kapasitasacara}
+								placeholder="Masukkan Nama"
+								class="w-full rounded-lg border px-2 py-1"
+							/>
+							{#if form?.errors}
+								{#each form.errors.kapasitasacara as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
+						<div class="ml-10 flex">
+							<div class="mr-10 w-full items-center text-center">
+								<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara</p>
+								<div class="mt-2 flex">
+									<div class="mx-2 flex items-center justify-center">
+										<input
+											id="default-radio-1"
+											type="radio"
+											value="private"
+											bind:group={jenis_acara}
+											name="jenis-acara"
+											class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+										/>
+										<label for="default-radio-1" class="mx-5 ms-2 text-sm font-medium text-gray-900"
+											>Private</label
+										>
+									</div>
+									<div class="mx-2 flex items-center justify-center">
+										<input
+											id="default-radio-2"
+											type="radio"
+											value="public"
+											bind:group={jenis_acara}
+											name="jenis-acara"
+											class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+										/>
+										<label for="default-radio-2" class="mx-5 ms-2 text-sm font-medium text-black"
+											>Public</label
+										>
+									</div>
 								</div>
-								<div class="mx-2 flex items-center justify-center">
-									<input
-										checked
-										id="default-radio-2"
-										type="radio"
-										value=""
-										name="default-radio"
-										class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-									/>
-									<label for="default-radio-2" class="mx-5 ms-2 text-sm font-medium text-black"
-										>Public</label
-									>
-								</div>
+								{#if form?.errors}
+									{#each form.errors.jenis_acara as a}
+										<p class="text-center text-red-500">{a}</p>
+									{/each}
+								{/if}
+							</div>
+						</div>
+					</div>
+					<div class="col-span-2 mt-2 w-full">
+						<p class="mt-2">Penanggung Jawab:</p>
+						<input
+							type="text"
+							placeholder="Masukkan Nama"
+							bind:value={penanggungjawab}
+							name="penanggungjawab"
+							class="w-full rounded-lg border px-2 py-1"
+						/>
+						{#if form?.errors}
+							{#each form.errors.penanggungjawab as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+					<div class="flexcoba mt-2 flex w-full">
+						<div class="mt-2 lg:flex-1">
+							<p>Tanggal Mulai:</p>
+							<input
+								type="text"
+								name="tanggalmulai"
+								placeholder="Masukkan Nama"
+								bind:value={tanggalmulai}
+								class="w-full rounded-lg border px-2 py-1"
+							/>
+							{#if form?.errors}
+								{#each form.errors.tanggalmulai as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
+						<div class="flex-1 lg:ml-10">
+							<div class="mt-2 w-full">
+								<p>Tanggal Selesai:</p>
+								<input
+									type="text"
+									placeholder="Masukkan Nama"
+									name="tanggalselesai"
+									bind:value={tanggalselesai}
+									class="w-full rounded-lg border px-2 py-1"
+								/>
+								{#if form?.errors}
+									{#each form.errors.tanggalselesai as a}
+										<p class="text-left text-red-500">{a}</p>
+									{/each}
+								{/if}
+							</div>
+						</div>
+					</div>
+					<div class="flexcoba mt-2 flex w-full">
+						<div class="mt-2 lg:flex-1">
+							<p>Waktu Mulai:</p>
+							<input
+								type="text"
+								name="waktumulai"
+								bind:value={waktumulai}
+								placeholder="Masukkan Nama"
+								class="w-full rounded-lg border px-2 py-1"
+							/>
+							{#if form?.errors}
+								{#each form.errors.waktumulai as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
+						<div class="flex-1 lg:ml-10">
+							<div class="mt-2 w-full">
+								<p>Waktu Selesai:</p>
+								<input
+									type="text"
+									placeholder="Masukkan Nama"
+									bind:value={waktuselesai}
+									name="waktuselesai"
+									class="w-full rounded-lg border px-2 py-1"
+								/>
+								{#if form?.errors}
+									{#each form.errors.waktuselesai as a}
+										<p class="text-left text-red-500">{a}</p>
+									{/each}
+								{/if}
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="col-span-2 mt-2 w-full">
-					<p class="mt-2">Penanggung Jawab:</p>
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="w-full rounded-lg border px-2 py-1"
-					/>
-				</div>
-				<div class="flexcoba mt-2 flex w-full">
-					<div class="mt-2 lg:flex-1">
-						<p>Tanggal Mulai:</p>
-						<input
-							type="text"
-							placeholder="Masukkan Nama"
-							class="w-full rounded-lg border px-2 py-1"
-						/>
+			</div>
+
+			<div class="mt-5 h-1 w-full bg-slate-300"></div>
+
+			<div class="mt-8 flex w-full">
+				<p class="my-auto ml-10 w-full text-start font-bold lg:text-center">Undangan</p>
+				<button class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white">
+					Tambah Undangan
+				</button>
+			</div>
+
+			<!-- bawah -->
+
+			<div class="mt-10 grid grid-cols-9 gap-2">
+				{#each Array(total) as _, i}
+					<div class="col-span-1 w-full">{i + 1}</div>
+					<div class="col-span-2 w-full rounded-lg border px-2 py-1">
+						<select name="panggilan" id="panggilan" class="w-full">
+							<option value="volvo">Tn</option>
+							<option value="saab">Ny</option>
+						</select>
 					</div>
-					<div class="flex-1 lg:ml-10">
-						<div class="mt-2 w-full">
-							<p>Tanggal Selesai:</p>
-							<input
-								type="text"
-								placeholder="Masukkan Nama"
-								class="w-full rounded-lg border px-2 py-1"
-							/>
-						</div>
+					<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
+					<div class="col-span-2 w-full rounded-lg border px-2 py-1">Tn</div>
+					<div class="col-span-1">
+						<span class="flex h-8 w-8 items-center justify-center rounded-full bg-red-400 p-2">
+							<i class="gg--trash z-10 items-center text-2xl"></i>
+						</span>
 					</div>
-				</div>
-				<div class="flexcoba mt-2 flex w-full">
-					<div class="mt-2 lg:flex-1">
-						<p>Waktu Mulai:</p>
-						<input
-							type="text"
-							placeholder="Masukkan Nama"
-							class="w-full rounded-lg border px-2 py-1"
-						/>
-					</div>
-					<div class="flex-1 lg:ml-10">
-						<div class="mt-2 w-full">
-							<p>Waktu Selesai:</p>
-							<input
-								type="text"
-								placeholder="Masukkan Nama"
-								class="w-full rounded-lg border px-2 py-1"
-							/>
-						</div>
-					</div>
-				</div>
+				{/each}
+			</div>
+
+			<div class="mt-8 flex w-full justify-center lg:justify-end">
+				<button class="w-50 text-nowrap rounded-lg bg-green-400 px-2 py-2 text-white" type="submit">
+					Ubah acara
+				</button>
 			</div>
 		</div>
-
-		<div class="mt-5 h-1 w-full bg-slate-300"></div>
-
-		<div class="mt-8 flex w-full">
-			<p class="my-auto ml-10 w-full text-start font-bold lg:text-center">Undangan</p>
-			<button class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white">
-				Tambah Undangan
-			</button>
-		</div>
-
-		<!-- bawah -->
-
-		<div class="mt-10 grid grid-cols-9 gap-2">
-			{#each Array(total) as _, i}
-				<div class="col-span-1 w-full">{i + 1}</div>
-				<div class="col-span-2 w-full rounded-lg border px-2 py-1">
-					<select name="panggilan" id="panggilan" class="w-full">
-						<option value="volvo">Tn</option>
-						<option value="saab">Ny</option>
-					</select>
-				</div>
-				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
-				<div class="col-span-2 w-full rounded-lg border px-2 py-1">Tn</div>
-				<div class="col-span-1">
-					<span class="flex h-8 w-8 items-center justify-center rounded-full bg-red-400 p-2">
-						<i class="gg--trash z-10 items-center text-2xl"></i>
-					</span>
-				</div>
-			{/each}
-		</div>
-
-		<div class="mt-8 flex w-full justify-center lg:justify-end">
-			<button
-				class="w-50 text-nowrap rounded-lg bg-green-400 px-2 py-2 text-white"
-				onclick={setTimer}
-			>
-				Ubah acara
-			</button>
-		</div>
-	</div>
+	</form>
 </div>
 
 {#if open}
