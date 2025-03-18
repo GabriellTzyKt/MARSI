@@ -23,6 +23,8 @@
 	let { form } = $props();
 	console.log('form data', form);
 
+	let angka = [1, 1, 2, 2];
+
 	if (form?.formData) {
 		buttonselect = form.formData.buttonselect;
 		input_radio = form.formData.inputradio;
@@ -42,16 +44,24 @@
 	let timer: number;
 
 	// Array untuk menyimpan data undangan
-	let invitations: { id: number }[] = $state([]);
+    let invitations: { id: number; panggilan: string; nama: string; notelepon: string }[] = $state([]);
 
 	function tambah() {
-		invitations = [...invitations, { id: invitations.length + 1 }];
-	}
+        invitations = [
+            ...invitations,
+            { id: invitations.length + 1, panggilan: 'Tn', nama: '', notelepon: '' }
+        ];
+    }
 
 	function hapus(index: number) {
 		console.log('Sebelum hapus:', invitations);
 		console.log('Menghapus indeks:', index);
-		invitations.splice(index, 1); 
+
+		// Hapus elemen berdasarkan indeks
+		invitations = invitations.filter((_, i) => i !== index);
+
+		// invitations = invitations.map((inv, idx) => ({ ...inv, id: idx + 1 }));
+
 		console.log('Sesudah hapus:', invitations);
 	}
 
@@ -352,16 +362,38 @@
 			</div>
 
 			<div class="mt-10 grid grid-cols-8 gap-2">
-				{#each invitations as invitation, i}
-					<!-- Tampilkan indeks (dimulai dari 1) -->
-					<div class="col-span-1 w-full">{i + 1}</div>
-					<TambahArray></TambahArray>
+				{#each invitations as invitation, i (invitation.id)}
+					<div class="col-span-1">{invitation.id}</div>
+					<div class="col-span-1 w-full rounded-lg border px-2 py-1">
+						<select
+							bind:value={invitation.panggilan}
+							class="mt-1 w-full"
+						>
+							<option value="Tn">Tn</option>
+							<option value="Ny">Ny</option>
+						</select>
+					</div>
+					<div class="col-span-3 w-full rounded-lg border px-2 py-1">
+						<input
+							type="text"
+							bind:value={invitation.nama}
+							placeholder="Nama"
+							class="w-full focus:outline-none"
+						/>
+					</div>
+					<div class="col-span-2 w-full rounded-lg border px-2 py-1">
+						<input
+							type="text"
+							bind:value={invitation.notelepon}
+							placeholder="081638149124"
+							class="w-full focus:outline-none"
+						/>
+					</div>
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
 					<div class="col-span-1">
-						<!-- Tombol hapus untuk elemen ini -->
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
-						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<span
-							class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-red-400 p-2"
+							class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2 cursor-pointer"
 							onclick={() => hapus(i)}
 						>
 							<i class="gg--trash z-10 items-center text-2xl"></i>
