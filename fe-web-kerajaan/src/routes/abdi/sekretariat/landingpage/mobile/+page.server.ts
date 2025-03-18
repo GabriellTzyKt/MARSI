@@ -20,7 +20,7 @@ export const actions: Actions = {
 
         requiredFields.forEach((f) => {
             if (!data.get(f)) {
-                errors.push({[f]:`${f.replace(/_/g, " ")} Wajib Dipilih` })
+                errors.push({[f]:f.replace('_', ' ')+ " Wajib Dipilih" })
             }
         })
         const penanggalan = data.get("penanggalan")
@@ -34,8 +34,10 @@ export const actions: Actions = {
         const profil = data.get("profil")
         const forum = data.get("forum")
         const permohonan = data.get("permohonan")
-        if (errors) {
-            return fail(418,{errors})
+        
+        if (errors.length> 0) {
+            console.log(errors)
+            return fail(418,{errors: errors})
         }
         return {errors: "no Error"}
         console.log(data)

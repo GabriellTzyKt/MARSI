@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
-	let errors = null;
+	let errors = $state();
 	let open = $state(false);
 	let timer: number;
 </script>
@@ -20,6 +20,7 @@
 					}, 3000);
 				}
 				if (result.type === 'failure') {
+					console.log(errors);
 					errors = result.data?.errors;
 				}
 			};
@@ -45,6 +46,13 @@
 							<input type="radio" name="penanggalan" id="" />
 							<p>Tidak</p>
 						</div>
+					</div>
+					<div class="flex">
+						{#if errors}
+							{#each errors as e}
+								<p class="text-left text-red-500">{e.penanggalan}</p>
+							{/each}
+						{/if}
 					</div>
 				</div>
 				<!-- tambahan penanggalan -->
@@ -72,6 +80,13 @@
 							<p>Penanggalan Arab</p>
 						</div>
 					</div>
+					<div class="flex">
+						{#if errors}
+							{#each errors as e}
+								<p class="text-left text-red-500">{e.tambahan_penanggalan}</p>
+							{/each}
+						{/if}
+					</div>
 				</div>
 				<!-- Tugas Pribadi -->
 				<div class="flex flex-col items-center gap-1 lg:items-start">
@@ -88,6 +103,13 @@
 							<p>Tidak</p>
 						</div>
 					</div>
+					<div class="flex">
+						{#if errors}
+							{#each errors as e}
+								<p class="text-left text-red-500">{e.pribadi}</p>
+							{/each}
+						{/if}
+					</div>
 				</div>
 				<!-- Tugas Acara -->
 				<div class="mb-6 flex flex-col items-center gap-1 lg:mb-0 lg:items-start">
@@ -103,6 +125,13 @@
 							<input type="radio" name="acara" id="" />
 							<p>Tidak</p>
 						</div>
+					</div>
+					<div class="flex">
+						{#if errors}
+							{#each errors as e}
+								<p class="text-left text-red-500">{e.acara}</p>
+							{/each}
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -124,6 +153,13 @@
 							<p>Tidak</p>
 						</div>
 					</div>
+					<div class="flex">
+						{#if errors}
+							{#each errors as e}
+								<p class="text-left text-red-500">{e.situs_kerajaan}</p>
+							{/each}
+						{/if}
+					</div>
 				</div>
 				<!-- chek in situs -->
 				<div class="flex flex-col items-center lg:items-start">
@@ -139,6 +175,13 @@
 							<input type="radio" name="check_in_situs" id="" />
 							<p>Tidak</p>
 						</div>
+					</div>
+					<div class="flex">
+						{#if errors}
+							{#each errors as e}
+								<p class="text-left text-red-500">{e.check_in_situs}</p>
+							{/each}
+						{/if}
 					</div>
 				</div>
 				<!-- acara kerajaan-->
@@ -156,6 +199,13 @@
 							<p>Tidak</p>
 						</div>
 					</div>
+					<div class="flex">
+						{#if errors}
+							{#each errors as e}
+								<p class="text-left text-red-500">{e.acara_kerajaan}</p>
+							{/each}
+						{/if}
+					</div>
 				</div>
 				<!-- grup chat-->
 				<div class="mb-6 flex flex-col items-center lg:mb-0 lg:items-start">
@@ -171,6 +221,13 @@
 							<input type="radio" name="grup_chat" id="" />
 							<p>Tidak</p>
 						</div>
+					</div>
+					<div class="flex">
+						{#if errors}
+							{#each errors as e}
+								<p class="text-left text-red-500">{e.grup_chat}</p>
+							{/each}
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -190,6 +247,13 @@
 							<input type="radio" name="forum" id="" />
 							<p>Tidak</p>
 						</div>
+					</div>
+					<div class="flex">
+						{#if errors}
+							{#each errors as e}
+								<p class="text-left text-red-500">{e.forum}</p>
+							{/each}
+						{/if}
 					</div>
 				</div>
 				<!-- profil -->
@@ -217,6 +281,13 @@
 							<p>Profil Saja</p>
 						</div>
 					</div>
+					<div class="flex">
+						{#if errors}
+							{#each errors as e}
+								<p class="text-left text-red-500">{e.profil}</p>
+							{/each}
+						{/if}
+					</div>
 				</div>
 				<!-- Permohonan-->
 				<div class="flex flex-col items-center lg:items-start">
@@ -232,6 +303,13 @@
 							<input type="radio" name="permohonan" id="" />
 							<p>Tidak</p>
 						</div>
+					</div>
+					<div class="flex">
+						{#if errors}
+							{#each errors as e}
+								<p class="text-left text-red-500">{e.permohonan}</p>
+							{/each}
+						{/if}
 					</div>
 				</div>
 			</div>
