@@ -4,7 +4,7 @@
 
 	let {
 		value = $bindable(),
-		open = $bindable(),
+
 		errors = null,
 		data2 = null,
 		dataambil
@@ -24,13 +24,6 @@
 		showDropdown = false;
 	}
 
-	if (open) {
-		timer = setTimeout(() => {
-			value = false;
-			open = false;
-		}, 3000);
-		clearTimeout(timer);
-	}
 	if (data2) {
 	}
 </script>

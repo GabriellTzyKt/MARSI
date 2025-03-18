@@ -1,10 +1,14 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import { fade } from 'svelte/transition';
-	let total = $state(8);
+	let total = $state(0);
 	let activeTab = $state('upcoming');
+	let { form, data } = $props();
+	let formData = null;
+	let error = $state();
 
 	function setActive(tab: string) {
 		activeTab = tab;
@@ -20,21 +24,34 @@
 
 	let open = $state(false);
 	let timer: number;
-	function setTimer() {
-		open = true;
-		if (timer) {
-			clearTimeout(timer);
-		}
-		if (open)
-			timer = setTimeout(() => {
-				open = false;
-				goto('/abdi/sekretariat/acara');
-			}, 3000);
-	}
+	// function setTimer() {
+	// 	open = true;
+	// 	if (timer) {
+	// 		clearTimeout(timer);
+	// 	}
+	// 	if (open)
+	// 		timer = setTimeout(() => {
+	// 			open = false;
+	// 			goto('/abdi/sekretariat/acara');
+	// 		}, 3000);
+	// }
 </script>
 
-<form action="?/tambah" method="post">
-	<div class="min-h-screen w-full">
+<div class="min-h-screen w-full">
+	<form
+		action="?/tambah"
+		method="post"
+		use:enhance={() => {
+			return async ({ result }) => {
+				console.log(result.data?.errors);
+				if (result.type === 'success') {
+				}
+				if (result.type === 'failure') {
+					error = result.data?.errors;
+				}
+			};
+		}}
+	>
 		<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 			<div class="col-span-2">
 				<div class="mt-2 w-full">
@@ -45,6 +62,11 @@
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
+					{#if error}
+						{#each error.nama_acara as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
 				</div>
 
 				<div class="mt-3 w-full">
@@ -55,6 +77,11 @@
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
+					{#if error}
+						{#each error.penanggungjawab_acara as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
 				</div>
 				<div class="mt-3 w-full">
 					<p>Penyelenggara Acara:</p>
@@ -64,6 +91,11 @@
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
+					{#if error}
+						{#each error.penyelenggara_acara as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
 				</div>
 				<div class="mt-3 w-full">
 					<p>Lokasi Acara:</p>
@@ -73,6 +105,11 @@
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
+					{#if error}
+						{#each error.lokasi_acara as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
 				</div>
 				<div class="mt-3 w-full">
 					<p>Tujuan Acara:</p>
@@ -82,6 +119,11 @@
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
+					{#if error}
+						{#each error.tujuan_acara as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
 				</div>
 			</div>
 
@@ -95,6 +137,11 @@
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
 						/>
+						{#if error}
+							{#each error.kapasitas_acara as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
 					</div>
 					<div class="ml-10 flex">
 						<div class="mr-10 w-full items-center text-center">
@@ -102,9 +149,9 @@
 							<div class="mt-2 flex justify-center">
 								<div class="mx-2 flex items-center justify-center">
 									<input
-										id="default-radio-1"
+										id="jenis_acara-1"
 										type="radio"
-										value=""
+										value="private"
 										name="jenis_acara"
 										class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
 									/>
@@ -121,7 +168,7 @@
 										name="jenis_acara"
 										class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
 									/>
-									<label for="default-radio-2" class="mx-5 ms-2 text-sm font-medium text-black"
+									<label for="jenis_acara-2" class="mx-5 ms-2 text-sm font-medium text-black"
 										>Public</label
 									>
 								</div>
@@ -139,6 +186,11 @@
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
 						/>
+						{#if error}
+							{#each error.tanggal_mulai as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
 					</div>
 					<div class="flex-1 lg:ml-10">
 						<div class="mt-2 w-full">
@@ -149,6 +201,11 @@
 								placeholder="Masukkan Nama"
 								class="w-full rounded-lg border px-2 py-1"
 							/>
+							{#if error}
+								{#each error.tanggal_selesai as e}
+									<p class="text-left text-red-500">- {e}</p>
+								{/each}
+							{/if}
 						</div>
 					</div>
 				</div>
@@ -157,18 +214,30 @@
 						<p>Waktu Mulai:</p>
 						<input
 							type="text"
+							name="waktu_mulai"
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
 						/>
+						{#if error}
+							{#each error.waktu_mulai as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
 					</div>
 					<div class="flex-1 lg:ml-10">
 						<div class="mt-2 w-full">
 							<p>Waktu Selesai:</p>
 							<input
 								type="text"
+								name="waktu_selesai"
 								placeholder="Masukkan Nama"
 								class="w-full rounded-lg border px-2 py-1"
 							/>
+							{#if error}
+								{#each error.waktu_selesai as e}
+									<p class="text-left text-red-500">- {e}</p>
+								{/each}
+							{/if}
 						</div>
 					</div>
 				</div>
@@ -176,8 +245,14 @@
 					<p>Deskripsi Acara:</p>
 					<textarea
 						placeholder="Masukkan Deskripsi Acara"
+						name="deskripsi_acara"
 						class="h-20 w-full resize-none rounded-md border px-3 py-1 text-lg"
 					></textarea>
+					{#if error}
+						{#each error.deskripsi_acara as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
 				</div>
 			</div>
 		</div>
@@ -186,7 +261,10 @@
 
 		<div class="mt-8 flex w-full">
 			<p class="my-auto ml-10 w-full text-center font-bold">Undangan</p>
-			<button class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white">
+			<button
+				class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white"
+				onclick={() => total++}
+			>
 				Tambah Undangan
 			</button>
 		</div>
@@ -196,32 +274,52 @@
 		<div class="mt-10 grid grid-cols-9 gap-2">
 			{#each Array(total) as _, i}
 				<div class="col-span-1 w-full">{i + 1}</div>
-				<div class="col-span-2 w-full rounded-lg border px-2 py-1">
+				<div class="col-span-2 flex w-full flex-col rounded-lg border px-2 py-1">
 					<select name="panggilan" id="panggilan" class="mt-1 w-full">
-						<option value="volvo">Tn</option>
-						<option value="saab">Ny</option>
+						<option value="Tuan">Tn</option>
+						<option value="Nyonya">Ny</option>
 					</select>
+					{#if error}
+						{#each error.panggilan as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
 				</div>
-				<input class="col-span-3 w-full rounded-lg border px-2 py-1" type="text" />
-				<input class="col-span-2 w-full rounded-lg border px-2 py-1" />
-				<div class="col-span-1">
+				<div class="col-span-3 flex flex-col">
+					<input class=" w-full rounded-lg border px-2 py-1" name="nama_lengkap" type="phone" />
+					{#if error}
+						{#each error.nama_lengkap as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
+				</div>
+				<div class="col-span-2 flex flex-col">
+					<input class=" w-full rounded-lg border px-2 py-1" type="text" name="no_telp" />
+					{#if error}
+						{#each error.no_telp as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
+				</div>
+				<div class="col-span-1 flex">
 					<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
 						<i class="gg--trash z-10 items-center text-2xl"></i>
 					</span>
 				</div>
 			{/each}
+			<div class="col-span-full">
+				<p class="text-red-500"></p>
+			</div>
 		</div>
 
 		<div class="mt-8 flex w-full justify-center lg:justify-end">
-			<button
-				class="w-50 text-nowrap rounded-lg bg-green-400 px-2 py-2 text-white"
-				onclick={toggle}
-			>
+			<button class="w-50 text-nowrap rounded-lg bg-green-400 px-2 py-2 text-white" type="submit">
 				Buat acara
 			</button>
 		</div>
-	</div>
-</form>
+	</form>
+</div>
+
 {#if success}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
 		<SucessModal

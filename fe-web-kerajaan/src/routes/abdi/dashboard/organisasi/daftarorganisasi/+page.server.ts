@@ -1,4 +1,4 @@
-import type { Actions } from "@sveltejs/kit";
+import { fail, type Actions } from "@sveltejs/kit";
 import { dummySekreAnggotaOrg } from '$lib/dummy'
 import { string, z } from "zod";
 import type { PageServerLoad } from "./$types";
@@ -22,13 +22,13 @@ export const actions: Actions = {
             jabatan: z.string().trim().min(1, "Jabatan harus diisi!"),
         });
 
-        form = {
+       const  form = {
             namaanggota: String(data.get("namaanggota") || "").trim(),
             deskripsi: String(data.get("deskripsi") || "").trim(),
             jabatan: String(data.get("jabatan") || "").trim(),
         };
 
-        console.log("Extracted Form:", form);
+        // console.log("Extracted Form:", form);
 
 
         const validation = ver.safeParse({ ...form });
@@ -38,7 +38,7 @@ export const actions: Actions = {
             return fail(406,{
                 errors: validation.error.flatten().fieldErrors, success: false,
                 formData: form, type: "add"
-            };
+            });
         }
 
         return { errors: "Success", success: true, formData: form, type: "add" };
