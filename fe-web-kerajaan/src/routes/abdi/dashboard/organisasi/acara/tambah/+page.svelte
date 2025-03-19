@@ -20,10 +20,12 @@
 	let buttonselect = $state('');
 	let error: any = $state('');
 
+	let panggilan = $state([]);
+	let namabawah = $state([]);
+	let notelpbawah = $state([]);
+
 	let { form } = $props();
 	console.log('form data', form);
-
-	let angka = [1, 1, 2, 2];
 
 	if (form?.formData) {
 		buttonselect = form.formData.buttonselect;
@@ -43,26 +45,39 @@
 	let open = $state(false);
 	let timer: number;
 
-	// Array untuk menyimpan data undangan
-    let invitations: { id: number; panggilan: string; nama: string; notelepon: string }[] = $state([]);
+	let invitations: { id: number; panggilan: string; nama: string; notelepon: string }[] = $state(
+		[]
+	);
+	let invitationIds: number[] = $state([]); // Array that stores only the invitation ids
 
 	function tambah() {
-        invitations = [
-            ...invitations,
-            { id: invitations.length + 1, panggilan: 'Tn', nama: '', notelepon: '' }
-        ];
-    }
+		// id nya dipakei date.now itu supaya pasti beda
+		const newId = Date.now();
+
+		invitations = [
+			...invitations,
+			{
+				id: newId,
+				panggilan: 'Tn',
+				nama: '',
+				notelepon: ''
+			}
+		];
+		console.log('invitations: ', invitations);
+
+		invitationIds = [...invitationIds, newId];
+		console.log('invitations id: ', invitationIds);
+	}
 
 	function hapus(index: number) {
 		console.log('Sebelum hapus:', invitations);
 		console.log('Menghapus indeks:', index);
 
-		// Hapus elemen berdasarkan indeks
 		invitations = invitations.filter((_, i) => i !== index);
-
-		// invitations = invitations.map((inv, idx) => ({ ...inv, id: idx + 1 }));
+		invitationIds = invitationIds.filter((_, i) => i !== index);
 
 		console.log('Sesudah hapus:', invitations);
+		console.log('Sesudah hapus:', invitationIds);
 	}
 
 	function setActive(tab: string) {
@@ -95,6 +110,8 @@
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
+					console.log('Error for namabawah:', error.namabawah);
+					console.log('Error for notelpbawah:', error.notelpbawah);
 				}
 			};
 		}}
@@ -354,7 +371,10 @@
 				<p class="my-auto ml-10 w-full text-center font-bold">Undangan</p>
 				<button
 					class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white"
-					onclick={tambah}
+					onclick={() => {
+						console.log('hi');
+						tambah();
+					}}
 					type="button"
 				>
 					Tambah Undangan
@@ -363,37 +383,72 @@
 
 			<div class="mt-10 grid grid-cols-8 gap-2">
 				{#each invitations as invitation, i (invitation.id)}
-					<div class="col-span-1">{invitation.id}</div>
+					<div class="col-span-1">{i + 1}</div>
+					<input type="hidden" name="id" value={invitation.id} />
 					<div class="col-span-1 w-full rounded-lg border px-2 py-1">
 						<select
-							bind:value={invitation.panggilan}
+							bind:value={panggilan[invitation.id]}
+							name={`panggilan_${invitation.id}`}
+							id={`panggilan_${invitation.id}`}
 							class="mt-1 w-full"
 						>
 							<option value="Tn">Tn</option>
 							<option value="Ny">Ny</option>
 						</select>
 					</div>
+
 					<div class="col-span-3 w-full rounded-lg border px-2 py-1">
 						<input
 							type="text"
-							bind:value={invitation.nama}
+							bind:value={namabawah[invitation.id]}
 							placeholder="Nama"
+							name={`namabawah_${invitation.id}`}
+							id={`namabawah_${invitation.id}`}
 							class="w-full focus:outline-none"
 						/>
+						{#if error.namabawah}
+							<!-- {#each invitationIds, i}
+								{#each error.namabawah as errorItem, j}
+									{console.log('Invitation Id : ', invitationIds[i])}
+									{console.log('Error Id : ', error.namabawah[j].id)} -->
+							<!-- {#if String(error.namabawah[j].id) === String(invitationIds[i])} -->
+							<p class="text-left text-red-500">{error.namabawah[0].message}</p>
+							<!-- {/if} -->
+							<!-- {/each}
+							{/each} -->
+						{:else}
+							{console.log('No error for namabawah with id', invitation.id)}
+						{/if}
 					</div>
+
 					<div class="col-span-2 w-full rounded-lg border px-2 py-1">
 						<input
 							type="text"
-							bind:value={invitation.notelepon}
+							bind:value={notelpbawah[invitation.id]}
+							name={`notelpbawah_${invitation.id}`}
+							id={`notelpbawah_${invitation.id}`}
 							placeholder="081638149124"
 							class="w-full focus:outline-none"
 						/>
+						{#if error.notelpbawah}
+							<!-- {#each invitationIds, i}
+							{#each error.namabawah as errorItem, j}
+								{console.log('Invitation Id : ', invitationIds[i])}
+								{console.log('Error Id : ', error.namabawah[j].id)} -->
+							<!-- {#if String(error.namabawah[j].id) === String(invitationIds[i])} -->
+							<p class="text-left text-red-500">{error.notelpbawah[0].message}</p>
+							<!-- {/if} -->
+							<!-- {/each}
+						{/each} -->
+						{:else}
+							{console.log('No error for namabawah with id', invitation.id)}
+						{/if}
 					</div>
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
 					<div class="col-span-1">
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<span
-							class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2 cursor-pointer"
+							class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-red-400 p-2"
 							onclick={() => hapus(i)}
 						>
 							<i class="gg--trash z-10 items-center text-2xl"></i>
