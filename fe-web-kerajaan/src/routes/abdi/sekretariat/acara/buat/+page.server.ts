@@ -4,6 +4,7 @@ import { union, z } from "zod";
 
 export const actions: Actions = {
     tambah: async ({ request }) => {
+        let error = []
         const today = new Date().toISOString().split("T")[0]
    
         const date_hours = String(new Date().getHours()).padStart(2,"0")
@@ -13,10 +14,38 @@ export const actions: Actions = {
         console.log(data)
         // console.log(today_time_hour + ":" + today_time_min)
         // console.log(date + ":" + date_min)
+        const panggilan = data.getAll("panggilan")
+        const nama_lengkap = (data.getAll("nama_lengkap"))
+        const no_telp = data.getAll("no_telp")
+        console.log(panggilan)
         const data_selesai = String(data.get("tanggal_selesai"))
         const data_mulai = String(data.get("tanggal_mulai"))
         const data_waktu_mulai = String(data.get("waktu_mulai"))
-        const data_waktu_selesai = String(data.get("waktu_selesai"))
+        const data_waktu_selesai = String(data.get("waktu_selesai")) 
+
+        if (!panggilan || !nama_lengkap || !no_telp) {
+            error.push({ message: "Semua field harus diisi" });
+        } else if (Array.isArray(panggilan)) {
+            for (let i = 0; i < panggilan.length; i++) {
+                let undanganError = [];
+                if (!panggilan[i] || !nama_lengkap[i] || !no_telp[i]) {
+                    undanganError.push("Semua field harus diisi.");
+                    // error.push(`Undangan ke-${i + 1} belum lengkap, semua field harus diisi`);
+                }
+                if (no_telp[i] && !/^\d+$/.test(String(no_telp[i]))) {
+                    undanganError.push("Nomer Telpon Bukan Berupa Digit / Angka");
+                    // error.push(`Undangan ke-${i + 1} Nomer Telpon Bukan Berupa Digit / Angka`)
+                }
+                if (no_telp[i] && (String(no_telp[i]).length < 10 || String(no_telp[i]).length > 13)) {
+                    undanganError.push("Nomer Telpon Harus 10-13 digit");
+                    // error.push(`Undangan ke-${i + 1} Nomer Telpon Harus 10-13 digit`)
+                }
+                if (undanganError.length > 0) {
+                    error.push({ index: String((i)), messages: undanganError });
+                }
+            }
+        }
+        
         
         const ver = z.object({
             nama_acara:
@@ -38,9 +67,9 @@ export const actions: Actions = {
             kapasitas_acara:
                 z.coerce.number({ message: "Field Kapasitas Acara harus berupa angka" })
                     .min(1, "Minimal 1 kapasitas"),
-            jenis_acara:
-                z.string({ message: "Field Jenis Acara harus diisi" })
-                    .nonempty("Minimal 1 huruf / tidak boleh kosong"),
+            // jenis_acara:
+            //     z.string({ message: "Field Jenis Acara harus diisi" })
+            //         .nonempty("Minimal 1 huruf / tidak boleh kosong"),
             tanggal_mulai:
                 z.string({ message: "Field Tanggal Mulai harus diisi" })
                     .refine((v) => {
@@ -62,46 +91,47 @@ export const actions: Actions = {
                        
                     }, { message: "Tanggal Selesai tidak boleh kurang dengan tanggal mulai" }),
             
-            panggilan: z.union([
-                z.string({ message: "Field Panggilan harus diisi" }).nonempty("Minimal 1 huruf / tidak boleh kosong"),
-                z.array(
-                    z.string({message:"Field Panggilan harus diisi"}).nonempty("Minimal 1 huruf / tidak boleh kosong")
-                )
-            ]).transform((val)=> (Array.isArray(val)? val: [val])),
-            nama_lengkap: z.union([
-                z.string({ message: "Field Panggilan harus diisi" }).nonempty("Minimal 1 huruf / tidak boleh kosong"),
-                z.array(
-                    z.string({message:"Field Panggilan harus diisi"}).nonempty("Minimal 1 huruf / tidak boleh kosong")
-                )
-            ]).transform((val) => (Array.isArray(val) ? val : [val])),
+            // panggilan: z.union([
+            //     z.string({ message: "Field Panggilan harus diisi" }).nonempty("Minimal 1 huruf / tidak boleh kosong"),
+            //     z.array(
+            //         z.string({message:"Field Panggilan harus diisi"}).nonempty("Minimal 1 huruf / tidak boleh kosong")
+            //     )
+            // ]).transform((val)=> (Array.isArray(val)? val: [val])),
+            // nama_lengkap: z.union([
+            //     z.string({ message: "Field Panggilan harus diisi" }).nonempty("Minimal 1 huruf / tidak boleh kosong"),
+            //     z.array(
+            //         z.string({message:"Field Panggilan harus diisi"}).nonempty("Minimal 1 huruf / tidak boleh kosong")
+            //     )
+            // ]).transform((val) => (Array.isArray(val) ? val : [val])),
             
-            no_telp:
-                z.array(
-                z.string()
-                .min(10, "Nomor telepon minimal harus 10 digit")
-                .max(15, "Nomor telepon maksimal 15 digit")
-                        .regex(/^\d+$/, "Harus berupa angka")
+            // no_telp:
+            // //     z.array(
+            // //     z.string()
+            // //     .min(10, "Nomor telepon minimal harus 10 digit")
+            // //     .max(15, "Nomor telepon maksimal 15 digit")
+            // //             .regex(/^\d+$/, "Harus berupa angka")
                     
-            ).nonempty({ message: "Minimal satu nomor telepon harus diisi" })
-                // z.string({ message: "Field Nomer Telpon ini harus diisi" })              
-                //     .min(10, "Nomer Telpon minimal harus 10 digit")
-                //     .max(15, "Nomer Telpon Maximal 15 digit")                   
-                //     .regex(/^d+$/, "Harus Berupa digit atau nomer")
-                //     .array()
-                // z.union([
-                //     z.string({ message: "Field Nomer Telpon ini harus diisi" })
-                // .min(10, "Nomer Telpon minimal harus 10 digit")
-                // .max(15, "Nomer Telpon Maximal 15 digit")
-                // .regex(/^\d+$/, "Harus Berupa digit atau nomer"),
-                // z.array(
-                //     z.string({ message: "Field Nomer Telpon ini harus diisi" })
-                //         .min(10, "Nomer Telpon minimal harus 10 digit")
-                //         .max(15, "Nomer Telpon Maximal 15 digit")
-                //         .regex(/^\d+$/, "Harus Berupa digit atau nomer")
+            //     // ).nonempty({ message: "Minimal satu nomor telepon harus diisi" })
+            
+            //     // z.string({ message: "Field Nomer Telpon ini harus diisi" })              
+            //     //     .min(10, "Nomer Telpon minimal harus 10 digit")
+            //     //     .max(15, "Nomer Telpon Maximal 15 digit")                   
+            //     //     .regex(/^d+$/, "Harus Berupa digit atau nomer")
+            //     //     .array()
+            //     z.union([
+            //         z.string({ message: "Field Nomer Telpon ini harus diisi" })
+            //     .min(10, "Nomer Telpon minimal harus 10 digit")
+            //     .max(15, "Nomer Telpon Maximal 15 digit")
+            //     .regex(/^\d+$/, "Harus Berupa digit atau nomer"),
+            //     z.array(
+            //         z.string({ message: "Field Nomer Telpon ini harus diisi" })
+            //             .min(10, "Nomer Telpon minimal harus 10 digit")
+            //             .max(15, "Nomer Telpon Maximal 15 digit")
+            //             .regex(/^\d+$/, "Harus Berupa digit atau nomer")
                         
-                // )
-                // ]).transform((val)=>(Array.isArray(val)? val: [val]))
-                ,
+            //     )
+            //     ]).transform((val)=>(Array.isArray(val)? val: [val]))
+            //     ,
             waktu_mulai:
                 z.string({ message: "Field Waktu Mulai harus diisi" })
                     .nonempty("tidak boleh kosong")
@@ -128,12 +158,12 @@ export const actions: Actions = {
             lokasi_acara: String(data.get("lokasi_acara")),
             tujuan_acara: String(data.get("tujuan_acara")),
             kapasitas_acara: String(data.get("kapasitas_acara")),
-            jenis_acara: String(data.get("jenis_acara")),
+            // jenis_acara: String(data.get("jenis_acara")),
             tanggal_mulai: String(data.get("tanggal_mulai")),
             tanggal_selesai: String(data.get("tanggal_selesai")),
-            panggilan: String(data.get("panggilan")),
-            nama_lengkap: String(data.get("nama_lengkap")),
-            no_telp: String(data.get("no_telp")),
+            // panggilan: data.getAll("panggilan"),
+            // nama_lengkap: data.get("nama_lengkap"),
+            // no_telp: data.getAll("no_telp"),
             waktu_mulai: String(data.get("waktu_mulai")),
             waktu_selesai: String(data.get("waktu_selesai")),
             deskripsi_acara: String(data.get("deskripsi_acara")),
@@ -142,7 +172,7 @@ export const actions: Actions = {
         const verif = ver.safeParse({ ...formData })
         if (!verif.success) {
             console.log(verif.error.flatten().fieldErrors)
-            return fail(500, { errors: verif.error.flatten().fieldErrors, formData})
+            return fail(500, { errors: verif.error.flatten().fieldErrors, formData, undanganError: error})
         }   
         return { errors: "success", formData}
     }

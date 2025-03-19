@@ -9,6 +9,7 @@
 	let { form, data } = $props();
 	let formData = null;
 	let error = $state();
+	let p = $state();
 
 	function setActive(tab: string) {
 		activeTab = tab;
@@ -43,11 +44,20 @@
 		method="post"
 		use:enhance={() => {
 			return async ({ result }) => {
-				console.log(result.data?.errors);
+				// console.log(result.data?.errors);
+				// console.log(result.data?.undanganError);
 				if (result.type === 'success') {
+					success = true;
+					let timer: number;
+					timer = setTimeout(() => {
+						success = false;
+						goto('/abdi/sekretariat/acara');
+					}, 3000);
 				}
 				if (result.type === 'failure') {
 					error = result.data?.errors;
+					p = result.data?.undanganError;
+					console.log(p);
 				}
 			};
 		}}
@@ -261,12 +271,12 @@
 
 		<div class="mt-8 flex w-full">
 			<p class="my-auto ml-10 w-full text-center font-bold">Undangan</p>
-			<button
+			<div
 				class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white"
 				onclick={() => total++}
 			>
 				Tambah Undangan
-			</button>
+			</div>
 		</div>
 
 		<!-- bawah -->
@@ -291,20 +301,19 @@
 						<i class="gg--trash z-10 items-center text-2xl"></i>
 					</span>
 				</div>
+				<div class=" col-span-full col-start-2">
+					{#if p}
+						{#each p as pp}
+							{console.log(pp.index === String(i))}
+							{#if pp.index === String(i)}
+								{#each pp.messages as ppp}
+									<p class="text-left text-red-500">- {ppp}</p>
+								{/each}
+							{/if}
+						{/each}
+					{/if}
+				</div>
 			{/each}
-			<div class="col-span-full">
-				{#if error}
-					{#each error.panggilan as e}
-						<p class="text-left text-red-500">- {e}</p>
-					{/each}
-					{#each error.no_telp as e}
-						<p class="text-left text-red-500">- {e}</p>
-					{/each}
-					{#each error.nama_lengkap as e}
-						<p class="text-left text-red-500">- {e}</p>
-					{/each}
-				{/if}
-			</div>
 		</div>
 
 		<div class="mt-8 flex w-full justify-center lg:justify-end">
@@ -316,14 +325,7 @@
 </div>
 
 {#if success}
-	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
-		<SucessModal
-			open={success}
-			text="Tamu Berhasil Di Undang!"
-			to="/abdi/sekretariat/acara"
-			on:close={toggle}
-		></SucessModal>
-	</div>
+	<SuccessModal text="Acara & Undangan Berhasil diinput"></SuccessModal>
 {/if}
 
 <style>
