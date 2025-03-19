@@ -10,7 +10,11 @@ void checkIn(BuildContext context) => showDialog(
           // Judul "Check In"
           title: Row(
             children: [
-              Icon(Icons.arrow_back_ios),
+              GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Icon(Icons.arrow_back_ios)),
               Text(
                 " Check In",
                 style: GayaTeks.body.copyWith(
@@ -63,35 +67,36 @@ void checkIn(BuildContext context) => showDialog(
                     ),
                   ),
                 ),
-                const SizedBox(height: 56),
-                // Tombol "Submit"
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: InkWell(
-                    child: Container(
-                      height: 30,
-                      width: double.infinity - 100,
-                      decoration: BoxDecoration(
-                        color: Warna.blue4,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Submit",
-                          style: GayaTeks.body.copyWith(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
-                )
               ],
             ),
           ),
-          actions: [],
+          actions: [
+            // Tombol "Submit"
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  height: 30,
+                  width: double.infinity - 100,
+                  decoration: BoxDecoration(
+                    color: Warna.blue4,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Submit",
+                      style: GayaTeks.body.copyWith(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
         ));
-// void submit(BuildContext context) {
-//   Navigator.pop(context);
-// }
 
 void laporanTugas(BuildContext context) => showDialog(
     context: context,
@@ -102,7 +107,11 @@ void laporanTugas(BuildContext context) => showDialog(
           // Judul "Laporan"
           title: Row(
             children: [
-              Icon(Icons.arrow_back_ios),
+              GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Icon(Icons.arrow_back_ios)),
               Text(
                 " Laporan",
                 style: GayaTeks.body.copyWith(
@@ -115,7 +124,7 @@ void laporanTugas(BuildContext context) => showDialog(
           // Kotak konten
           content: Container(
             width: 300,
-            height: 260,
+            height: 280,
             child: Column(
               children: [
                 // Input "Keterangan"
@@ -167,30 +176,37 @@ void laporanTugas(BuildContext context) => showDialog(
                     ),
                   ),
                 ),
-                // const SizedBox(height: 56),
-                // Tombol "Submit"
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                  child: InkWell(
-                    child: Container(
-                      height: 30,
-                      width: double.infinity - 120,
-                      decoration: BoxDecoration(
-                        color: Warna.blue4,
-                        borderRadius: BorderRadius.circular(26),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Laporkan",
-                          style: GayaTeks.body.copyWith(color: Colors.white),
+                // Tombol "Laporkan"
+                GestureDetector(
+                  onTap: () {
+                  
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: 30,
+                        width: double.infinity - 120,
+                        decoration: BoxDecoration(
+                          color: Warna.blue4,
+                          borderRadius: BorderRadius.circular(26),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Laporkan",
+                            style: GayaTeks.body.copyWith(color: Colors.white),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                )
+                ),
+                
               ],
             ),
           ),
-          actions: [],
         ));

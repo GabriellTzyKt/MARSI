@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:iconify_flutter/iconify_flutter.dart';
+import 'package:iconify_flutter/icons/mdi.dart';
+import 'package:iconify_flutter/icons/material_symbols.dart';
 import 'package:marsi_mobile/global/assets.dart';
 import 'package:marsi_mobile/global/widget.dart';
 import 'package:marsi_mobile/pages/acara/acara.dart';
 import 'package:marsi_mobile/pages/chat.dart';
 import 'package:marsi_mobile/pages/home/home.dart';
-import 'package:marsi_mobile/pages/login.dart';
-import 'package:marsi_mobile/pages/profil.dart';
+import 'package:marsi_mobile/pages/login/login.dart';
+import 'package:marsi_mobile/pages/profile/profil.dart';
 import 'package:marsi_mobile/pages/situs/situs.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
-  runApp(const MyApp());
+  initializeDateFormatting().then((_) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -42,7 +46,7 @@ class _MainState extends State<Main> {
     Profil(),
   ];
 
-  Widget _buildNavItem(IconData icon, int index) {
+  Widget _buildNavItem(String icon, int index) {
     bool isSelected = currentIndex == index;
 
     return GestureDetector(
@@ -64,7 +68,7 @@ class _MainState extends State<Main> {
           builder: (context, double scale, child) {
             return Transform.scale(
               scale: scale,
-              child: Icon(
+              child: Iconify(
                 icon,
                 color: isSelected ? Warna.blue4 : Colors.white,
               ),
@@ -86,11 +90,11 @@ class _MainState extends State<Main> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildNavItem(Icons.home, 0),
-            _buildNavItem(Icons.calendar_month_outlined, 1),
-            _buildNavItem(Icons.qr_code_scanner_outlined, 2),
-            _buildNavItem(Icons.notifications_none_outlined, 3),
-            _buildNavItem(Icons.person_2_outlined, 4),
+            _buildNavItem(MaterialSymbols.home_outline_rounded, 0),
+            _buildNavItem(Mdi.calendar_outline, 1),
+            _buildNavItem(MaterialSymbols.castle_outline, 2),
+            _buildNavItem(Mdi.message_outline, 3),
+            _buildNavItem(Mdi.user_circle_outline, 4),
           ],
         ),
       ),

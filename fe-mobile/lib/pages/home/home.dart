@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:marsi_mobile/global/assets.dart';
-import 'package:marsi_mobile/pages/home/popDialog.dart';
+import 'package:marsi_mobile/global/popDialog.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -10,18 +11,27 @@ class Homescreen extends StatefulWidget {
 }
 
 class HomescreenState extends State<Homescreen> {
+
+  DateTime tanggalAwal = DateTime.utc(1966, 10, 16);
+  DateTime tanggalAkhir = DateTime.utc(2030, 3, 14);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
         children: [
-          // Kalender
+          // Kalender7
           Container(
             margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
-            width: 200,
-            height: 200,
+            width: MediaQuery.of(context).size.width,
+            height: 400,
             decoration: Kotak.dekorasi,
-            child: Center(child: Text("Ini Kalender")),
+            child: TableCalendar(
+              firstDay: tanggalAwal,
+              lastDay: tanggalAkhir,
+              focusedDay: DateTime.now(),
+              locale: 'id_ID',
+            ),
           ),
           const SizedBox(height: 20),
           // Check in
@@ -121,13 +131,12 @@ class HomescreenState extends State<Homescreen> {
             ),
           ),
           Container(
-              margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
-              width: double.infinity,
-              height: 200,
-              decoration: Kotak.dekorasi,
-              child: ListView.builder(
-                itemCount: tugasPribadi.length,
-                itemBuilder: (context, index) {
+            margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
+            decoration: Kotak.dekorasi,
+            child: Column(
+              children: List.generate(
+                tugasPribadi.length,
+                (index) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: Column(
@@ -197,7 +206,7 @@ class HomescreenState extends State<Homescreen> {
                         // Tombol
                         InkWell(
                           onTap: () {
-                            laporanTugas(context);
+                            //
                           },
                           child: Container(
                             width: MediaQuery.of(context).size.width - 60,
@@ -218,7 +227,9 @@ class HomescreenState extends State<Homescreen> {
                     ),
                   );
                 },
-              )),
+              ),
+            ),
+          ),
           const SizedBox(height: 20),
           // Tugas Acara
           Padding(
@@ -230,13 +241,12 @@ class HomescreenState extends State<Homescreen> {
             ),
           ),
           Container(
-              margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
-              width: double.infinity,
-              height: 200,
-              decoration: Kotak.dekorasi,
-              child: ListView.builder(
-                itemCount: tugasPribadi.length,
-                itemBuilder: (context, index) {
+            margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
+            decoration: Kotak.dekorasi,
+            child: Column(
+              children: List.generate(
+                tugasPribadi.length,
+                (index) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: Column(
@@ -327,7 +337,9 @@ class HomescreenState extends State<Homescreen> {
                     ),
                   );
                 },
-              )),
+              ),
+            ),
+          ),
         ],
       ),
     );

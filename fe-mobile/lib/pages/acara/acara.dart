@@ -2,8 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:marsi_mobile/global/assets.dart';
 import 'package:marsi_mobile/pages/acara/detailAcara.dart';
 
-class Acara extends StatelessWidget {
+class Acara extends StatefulWidget {
   const Acara({super.key});
+
+  @override
+  State<Acara> createState() => _AcaraState();
+}
+
+List<Map<String, String>> cariAcara = [];
+
+class _AcaraState extends State<Acara> {
+  @override
+  void initState() {
+    cariAcara = detailAcara;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,11 +24,11 @@ class Acara extends StatelessWidget {
         body: Stack(children: [
       ListView(children: [
         Column(
-            children: List.generate(detailAcara.length, (index) {
+            children: List.generate(cariAcara.length, (index) {
           return Container(
             decoration: Kotak.dekorasi,
             margin: index == 0
-                ? EdgeInsets.fromLTRB(24, 88, 24, 12)
+                ? EdgeInsets.fromLTRB(24, 84, 24, 12)
                 : EdgeInsets.fromLTRB(24, 12, 24, 12),
             height: 250,
             child: Column(
@@ -44,7 +57,7 @@ class Acara extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          detailAcara[index]["nama_acara"]!,
+                          cariAcara[index]["nama_acara"]!,
                           style: GayaTeks.heading.copyWith(
                             color: Warna.darkBlue,
                           ),
@@ -55,7 +68,7 @@ class Acara extends StatelessWidget {
                 ),
                 // Lokasi dan Tombol Detail
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 12, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(12, 12, 0, 12),
                   child: Row(
                     children: [
                       // Lokasi
@@ -65,7 +78,7 @@ class Acara extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                          child: Text(detailAcara[index]["alamat_lokasi"]!,
+                          child: Text(cariAcara[index]["alamat_lokasi"]!,
                               style: GayaTeks.body.copyWith(
                                   fontSize: 12, color: Warna.darkBlue))),
                       // Tombol Detail
@@ -105,6 +118,7 @@ class Acara extends StatelessWidget {
           );
         })),
       ]),
+      // Search Bar
       Padding(
         padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
         child: Align(
@@ -112,11 +126,26 @@ class Acara extends StatelessWidget {
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.75,
             child: SearchBar(
+              onChanged: (value) {
+                filterAcara(value);
+              },
               hintText: "Cari Acara",
             ),
           ),
         ),
       ),
     ]));
+  }
+
+  void filterAcara(String value) {
+    List<Map<String, String>> hasil = [];
+    if (value.isEmpty) {
+      hasil = detailAcara;
+    }else {
+      hasil = detailAcara.where((element) => element["nama_acara"]!.toLowerCase().contains(value.toLowerCase())).toList();
+    }
+    setState(() {
+      cariAcara = hasil;
+    });
   }
 }

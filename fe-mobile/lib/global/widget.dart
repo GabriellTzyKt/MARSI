@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:marsi_mobile/global/assets.dart';
+import 'package:iconify_flutter/icons/material_symbols.dart';
 
 class TopBar extends StatelessWidget implements PreferredSize {
   const TopBar({super.key});
@@ -18,7 +20,9 @@ class TopBar extends StatelessWidget implements PreferredSize {
       Container(
           width: double.infinity,
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              // Gambar
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
                 child: Image.asset(
@@ -27,6 +31,7 @@ class TopBar extends StatelessWidget implements PreferredSize {
                   height: 80,
                 ),
               ),
+              // Text dan Nama
               Container(
                 margin: EdgeInsets.only(top: 40),
                 child: Column(
@@ -40,7 +45,7 @@ class TopBar extends StatelessWidget implements PreferredSize {
                           fontSize: 22),
                     ),
                     Text(
-                      "Jono",
+                      detailUser['nama']!,
                       style: GayaTeks.body.copyWith(
                           color: Warna.accentYellow,
                           fontWeight: FontWeight.bold,
@@ -48,7 +53,17 @@ class TopBar extends StatelessWidget implements PreferredSize {
                     )
                   ],
                 ),
-              )
+              ),
+              // Notifikasi
+              Spacer(),
+              Padding(
+                padding: EdgeInsets.fromLTRB(0, 36, 20, 0),
+                child: Iconify(
+                  MaterialSymbols.notifications_outline,
+                  color: Warna.accentYellow,
+                  size: 32,
+                ),
+              ),
             ],
           )),
     ]);
@@ -75,19 +90,19 @@ class _FooterState extends State<Footer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 60,
-        color: Warna.blue4,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildNavItem(Icons.home, 0),
-            _buildNavItem(Icons.calendar_month_outlined, 1),
-            _buildNavItem(Icons.qr_code_scanner_outlined, 2),
-            _buildNavItem(Icons.notifications_none_outlined, 3),
-            _buildNavItem(Icons.person_2_outlined, 4),
-          ],
-        ),
-      );
+      height: 60,
+      color: Warna.blue4,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildNavItem(Icons.home, 0),
+          _buildNavItem(Icons.calendar_month_outlined, 1),
+          _buildNavItem(Icons.qr_code_scanner_outlined, 2),
+          _buildNavItem(Icons.notifications_none_outlined, 3),
+          _buildNavItem(Icons.person_2_outlined, 4),
+        ],
+      ),
+    );
   }
 
   Widget _buildNavItem(IconData icon, int index) {
@@ -119,6 +134,62 @@ class _FooterState extends State<Footer> {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+class LahanTeks {
+  static Widget lahanBerjudul(BuildContext context, String judul, Map<String, String> map, String api) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            judul,
+            style: GayaTeks.body,
+          ),
+        ),
+        Container(
+          width: screenWidth(context) * 0.8,
+          height: 40,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black,
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                map[api]!,
+                style: GayaTeks.body,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  static Widget input(String teks) {
+    return Text(
+      teks,
+      style: GayaTeks.body.copyWith(
+        color: Warna.darkBlue,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  static Widget teksteks(String teks) {
+    return Text(
+      teks,
+      style: GayaTeks.body.copyWith(
+        color: Warna.darkBlue,
       ),
     );
   }

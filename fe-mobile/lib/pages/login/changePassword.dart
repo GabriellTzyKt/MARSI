@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:marsi_mobile/global/assets.dart';
-import 'package:marsi_mobile/main.dart';
+import 'package:marsi_mobile/pages/login/login.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class Changepassword extends StatefulWidget {
+  const Changepassword({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Changepassword> createState() => _ChangepasswordState();
 }
 
-class _LoginState extends State<Login> {
+class _ChangepasswordState extends State<Changepassword> {
   bool isHidden = true;
 
   void toggleVisibility() {
@@ -28,7 +28,7 @@ class _LoginState extends State<Login> {
             // bg motif
             Container(
               width: double.infinity,
-              height: MediaQuery.of(context).size.height,
+              height: MediaQuery.of(context).size.height * 0.75,
               color: Warna.blue4,
               child: Image.asset(
                 'assets/gambar/bg.png',
@@ -37,7 +37,7 @@ class _LoginState extends State<Login> {
             ),
             Column(
               children: [
-                // logo
+                // Logo
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 42),
                   child: Image.asset(
@@ -46,7 +46,7 @@ class _LoginState extends State<Login> {
                     height: 100,
                   ),
                 ),
-                // form login
+                // Form Login
                 Container(
                   height: MediaQuery.of(context).size.height * 0.75,
                   width: double.infinity,
@@ -58,7 +58,7 @@ class _LoginState extends State<Login> {
                   ),
                   child: Column(
                     children: [
-                      // judul
+                      // Judul
                       Container(
                         margin: EdgeInsets.only(
                             top: 38, bottom: 64, left: 68, right: 68),
@@ -70,12 +70,18 @@ class _LoginState extends State<Login> {
                               fontFamily: 'Lato',
                             )),
                       ),
-                      // username
+                      // Password Baru
                       Container(
                         margin: EdgeInsets.only(left: 40, right: 40),
                         child: TextFormField(
+                          obscureText: isHidden,
                           decoration: InputDecoration(
-                            labelText: 'Username',
+                            suffixIcon: IconButton(
+                                onPressed: toggleVisibility,
+                                icon: Icon(isHidden
+                                    ? Icons.visibility_off
+                                    : Icons.visibility)),
+                            labelText: 'Password Baru',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -87,9 +93,8 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                       ),
-                      // 24
                       SizedBox(height: screenHeight * 0.03),
-                      // password
+                      // Ulang Password Baru
                       Container(
                         margin: EdgeInsets.only(left: 40, right: 40),
                         child: TextFormField(
@@ -100,7 +105,7 @@ class _LoginState extends State<Login> {
                                 icon: Icon(isHidden
                                     ? Icons.visibility_off
                                     : Icons.visibility)),
-                            labelText: 'Password',
+                            labelText: 'Konfirmasi Password Baru',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -115,10 +120,8 @@ class _LoginState extends State<Login> {
                       // tombol login
                       InkWell(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Main()));
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => Login()));
                         },
                         child: Container(
                           margin: EdgeInsets.only(top: 24, left: 40, right: 40),
@@ -128,14 +131,13 @@ class _LoginState extends State<Login> {
                             borderRadius: BorderRadius.circular(36),
                           ),
                           child: Center(
-                            child: Text('Masuk'),
+                            child: Text(
+                              'Ubah Password',
+                              style:
+                                  GayaTeks.body.copyWith(color: Warna.darkBlue),
+                            ),
                           ),
                         ),
-                      ),
-                      // text "bikin akun"
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [Text('Belum punya akun?'), Text("Daftar")],
                       ),
                     ],
                   ),

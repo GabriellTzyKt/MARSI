@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:marsi_mobile/global/assets.dart';
+import 'package:marsi_mobile/pages/situs/situs.dart';
+
 
 class Detailsitus extends StatelessWidget {
   final int index;
@@ -54,7 +56,7 @@ class Detailsitus extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
                 child: Text(
-                  detailSitus[index]["nama_situs"]!,
+                  cariSitus[index]["nama_situs"]!,
                   style: GayaTeks.heading.copyWith(
                     color: Warna.darkBlue,
                   ),
@@ -75,7 +77,7 @@ class Detailsitus extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        "Alamat: " + detailSitus[index]["alamat"]!,
+                        "Alamat: ${cariSitus[index]["alamat"]!}",
                         style: GayaTeks.body.copyWith(color: Warna.darkBlue),
                       ),
                     ),
@@ -97,7 +99,7 @@ class Detailsitus extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        "Jam Buka: " + detailSitus[index]["jam_buka"]!,
+                        "Jam Buka: ${cariSitus[index]["jam_buka"]!}",
                         style: GayaTeks.body.copyWith(color: Warna.darkBlue),
                       ),
                     ),
@@ -119,7 +121,7 @@ class Detailsitus extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        detailSitus[index]["nomor_telepon"]!,
+                        cariSitus[index]["nomor_telepon"]!,
                         style: GayaTeks.body.copyWith(color: Warna.darkBlue),
                       ),
                     ),
@@ -141,7 +143,7 @@ class Detailsitus extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        "Juru Kunci: " + detailSitus[index]["juru_kunci"]!,
+                        "Juru Kunci: ${cariSitus[index]["juru_kunci"]!}",
                         style: GayaTeks.body.copyWith(color: Warna.darkBlue),
                       ),
                     ),
@@ -162,7 +164,7 @@ class Detailsitus extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      detailSitus[index]["keterangan_acara"]!,
+                      cariSitus[index]["keterangan_acara"]!,
                       style: GayaTeks.body.copyWith(color: Warna.darkBlue),
                     ),
                   ],

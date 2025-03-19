@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:marsi_mobile/global/assets.dart';
 import 'package:marsi_mobile/pages/acara/rsvp.dart';
+import 'package:marsi_mobile/pages/acara/acara.dart';
 
 class Detailacara extends StatelessWidget {
   final int index;
@@ -55,7 +56,7 @@ class Detailacara extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
                 child: Text(
-                  detailAcara[index]["nama_acara"]!,
+                  cariAcara[index]["nama_acara"]!,
                   style: GayaTeks.heading.copyWith(
                     color: Warna.darkBlue,
                   ),
@@ -76,8 +77,7 @@ class Detailacara extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        "Penanggung Jawab: " +
-                            detailAcara[index]["penanggung_jawab"]!,
+                        "Penanggung Jawab: ${cariAcara[index]["penanggung_jawab"]!}",
                         style: GayaTeks.body.copyWith(color: Warna.darkBlue),
                       ),
                     ),
@@ -99,7 +99,7 @@ class Detailacara extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        "Jam Acara: " + detailAcara[index]["jam_acara"]!,
+                        "Jam Acara: ${cariAcara[index]["jam_acara"]!}",
                         style: GayaTeks.body.copyWith(color: Warna.darkBlue),
                       ),
                     ),
@@ -121,7 +121,7 @@ class Detailacara extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        detailAcara[index]["tanggal"]!,
+                        cariAcara[index]["tanggal"]!,
                         style: GayaTeks.body.copyWith(color: Warna.darkBlue),
                       ),
                     ),
@@ -143,7 +143,7 @@ class Detailacara extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        detailAcara[index]["jenis_acara"]!,
+                        cariAcara[index]["jenis_acara"]!,
                         style: GayaTeks.body.copyWith(color: Warna.darkBlue),
                       ),
                     ),
@@ -165,7 +165,7 @@ class Detailacara extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        detailAcara[index]["alamat_lokasi"]!,
+                        cariAcara[index]["alamat_lokasi"]!,
                         style: GayaTeks.body.copyWith(color: Warna.darkBlue),
                       ),
                     ),
@@ -186,7 +186,7 @@ class Detailacara extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      detailAcara[index]["keterangan_acara"]!,
+                      cariAcara[index]["keterangan_acara"]!,
                       style: GayaTeks.body.copyWith(color: Warna.darkBlue),
                     ),
                   ],

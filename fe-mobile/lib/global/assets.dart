@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+int screenHeight(BuildContext context) => MediaQuery.of(context).size.height.toInt();
+int screenWidth(BuildContext context) => MediaQuery.of(context).size.width.toInt();
+
 class Warna {
   static Color darkBlue = const Color.fromRGBO(11, 46, 75, 1);
   static Color blue1 = const Color.fromRGBO(0, 183, 255, 1);
@@ -79,7 +82,7 @@ List<Map<String, String>> detailAcara = [
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
   },
   {
-    "nama_acara": "Workshop Digital Marketing",
+    "nama_acara": "Workshop Digital Marketing consectetur adipiscing elit",
     "penanggung_jawab": "Rudi Hartono",
     "jam_acara": "13.00 - 15.30",
     "tanggal": "25 September 2025",
@@ -108,7 +111,6 @@ List<Map<String, String>> detailSitus = [
     "juru_kunci": "Parman",
     "keterangan_acara":
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-
   },
   {
     "nama_situs": "Benteng Vredeburg",
@@ -118,6 +120,81 @@ List<Map<String, String>> detailSitus = [
     "juru_kunci": "Wahyudi",
     "keterangan_acara":
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-
   }
 ];
+
+Map<String, String> detailUser = {
+  "nama": "Jono",
+  "tempat_lahir": "Surabaya",
+  "tanggal_lahir": "15-08-1995",
+  "alamat": "Jl. Merdeka No. 45, Surabaya, Indonesia",
+  "jenis_kelamin": "Laki-laki",
+  "wongso": "Indonesia",
+  "email": "jono@example.com",
+  "no_telp": "+62 812-3456-7890"
+};
+
+List<Map<String, String>> organisasi = [
+  {
+    "nama_organisasi": "Komunitas Developer Surabaya",
+    "tanggal_bergabung": "12-03-2022",
+    "kedudukan": "Anggota",
+    "jumlah_anggota": "150"
+  },
+  {
+    "nama_organisasi": "Asosiasi Startup Indonesia",
+    "tanggal_bergabung": "25-07-2023",
+    "kedudukan": "Koordinator",
+    "jumlah_anggota": "300"
+  },
+  {
+    "nama_organisasi": "Himpunan Mahasiswa Teknik Informatika",
+    "tanggal_bergabung": "05-09-2021",
+    "kedudukan": "Sekretaris",
+    "jumlah_anggota": "80"
+  }
+];
+
+List<Map<String, String>> komunitas = [
+  {
+    "nama_komunitas": "Komunitas Pecinta Alam",
+    "tanggal_bergabung": "15-06-2020",
+    "kedudukan": "Anggota",
+    "jumlah_anggota": "120"
+  },
+  {
+    "nama_komunitas": "Komunitas Fotografi Surabaya",
+    "tanggal_bergabung": "10-02-2023",
+    "kedudukan": "Ketua",
+    "jumlah_anggota": "75"
+  },
+  {
+    "nama_komunitas": "Komunitas Pengembang Flutter",
+    "tanggal_bergabung": "20-09-2022",
+    "kedudukan": "Moderator",
+    "jumlah_anggota": "200"
+  }
+]
+;
+
+List<Map<String, String>> riwayatAcara = [
+  {
+    "nama_acara": "Seminar Teknologi Masa Depan",
+    "lokasi_acara": "Auditorium Universitas Teknologi, Jakarta",
+    "tanggal_acara": "10-03-2024",
+    "diadakan_oleh": "Kementerian Riset dan Teknologi"
+  },
+  {
+    "nama_acara": "Festival Budaya Nusantara",
+    "lokasi_acara": "Lapangan Merdeka, Bandung",
+    "tanggal_acara": "25-06-2023",
+    "diadakan_oleh": "Dinas Pariwisata Jawa Barat"
+  },
+  {
+    "nama_acara": "Workshop Pengembangan Startup",
+    "lokasi_acara": "Co-Working Space Startup Hub, Surabaya",
+    "tanggal_acara": "15-09-2023",
+    "diadakan_oleh": "Asosiasi Startup Indonesia"
+  }
+]
+;
