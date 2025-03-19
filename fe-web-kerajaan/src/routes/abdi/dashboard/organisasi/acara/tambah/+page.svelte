@@ -406,16 +406,8 @@
 							id={`namabawah_${invitation.id}`}
 							class="w-full focus:outline-none"
 						/>
-						{#if error.namabawah}
-							<!-- {#each invitationIds, i}
-								{#each error.namabawah as errorItem, j}
-									{console.log('Invitation Id : ', invitationIds[i])}
-									{console.log('Error Id : ', error.namabawah[j].id)} -->
-							<!-- {#if String(error.namabawah[j].id) === String(invitationIds[i])} -->
+						{#if error.namabawah && error.namabawah[0] && !namabawah[invitation.id]}
 							<p class="text-left text-red-500">{error.namabawah[0].message}</p>
-							<!-- {/if} -->
-							<!-- {/each}
-							{/each} -->
 						{:else}
 							{console.log('No error for namabawah with id', invitation.id)}
 						{/if}
@@ -430,18 +422,8 @@
 							placeholder="081638149124"
 							class="w-full focus:outline-none"
 						/>
-						{#if error.notelpbawah}
-							<!-- {#each invitationIds, i}
-							{#each error.namabawah as errorItem, j}
-								{console.log('Invitation Id : ', invitationIds[i])}
-								{console.log('Error Id : ', error.namabawah[j].id)} -->
-							<!-- {#if String(error.namabawah[j].id) === String(invitationIds[i])} -->
+						{#if error.notelpbawah && error.notelpbawah[0] && !notelpbawah[invitation.id]}
 							<p class="text-left text-red-500">{error.notelpbawah[0].message}</p>
-							<!-- {/if} -->
-							<!-- {/each}
-						{/each} -->
-						{:else}
-							{console.log('No error for namabawah with id', invitation.id)}
 						{/if}
 					</div>
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
