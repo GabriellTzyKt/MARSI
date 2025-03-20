@@ -29,19 +29,6 @@ export const actions: Actions = {
             panggilan: {},
         }
 
-        for (const id of ids) {
-            console.log(`Checking id: ${id}`);
-
-            form.namabawah[id] = data.get(`namabawah_${id}`) ?? "";
-            form.notelpbawah[id] = data.get(`notelpbawah_${id}`) ?? "";
-            form.panggilan[id] = data.get(`panggilan_${id}`) ?? "";
-
-            console.log(`namabawah_${id}:`, form.namabawah[id]);
-            console.log(`notelpbawah_${id}:`, form.notelpbawah[id]);
-            console.log(`panggilan_${id}:`, form.panggilan[id]);
-            console.log('----------------------------');
-        }
-
         const ver = z.object({
             buttonselect: z.string().trim().min(1, "Minimal 1!"),
             inputradio: z.string().trim().min(1, "Minimal 1!"),
@@ -66,7 +53,7 @@ export const actions: Actions = {
             namabawah: z.record(z.string().min(1, "Masih ada input field yg kosong!")),
             notelpbawah: z.record(
                 z.string()
-                    .min(1, "Nomor telepon harus diisi!")
+                    .min(10, "Nomor telepon harus diisi!")
                     .regex(/^\d+$/, "Nomor telepon hanya boleh angka!")
             ),
         });
@@ -89,40 +76,24 @@ export const actions: Actions = {
             notelpbawah: {},
         };
 
-        for (const entry of data.entries()) {
-            const [key, value] = entry;
-
-            const match = key.match(/^(panggilan|namabawah|notelpbawah)_(\d+)$/);
-            if (match) {
-                const [, fieldName, id] = match;
-                form[fieldName][id] = value;
-            }
+        for (const id of ids) {
+            form.namabawah[id] = data.get(`namabawah_${id}`) ?? "";
+            form.notelpbawah[id] = data.get(`notelpbawah_${id}`) ?? "";
+            form.panggilan[id] = data.get(`panggilan_${id}`) ?? "";
         }
+
+
+        console.log(form)
 
         const validation = ver.safeParse({ ...form });
 
         if (!validation.success) {
             const fieldErrors = validation.error.flatten().fieldErrors;
 
-            // Modifikasi fieldErrors untuk menambahkan id pada setiap pesan error
-            const errorWithId: any = {};
-
-            for (const [key, errors] of Object.entries(fieldErrors)) {
-                if (key === 'namabawah' || key === 'notelpbawah') {
-                    errorWithId[key] = errors.map((error, index) => ({
-                        message: error,
-                        id: ids[index] || "undefined",
-                    }));
-                    console.log("error with key", errorWithId[key])
-                } else {
-                    errorWithId[key] = errors;
-                }
-            }
-
-            console.log(errorWithId); // Debugging untuk memastikan format sudah sesuai
-
+            console.log("errors : " , fieldErrors)
+            
             return fail(406, {
-                errors: errorWithId,
+                errors: fieldErrors,
                 success: false,
                 formData: form,
                 type: "add"

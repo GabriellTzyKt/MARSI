@@ -299,7 +299,7 @@
 						<div class="mt-2 lg:flex-1">
 							<p>Tanggal Mulai:</p>
 							<input
-								type="text"
+								type="date"
 								name="tanggalmulai"
 								placeholder="Masukkan Nama"
 								bind:value={tanggalmulai}
@@ -315,7 +315,7 @@
 							<div class="mt-2 w-full">
 								<p>Tanggal Selesai:</p>
 								<input
-									type="text"
+									type="date"
 									name="tanggalselesai"
 									placeholder="Masukkan Nama"
 									bind:value={tanggalselesai}
@@ -406,10 +406,13 @@
 							id={`namabawah_${invitation.id}`}
 							class="w-full focus:outline-none"
 						/>
-						{#if error.namabawah && error.namabawah[0] && !namabawah[invitation.id]}
-							<p class="text-left text-red-500">{error.namabawah[0].message}</p>
-						{:else}
-							{console.log('No error for namabawah with id', invitation.id)}
+						{#if error}
+							{console.log(error)}
+							{#if error.namabawah && !namabawah[invitation.id]}
+								<p class="text-left text-red-500">{error.namabawah[0]}</p>
+							{:else}
+								{console.log('No error for namabawah with id', invitation.id)}
+							{/if}
 						{/if}
 					</div>
 
@@ -421,9 +424,12 @@
 							id={`notelpbawah_${invitation.id}`}
 							placeholder="081638149124"
 							class="w-full focus:outline-none"
+							pattern="\d+" 
+							title="Hanya angka yang diizinkan"
+							minlength="10"
 						/>
-						{#if error.notelpbawah && error.notelpbawah[0] && !notelpbawah[invitation.id]}
-							<p class="text-left text-red-500">{error.notelpbawah[0].message}</p>
+						{#if error.notelpbawah && !notelpbawah[invitation.id]} 
+							<p class="text-left text-red-500">{error.notelpbawah[0]}</p>
 						{/if}
 					</div>
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
