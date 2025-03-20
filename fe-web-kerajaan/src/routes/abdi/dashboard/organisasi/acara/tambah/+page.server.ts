@@ -34,7 +34,7 @@ export const actions: Actions = {
             inputradio: z.string().trim().min(1, "Minimal 1!"),
             namaacara: z.string().trim().min(1, "Isi Nama acara"),
             lokasiacara: z.string().trim().min(1, "Alamat harus diisi!"),
-            tujuanacara: z.string().email("Email Tidak Valid").trim().min(1, "Email harus diisi!"),
+            tujuanacara: z.string().trim().min(1, "Tujuan harus diisi!"),
             deskripsiacara: z.string().trim().min(1, "Deskripsi harus terisi!"),
             penanggungjawab: z.string().trim().min(1, "Isi penanggungjawab!"),
             kapasitasacara: z.string()

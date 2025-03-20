@@ -333,9 +333,8 @@
 						<div class="mt-2 lg:flex-1">
 							<p>Waktu Mulai:</p>
 							<input
-								type="text"
+								type="time"
 								name="waktumulai"
-								placeholder="Masukkan Nama"
 								bind:value={waktumulai}
 								class="w-full rounded-lg border px-2 py-1"
 							/>
@@ -349,10 +348,9 @@
 							<div class="mt-2 w-full">
 								<p>Waktu Selesai:</p>
 								<input
-									type="text"
+									type="time"
 									name="waktuselesai"
 									bind:value={waktuselesai}
-									placeholder="Masukkan Nama"
 									class="w-full rounded-lg border px-2 py-1"
 								/>
 								{#if error}
@@ -424,11 +422,11 @@
 							id={`notelpbawah_${invitation.id}`}
 							placeholder="081638149124"
 							class="w-full focus:outline-none"
-							pattern="\d+" 
+							pattern="\d+"
 							title="Hanya angka yang diizinkan"
 							minlength="10"
 						/>
-						{#if error.notelpbawah && !notelpbawah[invitation.id]} 
+						{#if error.notelpbawah && !notelpbawah[invitation.id]}
 							<p class="text-left text-red-500">{error.notelpbawah[0]}</p>
 						{/if}
 					</div>
