@@ -161,7 +161,7 @@
 											type="radio"
 											value="private"
 											bind:group={jenis_acara}
-											name="jenis-acara"
+											name="jenisacara"
 											class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 										/>
 										<label for="default-radio-1" class="mx-5 ms-2 text-sm font-medium text-gray-900"
@@ -174,7 +174,7 @@
 											type="radio"
 											value="public"
 											bind:group={jenis_acara}
-											name="jenis-acara"
+											name="jenisacara"
 											class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 										/>
 										<label for="default-radio-2" class="mx-5 ms-2 text-sm font-medium text-black"

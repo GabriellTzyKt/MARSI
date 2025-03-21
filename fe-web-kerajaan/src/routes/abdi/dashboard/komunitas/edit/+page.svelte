@@ -33,7 +33,6 @@
 	}
 
 	let open = $state(false);
-	let success = $state(false);
 	let timer: any;
 	let error : any = $state('')
 
@@ -44,13 +43,14 @@
 		return async ({ result }) => {
 			console.log(result);
 			if (result.type === 'success') {
-				success = true;
+				open = true;
 				clearTimeout(timer);
 				timer = setTimeout(() => {
-					success = false;
+					open = false;
+					goto('/abdi/dashboard/komunitas/detail');
 				}, 3000);
 			} else if (result.type === 'failure') {
-				error = result?.data?.errors;
+				error = result.data?.errors;
 			}
 		};
 	}}>

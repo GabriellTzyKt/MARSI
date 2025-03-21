@@ -1,36 +1,46 @@
-import { fail } from "@sveltejs/kit";
-import { error, type Actions } from "@sveltejs/kit";
-import { z } from "zod";
+import { error, fail, type Actions } from "@sveltejs/kit";
+import { any, z } from "zod";
+
 
 export const actions: Actions = {
-    edit: async ({ request }) => {
+    tambah: async ({ request }) => {
         const data = await request.formData();
 
-        let form = {
+        const ids = data.getAll("id").map(String);
+
+
+        console.log(ids)
+
+        let form: any = {
             namaacara: "",
             lokasiacara: "",
             tujuanacara: "",
             deskripsiacara: "",
             penanggungjawab: "",
             kapasitasacara: "",
-            jenis_acara: "",
             tanggalmulai: "",
             tanggalselesai: "",
             waktumulai: "",
-            waktuselesai: ""
+            waktuselesai: "",
+            buttonselect: "",
+            inputradio: "",
+            namabawah: {},
+            notelpbawah: {},
+            panggilan: {},
         }
 
         const ver = z.object({
-            namaacara: z.string().trim().min(1, "Isi Nama Acara!"),
-            lokasiacara: z.string().trim().min(1, "Lokasi harus diisi!"),
+            buttonselect: z.string().trim().min(1, "Minimal 1!"),
+            inputradio: z.string().trim().min(1, "Minimal 1!"),
+            namaacara: z.string().trim().min(1, "Isi Nama acara"),
+            lokasiacara: z.string().trim().min(1, "Alamat harus diisi!"),
             tujuanacara: z.string().trim().min(1, "Tujuan harus diisi!"),
             deskripsiacara: z.string().trim().min(1, "Deskripsi harus terisi!"),
             penanggungjawab: z.string().trim().min(1, "Isi penanggungjawab!"),
             kapasitasacara: z.string()
                 .trim()
-                .min(1, "Minimal 1 anggota") // trim hapus spasi awal dan akhir, min 1 itu mastiin "" dan null tdk valid
+                .min(1, "Kapasitas harus terisi!")
                 .regex(/^\d+$/, "Jumlah anggota harus angka"),
-            jenis_acara: z.string().trim().min(1, "Pilih jenis acara!"),
             tanggalmulai: z.coerce.date({ message: "Tanggal Tidak valid (YYYY-MM-DD)" }),
             tanggalselesai: z.coerce.date({ message: "Tanggal Tidak valid (YYYY-MM-DD)" }),
             waktumulai: z.string().regex(/^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/, {
@@ -39,29 +49,49 @@ export const actions: Actions = {
             waktuselesai: z.string().regex(/^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/, {
                 message: "pakai format : HH(jam):mm(menit).",
             }),
+            panggilan: z.record(z.string().min(1, "Panggilan gaboleh kosong!")),
+            namabawah: z.record(z.string().min(1, "Masih ada input field yg kosong!")),
+            notelpbawah: z.record(
+                z.string()
+                    .min(10, "Nomor telepon harus diisi!")
+                    .regex(/^\d+$/, "Nomor telepon hanya boleh angka!")
+            ),
         });
 
         form = {
+            buttonselect: data.get("buttonselect") ?? "",
+            inputradio: data.get("default-radio") ?? "",
             namaacara: data.get("namaacara") ?? "",
             lokasiacara: data.get("lokasiacara") ?? "",
             tujuanacara: data.get("tujuanacara") ?? "",
             deskripsiacara: data.get("deskripsiacara") ?? "",
             penanggungjawab: data.get("penanggungjawab") ?? "",
             kapasitasacara: data.get("kapasitasacara") ?? "",
-            jenis_acara: data.get("jenisacara") ?? "",
             tanggalmulai: data.get("tanggalmulai") ?? "",
             tanggalselesai: data.get("tanggalselesai") ?? "",
             waktumulai: data.get("waktumulai") ?? "",
             waktuselesai: data.get("waktuselesai") ?? "",
+            panggilan: {},
+            namabawah: {},
+            notelpbawah: {},
         };
+
+        for (const id of ids) {
+            form.namabawah[id] = data.get(`namabawah_${id}`) ?? "";
+            form.notelpbawah[id] = data.get(`notelpbawah_${id}`) ?? "";
+            form.panggilan[id] = data.get(`panggilan_${id}`) ?? "";
+        }
+
+
+        console.log(form)
 
         const validation = ver.safeParse({ ...form });
 
         if (!validation.success) {
             const fieldErrors = validation.error.flatten().fieldErrors;
 
-            console.log("errors : ", fieldErrors)
-
+            console.log("errors : " , fieldErrors)
+            
             return fail(406, {
                 errors: fieldErrors,
                 success: false,
@@ -70,6 +100,6 @@ export const actions: Actions = {
             });
         }
 
-        return { errors: "Success", success: true, formData: form };
+        return { errors: "Success", success: true, formData: form, type: "add" };
     }
 };

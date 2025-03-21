@@ -14,6 +14,11 @@
 	import Marker from '$lib/Marker.svelte';
 	import Popup from '$lib/Popup.svelte';
 	import gambar from '$lib/logo_popup_umum.png';
+	import { goto } from '$app/navigation';
+	import { enhance } from '$app/forms';
+	import { resolveRoute } from '$app/paths';
+
+	let resultBaru: any = $state([]);
 
 	const initialView: LatLngExpression = [-2.5489, 118.0149]; // Pusat Indonesia (biar tampilan awal pas)
 
@@ -28,9 +33,9 @@
 		{ latLng: [-3.3194, 114.5908], text: 'Keraton Surakarta 7', location: 'Kalsel' } // Kalimantan Selatan
 	];
 
-	let { data } = $props();
-	console.log(data);
-	const selectedFlip = data.selectedFlip;
+	// let { form } = $props();
+	// console.log('Data yang dikirim : ', form?.selectedFlip);
+	// const selectedFlip = form?.selectedFlip || [];
 </script>
 
 <!-- Section 1 -->
@@ -55,11 +60,74 @@
 				{/each}
 			</Leaflet>
 		</div>
+		<div class="mb-5 flex w-[80%] justify-between gap-8">
+			<button
+				id="btn-tentang-kami"
+				onclick={() => {
+					const section = document.getElementById('tentang-kami');
+					if (section) {
+						section.scrollIntoView({ behavior: 'smooth' });
+					}
+				}}
+				class="w-full rounded-lg border-2 border-orange-500 px-4 py-1 text-center text-black transition-all duration-500 hover:bg-orange-500 hover:text-white"
+			>
+				Tentang Kami
+			</button>
+			<button
+				id="btn-kerajaan"
+				onclick={() => {
+					const section = document.getElementById('kerajaan');
+					if (section) {
+						section.scrollIntoView({ behavior: 'smooth' });
+					}
+				}}
+				class="w-full rounded-lg border-2 border-orange-500 px-4 py-1 text-center text-black transition-all duration-500 hover:bg-orange-500 hover:text-white"
+			>
+				Kerajaan
+			</button>
+			<button
+				id="btn-situs-kerajaan"
+				onclick={() => {
+					const section = document.getElementById('situs-kerajaan');
+					if (section) {
+						section.scrollIntoView({ behavior: 'smooth' });
+					}
+				}}
+				class="w-full rounded-lg border-2 border-orange-500 px-4 py-1 text-center text-black transition-all duration-500 hover:bg-orange-500 hover:text-white"
+			>
+				Situs Kerajaan
+			</button>
+			<button
+				id="btn-aset-kerajaan"
+				onclick={() => {
+					const section = document.getElementById('aset-kerajaan');
+					if (section) {
+						section.scrollIntoView({ behavior: 'smooth' });
+					}
+				}}
+				class="w-full rounded-lg border-2 border-orange-500 px-4 py-1 text-center text-black transition-all duration-500 hover:bg-orange-500 hover:text-white"
+			>
+				Aset Kerajaan
+			</button>
+			<button
+				id="btn-acara"
+				onclick={() => {
+					const section = document.getElementById('acara');
+					if (section) {
+						section.scrollIntoView({ behavior: 'smooth' });
+					}
+				}}
+				class="w-full rounded-lg border-2 border-orange-500 px-4 py-1 text-center text-black transition-all duration-500 hover:bg-orange-500 hover:text-white"
+			>
+				Acara
+			</button>
+		</div>
 	</div>
 </section>
 
 <!-- Section 2 -->
 <section
+	id="tentang-kami"
 	class=" relative mb-20 h-[100%] w-[100%] overflow-hidden bg-cover bg-center p-5"
 	style:background-image="url('{gambar5}')"
 >
@@ -88,7 +156,7 @@
 </section>
 
 <!-- Section 3 + 4 -->
-<section class="relative h-fit">
+<section id="kerajaan" class="relative h-fit">
 	<div class="waves_a rotate-180">
 		<svg
 			data-name="Layer 1"
@@ -136,31 +204,49 @@
 			</div>
 		</div>
 
-		<div class="flexcoba mb-10 mt-20 flex items-center justify-between px-20">
-			<p class="text-nowrap text-3xl font-semibold">Kerajaan di Indonesia</p>
-			<button
-				class="mt-10 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-slate-400 lg:mt-0"
-				onclick={() => window.location.reload()}
-			>
-				<i class="material-symbols--refresh lg:mt-0"></i>
-			</button>
-		</div>
-		<div class="mx-auto flex flex-wrap justify-center gap-12 gap-y-4">
-			{#each selectedFlip as item, i}
-				<Flipcard
-					gambar={item.gambar}
-					kerajaan={item.kerajaan}
-					judul={item.kerajaan}
-					lokasi={item.lokasi}
-					isi={item.isi}
-				/>
-			{/each}
+		<div class="flexcoba mb-10 mt-20 flex-col items-center justify-between px-20">
+			<div class="flex justify-between">
+				<p class="text-nowrap text-3xl font-semibold">Kerajaan di Indonesia</p>
+				<form
+					method="post"
+					action="?/refresh"
+					use:enhance={() => {
+						return async ({ result }) => {
+							if (result.type === 'success') {
+								resultBaru = result.data?.selectedFlip;
+								console.log(resultBaru);
+							}
+						};
+					}}
+				>
+					<!-- svelte-ignore a11y_consider_explicit_label -->
+					<button
+						class="mt-10 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border bg-slate-400 lg:mt-0"
+					>
+						<i class="material-symbols--refresh lg:mt-0"></i>
+					</button>
+				</form>
+			</div>
+
+			<div class="mx-auto flex flex-wrap justify-center gap-12 gap-y-4 mt-5">
+				{#if resultBaru}
+					{#each resultBaru as item, i}
+						<Flipcard
+							gambar={item.gambar}
+							kerajaan={item.kerajaan}
+							judul={item.kerajaan}
+							lokasi={item.lokasi}
+							isi={item.isi}
+						/>
+					{/each}
+				{/if}
+			</div>
 		</div>
 	</div>
 </section>
 
 <!-- Section 5 -->
-<section class="relative">
+<section class="relative" id="situs-kerajaan">
 	<section class="relative bg-white pb-10 pt-10">
 		<div class="grid grid-cols-1 items-center justify-center md:grid-cols-2">
 			<div class=" max-w-full break-words p-4 text-center lg:text-right">
@@ -198,7 +284,7 @@
 </section>
 
 <!-- Section 6 -->
-<section class="relative">
+<section class="relative" id="aset-kerajaan">
 	<div class="waves_a my-rotate-x-180">
 		<svg
 			data-name="Layer 1"
@@ -251,7 +337,7 @@
 </section>
 
 <!-- Section 7  -->
-<div class="mb-10 mt-20">
+<div class="mb-10 mt-20" id="acara">
 	<section class="relative">
 		<section class="relative bg-white pb-10">
 			<div class="grid grid-cols-1 items-center justify-center md:grid-cols-2">

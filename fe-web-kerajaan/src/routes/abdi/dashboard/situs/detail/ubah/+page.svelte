@@ -1,184 +1,356 @@
 <script lang="ts">
-	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
+	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import { fade } from 'svelte/transition';
+
+	let namasitus = $state('');
+	let email = $state('');
+	let notelepon = $state('');
+	let kepemilikan = $state('');
+	let deskripsi = $state('');
+	let dibangunoleh = $state('');
+	let tanggalberdiri = $state('');
+	let alamat = $state('');
+	let jurukunci = $state('');
+	let jenissitus = $state('');
+	let pembina = $state('');
+	let pelindung = $state('');
+	let jambuka = $state('');
+	let jamtutup = $state('');
+	let wisata = $state('');
+
+	let { form } = $props();
+	console.log('form data', form?.formData);
+
+	if (form?.formData) {
+		namasitus = form.formData.namasitus;
+		notelepon = form.formData.notelepon;
+		email = form.formData.email;
+		kepemilikan = form.formData.kepemilikan;
+		dibangunoleh = form.formData.dibangunoleh;
+		tanggalberdiri = form.formData.tanggalberdiri;
+		alamat = form.formData.alamat;
+		jurukunci = form.formData.jurukunci;
+		jenissitus = form.formData.jenissitus;
+		pembina = form.formData.pembina;
+		pelindung = form.formData.pelindung;
+		jambuka = form.formData.jambuka;
+		jamtutup = form.formData.jamtutup;
+		wisata = form.formData.wisata;
+	}
+
+	let open = $state(false);
+	let timer: any;
+	let error: any = $state('');
 </script>
 
 <div class="h-full w-full">
-	<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
-		<!-- 1 -->
-		<div>
-			<div class="relative mx-auto mb-9 flex w-full items-center justify-center">
-				<img src={gambardefault} class="relative ml-5 mr-5 h-20 w-20 rounded-full" alt="" />
-				<span class="mdi--edit absolute"></span>
-			</div>
+	<form
+		method="post"
+		action="?/edit"
+		use:enhance={() => {
+			return async ({ result }) => {
+				console.log(result);
+				if (result.type === 'success') {
+					open = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						open = false;
+						goto('/abdi/dashboard/situs/detail');
+					}, 3000);
+				} else if (result.type === 'failure') {
+					error = result?.data?.errors;
+				}
+			};
+		}}
+	>
+		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
+			<!-- 1 -->
 			<div>
-				<p>Nama Situs:</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-					/>
-					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+				<div class="relative mx-auto mb-9 flex w-full items-center justify-center">
+					<img src={gambardefault} class="relative ml-5 mr-5 h-20 w-20 rounded-full" alt="" />
+					<span class="mdi--edit absolute"></span>
 				</div>
-			</div>
-
-			<div>
-				<p class="mt-5">Email:</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-					/>
-					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
-				</div>
-			</div>
-
-			<div class="flexcoba mt-5 flex gap-6">
-				<div class="w-full">
-					<p>No telepon :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-				<div class="w-full">
-					<p>Kepemilikan :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-			</div>
-
-			<div>
-				<p class="mt-5">Deskripsi Situs:</p>
-				<div class="relative w-full">
-					<textarea
-						placeholder="Masukkan nama"
-						class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg"
-					></textarea>
-					<div class="h-full">
+				<div>
+					<p>Nama Situs:</p>
+					<div class="relative">
+						<input
+							type="text"
+							placeholder="Masukkan Nama"
+							name="namasitus"
+							bind:value={namasitus}
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						/>
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+					</div>
+					{#if error}
+						{#each error.namasitus as a}
+							<p class="text-center text-red-500">{a}</p>
+						{/each}
+					{/if}
+				</div>
+
+				<div>
+					<p class="mt-5">Email:</p>
+					<div class="relative">
+						<input
+							type="text"
+							name="email"
+							bind:value={email}
+							placeholder="Masukkan Nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						/>
+						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+					</div>
+					{#if error}
+						{#each error.email as a}
+							<p class="text-center text-red-500">{a}</p>
+						{/each}
+					{/if}
+				</div>
+
+				<div class="flexcoba mt-5 flex gap-6">
+					<div class="w-full">
+						<p>No telepon :</p>
+						<input
+							type="text"
+							name="notelepon"
+							bind:value={notelepon}
+							placeholder="Masukkan nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+						{#if error}
+							{#each error.notelepon as a}
+								<p class="text-center text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+					<div class="w-full">
+						<p>Kepemilikan :</p>
+						<input
+							type="text"
+							placeholder="Masukkan nama"
+							name="kepemilikan"
+							bind:value={kepemilikan}
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+						{#if error}
+							{#each error.kepemilikan as a}
+								<p class="text-center text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
+
+				<div>
+					<p class="mt-5">Deskripsi Situs:</p>
+					<div class="relative w-full">
+						<textarea
+							placeholder="Masukkan nama"
+							name="deskripsi"
+							bind:value={deskripsi}
+							class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg"
+						></textarea>
+						<div class="h-full">
+							<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+						</div>
+						{#if error}
+							{#each error.deskripsi as a}
+								<p class="text-center text-red-500">{a}</p>
+							{/each}
+						{/if}
 					</div>
 				</div>
 			</div>
+
+			<!-- 2 -->
+			<div>
+				<div class="flexcoba mt-5 flex gap-6">
+					<div class="w-full">
+						<p>Dibangun Oleh :</p>
+						<input
+							type="text"
+							name="dibangunoleh"
+							bind:value={dibangunoleh}
+							placeholder="Masukkan nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+						{#if error}
+							{#each error.dibangunoleh as a}
+								<p class="text-center text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+					<div class="w-full">
+						<p>Tanggal Berdiri :</p>
+						<input
+							type="date"
+							name="tanggalberdiri"
+							bind:value={tanggalberdiri}
+							placeholder="Masukkan nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+						{#if error}
+							{#each error.tanggalberdiri as a}
+								<p class="text-center text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
+
+				<div class="mt-5">
+					<p>Alamat:</p>
+					<div class="relative">
+						<input
+							type="text"
+							name="alamat"
+							bind:value={alamat}
+							placeholder="Masukkan Pembina"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+					</div>
+					{#if error}
+						{#each error.alamat as a}
+							<p class="text-center text-red-500">{a}</p>
+						{/each}
+					{/if}
+				</div>
+
+				<div class="flexcoba mt-5 flex gap-6">
+					<div class="w-full">
+						<p>Juru Kunci :</p>
+						<input
+							type="text"
+							name="jurukunci"
+							bind:value={jurukunci}
+							placeholder="Masukkan nama"
+							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
+						/>
+						{#if error}
+							{#each error.jurukunci as a}
+								<p class="text-center text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+					<div class="w-full">
+						<p>Jenis Situs :</p>
+						<input
+							type="text"
+							name="jenissitus"
+							bind:value={jenissitus}
+							placeholder="Masukkan nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+						{#if error}
+							{#each error.jenissitus as a}
+								<p class="text-center text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
+
+				<div class="flexcoba mt-5 flex gap-6">
+					<div class="w-full">
+						<p>Pembina :</p>
+						<input
+							type="text"
+							name="pembina"
+							bind:value={pembina}
+							placeholder="Masukkan nama"
+							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
+						/>
+						{#if error}
+							{#each error.pembina as a}
+								<p class="text-center text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+					<div class="w-full">
+						<p>Pelindung :</p>
+						<input
+							type="text"
+							name="pelindung"
+							bind:value={pelindung}
+							placeholder="Masukkan nama"
+							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
+						/>
+						{#if error}
+							{#each error.pelindung as a}
+								<p class="text-center text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
+
+				<div class="flexcoba mt-5 flex gap-6">
+					<div class="w-full">
+						<p>Jam Buka :</p>
+						<input
+							type="time"
+							bind:value={jambuka}
+							name="jambuka"
+							placeholder="Masukkan nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+						{#if error}
+							{#each error.jambuka as a}
+								<p class="text-center text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+					<div class="w-full">
+						<p>Jam Tutup :</p>
+						<input
+							type="time"
+							bind:value={jamtutup}
+							name="jamtutup"
+							placeholder="Masukkan nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+						{#if error}
+							{#each error.jamtutup as a}
+								<p class="text-center text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
+
+				<div class="mt-3">
+					<p>Wisata:</p>
+					<div class="relative">
+						<input
+							type="text"
+							bind:value={wisata}
+							name="wisata"
+							placeholder="Masukkan Pembina"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+					</div>
+					{#if error}
+						{#each error.wisata as a}
+							<p class="text-center text-red-500">{a}</p>
+						{/each}
+					{/if}
+				</div>
+
+				<div class="relative flex w-full items-end justify-center lg:justify-end">
+					<button
+						class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
+						type="submit">Simpan Data</button
+					>
+				</div>
+			</div>
 		</div>
-
-		<!-- 2 -->
-		<div>
-			<div class="flexcoba mt-5 flex gap-6">
-				<div class="w-full">
-					<p>Dibangun Oleh :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-				<div class="w-full">
-					<p>Tanggal Berdiri :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-			</div>
-
-			<div class="mt-5">
-				<p>Alamat:</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Pembina"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-			</div>
-
-			<div class="flexcoba mt-5 flex gap-6">
-				<div class="w-full">
-					<p>Juru Kunci :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
-					/>
-				</div>
-				<div class="w-full">
-					<p>Jenis Situs :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-			</div>
-
-			<div class="flexcoba mt-5 flex gap-6">
-				<div class="w-full">
-					<p>Pembina :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
-					/>
-				</div>
-				<div class="w-full">
-					<p>Pelindung :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
-					/>
-				</div>
-			</div>
-
-			<div class="flexcoba mt-5 flex gap-6">
-				<div class="w-full">
-					<p>Jam Buka :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-				<div class="w-full">
-					<p>Jam Tutup :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-			</div>
-
-			<div class="mt-3">
-				<p>Wisata:</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Pembina"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-			</div>
-
-			<div class="relative w-full items-end flex lg:justify-end justify-center">
-                <a href="/abdi/dashboard/situs/detail">
-                    <button
-                        class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
-                        >Simpan Data</button
-                    >
-                </a>
-            </div>
-		</div>
-	</div>
+	</form>
 </div>
+
+{#if open}
+	<div transition:fade={{ duration: 100 }}>
+		<SuccessModal text="Acara berhasil diubah!"></SuccessModal>
+	</div>
+{/if}
 
 <style>
 	@media (max-width: 768px) {
