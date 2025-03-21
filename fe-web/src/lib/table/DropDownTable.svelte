@@ -1,11 +1,13 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { slide } from 'svelte/transition';
 
 	interface IProps {
 		table_data: Record<string, any>[];
 		table_header: (string | string[])[];
 		children?: Snippet<[any]>;
 	}
+	let dropdown = $state(false);
 
 	let { table_data, table_header, children }: IProps = $props();
 </script>
@@ -17,10 +19,11 @@
 				<th class="rounded-tl-xl px-2 py-3 text-left">No</th>
 				{#each table_header as header, i}
 					{#if typeof header === 'string'}
-						<th class="py-3 pe-2 text-left">{header}</th>
+						<th class={`py-3 pe-2 text-left ${header[2]}`}>{header}</th>
 					{:else}
-						<th class="py-3 pe-2 text-left" class:rounded-tr-xl={i === table_header.length - 1}
-							>{header[1]}</th
+						<th
+							class={`py-3 pe-2 text-left ${header[2]}`}
+							class:rounded-tr-xl={i === table_header.length - 1}>{header[1]}</th
 						>
 					{/if}
 				{/each}
@@ -30,7 +33,7 @@
 			{#each table_data as data, i}
 				<tr class="">
 					<td
-						class=" whitespace-normal break-words py-3 text-center"
+						class=" py-3 text-center"
 						class:border-y={i !== table_data.length - 1}
 						class:border-bl-xl={i === table_data.length - 1}
 						class:border-br-xl={i === table_data.length - 1}
@@ -40,7 +43,7 @@
 					{#each table_header as header, b}
 						{#if typeof header === 'string'}
 							<td
-								class=" whitespace-normal break-words py-3 text-left"
+								class=" py-3 text-left"
 								class:border-y={i !== table_data.length - 1}
 								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}
@@ -48,7 +51,7 @@
 							>
 						{:else if header[0] === 'children'}
 							<td
-								class=" whitespace-normal break-words py-3 text-left"
+								class=" py-3 text-left"
 								class:border-y={i !== table_data.length - 1}
 								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}
@@ -56,7 +59,7 @@
 							>
 						{:else}
 							<td
-								class=" whitespace-normal break-words py-3 text-left"
+								class=" py-3 text-left"
 								class:border-y={i !== table_data.length - 1}
 								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}
@@ -65,6 +68,11 @@
 						{/if}
 					{/each}
 				</tr>
+				{#if dropdown}
+					<tr transition:slide={{ duration: 150 }}>
+						<td colspan="100" class="flex justify-between">ppp </td>
+					</tr>
+				{/if}
 			{/each}
 		</tbody>
 	</table>
@@ -74,31 +82,28 @@
 		</div>
 		<div class="flex flex-row">
 			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white"
-					>Previous</button
-				>
+				<button class=" m border-badran-bt hover:bg-badran-bt border p-2">Previous</button>
 			</div>
 			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white">1</button>
+				<button class="border-badran-bt hover:bg-marsi m border p-2">1</button>
 			</div>
 			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white">2</button>
+				<button class="border-badran-bt hover:bg-badran-bt m border p-2">2</button>
 			</div>
 			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white">3</button>
+				<button class="border-badran-bt hover:bg-badran-bt m border p-2">3</button>
 			</div>
 			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white">4</button>
+				<button class="border-badran-bt hover:bg-badran-bt m border p-2">4</button>
 			</div>
 			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white">...</button>
+				<button class="border-badran-bt hover:bg-badran-bt m border p-2">...</button>
 			</div>
 			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white">10</button>
+				<button class="border-badran-bt hover:bg-badran-bt m border p-2">10</button>
 			</div>
 			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white">Next</button
-				>
+				<button class="border-badran-bt hover:bg-badran-bt m border p-2">Next</button>
 			</div>
 		</div>
 	</div>
@@ -106,6 +111,9 @@
 
 <style>
 	.marsi {
-		background-color: #89d8eb;
+		background-color: #f9d48b;
+	}
+	.m:hover {
+		background-color: #f9d48b;
 	}
 </style>

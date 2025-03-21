@@ -1,13 +1,25 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyTugas } from '$lib/dummy';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import TambahKunjungan from '$lib/popup/TambahKunjungan.svelte';
 	import TambahTugas from '$lib/popup/TambahTugas.svelte';
 
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
+	import { error } from '@sveltejs/kit';
+
+	let today = String(new Date().toISOString().split('T')[0]);
 	let open = $state(false);
+	let success = $state(false);
+	let errors = $state();
+	$effect(() => {
+		if (!open) {
+			errors = '';
+		}
+	});
 </script>
 
 <div class="flex w-full flex-col">
@@ -111,7 +123,37 @@
 		</Table>
 	</div>
 </div>
+
 {#if open}
-	<TambahTugas bind:value={open} text="Tambah Tugas" successText="Tugas Berhasil Ditambah"
-	></TambahTugas>
+	<form
+		action="?/tambahTugas"
+		method="post"
+		use:enhance={() => {
+			return async ({ result, update }) => {
+				if (result.type === 'success') {
+					let timer: number;
+					success = true;
+
+					timer = setTimeout(() => {
+						open = false;
+						success = false;
+						errors = null;
+					}, 3000);
+				}
+				if (result.type === 'failure') {
+					errors = result.data?.errors;
+				}
+			};
+		}}
+	>
+		<TambahTugas
+			bind:value={open}
+			text="Tambah Tugas"
+			{errors}
+			successText="Tugas Berhasil Ditambah"
+		></TambahTugas>
+	</form>
+{/if}
+{#if success}
+	<SuccessModal text="Tugas BErhasil Ditambah"></SuccessModal>
 {/if}

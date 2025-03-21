@@ -135,8 +135,10 @@
 					timer = setTimeout(() => {
 						valo = false;
 					}, 3000);
+					error = null;
 					open = false;
 				} else if (result.type === 'failure') {
+					console.log(result.type);
 					error = result.data?.errors || '';
 				}
 			};

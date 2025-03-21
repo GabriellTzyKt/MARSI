@@ -19,7 +19,7 @@
 </script>
 
 <div class="min-h-full w-full">
-	<div class="mt-10 grid lg:grid-cols-2 grid-cols-1 gap-4">
+	<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 		<!-- 1 -->
 		<div>
 			<div>
@@ -27,6 +27,7 @@
 				<div class="relative">
 					<input
 						type="text"
+						name="nama_lengkap"
 						placeholder="Masukkan Nama"
 						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 					/>
@@ -39,6 +40,7 @@
 					<p>Tempat Lahir :</p>
 					<input
 						type="text"
+						name="tempat_lahir"
 						placeholder="Masukkan nama"
 						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 					/>
@@ -46,7 +48,8 @@
 				<div class="w-full">
 					<p>Tanggal Lahir :</p>
 					<input
-						type="text"
+						type="date"
+						name="tanggal_lahir"
 						placeholder="Masukkan nama"
 						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 					/>
@@ -59,6 +62,7 @@
 				<div class="relative">
 					<input
 						type="text"
+						name="alamat"
 						placeholder="Masukkan Nama"
 						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 					/>
@@ -70,18 +74,22 @@
 				<div class="w-full">
 					<p>No telepon :</p>
 					<input
-						type="text"
+						type="phone"
+						name="no_telp"
 						placeholder="Masukkan nama"
 						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 					/>
 				</div>
 				<div class="w-full">
 					<p>Jenis Kelamin :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
+					<select
 						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
+						name="jenis_kelamin"
+						value="Laki-Laki"
+					>
+						<option value="Laki-Laki">Laki-Laki</option>
+						<option value="Perempuan">Perempuan</option>
+					</select>
 				</div>
 			</div>
 
@@ -90,6 +98,7 @@
 				<div class="relative">
 					<input
 						type="text"
+						name="hobi"
 						placeholder="Masukkan Nama"
 						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 					/>
@@ -122,7 +131,8 @@
 								class="h-4 w-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
 								checked
 							/>
-							<label for="radio-ayah-tidak" class="mx-2 text-sm font-medium text-black">Tidak</label>
+							<label for="radio-ayah-tidak" class="mx-2 text-sm font-medium text-black">Tidak</label
+							>
 						</div>
 					</div>
 				</div>
@@ -212,7 +222,7 @@
 
 			<div class="mt-5">
 				<p>Agama(Opsional):</p>
-				<div class="relative lg:w-[50%] w-full">
+				<div class="relative w-full lg:w-[50%]">
 					<input
 						type="text"
 						placeholder="Masukkan Nama"

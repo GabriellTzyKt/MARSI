@@ -4,21 +4,19 @@
 
 	let {
 		value = $bindable(),
-		open = $bindable(),
+
 		errors = null,
 		data2 = null,
 		dataambil
 	} = $props();
 
-    let keyword = $state(data2 ? data2.namaanggota : '');
+	let keyword = $state(data2 ? data2.namaanggota : '');
 	let showDropdown = $state(false);
 
 
 	function updateFilteredData() {
-		if (!keyword.trim()) return []; 
-		return dataambil.filter((v: any) =>
-			v.asma_timur.toLowerCase().includes(keyword.toLowerCase())
-		);
+		if (!keyword.trim()) return [];
+		return dataambil.filter((v: any) => v.asma_timur.toLowerCase().includes(keyword.toLowerCase()));
 	}
 
 	function selectItem(item: string) {
@@ -71,14 +69,17 @@
 					placeholder="Nama Anggota"
 					name="namaanggota"
 					class="w-full rounded-lg border-2 border-gray-400 px-2 py-2 pr-8"
-					onfocus={() => showDropdown = true}  >
+					onfocus={() => (showDropdown = true)}
+				/>
 
 				{#if showDropdown && updateFilteredData().length > 0}
-					<ul class="absolute z-10 w-full bg-white border border-gray-400 rounded-lg shadow-lg max-h-40 overflow-y-auto">
+					<ul
+						class="absolute z-10 max-h-40 w-full overflow-y-auto rounded-lg border border-gray-400 bg-white shadow-lg"
+					>
 						{#each updateFilteredData() as item}
 							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-							<li 
-								class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+							<li
+								class="cursor-pointer px-4 py-2 hover:bg-gray-200"
 								onclick={() => selectItem(item.asma_timur)}
 							>
 								{item.asma_timur}

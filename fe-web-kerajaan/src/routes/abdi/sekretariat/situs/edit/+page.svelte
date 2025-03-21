@@ -3,8 +3,10 @@
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
 	import { goto } from '$app/navigation';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import { enhance } from '$app/forms';
 	let open = $state(false);
 	let timer: number;
+	let errors = $state();
 	function setTimer() {
 		open = true;
 		if (timer) {
@@ -19,186 +21,296 @@
 </script>
 
 <div class="h-full w-full">
-	<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
-		<!-- 1 -->
-		<div>
-			<div class="relative mx-auto mb-4 flex w-full items-center justify-center">
-				<div class="group relative h-[100px] w-[100px]">
-					<!-- svelte-ignore a11y_img_redundant_alt -->
-					<img src={gambardefault} class="h-full w-full rounded-full" alt="Profile Picture" />
+	<form
+		action="?/editSitus"
+		method="post"
+		use:enhance={() => {
+			return async ({ result, update }) => {
+				if (result.type === 'success') {
+					open = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						open = false;
+						goto('/abdi/sekretariat/situs');
+					}, 3000);
+				}
+				if (result.type === 'failure') {
+					errors = result.data?.errors;
+				}
+			};
+		}}
+	>
+		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
+			<!-- 1 -->
+			<div>
+				<div class="relative mx-auto mb-4 flex w-full items-center justify-center">
+					<div class="group relative h-[100px] w-[100px]">
+						<!-- svelte-ignore a11y_img_redundant_alt -->
+						<img src={gambardefault} class="h-full w-full rounded-full" alt="Profile Picture" />
 
-					<div
-						class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-					>
-						<p class="font-semibold text-white">Ganti Foto</p>
+						<div
+							class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+						>
+							<p class="font-semibold text-white">Ganti Foto</p>
+						</div>
 					</div>
 				</div>
-			</div>
 
-			<div>
-				<p>Nama Situs:</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-					/>
-					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
-				</div>
-			</div>
-
-			<div>
-				<p class="mt-5">Alamat:</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-					/>
-					<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
-				</div>
-			</div>
-
-			<div class="flexcoba mt-5 flex gap-6">
-				<div class="w-full">
-					<p>No telepon :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-				<div class="w-full">
-					<p>Kepemilikan :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-			</div>
-
-			<div>
-				<p class="mt-5">Deskripsi Situs:</p>
-				<div class="relative w-full">
-					<textarea
-						placeholder="Masukkan nama"
-						class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg"
-					></textarea>
-					<div class="h-full">
+				<div>
+					<p>Nama Situs:</p>
+					<div class="relative">
+						<input
+							type="text"
+							name="nama_situs"
+							placeholder="Masukkan Nama Situs"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						/>
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 					</div>
+					{#if errors}
+						{#each errors.nama_situs as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
+				</div>
+
+				<div>
+					<p class="mt-5">Alamat:</p>
+					<div class="relative">
+						<input
+							type="text"
+							placeholder="Masukkan Alamat"
+							name="alamat"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						/>
+						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+					</div>
+					{#if errors}
+						{#each errors.alamat as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
+				</div>
+
+				<div class="flexcoba mt-5 flex gap-6">
+					<div class="w-full">
+						<p>No telepon :</p>
+						<input
+							type="text"
+							name="phone"
+							placeholder="Masukkan Nomer Telepon"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+						{#if errors}
+							{#each errors.phone as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
+					<div class="w-full">
+						<p>Kepemilikan :</p>
+						<input
+							type="text"
+							name="kepemilikan"
+							placeholder="Masukkan Kepemilikan"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+						{#if errors}
+							{#each errors.kepemilikan as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
+
+				<div>
+					<p class="mt-5">Deskripsi Situs:</p>
+					<div class="relative w-full">
+						<textarea
+							placeholder="Masukkan Deskripsi Situs"
+							name="deskripsi_situs"
+							class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg"
+						></textarea>
+						<div class="h-full">
+							<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+						</div>
+					</div>
+					{#if errors}
+						{#each errors.deskripsi_situs as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
+				</div>
+			</div>
+
+			<!-- 2 -->
+			<div>
+				<div class="mt-5">
+					<p>Juru Kunci:</p>
+					<div class="relative">
+						<input
+							type="text"
+							placeholder="Masukkan Juru Kunci"
+							name="juru_kunci"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+					</div>
+					{#if errors}
+						{#each errors.juru_kunci as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
+				</div>
+				<div class="flexcoba mt-5 flex gap-6">
+					<div class="w-full">
+						<p>Dibangun Oleh :</p>
+						<input
+							type="text"
+							placeholder="Masukkan nama"
+							name="dibangun_oleh"
+							class="border-blackpx-2 mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
+						/>
+						{#if errors}
+							{#each errors.dibangun_oleh as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
+					<div class="w-full">
+						<p>Tahun Berdiri :</p>
+						<input
+							type="text"
+							placeholder="Masukkan Tahun"
+							name="tahun_berdiri"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+						{#if errors}
+							{#each errors.tahun_berdiri as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
+
+				<div class="flexcoba mt-5 flex gap-6">
+					<div class="w-full">
+						<p>Pembina :</p>
+						<input
+							type="text"
+							placeholder="Masukkan Nama Pembina"
+							name="pembina"
+							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
+						/>
+						{#if errors}
+							{#each errors.pembina as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
+					<div class="w-full">
+						<p>Pelindung :</p>
+						<input
+							type="text"
+							placeholder="Masukkan Nama Pelindung"
+							name="pelindung"
+							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
+						/>
+						{#if errors}
+							{#each errors.pelindung as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
+
+				<div class="mt-5">
+					<p>Pelindung:</p>
+					<div class="relative">
+						<input
+							type="text"
+							name="pelindungg"
+							placeholder="Masukkan Nama Pelindung"
+							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
+						/>
+					</div>
+					{#if errors}
+						{#each errors.pelindung as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
+				</div>
+
+				<div class="flexcoba mt-5 flex gap-6">
+					<div class="w-full">
+						<p>Jam Buka :</p>
+						<input
+							type="time"
+							name="jam_buka"
+							placeholder=""
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+						{#if errors}
+							{#each errors.jam_buka as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
+					<div class="w-full">
+						<p>Jam Tutup :</p>
+						<input
+							type="time"
+							name="jam_tutup"
+							placeholder=""
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+						{#if errors}
+							{#each errors.jam_tutup as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
+					<div class="w-full">
+						<p>Jumlah Anggota :</p>
+						<input
+							type="number"
+							name="jumlah_anggota"
+							placeholder="Masukkan Jumlah anggota"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+						{#if errors}
+							{#each errors.jumlah_anggota as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
+
+				<div class="mt-3">
+					<p>Wisata:</p>
+					<div class="relative">
+						<input
+							type="text"
+							name="wisata"
+							placeholder="Masukkan Pembina"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+					</div>
+					{#if errors}
+						{#each errors.wisata as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
 				</div>
 			</div>
 		</div>
 
-		<!-- 2 -->
-		<div>
-			<div class="mt-5">
-				<p>Juru Kunci:</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Pembina"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-			</div>
-			<div class="flexcoba mt-5 flex gap-6">
-				<div class="w-full">
-					<p>Dibangun Oleh :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="border-blackpx-2 mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
-					/>
-				</div>
-				<div class="w-full">
-					<p>Tahun Berdiri :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-			</div>
-
-			<div class="flexcoba mt-5 flex gap-6">
-				<div class="w-full">
-					<p>Pembina :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
-					/>
-				</div>
-				<div class="w-full">
-					<p>Pelindung :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
-					/>
-				</div>
-			</div>
-
-			<div class="mt-5">
-				<p>Pelindung:</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Pembina"
-						class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
-					/>
-				</div>
-			</div>
-
-			<div class="flexcoba mt-5 flex gap-6">
-				<div class="w-full">
-					<p>Jam Buka :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-				<div class="w-full">
-					<p>Jam Tutup :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-				<div class="w-full">
-					<p>Jumlah Anggota :</p>
-					<input
-						type="text"
-						placeholder="Masukkan nama"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-			</div>
-
-			<div class="mt-3">
-				<p>Wisata:</p>
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Masukkan Pembina"
-						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-					/>
-				</div>
-			</div>
+		<div class="relative flex w-full justify-center lg:justify-end">
+			<button
+				class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
+				type="submit">Simpan Data</button
+			>
 		</div>
-	</div>
-
-	<div class="relative w-full flex justify-center lg:justify-end">
-		<button
-			class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
-			onclick={setTimer}>Simpan Data</button
-		>
-	</div>
+	</form>
 </div>
 {#if open}
 	<SuccessModal text="Situs Berhasil Diedit"></SuccessModal>

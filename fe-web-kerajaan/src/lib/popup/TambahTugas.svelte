@@ -2,10 +2,11 @@
 	import { goto } from '$app/navigation';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import { fade } from 'svelte/transition';
-	let { value = $bindable(), text = '', successText = '' } = $props();
+	let { value = $bindable(), text = '', successText = '', errors = $bindable() } = $props();
 	let total = $state(8);
 	let open = $state(false);
 	let timer: number;
+	let today = $state(String(new Date().toISOString().split('T')[0]));
 	function setTimer() {
 		open = true;
 		if (timer) {
@@ -31,6 +32,7 @@
 			class="absolute right-0 top-0 me-4 mt-7 cursor-pointer p-2"
 			onclick={() => {
 				value = false;
+				errors = null;
 			}}
 		>
 			<svg
@@ -58,7 +60,7 @@
 						type="text"
 						class="my-2 w-full pe-2 ps-2 focus:outline-none"
 						placeholder="Jane Doe"
-						name=""
+						name="pemberi_tugas"
 						id=""
 					/>
 				</div>
@@ -79,6 +81,11 @@
 					</svg>
 				</div>
 			</div>
+			{#if errors}
+				{#each errors.pemberi_tugas as e}
+					<p class="text-left text-red-500">{e}</p>
+				{/each}
+			{/if}
 		</div>
 		<div class="mt-2 flex w-full flex-col">
 			<div>
@@ -91,7 +98,7 @@
 						type="text"
 						class="my-2 w-full pe-2 ps-2 focus:outline-none"
 						placeholder="Jane Doe"
-						name=""
+						name="nama_tugas"
 						id=""
 					/>
 				</div>
@@ -112,6 +119,11 @@
 					</svg>
 				</div>
 			</div>
+			{#if errors}
+				{#each errors.nama_tugas as e}
+					<p class="text-left text-red-500">{e}</p>
+				{/each}
+			{/if}
 		</div>
 		<div class="mt-2 flex w-full flex-col">
 			<div>
@@ -124,12 +136,17 @@
 						type="date"
 						class="my-2 w-full pe-2 ps-2 focus:outline-none"
 						placeholder="13-12-2001"
-						name=""
-						value="2003-12-14"
+						name="tanggal_penugasan"
+						value={today}
 						id=""
 					/>
 				</div>
 			</div>
+			{#if errors}
+				{#each errors.tanggal_penugasan as e}
+					<p class="text-left text-red-500">{e}</p>
+				{/each}
+			{/if}
 		</div>
 		<div class="mt-2 flex w-full flex-col">
 			<div>
@@ -142,7 +159,7 @@
 						type="text"
 						class="my-2 w-full pe-2 ps-2 focus:outline-none"
 						placeholder="Jane Doe"
-						name=""
+						name="anggota_yg_ditugaskan"
 						id=""
 					/>
 				</div>
@@ -163,16 +180,21 @@
 					</svg>
 				</div>
 			</div>
+			{#if errors}
+				{#each errors.anggota_yg_ditugaskan as e}
+					<p class="text-left text-red-500">{e}</p>
+				{/each}
+			{/if}
 		</div>
 		<div class="mt-2 flex w-full flex-col">
 			<div>
-				<p class="text-sm">Anggota yang Ditugaskan</p>
+				<p class="text-sm">Deskripsi Tugas</p>
 			</div>
 			<!-- nama Tugas -->
 			<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
 				<div class="grow">
 					<textarea
-						name=""
+						name="deskripsi_tugas"
 						class="w-full pe-2 ps-2 pt-2 focus:outline-none"
 						placeholder="Deskripsi"
 						id=""
@@ -180,12 +202,16 @@
 					></textarea>
 				</div>
 			</div>
+			{#if errors}
+				{#each errors.deskripsi_tugas as e}
+					<p class="text-left text-red-500">{e}</p>
+				{/each}
+			{/if}
 		</div>
 		<div class="mt-4 flex w-full lg:justify-end">
 			<button
 				class="w-full cursor-pointer rounded-lg bg-green-500 px-4 py-2 text-white lg:w-auto"
-				type="submit"
-				onclick={setTimer}>{text}</button
+				type="submit">{text}</button
 			>
 		</div>
 	</div>

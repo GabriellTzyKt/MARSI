@@ -34,7 +34,7 @@ export const actions: Actions = {
             jabatan: String(data.get("jabatan") || "").trim(),
         };
 
-        console.log("Extracted Form:", form);
+        // console.log("Extracted Form:", form);
 
 
         const validation = ver.safeParse({ ...form });
@@ -44,6 +44,7 @@ export const actions: Actions = {
             return fail(406,{
                 errors: validation.error.flatten().fieldErrors, success: false,
                 formData: form, type: "add"
+            });
             });
         }
 
