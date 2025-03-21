@@ -10,11 +10,14 @@
 	import TambahTugas from '$lib/popup/TambahTugas.svelte';
 	import BuktiLaporan from '$lib/popup/BuktiLaporan.svelte';
 	import TambahMasterData from '$lib/popup/TambahMasterData.svelte';
+	import { enhance } from '$app/forms';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	// import Modal from '$lib/popup/Modal.svelte';
 	// export const dropId = $state(writable<string | null>(null));
 	let open = $state(false);
 	const dispatcher = createEventDispatcher();
 	let pop = $state(false);
+
 	// Unique ID for this dropdown
 	const {
 		id,
@@ -28,6 +31,7 @@
 		dataG = null,
 		header = null
 	} = $props();
+	let UT_errors = $state();
 	let isOpen = $state(false);
 	let temp = $state('');
 	let openm = $state(false);
@@ -35,6 +39,7 @@
 	let openBintang = $state(false);
 	let openUT = $state(false);
 	let openBL = $state(false);
+	let success = $state(false);
 	const toggleDropdown = () => {
 		// console.log(data);
 		openDropdown.update((current) => {
@@ -53,6 +58,9 @@
 			pop = false;
 		}
 	};
+	$effect(() => {
+		if (!openUT) UT_errors = '';
+	});
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -164,10 +172,35 @@
 	</div>
 {/if}
 {#if openUT}
-	<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
-		<TambahTugas bind:value={openUT} text="Ubah Tugas" successText="Tugas Berhasil Diubah"
-		></TambahTugas>
-	</div>
+	<form
+		action="?/ubahTugas"
+		method="post"
+		use:enhance={() => {
+			return async ({ result }) => {
+				if (result.type === 'success') {
+					success = true;
+
+					let timer: number;
+					timer = setTimeout(() => {
+						openUT = false;
+						success = false;
+					}, 3000);
+				}
+				if (result.type === 'failure') {
+					UT_errors = result.data?.errors;
+				}
+			};
+		}}
+	>
+		<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
+			<TambahTugas
+				errors={UT_errors}
+				bind:value={openUT}
+				text="Ubah Tugas"
+				successText="Tugas Berhasil Diubah"
+			></TambahTugas>
+		</div>
+	</form>
 {/if}
 {#if openBL}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
@@ -186,3 +219,6 @@
         open = true;
     }
 }} -->
+{#if success}
+	<SuccessModal text="Berhasil Diubah"></SuccessModal>
+{/if}

@@ -135,16 +135,14 @@ export const actions: Actions = {
             waktu_mulai:
                 z.string({ message: "Field Waktu Mulai harus diisi" })
                     .nonempty("tidak boleh kosong")
-                    .refine(() => {
-                         return data_waktu_mulai >= time_now
-                    },{message:"Waktu Mulai gaboleh kurang dari Waktu Sekarang"}),
+            ,
+            
             
             waktu_selesai:
                 z.string({ message: "Field Waktu Selesai harus diisi" })
                     .nonempty("tidak boleh kosong")
-                    .refine(() => {
-                        return data_waktu_selesai >= data_waktu_mulai
-                   },{message:"Waktu Selesai gaboleh kurang dari Waktu Selesai"}),
+            ,
+            
             deskripsi_acara:
                 z.string({ message: "Field Deskripsi Acara harus diisi" })
                     .nonempty("tidak boleh kosong"),

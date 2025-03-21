@@ -10,10 +10,16 @@
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
 	import { error } from '@sveltejs/kit';
+
 	let today = String(new Date().toISOString().split('T')[0]);
 	let open = $state(false);
 	let success = $state(false);
 	let errors = $state();
+	$effect(() => {
+		if (!open) {
+			errors = '';
+		}
+	});
 </script>
 
 <div class="flex w-full flex-col">
@@ -136,9 +142,6 @@
 				}
 				if (result.type === 'failure') {
 					errors = result.data?.errors;
-					if (!open) {
-						errors = null;
-					}
 				}
 			};
 		}}
