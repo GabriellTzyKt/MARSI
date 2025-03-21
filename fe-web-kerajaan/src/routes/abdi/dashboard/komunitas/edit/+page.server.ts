@@ -6,6 +6,7 @@ export const actions: Actions = {
     edit: async ({ request }) => {
         const data = await request.formData();
 
+        
         let form = {
             namakomunitas: "",
             alamat: "",

@@ -51,6 +51,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						success = false;
+						goto('/abdi/dashboard/organisasi/detail');
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
