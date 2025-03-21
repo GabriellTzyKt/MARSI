@@ -43,6 +43,7 @@
 			['children', 'Aksi']
 		]}
 		table_data={dummydata}
+		isdrop={true}
 	>
 		{#snippet children({ header, data, index })}
 			{#if header === 'Aksi'}
@@ -60,6 +61,50 @@
 					{data}
 				></DropDown>
 			{/if}
+		{/snippet}
+		{#snippet details({})}
+			<div class=" me-4 ms-4 mt-4 flex flex-col">
+				<div class="flex justify-between">
+					<div>
+						<p class="text-xl font-[600]">Data Kerajaan</p>
+					</div>
+					<div>
+						<button class="rounded-xl bg-orange-500 px-6 py-2 text-white"> +Tambah data </button>
+					</div>
+				</div>
+				<Table
+					table_header={[
+						['nama', 'Nama Anggota'],
+						['email', 'Email'],
+						['telepon', 'Nomer Telepon'],
+						['kerajaan', 'Nama Kerajaan'],
+						['jenis_kerajaan', 'Jenis Kerajaan'],
+						['gelar', 'Gelar'],
+						['children', 'Aksi']
+					]}
+					table_data={dummydata}
+					isdrop={true}
+				>
+					{#snippet children({ header, data, index })}
+						{#if header === 'Aksi'}
+							<DropDown
+								text="apakah yakin ingin mengarsip anggota {data.nama} ini?"
+								successText={`Anggota ${data.nama} berhasil diarsipkan!`}
+								link="/admin/keanggotaan/daftaranggota"
+								{index}
+								items={[
+									['Ubah', `/admin/keanggotaan/daftaranggota/ubahanggota/${data.id}`],
+									['children', 'Arsipkan']
+								]}
+								tipe="anggota"
+								id={`id-anggota-${index}`}
+								{data}
+							></DropDown>
+						{/if}
+					{/snippet}
+					{#snippet details({})}{/snippet}
+				</Table>
+			</div>
 		{/snippet}
 	</Table>
 </div>

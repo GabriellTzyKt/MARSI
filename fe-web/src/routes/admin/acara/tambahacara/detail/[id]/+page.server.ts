@@ -1,4 +1,4 @@
-import type { PageServerLoad } from "./$types";
+import type { Actions, PageServerLoad } from "./$types";
 import { dummyAcara } from "$lib/dummy";
 
 export const load: PageServerLoad = async ({fetch, params}) => {
@@ -6,4 +6,8 @@ export const load: PageServerLoad = async ({fetch, params}) => {
     console.log(dummyAcara[Number(params.id)])
     console.log(fetch)
     return {acara : dummyAcara[Number(params.id)]}
+};
+
+export const actions: Actions = {
+    
 };
