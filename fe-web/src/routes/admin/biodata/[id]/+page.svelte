@@ -205,7 +205,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						goto("/admin/biodata");
+						goto('/admin/biodata');
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
@@ -543,6 +543,7 @@
 					<button
 						class="bg-customKrem w-fit rounded-lg border px-3 py-2 font-semibold"
 						onclick={OpenModal}
+						type="button"
 					>
 						+Tambah Data
 					</button>

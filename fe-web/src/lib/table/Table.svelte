@@ -105,13 +105,8 @@
 				</tr>
 
 				{#if isdrop && dropdown === i}
-					<tr in:slide={{ duration: 200 }} out:slide={{ duration: 200 }}>
-						<td
-							colspan={isdrop ? table_header.length + 2 : table_header.length + 1}
-							class=""
-							in:slide={{ duration: 200 }}
-							out:slide={{ duration: 200 }}
-						>
+					<tr>
+						<td colspan={isdrop ? table_header.length + 2 : table_header.length + 1} class="">
 							{@render details?.({ data, index: i })}
 						</td>
 					</tr>

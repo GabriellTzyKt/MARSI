@@ -1,9 +1,11 @@
 <script lang="ts">
 	import Table from '$lib/table/Table.svelte';
-	import { dummydata } from '$lib/dummy';
+	import { dummydata, dummyDokumen } from '$lib/dummy';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
+	import CustomBtn from '../../masterData/CustomBtn.svelte';
+	import { slide } from 'svelte/transition';
 
 	// import {dropId} from './DropDown.svelte'
 
@@ -80,7 +82,7 @@
 			{/if}
 		{/snippet}
 		{#snippet details({})}
-			<div class=" me-4 ms-4 mt-4 flex flex-col">
+			<div class=" me-4 ms-4 mt-4 flex flex-col" transition:slide={{ duration: 300 }}>
 				<div class="flex justify-between">
 					<div>
 						<p class="text-xl font-[600]">Data Kerajaan</p>
@@ -91,35 +93,16 @@
 				</div>
 				<Table
 					table_header={[
-						['nama', 'Nama Anggota'],
-						['email', 'Email'],
-						['telepon', 'Nomer Telepon'],
-						['kerajaan', 'Nama Kerajaan'],
-						['jenis_kerajaan', 'Jenis Kerajaan'],
-						['gelar', 'Gelar'],
-						['children', 'Aksi']
+						['nama', 'Nama Dokumen', 'justify-start flex grow'],
+						['children', 'Aksi', 'text-right pe-48']
 					]}
-					table_data={data}
-					isdrop={true}
+					table_data={dummyDokumen}
 				>
 					{#snippet children({ header, data, index })}
 						{#if header === 'Aksi'}
-							<DropDown
-								text="apakah yakin ingin mengarsip anggota {data.nama} ini?"
-								successText={`Anggota ${data.nama} berhasil diarsipkan!`}
-								link="/admin/keanggotaan/daftaranggota"
-								{index}
-								items={[
-									['Ubah', `/admin/keanggotaan/daftaranggota/ubahanggota/${data.id}`],
-									['children', 'Arsipkan']
-								]}
-								tipe="anggota"
-								id={`id-anggota-${index}`}
-								{data}
-							></DropDown>
+							<CustomBtn></CustomBtn>
 						{/if}
 					{/snippet}
-					{#snippet details({})}{/snippet}
 				</Table>
 			</div>
 		{/snippet}
