@@ -10,9 +10,11 @@
 		dataambil
 	} = $props();
 
+	console.log("ini data2 : " , data2)
+
 	let keyword = $state(data2 ? data2.namaanggota : '');
 	let showDropdown = $state(false);
-	let timer: number;
+
 
 	function updateFilteredData() {
 		if (!keyword.trim()) return [];
@@ -24,8 +26,7 @@
 		showDropdown = false;
 	}
 
-	if (data2) {
-	}
+
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->

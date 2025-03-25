@@ -149,6 +149,10 @@
 		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/buat') {
 			return 'Tambah Organisasi';
 		} 		
+		else if (page.route.id === '/abdi/dashboard/situs/daftaracara/edit') {
+			return 'Edit Acara Situs';
+		} 	
+
 	});
 
 	let { children } = $props();

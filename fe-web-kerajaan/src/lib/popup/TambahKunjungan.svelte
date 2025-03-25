@@ -1,28 +1,48 @@
 <script lang="ts">
-	let { id = 0 } = $props();
+	let { id = 0, errors = null, data2 } = $props();
+	let namapengunjung = $state(data2 ? data2.namapengunjung : '');
+	let radioinput = $state(data2 ? data2.radioinput : 'tidak');
+	let keterangankunjungan = $state(data2 ? data2.keterangankunjungan : '');
+	let notelp = $state(data2 ? data2.notelp : '');
+	let kotaasal = $state(data2 ? data2.kotaasal : '');
+	let orangyangditemui = $state(data2 ? data2.orangyangditemui : '');
+	let tujuankunjungan = $state(data2 ? data2.tujuankunjungan : '');
+	console.log('ini data2 : ', data2);
+	console.log('ini error : ', errors);
+	
 </script>
 
 <div
-	class="lg:grid-cols-15 mt-5 grid h-[550px] w-full grid-cols-5 gap-2 rounded-lg border-2 border-gray-100 bg-gray-300 px-2 lg:h-fit"
+	class="lg:grid-cols-15 mt-5 grid h-fit p-10 w-full grid-cols-5 gap-2 rounded-lg border-2 border-gray-100 bg-gray-300 px-2 lg:h-fit"
 >
 	<div class="col-span-7 mt-5 lg:col-span-5 lg:mb-5">
 		<div class="flex flex-col">
 			<div class="relative flex items-center">
 				<input
 					type="text"
+					name="namapengunjung-{id}"
+					bind:value={namapengunjung}
 					class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
 					placeholder="Nama Pengunjung"
 				/>
 				<span class="line-md--pencil absolute right-2"></span>
 			</div>
+			{#if errors && namapengunjung === ''}
+				<p class="ml-5 text-left text-red-500">{errors.namapengunjung[0]}</p>
+			{/if}
 			<div class="relative mt-5 flex items-center">
 				<input
 					type="text"
+					name="keterangankunjungan-{id}"
+					bind:value={keterangankunjungan}
 					class="py-8.5 lg:py-9.5 h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
 					placeholder="Keterangan kunjungan"
 				/>
 				<span class="line-md--pencil absolute right-2"></span>
 			</div>
+			{#if errors && keterangankunjungan === ''}
+				<p class="ml-5 text-left text-red-500">{errors.keterangankunjungan[0]}</p>
+			{/if}
 		</div>
 	</div>
 
@@ -34,17 +54,33 @@
 						type="text"
 						class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
 						placeholder="No Telepon"
+						bind:value={notelp}
+						name="notelp-{id}"
+						pattern="[0-9]*"
+						minlength="10"
 					/>
+
 					<span class="line-md--pencil absolute right-2"></span>
 				</div>
+				{#if errors && notelp === ''}
+					<div class="flex-col">
+						<p class="ml-5 text-left text-red-500">{errors.notelp[0]}</p>
+						<p class="ml-5 text-left text-red-500">{errors.notelp[1]}</p>
+					</div>
+				{/if}
 				<div class="relative col-span-3 flex items-center">
 					<input
 						type="text"
+						name="kotaasal-{id}"
+						bind:value={kotaasal}
 						class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
 						placeholder="Kota asal"
 					/>
 					<span class="line-md--pencil absolute right-2"></span>
 				</div>
+				{#if errors && kotaasal === ''}
+					<p class="ml-5 text-left text-red-500">{errors.kotaasal[0]}</p>
+				{/if}
 			</div>
 
 			<!-- Radio Button -->
@@ -55,46 +91,60 @@
 						<input
 							id="default-radio-1-{id}"
 							type="radio"
-							value=""
+							value="ya"
+							bind:group={radioinput}
 							name="default-radio-{id}"
 							class="h-3 w-3 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
 						/>
-						<label for="default-radio-1" class="ms-2 text-sm font-medium text-gray-900">Ya</label>
+						<label for="default-radio-1-{id}" class="ms-2 text-sm font-medium text-gray-900"
+							>Ya</label
+						>
 					</div>
 					<div class="flex items-center justify-center">
 						<input
-							checked
 							id="default-radio-2-{id}"
 							type="radio"
-							value=""
+							value="tidak"
+							bind:group={radioinput}
 							name="default-radio-{id}"
 							class="h-3 w-3 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
 						/>
-						<label for="default-radio-2" class="ms-2 text-sm font-medium text-black">Tidak</label>
+						<label for="default-radio-2-{id}" class="ms-2 text-sm font-medium text-black"
+							>Tidak</label
+						>
 					</div>
 				</div>
+				{#if errors && radioinput === ''}
+					<p class="ml-5 text-left text-red-500">{errors.radioinput}</p>
+				{/if}
 			</div>
 
 			<!-- Grid untuk input field -->
-			<div class="grid grid-cols-1 gap-2 lg:grid-cols-7">
-				<div class="relative flex items-center lg:col-span-4">
-					<input
-						type="text"
-						class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
-						placeholder="Orang Yang Ingin Ditemui"
-					/>
-					<span class="line-md--pencil absolute right-2"></span>
-				</div>
+			{#if radioinput === 'ya'}
+				<div class="grid grid-cols-1 gap-2 lg:grid-cols-7">
+					<div class="relative flex items-center lg:col-span-4">
+						<input
+							type="text"
+							bind:value={orangyangditemui}
+							class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
+							name="orangyangditemui-{id}"
+							placeholder="Orang Yang Ingin Ditemui"
+						/>
+						<span class="line-md--pencil absolute right-2"></span>
+					</div>
 
-				<div class="relative flex items-center lg:col-span-3">
-					<input
-						type="text"
-						class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
-						placeholder="Tujuan Kunjungan"
-					/>
-					<span class="line-md--pencil absolute right-2"></span>
+					<div class="relative flex items-center lg:col-span-3">
+						<input
+							type="text"
+							class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
+							bind:value={tujuankunjungan}
+							name="tujuankunjungan-{id}"
+							placeholder="Tujuan Kunjungan"
+						/>
+						<span class="line-md--pencil absolute right-2"></span>
+					</div>
 				</div>
-			</div>
+			{/if}
 		</div>
 	</div>
 </div>

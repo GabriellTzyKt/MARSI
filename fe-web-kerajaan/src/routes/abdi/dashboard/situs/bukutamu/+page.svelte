@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAcara, dummyAnggota, dummyBukuTamu } from '$lib/dummy';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import TambahKunjungan from '$lib/popup/TambahKunjungan.svelte';
-	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
 
@@ -10,10 +11,16 @@
 	let id = $state(1);
 	let showModal = $state(false);
 
+	let valo = $state(false);
+	let error = $state();
+	let data2 = $state();
+
+	let timer : any;
+
 	function increment() {
 		count += 1;
 		id += 1;
-		showModal = true;
+		console.log("id: ", count, id)
 	}
 
 	function OpenModal() {
@@ -120,48 +127,74 @@
 		</Table>
 	</div>
 </div>
+
 {#if showModal}
-	<div class="fixed inset-0 flex items-center justify-center bg-black/60 bg-opacity-50">
-		<div class="max-h-[90vh] w-[70%] overflow-y-auto rounded-lg bg-white p-5 shadow-lg">
-			<div class="flex justify-between">
-				<h2 class="text-xl font-bold">Tambah Kunjungan</h2>
-				<!-- svelte-ignore a11y_consider_explicit_label -->
-				<button onclick={closeModal}>
-					<span class="carbon--close-outline"></span>
+	<form
+		action="?/tambah"
+		method="post"
+		use:enhance={() => {
+			return async ({ result }) => {
+				console.log("INI Result : " , result);
+				if (result.type === 'success') {
+					valo = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						valo = false;
+					}, 3000);
+					showModal = false;
+				} else if (result.type === 'failure') {
+					error = result.data?.errors || '';
+					console.log("ini ERROR : " , error);
+				}
+			};
+		}}
+	>
+		<div class="fixed inset-0 flex items-center justify-center bg-black/60 bg-opacity-50">
+			<div class="max-h-[90vh] w-[70%] overflow-y-auto rounded-lg bg-white p-5 shadow-lg">
+				<div class="flex justify-between">
+					<h2 class="text-xl font-bold">Tambah Kunjungan</h2>
+					<!-- svelte-ignore a11y_consider_explicit_label -->
+					<button onclick={closeModal}>
+						<span class="carbon--close-outline"></span>
+					</button>
+				</div>
+				<button
+					class="ml-auto mt-4 flex w-fit items-end justify-end rounded-lg bg-blue-600 p-2 px-3 text-white"
+					onclick={() => increment()} 
+					>
+					Tambah Kunjungan
+				</button>
+
+				{#each Array(count) as _, id}
+					<div class="relative flex h-full flex-col justify-between lg:h-fit">
+						<TambahKunjungan id={id + 1} errors = {error} {data2} ></TambahKunjungan>
+						<div class="mx-auto mb-5 flex h-full items-center">
+							<!-- svelte-ignore a11y_consider_explicit_label -->
+							<button onclick={hapus}>
+								<span
+									class="absolute bottom-8 right-2 flex h-10 w-10 items-center justify-center rounded-lg bg-red-400 p-2 lg:right-12 lg:top-1/2"
+								>
+									<i class="gg--trash z-10 items-center text-2xl text-white"></i>
+								</span>
+							</button>
+						</div>
+					</div>
+				{/each}
+
+				<button
+					class="ml-auto mt-3 flex w-fit items-end rounded-lg bg-green-500 p-2 px-8 py-2 text-white"
+					type="submit"
+				>
+					Tambah Data
 				</button>
 			</div>
-			<button
-				class="ml-auto mt-4 flex w-fit items-end justify-end rounded-lg bg-blue-600 p-2 px-3 text-white"
-				onclick={increment}
-			>
-				Tambah Kunjungan
-			</button>
-
-			{#each Array(count) as _, id}
-				<div class="relative flex h-full flex-col justify-between lg:h-fit">
-					<TambahKunjungan id={id + 1}></TambahKunjungan>
-					<div class="mx-auto mb-5 flex h-full items-center">
-						<!-- svelte-ignore a11y_consider_explicit_label -->
-						<button onclick={hapus}>
-							<span
-								class="absolute bottom-8 right-2 flex h-10 w-10 items-center justify-center rounded-lg bg-red-400 p-2 lg:right-12 lg:top-1/2"
-							>
-								<i class="gg--trash z-10 items-center text-2xl text-white"></i>
-							</span>
-						</button>
-					</div>
-				</div>
-			{/each}
-
-			<button
-				class="ml-auto mt-3 flex w-fit items-end rounded-lg bg-green-500 p-2 px-8 py-2 text-white"
-				onclick={closeModal}
-			>
-				Tambah Data
-			</button>
 		</div>
-	</div>
+	</form>
 {/if}
+{#if valo}
+	<SuccessModal text="Anggota berhasil Ditambah!"></SuccessModal>
+{/if}
+
 
 <style>
 	.carbon--close-outline {

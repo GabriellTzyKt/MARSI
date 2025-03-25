@@ -1,6 +1,6 @@
+import { fail } from "@sveltejs/kit";
 import { error, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
-
 
 export const actions: Actions = {
     edit: async ({ request }) => {
@@ -12,7 +12,7 @@ export const actions: Actions = {
             tujuanacara: "",
             deskripsiacara: "",
             penanggungjawab: "",
-            kapasitascara: "",
+            kapasitasacara: "",
             jenis_acara: "",
             tanggalmulai: "",
             tanggalselesai: "",
@@ -31,10 +31,14 @@ export const actions: Actions = {
                 .min(1, "Minimal 1 anggota") // trim hapus spasi awal dan akhir, min 1 itu mastiin "" dan null tdk valid
                 .regex(/^\d+$/, "Jumlah anggota harus angka"),
             jenis_acara: z.string().trim().min(1, "Pilih jenis acara!"),
-            tanggalmulai: z.string().trim().min(1, "tanggal harus terisi!"),
-            tanggalselesai: z.string().trim().min(1, "tanggal harus terisi!"),
-            waktumulai: z.string().trim().min(1, "waktu harus terisi!"),
-            waktuselesai: z.string().trim().min(1, "waktu harus terisi!"),
+            tanggalmulai: z.coerce.date({ message: "Tanggal Tidak valid (YYYY-MM-DD)" }),
+            tanggalselesai: z.coerce.date({ message: "Tanggal Tidak valid (YYYY-MM-DD)" }),
+            waktumulai: z.string().regex(/^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/, {
+                message: "pakai format : HH(jam):mm(menit).",
+            }),
+            waktuselesai: z.string().regex(/^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/, {
+                message: "pakai format : HH(jam):mm(menit).",
+            }),
         });
 
         form = {
@@ -44,7 +48,7 @@ export const actions: Actions = {
             deskripsiacara: data.get("deskripsiacara") ?? "",
             penanggungjawab: data.get("penanggungjawab") ?? "",
             kapasitasacara: data.get("kapasitasacara") ?? "",
-            jenis_acara: data.get("jenis_acara") ?? "",
+            jenis_acara: data.get("jenisacara") ?? "",
             tanggalmulai: data.get("tanggalmulai") ?? "",
             tanggalselesai: data.get("tanggalselesai") ?? "",
             waktumulai: data.get("waktumulai") ?? "",
@@ -54,11 +58,16 @@ export const actions: Actions = {
         const validation = ver.safeParse({ ...form });
 
         if (!validation.success) {
-            console.log(validation.error.flatten().fieldErrors)
-            return {
-                errors: validation.error.flatten().fieldErrors, success: false,
-                formData: form
-            };
+            const fieldErrors = validation.error.flatten().fieldErrors;
+
+            console.log("errors : ", fieldErrors)
+
+            return fail(406, {
+                errors: fieldErrors,
+                success: false,
+                formData: form,
+                type: "add"
+            });
         }
 
         return { errors: "Success", success: true, formData: form };

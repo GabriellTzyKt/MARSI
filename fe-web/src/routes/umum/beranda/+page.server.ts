@@ -1,4 +1,5 @@
 import { data_flipcard } from "$lib/dummy";
+import type { Action, Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 export const ssr = false;
 
@@ -10,14 +11,19 @@ function getRandomIDs(count: number, max: number): number[] {
     return Array.from(ids);
 }
 
-export const load: PageServerLoad = async () => {
-    console.log("Data flipcard:", data_flipcard);
 
-    let randomIDs = getRandomIDs(3, data_flipcard.length);
+export const actions: Actions = {
+    refresh: async ({ request }) => {
 
-    let selectedFlip = data_flipcard.filter(item => randomIDs.includes(item.id));
+        console.log("Data flipcard:", data_flipcard);
 
-    console.log("Final Data yang Dikirim:", { selectedFlip });
-    return { selectedFlip };
-    
-};
+        let randomIDs = getRandomIDs(3, data_flipcard.length);
+
+        console.log("ID : ", randomIDs)
+
+        let selectedFlip = data_flipcard.filter(item => randomIDs.includes(item.id));
+
+        console.log("Final Data yang Dikirim:", { selectedFlip });
+        return { selectedFlip };
+    }
+}

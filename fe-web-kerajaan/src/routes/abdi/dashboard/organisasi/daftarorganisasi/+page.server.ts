@@ -15,6 +15,12 @@ export const actions: Actions = {
     tambah: async ({request}) => {
         const data = await request.formData();
 
+        let form = {
+            namaanggota : "",
+            deskripsi : "",
+            jabatan : ""
+        }
+
     
         const ver = z.object({
             namaanggota: z.string().trim().min(1, "Minimal 1 anggota!"),
@@ -22,9 +28,9 @@ export const actions: Actions = {
             jabatan: z.string().trim().min(1, "Jabatan harus diisi!"),
         });
 
-       const  form = {
+        form = {
             namaanggota: String(data.get("namaanggota") || "").trim(),
-            deskripsi: String(data.get("deskripsi") || "").trim(),
+            deskripsi: String(data.get("deskripsitugas") || "").trim(),
             jabatan: String(data.get("jabatan") || "").trim(),
         };
 
@@ -38,6 +44,7 @@ export const actions: Actions = {
             return fail(406,{
                 errors: validation.error.flatten().fieldErrors, success: false,
                 formData: form, type: "add"
+            });
             });
         }
 

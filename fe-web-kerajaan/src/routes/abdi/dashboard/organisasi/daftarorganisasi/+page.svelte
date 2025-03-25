@@ -10,16 +10,16 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	let { form, data } = $props();
+	let { data } = $props();
 	let dataambil = data.detil_anggota;
 	console.log(dataambil);
 
 	let open = $state(false);
 	let valo = $state(false);
 	let error = $state();
-
-	let timer: number;
 	let data2 = $state();
+
+	let timer : any;
 
 	let toggle = () => {
 		if (!open) {
@@ -27,37 +27,12 @@
 		} else open = false;
 		console.log(open);
 	};
-
-	// onMount(() => {
-	// 	if (form?.errors) {
-	// 		error = form.errors;
-	// 		data2 = form.formData;
-	// 		if (form.type === 'add') {
-	// 			open = true;
-	// 		}
-	// 		valo = false;
-	// 	} else if (form?.success) {
-	// 		if (form.type === 'add') {
-	// 			open = false;
-	// 		}
-	// 		valo = true;
-	// 		timer = setTimeout(() => {
-	// 			valo = false;
-	// 		}, 3000);
-	// 	} else {
-	// 		open = false;
-	// 		valo = false;
-	// 	}
-	// });
 </script>
 
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
-		<button
-			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
-			onclick={() => {
-				open = true;
-			}}>+Tambah Data</button
+		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white" onclick={toggle}
+			>+Tambah Data</button
 		>
 		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
@@ -153,7 +128,7 @@
 		method="post"
 		use:enhance={() => {
 			return async ({ result }) => {
-				console.log(result.type);
+				console.log(result)
 				if (result.type === 'success') {
 					valo = true;
 					clearTimeout(timer);
@@ -170,7 +145,8 @@
 		}}
 	>
 		<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
-			<TambahAnggota bind:value={open} errors={error} {data2} {dataambil}></TambahAnggota>
+			<TambahAnggota bind:value={open} bind:open={valo} errors={error} {data2} {dataambil}
+			></TambahAnggota>
 		</div>
 	</form>
 {/if}

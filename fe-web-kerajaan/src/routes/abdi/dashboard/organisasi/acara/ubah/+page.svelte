@@ -1,20 +1,22 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	let namaacara = $state(' ');
-	let lokasiacara = $state(' ');
-	let tujuanacara = $state(' ');
-	let deskripsiacara = $state(' ');
-	let kapasitasacara = $state(' ');
-	let jenis_acara = $state(' ');
-	let penanggungjawab = $state(' ');
-	let waktumulai = $state(' ');
-	let waktuselesai = $state(' ');
-	let tanggalmulai = $state(' ');
-	let tanggalselesai = $state(' ');
+	let namaacara = $state('');
+	let lokasiacara = $state('');
+	let tujuanacara = $state('');
+	let deskripsiacara = $state('');
+	let kapasitasacara = $state('');
+	let jenis_acara = $state('');
+	let penanggungjawab = $state('');
+	let waktumulai = $state('');
+	let waktuselesai = $state('');
+	let tanggalmulai = $state('');
+	let tanggalselesai = $state('');
+	let error: any = $state('');
 
 	let { form } = $props();
 
@@ -37,22 +39,36 @@
 
 	let success = $state(false);
 	let timer: Number;
-	onMount(() => {
-		if (form?.success) {
-			success = true;
-			if (timer) {
-				clearTimeout(timer);
-			}
-			timer = setTimeout(() => {
-				success = false;
-				goto('/abdi/dashboard/organisasi/detail');
-			}, 3000);
-		}
-	});
+	// onMount(() => {
+	// 	if (form?.success) {
+	// 		success = true;
+	// 		if (timer) {
+	// 			clearTimeout(timer);
+	// 		}
+	// 		timer = setTimeout(() => {
+	// 			success = false;
+	// 			goto('/abdi/dashboard/organisasi/detail');
+	// 		}, 3000);
+	// 	}
+	// });
 </script>
 
 <div class="min-h-full w-full">
-	<form method="post" action="?/edit">
+	<form method="post" action="?/edit" use:enhance={() => {
+		return async ({ result }) => {
+			console.log(result);
+			if (result.type === 'success') {
+				open = true;
+				clearTimeout(timer);
+				timer = setTimeout(() => {
+					open = false;
+					goto('/abdi/dashboard/organisasi/acara');
+				}, 3000);
+			} else if (result.type === 'failure') {
+				error = result?.data?.errors;
+			}
+		};
+	}}>
 		<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 			<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 				<div class="col-span-2">
@@ -65,8 +81,8 @@
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
 						/>
-						{#if form?.errors}
-							{#each form.errors.namaacara as a}
+						{#if error}
+							{#each error.namaacara as a}
 								<p class="text-left text-red-500">{a}</p>
 							{/each}
 						{/if}
@@ -78,11 +94,11 @@
 							type="text"
 							name="lokasiacara"
 							bind:value={lokasiacara}
-							placeholder="Masukkan Nama"
+							placeholder="Masukkan Lokasi"
 							class="w-full rounded-lg border px-2 py-1"
 						/>
-						{#if form?.errors}
-							{#each form.errors.lokasiacara as a}
+						{#if error}
+							{#each error.lokasiacara as a}
 								<p class="text-left text-red-500">{a}</p>
 							{/each}
 						{/if}
@@ -93,11 +109,11 @@
 							type="text"
 							name="tujuanacara"
 							bind:value={tujuanacara}
-							placeholder="Masukkan Nama"
+							placeholder="Masukkan Tujuan"
 							class="w-full rounded-lg border px-2 py-1"
 						/>
-						{#if form?.errors}
-							{#each form.errors.tujuanacara as a}
+						{#if error}
+							{#each error.tujuanacara as a}
 								<p class="text-left text-red-500">{a}</p>
 							{/each}
 						{/if}
@@ -110,8 +126,8 @@
 							bind:value={deskripsiacara}
 							class="h-32 w-full resize-none rounded-md border px-3 py-3 text-lg"
 						></textarea>
-						{#if form?.errors}
-							{#each form.errors.deskripsiacara as a}
+						{#if error}
+							{#each error.deskripsiacara as a}
 								<p class="text-left text-red-500">{a}</p>
 							{/each}
 						{/if}
@@ -126,11 +142,11 @@
 								name="kapasitasacara"
 								type="text"
 								bind:value={kapasitasacara}
-								placeholder="Masukkan Nama"
+								placeholder="Masukkan Jumlah Kapasitas"
 								class="w-full rounded-lg border px-2 py-1"
 							/>
-							{#if form?.errors}
-								{#each form.errors.kapasitasacara as a}
+							{#if error}
+								{#each error.kapasitasacara as a}
 									<p class="text-left text-red-500">{a}</p>
 								{/each}
 							{/if}
@@ -145,7 +161,7 @@
 											type="radio"
 											value="private"
 											bind:group={jenis_acara}
-											name="jenis-acara"
+											name="jenisacara"
 											class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 										/>
 										<label for="default-radio-1" class="mx-5 ms-2 text-sm font-medium text-gray-900"
@@ -158,7 +174,7 @@
 											type="radio"
 											value="public"
 											bind:group={jenis_acara}
-											name="jenis-acara"
+											name="jenisacara"
 											class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 										/>
 										<label for="default-radio-2" class="mx-5 ms-2 text-sm font-medium text-black"
@@ -166,8 +182,8 @@
 										>
 									</div>
 								</div>
-								{#if form?.errors}
-									{#each form.errors.jenis_acara as a}
+								{#if error}
+									{#each error.jenis_acara as a}
 										<p class="text-center text-red-500">{a}</p>
 									{/each}
 								{/if}
@@ -178,13 +194,13 @@
 						<p class="mt-2">Penanggung Jawab:</p>
 						<input
 							type="text"
-							placeholder="Masukkan Nama"
+							placeholder="Masukkan Penanggungjawab"
 							bind:value={penanggungjawab}
 							name="penanggungjawab"
 							class="w-full rounded-lg border px-2 py-1"
 						/>
-						{#if form?.errors}
-							{#each form.errors.penanggungjawab as a}
+						{#if error}
+							{#each error.penanggungjawab as a}
 								<p class="text-left text-red-500">{a}</p>
 							{/each}
 						{/if}
@@ -193,14 +209,14 @@
 						<div class="mt-2 lg:flex-1">
 							<p>Tanggal Mulai:</p>
 							<input
-								type="text"
+								type="date"
 								name="tanggalmulai"
-								placeholder="Masukkan Nama"
+								placeholder="Masukkan Tanggal Mulai"
 								bind:value={tanggalmulai}
 								class="w-full rounded-lg border px-2 py-1"
 							/>
-							{#if form?.errors}
-								{#each form.errors.tanggalmulai as a}
+							{#if error}
+								{#each error.tanggalmulai as a}
 									<p class="text-left text-red-500">{a}</p>
 								{/each}
 							{/if}
@@ -209,14 +225,14 @@
 							<div class="mt-2 w-full">
 								<p>Tanggal Selesai:</p>
 								<input
-									type="text"
-									placeholder="Masukkan Nama"
+									type="date"
+									placeholder="Masukkan Tanggal Selesai"
 									name="tanggalselesai"
 									bind:value={tanggalselesai}
 									class="w-full rounded-lg border px-2 py-1"
 								/>
-								{#if form?.errors}
-									{#each form.errors.tanggalselesai as a}
+								{#if error}
+									{#each error.tanggalselesai as a}
 										<p class="text-left text-red-500">{a}</p>
 									{/each}
 								{/if}
@@ -227,14 +243,13 @@
 						<div class="mt-2 lg:flex-1">
 							<p>Waktu Mulai:</p>
 							<input
-								type="text"
+								type="time"
 								name="waktumulai"
 								bind:value={waktumulai}
-								placeholder="Masukkan Nama"
 								class="w-full rounded-lg border px-2 py-1"
 							/>
-							{#if form?.errors}
-								{#each form.errors.waktumulai as a}
+							{#if error}
+								{#each error.waktumulai as a}
 									<p class="text-left text-red-500">{a}</p>
 								{/each}
 							{/if}
@@ -243,14 +258,13 @@
 							<div class="mt-2 w-full">
 								<p>Waktu Selesai:</p>
 								<input
-									type="text"
-									placeholder="Masukkan Nama"
+									type="time"
 									bind:value={waktuselesai}
 									name="waktuselesai"
 									class="w-full rounded-lg border px-2 py-1"
 								/>
-								{#if form?.errors}
-									{#each form.errors.waktuselesai as a}
+								{#if error}
+									{#each error.waktuselesai as a}
 										<p class="text-left text-red-500">{a}</p>
 									{/each}
 								{/if}
@@ -280,8 +294,8 @@
 							<option value="saab">Ny</option>
 						</select>
 					</div>
-					<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
-					<div class="col-span-2 w-full rounded-lg border px-2 py-1">Tn</div>
+					<div class="col-span-3 w-full rounded-lg border px-2 py-1">a</div>
+					<div class="col-span-2 w-full rounded-lg border px-2 py-1">0812390132</div>
 					<div class="col-span-1">
 						<span class="flex h-8 w-8 items-center justify-center rounded-full bg-red-400 p-2">
 							<i class="gg--trash z-10 items-center text-2xl"></i>

@@ -3,8 +3,7 @@
 	import SModal from '$lib/popup/SModal.svelte';
 
 	let nama = $state('');
-	let lokasi = $state('');
-	let provinsi = $state('');
+	let alamat = $state('');
 	let tanggal = $state('');
 	let jenis_kerajaan = $state('');
 	let nama_raja = $state('');
@@ -96,26 +95,15 @@
 			/>
 
 			<div class="flex flex-grow flex-col gap-2 lg:flex-row">
-				<div class="w-full flex-col lg:w-2/4">
-					<label class="text-md self-start text-left" for="provinsi">Provnsi Kerajaan</label>
-					<select
-						bind:value={provinsi} name="provinsi"
-						id="provinsi" class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-					>
-						<option value="" selected disabled>Pilih Provinsi</option>
-						<option value="jawatengah">Jawa Tengah </option>
-						<option value="bali">Bali</option>
-					</select>
-				</div>
-
 				<div class="w-full flex-col">
-					<label class="text-md mt-5 self-start text-left" for="lokasi"> Lokasi Kerajaan </label>
+					<label class="text-md mt-5 self-start text-left" for="lokasi"> Alamat Kerajaan </label>
 					<div class="relative flex">
 						<input
 							class="input-field w-full rounded-lg border p-2 pr-10"
 							type="text"
 							id="lokasi"
-							bind:value={lokasi}
+							name="alamat"
+							bind:value={alamat}
 							placeholder="John Doe"
 						/>
 
@@ -156,7 +144,7 @@
 				<div class="w-full flex-col">
 					<label class="text-md self-start text-left" for="era">Era Kerajaan</label>
 					<select
-						bind:value={era} id="era"
+						bind:value={era} id="era" name="era"
 						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 					>
 						<option value="" selected disabled>Pilih Era</option>
@@ -167,7 +155,7 @@
 				<div class="w-full flex-col">
 					<label class="text-md self-start text-left" for="rumpun">Rumpun Kerajaan</label>
 					<select
-						bind:value={rumpun} id="rumpun"
+						bind:value={rumpun} id="rumpun" name="rumpun"
 						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 					>
 						<option value="" selected disabled>Pilih Rumpun</option>
@@ -194,8 +182,8 @@
 						<input
 							class="input-field w-full rounded-lg border p-2 pr-8"
 							type="search"
-							id="namaRaja"
-							name="namaRaja"
+							id="namaraja"
+							name="namaraja"
 							bind:value={nama_raja}
 							placeholder="John Doe"
 						/>
@@ -212,109 +200,6 @@
 				placeholder="John Doe"
 			></textarea>
 
-			<div class="mt-2 flex flex-grow flex-col gap-4 md:flex-row">
-				<!-- Dokumen -->
-				<div class="flex w-full flex-col gap-1 lg:w-2/3">
-					<label class="text-md self-start text-left" for="fileInput">Dokumentasi Kerajaan</label>
-					<div class="h-full w-full overflow-x-auto rounded-lg border-2 border-black px-2 py-2">
-						<div class="flex flex-row gap-x-5">
-							<div
-								class="upload-container relative h-[200px] w-[300px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-black"
-							>
-								<input
-									type="file"
-									id="fileInput"
-									name="fileInput"
-									class="hidden"
-									onchange={(e) => handleFileChange(e, 'dokumen')}
-									multiple
-									accept="image/*"
-								/>
-								<label
-									for="fileInput"
-									class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
-								>
-									<span class="pajamas--media"></span>
-									<p class="mt-3 text-center">Upload Dokumentasi</p>
-								</label>
-							</div>
-
-							{#each uploadedFileUrls as url, index}
-								<div class="relative flex-shrink-0">
-									<img
-										src={url}
-										alt="Uploaded file"
-										class="h-[200px] w-[300px] rounded-lg border object-cover"
-									/>
-									<button class="remove-btn" onclick={() => removeImage(index)}>✕</button>
-								</div>
-							{/each}
-						</div>
-					</div>
-					<p class="text-md mb-10 opacity-70">
-						* Foto di urutan pertama akan menjadi foto besar awalan
-					</p>
-				</div>
-
-				<!-- Bendera -->
-				<div class="w-full flex-col lg:w-1/3">
-					<p class="text-nowrap text-center lg:text-start">Bendera Kerajaan</p>
-					<div
-						class="upload-container relative ml-6 mt-2 h-[200px] w-[270px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-black lg:ml-0"
-					>
-						<input
-							type="file"
-							id="fileBendera"
-							name="fileBendera"
-							class="hidden"
-							accept="image/*"
-							onchange={(e) => handleFileChange(e, 'bendera')}
-						/>
-						<label
-							for="fileBendera"
-							class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
-						>
-							{#if benderaUrl}
-								<img src={benderaUrl} alt="Bendera" class="h-full w-full rounded-lg object-cover" />
-								<button class="remove-btn" onclick={() => ganti('bendera')}>✎</button>
-							{:else}
-								<span class="pajamas--media"></span>
-								<p class="mt-3 text-center">Upload Bendera</p>
-							{/if}
-						</label>
-					</div>
-				</div>
-
-				<!-- Lambang -->
-				<div class="w-full flex-col lg:w-1/3">
-					<p class="text-nowrap text-center">Lambang Kerajaan</p>
-					<div
-						class="upload-container relative ml-6 mt-2 h-[200px] w-[270px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-black lg:ml-0"
-					>
-						<input
-							type="file"
-							id="fileLambang"
-							name="fileLambang"
-							class="hidden"
-							accept="image/*"
-							onchange={(e) => handleFileChange(e, 'lambang')}
-						/>
-						<label
-							for="fileLambang"
-							class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
-						>
-							{#if lambangUrl}
-								<img src={lambangUrl} alt="Lambang" class="h-full w-full rounded-lg object-cover" />
-								<button class="remove-btn" onclick={() => ganti('lambang')}>✎</button>
-							{:else}
-								<span class="pajamas--media"></span>
-								<p class="mt-3 text-center">Upload Lambang</p>
-							{/if}
-						</label>
-					</div>
-				</div>
-			</div>
-
 			<button
 				class="bg-customGold mt-5 self-center rounded-lg px-5 py-2 font-bold text-white lg:mt-0 lg:self-end"
 				onclick={setTimer} type="submit"
@@ -330,25 +215,5 @@
 {/if}
 
 <style>
-	.pajamas--media {
-		display: inline-block;
-		width: 48px;
-		height: 48px;
-		background-repeat: no-repeat;
-		background-size: 100% 100%;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23fff' fill-rule='evenodd' d='M13 2.5H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V3a.5.5 0 0 0-.5-.5M3 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm9 9.857L9.5 8l-2.476 2.83L5.5 9L4 10.8V12h8zM6.5 8a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3' clip-rule='evenodd'/%3E%3C/svg%3E");
-	}
 
-	.remove-btn {
-		position: absolute;
-		top: 5px;
-		right: 5px;
-		background: red;
-		color: white;
-		border: none;
-		border-radius: 50%;
-		width: 25px;
-		height: 25px;
-		cursor: pointer;
-	}
 </style>

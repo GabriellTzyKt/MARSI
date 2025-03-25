@@ -1,97 +1,64 @@
 <script lang="ts">
-	import Modal from '$lib/popup/Modal.svelte';
-	import Pagination from '$lib/table/Pagination.svelte';
-	import Search from '$lib/table/Search.svelte';
-	import Table from '$lib/table/Table.svelte';
-	import { dummyAcara } from '$lib/dummy';
-	import DropDown from '$lib/dropdown/DropDown.svelte';
-	import Status from '$lib/table/Status.svelte';
-	let pop = $state(false);
-	function setpop() {
-		pop = true;
-	}
-	function dispop() {
-		pop = false;
-	}
+	import PieChart from '../../Piechart.svelte';
+	import Barplot from '../../Barplot.svelte';
+	import ColorPicker from 'svelte-awesome-color-picker';
+	import { colord, Colord } from 'colord';
+	import Icon from '@iconify/svelte';
+	import '@fontsource/lato';
+
+	let hex = '#878272ed';
+
+	let rgb = {
+		r: 135,
+		g: 130,
+		b: 114,
+		a: 0.93
+	};
+
+	let hsv = {
+		h: 46,
+		s: 15.3,
+		v: 52.76,
+		a: 0.93
+	};
+
+	let color: Colord = colord(hex);
 </script>
 
-<!-- <button class="ms-3 mt-3 bg-yellow-600 p-3 text-white" onclick={setpop}> Click me </button>
-<Modal {pop} nama="Halo" on:close={dispop}></Modal> -->
-<div class="mt-20 flex w-full flex-col xl:mt-0">
-	<div class="flex flex-col justify-center xl:mt-0 xl:flex-row xl:justify-between">
-		<div class=" col-start-1 mb-4 flex flex-row items-center justify-center xl:mb-0">
-			<a href="/admin/acara/tambahacara"
-				><button class=" custom-button bg-customKrem px-6 py-2"> +Tambah Data </button></a
-			>
+<div class="flex w-full h-full flex-col">
+	<div class="relative w-[70%] items-center lg:w-[97%] lg:items-start">
+		<input name="input-field" class="m-5 w-full pr-12 text-start" placeholder="Cari Kerajaan..." />
+		<svg
+			class="absolute right-0 top-1/2 -translate-y-1/2 transform"
+			xmlns="http://www.w3.org/2000/svg"
+			width="18"
+			height="18"
+			viewBox="0 0 24 24"
+		>
+			<path
+				fill="#150000"
+				d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5T6.313 6.313T5 9.5t1.313 3.188T9.5 14"
+			/>
+		</svg>
+	</div>
+
+	<div class="flex w-full flex-col flex-wrap items-center gap-6 overflow-auto p-5 lg:flex-row">
+		<div class="flex-shrink-1 lg:h-full h-fit flex-grow rounded-md border border-gray-500 bg-white p-5">
+			<p class="mb-3 text-center text-xl font-bold">
+				Persentase Acara Kerajaan berdasarkan Jenis Kerajaan
+			</p>
+			<PieChart />
 		</div>
-		<div class="col-span-2 col-end-5 flex flex-row items-center justify-center">
-			<div>
-				<Search></Search>
-			</div>
-			<div class="me-4 ms-2">
-				<p>Show</p>
-			</div>
-			<div class="text-center">
-				<Pagination></Pagination>
-			</div>
-			<div class="mx-2">
-				<p>entries</p>
-			</div>
+		<div class="flex-shrink-1 lg:h-full h-fit flex-grow rounded-md border border-gray-500 bg-white p-5">
+			<p class="mb-3 text-center text-xl font-bold">Jumlah Acara yang Berlangsung di 2024</p>
+			<Barplot />
 		</div>
 	</div>
-	<Table
-		table_header={[
-			['id_acara', 'ID Acara'],
-			['nama_acara', 'Nama Acara'],
-			['tanggal', 'Tanggal'],
-			['lokasi', 'Lokasi'],
-			['jenis_acara', 'Jenis Acara'],
-			['kapasitas', 'Kapasitas'],
-			['children', 'Status'],
-			['children', 'Aksi']
-		]}
-		table_data={dummyAcara}
-	>
-		{#snippet children({ header, data, index })}
-			{#if header === 'Aksi'}
-				<DropDown
-					text="apakah yakin ingin mengarsip acara {data.nama_acara} ini?"
-					successText={`Acara ${data.nama_acara} berhasil diarsipkan!`}
-					link="/admin/acara"
-					{index}
-					items={[
-						['Detail', `/admin/acara/tambahacara/detail/${data.id}`],
-						['Ubah', `/admin/acara/tambahacara/ubahdetail/${data.id}`],
-						['children', 'Arsipkan']
-					]}
-					tipe="acara"
-					id={`id-acara-${index}`}
-					{data}
-				></DropDown>
-			{/if}
-			{#if header === 'Status'}
-				<Status status={data.status}></Status>
-			{/if}
-		{/snippet}
-	</Table>
+
+	<div class="flex flex-grow rounded-md border border-gray-500 w-[97%] bg-white p-5 m-5">
+		<p class="font-bold text-xl">History Acara : </p>
+	</div>
 </div>
 
 <style>
-	.custom-button {
-		border: none;
-
-		text-align: center;
-		color: black;
-		font-weight: bold;
-		font-size: 16px;
-		border-radius: 10px;
-		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-		cursor: pointer;
-	}
-
-	@media (max-width: 768px) {
-		.test {
-			margin-top: 90px;
-		}
-	}
 </style>
