@@ -1,9 +1,17 @@
 <script lang="ts">
-	let { data = null } = $props();
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
+	import Modal from '$lib/popup/Modal.svelte';
+
+	let { data = null, del = $bindable(), edit = $bindable() } = $props();
 </script>
 
 <div class=" me-4 flex justify-end gap-2">
-	<button class="flex gap-2 rounded-lg bg-[#FFA600] px-4 py-2 text-white">
+	<button
+		class="flex gap-2 rounded-lg bg-[#FFA600] px-4 py-2 text-white"
+		onclick={() => {
+			edit = true;
+		}}
+	>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
@@ -21,7 +29,12 @@
 
 		Edit</button
 	>
-	<button class="flex gap-2 rounded-lg bg-[#FF5E5E] px-4 py-2 text-white">
+	<button
+		class="flex gap-2 rounded-lg bg-[#FF5E5E] px-4 py-2 text-white"
+		onclick={() => {
+			del = true;
+		}}
+	>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"

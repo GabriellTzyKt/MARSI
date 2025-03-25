@@ -41,17 +41,18 @@
 </script>
 
 <div class="test flex w-full flex-col">
-	<div class="flex flex-row">
-		<a href="/admin/keanggotaan/daftaranggota"
-			><button class="custom-button bg-customRed">⭠ Kembali</button></a
+	<div class=" flex flex-row items-center">
+		<a href="/admin/keanggotaan/daftaranggota" class="flec self-end text-2xl underline">⭠ Kembali</a
 		>
-		<p class="ml-5 mt-6 text-3xl font-bold underline">Tambah Anggota</p>
 	</div>
 
+	<div class="my-4 flex">
+		<p class="ml-5 mt-6 text-3xl font-bold underline">Tambah Anggota</p>
+	</div>
 	<div class="form-container flex flex-col">
 		<form method="post" action="?/tambah">
 			<div class="input-group flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nama">Nama Anggota</label>
+				<label class="text-md self-start text-left" for="nama">Nama Kerajaan</label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"

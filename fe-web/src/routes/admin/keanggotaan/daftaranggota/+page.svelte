@@ -6,13 +6,22 @@
 	import Search from '$lib/table/Search.svelte';
 	import CustomBtn from '../../masterData/CustomBtn.svelte';
 	import { slide } from 'svelte/transition';
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
+	import KerajaanPopup from '$lib/popup/KerajaanPopup.svelte';
+	import { enhance } from '$app/forms';
+	import SModal from '$lib/popup/SModal.svelte';
+	import { goto } from '$app/navigation';
 
 	// import {dropId} from './DropDown.svelte'
-
+	let success = $state(false);
+	let errors = $state();
 	let keyword = $state('');
+	let del = $state(false);
+	let edit = $state(false);
 	let data = $state(dummydata);
 	let entries = $state(10);
 	let currPage = $state(1);
+	let tambah = $state(false);
 	$effect(() => {
 		data = keyword.trim()
 			? dummydata.filter(
@@ -22,6 +31,11 @@
 						d.telepon.toLowerCase().includes(keyword.toLowerCase().trim())
 				)
 			: dummydata;
+	});
+	$effect(() => {
+		if (!edit || !tambah) {
+			errors = null;
+		}
 	});
 	let paginatedData = $derived(data.slice((currPage - 1) * entries, currPage * entries));
 	let ttlPage = $derived(Math.ceil(data.length / entries));
@@ -88,7 +102,12 @@
 						<p class="text-xl font-[600]">Data Kerajaan</p>
 					</div>
 					<div>
-						<button class="rounded-xl bg-orange-500 px-6 py-2 text-white"> +Tambah data </button>
+						<button
+							class="rounded-xl bg-orange-500 px-6 py-2 text-white"
+							onclick={() => (tambah = true)}
+						>
+							+Tambah data
+						</button>
 					</div>
 				</div>
 				<Table
@@ -100,7 +119,7 @@
 				>
 					{#snippet children({ header, data, index })}
 						{#if header === 'Aksi'}
-							<CustomBtn></CustomBtn>
+							<CustomBtn bind:del bind:edit></CustomBtn>
 						{/if}
 					{/snippet}
 				</Table>
@@ -129,6 +148,65 @@
 		</div>
 	</div>
 </div>
+{#if del}
+	<DeleteModal
+		bind:value={del}
+		successText="Berhasil Diarsip"
+		text="Apakah yakin ingin diarsip?"
+		choose="arsip"
+	></DeleteModal>
+{/if}
+{#if edit}
+	<form
+		action="?/ubahKerajaan"
+		method="post"
+		use:enhance={() => {
+			return async ({ result }) => {
+				if (result.type === 'success') {
+					success = true;
+					let timer: number;
+					timer = setTimeout(() => {
+						edit = false;
+						success = false;
+						goto('/admin/keanggotaan/daftaranggota');
+					}, 3000);
+				}
+				if (result.type === 'failure') {
+					errors = result.data?.errors;
+				}
+			};
+		}}
+	>
+		<KerajaanPopup bind:value={edit} bind:errors type="Ubah"></KerajaanPopup>
+	</form>
+{/if}
+{#if tambah}
+	<form
+		action="?/tambahKerajaan"
+		method="post"
+		use:enhance={() => {
+			return async ({ result }) => {
+				if (result.type === 'success') {
+					success = true;
+					let timer: number;
+					timer = setTimeout(() => {
+						tambah = false;
+						success = false;
+						goto('/admin/keanggotaan/daftaranggota');
+					}, 3000);
+				}
+				if (result.type === 'failure') {
+					errors = result.data?.errors;
+				}
+			};
+		}}
+	>
+		<KerajaanPopup bind:value={tambah} bind:errors type="Tambah"></KerajaanPopup>
+	</form>
+{/if}
+{#if success}
+	<SModal text="Sukses!"></SModal>
+{/if}
 
 <style>
 	.custom-button {

@@ -36,7 +36,7 @@
 			in:fade={{ duration: 100 }}
 			out:fade={{ duration: 100 }}
 		>
-			<div class="absolute right-0 top-0 me-8 mt-8">
+			<div class="absolute right-0 top-0 me-8 mt-8" onclick={() => (value = false)}>
 				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 				<img
 					src={xbutton}
@@ -51,7 +51,7 @@
 			<div class=" mt-8 px-10">
 				<p class="text-xl font-[475]">{text}</p>
 			</div>
-			<div class="mb-8 mt-16 grid grid-cols-2 items-center justify-center gap-10">
+			<div class="mb-8 mt-16 grid grid-cols-2 items-center justify-center gap-10 px-10">
 				<div class="flex">
 					<button
 						class=" btn-batal rounded-xl px-10 py-3 font-[500] text-white hover:cursor-pointer hover:ring hover:ring-gray-600"

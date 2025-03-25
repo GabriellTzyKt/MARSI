@@ -1,6 +1,11 @@
 import { env } from "$env/dynamic/private";
 import Table from "$lib/table/Table.svelte";
-import type { PageServerLoad } from "./$types";
+import { z } from "zod";
+import type { Actions, PageServerLoad } from "./$types";
+import { schema } from "./schema";
+import { fail } from "@sveltejs/kit";
+
+
 
 export const load: PageServerLoad = async () => {
     try {
@@ -34,4 +39,28 @@ export const load: PageServerLoad = async () => {
    catch (e){
     if(e instanceof Error) return console.log(e.message)
    }
+};
+export const actions: Actions = {
+    tambahKerajaan: async ({request}) => {
+        const data = await request.formData()
+        const entry = Object.fromEntries(data)
+        console.log(data)
+        const verif = schema.safeParse(entry)
+        if (!verif.success) {
+            console.log(verif.error.flatten().fieldErrors)
+            return fail(418, {errors: verif.error.flatten().fieldErrors, success: false, entry})
+        }
+        return {errors: "No Error", success: true}
+ 
+    },
+    ubahKerajaan: async ({request}) => {
+        const data = await request.formData().then((v)=> Object.fromEntries(v))
+        const verif = schema.safeParse(data)
+        if (!verif.success) {
+            console.log(verif.error.flatten().fieldErrors)
+            return fail(418, {errors: verif.error.flatten().fieldErrors, success: false, data})
+        }
+        return {errors: "No Error", success: true}
+        console.log(data)
+    }
 };

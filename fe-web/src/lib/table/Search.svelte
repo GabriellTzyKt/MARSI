@@ -2,7 +2,7 @@
 	import { dummydata } from '$lib/dummy';
 
 	let { keyword = $bindable(), data = $bindable() } = $props();
-	console.log(data);
+
 	function filter() {
 		if (keyword !== '') {
 			data = dummydata.filter((d) => {
@@ -13,7 +13,6 @@
 		} else {
 			data = dummydata;
 		}
-		console.log(data);
 	}
 </script>
 
