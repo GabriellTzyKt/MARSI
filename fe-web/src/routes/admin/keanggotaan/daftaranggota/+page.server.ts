@@ -10,9 +10,16 @@ export const load: PageServerLoad = async () => {
         //         "accept": "application/json"
         //     }
         // }
-        const data = await fetch(`${env.PUB_PORT}/kerajaan`, {
-            method: "GET"
-        }).then((r)=> r.json())
+        const data = await fetch(`htttp://leap.crossnet.co.id:8888/history-raja/kerajaan/10`, {
+            method: "GET",
+            headers: {
+                accept: "application/json"
+            }
+        })
+        if (!data.ok) {
+            throw new Error(`HTTP error! Status: ${data.status}`);
+        }
+        
         console.log(data)
         // const data = await fetch(env.URL_BASE,{
         //     method: 'GET',
