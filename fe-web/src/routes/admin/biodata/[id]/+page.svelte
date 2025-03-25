@@ -1,27 +1,43 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import SModal from '$lib/popup/SModal.svelte';
 	import gambartemp from '../../../../asset/gambarsementara.jpg';
+	import { writable } from 'svelte/store';
 
-	let nama = $state('');
-	let lokasi = $state('');
-	let tanggal = $state('');
-	let linkkerajaan = $state('');
-	let promosi = $state('');
-	let linkacara1 = $state('');
-	let linkacara2 = $state('');
-	let linkacara3 = $state('');
-	let namaRaja = $state('');
-	let gelarRaja = $state('');
-	let tanggalLahir = $state('');
-	let kotaLahir = $state('');
-	let agama = $state('');
-	let wangsa = $state('');
-	let namaAyah = $state('');
-	let namaIbu = $state('');
-	let tanggalAwal = $state('');
-	let tanggalAkhir = $state('');
+	let success = $state(false);
+
+	let nama = $state(' ');
+	let lokasi = $state(' ');
+	let tanggal = $state(' ');
+	let jenis = $state(' ');
+	let linkkerajaan = $state(' ');
+	let promosi = $state(' ');
+	let linkacara1 = $state(' ');
+	let linkacara2 = $state(' ');
+	let linkacara3 = $state(' ');
+	let namaraja = $state(' ');
+	let gelarraja = $state('');
+	let tanggallahir = $state(' ');
+	let kotalahir = $state(' ');
+	let era = $state(' ');
+	let rumpun = $state(' ');
+	let agama = $state(' ');
+	let wangsa = $state(' ');
+	let namaayah = $state(' ');
+	let namaibu = $state(' ');
+	let tanggalawal = $state(' ');
+	let tanggalakhir = $state(' ');
 	let showModal = $state(false);
+	let selectedLocation: any = $state(' ');
+	let namafoto: any = $state('');
+	let namabendera: any = $state('');
+	let namalambang: any = $state('');
+	let lat: any = $state('');
+	let long: any = $state('');
+	let error: any = $state('');
+	let isChecked: any = $state('');
 
 	let uploadedFiles: File[] = [];
 	let uploadedFileUrls: string[] = $state([]);
@@ -32,12 +48,11 @@
 	let lambangUrl: string | null = $state(null);
 	let videoName: string | null = $state(' No Video Selected ');
 
-	import { writable } from 'svelte/store';
-
 	let results = writable<string[]>([]);
 	let showDropdown = writable(false);
+	let locationsData: any[] = []; // Simpan data lokasi untuk referensi
 
-	const API_KEY = 'pk.def50126ee21d7c7b667386e05fc8bcb'; 
+	const API_KEY = 'pk.def50126ee21d7c7b667386e05fc8bcb';
 
 	async function fetchLocations() {
 		if (!lokasi.trim()) return; // Cegah pencarian kosong
@@ -49,8 +64,8 @@
 			const data = await res.json();
 
 			if (data && Array.isArray(data)) {
+				locationsData = data; // Simpan semua data lokasi
 				const extractedNames = data.map((item: any) => item.display_name);
-				console.log(data)
 
 				results.set(extractedNames);
 				showDropdown.set(extractedNames.length > 0);
@@ -70,19 +85,32 @@
 		lokasi = name;
 		results.set([]);
 		showDropdown.set(false);
+
+		// Cari latitude dan longitude berdasarkan nama lokasi yang dipilih
+		selectedLocation = locationsData.find((item) => item.display_name === name);
+		if (selectedLocation) {
+			lat = selectedLocation.lat;
+			long = selectedLocation.lon;
+			console.log('Latitude:', lat, 'Longitude:', long);
+		} else {
+			console.log('Koordinat tidak ditemukan.');
+		}
 	}
 
 	let open = $state(false);
 	let timer: number;
 	let value = $state(false);
-	function setTimer() {
+
+	function setTimer(success: boolean) {
 		open = true;
 		if (timer) {
 			clearTimeout(timer);
 		}
 		timer = setTimeout(() => {
 			open = false;
-			showModal = false;
+			if (success) {
+				showModal = false; // Hanya tutup modal jika operasi berhasil
+			}
 		}, 3000);
 	}
 
@@ -101,30 +129,29 @@
 	}
 
 	function handleFileChange(event: Event, type: string) {
-		console.log(event);
 		const target = event.target as HTMLInputElement;
-		console.log(target);
-		// memastikan setidaknya ada 1 file yg sudah di upload
+
 		if (target.files && target.files.length > 0) {
-			const newFiles = Array.from(target.files); // mengambil semua file yg diupload
-			console.log('files', newFiles);
+			const newFiles = Array.from(target.files);
 
 			if (type === 'bendera') {
-				// karena bendera hanya 1, jadi ambil di posisi pertama (0)
 				benderaUrl = URL.createObjectURL(newFiles[0]);
+				console.log('Bendera yang di upload : ', newFiles[0].name);
+				namabendera = newFiles[0].name;
 			} else if (type === 'lambang') {
 				lambangUrl = URL.createObjectURL(newFiles[0]);
+				console.log('Lambang yang di upload : ', newFiles[0].name);
+				namalambang = newFiles[0].name;
 			} else if (type === 'video') {
 				videoName = newFiles[0].name;
 			} else {
-				// ... itu ngambil semua data ( ini kalo dokumen tipe nya )
-				// ini gabungin data lama + data baru
 				uploadedFiles = [...uploadedFiles, ...newFiles];
 				uploadedFileUrls = [
 					...uploadedFileUrls,
-					// mengambil dari setiap File yang ada di newFiles lalu diberikan link sementara untuk ditampilkan pada UI
 					...newFiles.map((file) => URL.createObjectURL(file))
 				];
+				namafoto = uploadedFiles.map((file) => file.name);
+				console.log('Nama file yang diupload:', namafoto);
 			}
 		}
 	}
@@ -150,15 +177,12 @@
 		} else if (sortOrder === 'desc') {
 			dataGet.sort((a, b) => Number(b.tahun_awal_jabatan) - Number(a.tahun_awal_jabatan));
 		}
-		console.log('Filtered Data:', dataGet);
 		dataubah = [...dataGet];
 	}
 
 	function toggleSort() {
-		// Toggle antara asc dan desc
 		sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
 		arrowDirection = sortOrder === 'asc' ? 'mingcute--arrow-down-fill' : 'mingcute--arrow-up-fill';
-		console.log(sortOrder, 'direction', arrowDirection);
 		updateFilteredData();
 	}
 
@@ -169,42 +193,77 @@
 </script>
 
 <div class="ml-2 flex h-fit w-full flex-col md:ml-6">
-	<p class="text-2xl font-semibold">Biodata Kerajaan A</p>
+	<form
+		method="post"
+		action="?/selesai"
+		enctype="multipart/form-data"
+		use:enhance={() => {
+			return async ({ result }) => {
+				console.log(result);
+				if (result.type === 'success') {
+					open = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						open = false;
+						goto("/admin/biodata");
+					}, 3000);
+				} else if (result.type === 'failure') {
+					error = result?.data?.errors;
+				}
+			};
+		}}
+	>
+		<p class="text-2xl font-semibold">Biodata Kerajaan A</p>
 
-	<div class="flex flex-col gap-1">
-		<label class="text-md mt-5 self-start text-left" for="nama">Nama Dokumen</label>
-		<input
-			class="input-field rounded-lg border p-2 pr-8"
-			type="text"
-			id="nama"
-			bind:value={nama}
-			placeholder="John Doe"
-		/>
+		<div class="flex flex-col gap-1">
+			<label class="text-md mt-5 self-start text-left" for="nama">Nama Kerajaan</label>
+			<input
+				class="input-field rounded-lg border p-2 pr-8"
+				type="text"
+				id="nama"
+				name="nama"
+				bind:value={nama}
+				placeholder="John Doe"
+			/>
 
-		<div class="flex lg:flex-row flex-col flex-grow gap-4">
-			<div class="relative w-full flex-col">
-				<label class="text-md mt-5 self-start text-left" for="nama">Lokasi</label>
-				<input
-					class="input-field w-full rounded-lg border p-2 pr-8"
-					type="text"
-					id="nama"
-					bind:value={lokasi}
-					onkeydown={handleKeyDown}
-					placeholder="Cari lokasi..."
-				/>
-			
-				{#if $showDropdown && lokasi !== ""}
-					<ul class="dropdown">
-						{#each $results as name}
-							<!-- svelte-ignore a11y_click_events_have_key_events -->
-							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-							<li onclick={() => selectLocation(name)}>{name}</li>
-						{/each}
-					</ul>
-				{/if}
-			</div>
+			<div class="flex flex-grow flex-col gap-4 lg:flex-row">
+				<div class="relative w-full flex-col">
+					<label class="text-md mt-5 self-start text-left" for="nama">Alamat Kerajaan</label>
+					<input
+						class="input-field w-full rounded-lg border p-2 pr-8"
+						type="text"
+						id="lokasi"
+						name="lokasi"
+						bind:value={lokasi}
+						onkeydown={handleKeyDown}
+						placeholder="Cari lokasi..."
+					/>
 
-			<div class="w-full flex-col">
+					{#if $showDropdown && lokasi !== ''}
+						<ul class="dropdown">
+							{#each $results as name}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								<li onclick={() => selectLocation(name)}>{name}</li>
+							{/each}
+						</ul>
+					{/if}
+				</div>
+
+				<div class="w-full flex-col lg:w-1/4">
+					<label class="text-md self-start text-left" for="rumpun">Jenis Kerajaan</label>
+					<select
+						bind:value={jenis}
+						id="jenis"
+						name="jenis"
+						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+					>
+						<option value="" selected disabled>Pilih Jenis Kerajaan</option>
+						<option value="mataram">Kasunanan</option>
+					</select>
+				</div>
+
+				<!-- <div class="w-full flex-col">
 				<label class="text-md mt-5 self-start text-left" for="nama"> Tanggal Berdiri </label>
 				<input
 					class="input-field w-full rounded-lg border p-2 pr-8"
@@ -213,309 +272,374 @@
 					bind:value={tanggal}
 					placeholder="John Doe"
 				/>
+			</div> -->
 			</div>
-		</div>
 
-		<label class="text-md mt-5 self-start text-left" for="nama">Deskripsi Kerajaan : </label>
-		<textarea
-			class="input-field h-[100px] rounded-lg border p-2 pr-8"
-			id="deskripsi"
-			placeholder="John Doe"
-		></textarea>
+			<div class="flex flex-grow flex-col gap-4 lg:flex-row">
+				<div class="w-full flex-col">
+					<label class="text-md mt-5 self-start text-left" for="tanggalberdiri">
+						Tanggal Berdiri
+					</label>
+					<input
+						class="input-field w-full rounded-lg border p-2"
+						type="date"
+						name="tanggalberdiri"
+						id="tanggalberdiri"
+						bind:value={tanggal}
+						placeholder="John Doe"
+					/>
+				</div>
 
-		<div class="mt-2 flex flex-grow flex-col gap-4 md:flex-row">
-			<!-- Dokumen -->
-			<div class="flex w-2/3 flex-col gap-1">
-				<label class="text-md self-start text-left" for="fileInput">Dokumentasi Kerajaan</label>
-				<div class="h-full w-full overflow-x-auto rounded-lg border-2 border-black px-2 py-2">
-					<div class="flex flex-row gap-x-5">
-						<div
-							class="upload-container relative h-[200px] w-[300px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-black"
-						>
-							<input
-								type="file"
-								id="fileInput"
-								class="hidden"
-								onchange={(e) => handleFileChange(e, 'dokumen')}
-								multiple
-								accept="image/*"
-							/>
-							<label
-								for="fileInput"
-								class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
+				<div class="w-full flex-col">
+					<label class="text-md self-start text-left" for="era">Era Kerajaan</label>
+					<select
+						bind:value={era}
+						id="era"
+						name="era"
+						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+					>
+						<option value="" selected disabled>Pilih Era</option>
+						<option value="kolonial">Kolonial </option>
+					</select>
+				</div>
+
+				<div class="w-full flex-col">
+					<label class="text-md self-start text-left" for="rumpun">Rumpun Kerajaan</label>
+					<select
+						bind:value={rumpun}
+						id="rumpun"
+						name="rumpun"
+						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+					>
+						<option value="" selected disabled>Pilih Rumpun</option>
+						<option value="mataram">Mataram</option>
+					</select>
+				</div>
+			</div>
+
+			<label class="text-md mt-5 self-start text-left" for="nama">Deskripsi Kerajaan : </label>
+			<textarea
+				class="input-field h-[100px] rounded-lg border p-2 pr-8"
+				id="deskripsi"
+				name="deskripsi"
+				placeholder="John Doe"
+			></textarea>
+
+			<div class="mt-2 flex flex-grow flex-col gap-4 md:flex-row">
+				<!-- Dokumen -->
+				<div class="flex w-2/3 flex-col gap-1">
+					<label class="text-md self-start text-left" for="fileInput">Dokumentasi Kerajaan</label>
+					<div class="h-full w-full overflow-x-auto rounded-lg border-2 border-black px-2 py-2">
+						<div class="flex flex-row gap-x-5">
+							<div
+								class="upload-container relative h-[200px] w-[300px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-black"
 							>
-								<span class="pajamas--media"></span>
-								<p class="mt-3 text-center">Upload Dokumentasi</p>
-							</label>
-						</div>
-
-						{#each uploadedFileUrls as url, index}
-							<div class="relative flex-shrink-0">
-								<img
-									src={url}
-									alt="Uploaded file"
-									class="h-[200px] w-[300px] rounded-lg border object-cover"
+								<input
+									type="file"
+									id="fileInput"
+									name="dokumen"
+									bind:value={namafoto}
+									class="hidden"
+									onchange={(e) => handleFileChange(e, 'dokumen')}
+									multiple
+									accept="image/*"
 								/>
-								<button class="remove-btn" onclick={() => removeImage(index)}>✕</button>
+								<label
+									for="fileInput"
+									class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
+								>
+									<span class="pajamas--media"></span>
+									<p class="mt-3 text-center">Upload Dokumentasi</p>
+								</label>
 							</div>
-						{/each}
+
+							{#each uploadedFileUrls as url, index}
+								<div class="relative flex-shrink-0">
+									<img
+										src={url}
+										alt="Uploaded file"
+										class="h-[200px] w-[300px] rounded-lg border object-cover"
+									/>
+									<button class="remove-btn" onclick={() => removeImage(index)}>✕</button>
+								</div>
+							{/each}
+						</div>
+					</div>
+					<p class="text-md mb-10 opacity-70">
+						* Foto di urutan pertama akan menjadi foto besar awalan
+					</p>
+				</div>
+
+				<!-- Bendera -->
+				<div class="w-1/3 flex-col">
+					<p class="text-nowrap">Bendera Kerajaan</p>
+					<div
+						class="upload-container relative mt-4 h-[200px] w-[270px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-black"
+					>
+						<input
+							type="file"
+							id="fileBendera"
+							class="hidden"
+							name="inputbendera"
+							accept="image/*"
+							onchange={(e) => handleFileChange(e, 'bendera')}
+						/>
+						<label
+							for="fileBendera"
+							class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
+						>
+							{#if benderaUrl}
+								<img src={benderaUrl} alt="Bendera" class="h-full w-full rounded-lg object-cover" />
+								<button class="remove-btn" onclick={() => ganti('bendera')}>✎</button>
+							{:else}
+								<span class="pajamas--media"></span>
+								<p class="mt-3 text-center">Upload Bendera</p>
+							{/if}
+						</label>
 					</div>
 				</div>
-				<p class="text-md mb-10 opacity-70">
-					* Foto di urutan pertama akan menjadi foto besar awalan
-				</p>
-			</div>
 
-			<!-- Bendera -->
-			<div class="w-1/3 flex-col">
-				<p class="text-nowrap">Bendera Kerajaan</p>
-				<div
-					class="upload-container relative mt-4 h-[200px] w-[270px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-black"
-				>
-					<input
-						type="file"
-						id="fileBendera"
-						class="hidden"
-						accept="image/*"
-						onchange={(e) => handleFileChange(e, 'bendera')}
-					/>
-					<label
-						for="fileBendera"
-						class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
+				<!-- Lambang -->
+				<div class="w-1/3 flex-col">
+					<p class="text-nowrap">Lambang Kerajaan</p>
+					<div
+						class="upload-container relative mt-4 h-[200px] w-[270px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-black"
 					>
-						{#if benderaUrl}
-							<img src={benderaUrl} alt="Bendera" class="h-full w-full rounded-lg object-cover" />
-							<button class="remove-btn" onclick={() => ganti('bendera')}>✎</button>
-						{:else}
-							<span class="pajamas--media"></span>
-							<p class="mt-3 text-center">Upload Bendera</p>
-						{/if}
-					</label>
+						<input
+							type="file"
+							id="fileLambang"
+							name="inputlambang"
+							class="hidden"
+							accept="image/*"
+							onchange={(e) => handleFileChange(e, 'lambang')}
+						/>
+						<label
+							for="fileLambang"
+							class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
+						>
+							{#if lambangUrl}
+								<img src={lambangUrl} alt="Lambang" class="h-full w-full rounded-lg object-cover" />
+								<button class="remove-btn" onclick={() => ganti('lambang')}>✎</button>
+							{:else}
+								<span class="pajamas--media"></span>
+								<p class="mt-3 text-center">Upload Lambang</p>
+							{/if}
+						</label>
+					</div>
 				</div>
 			</div>
-
-			<!-- Lambang -->
-			<div class="w-1/3 flex-col">
-				<p class="text-nowrap">Lambang Kerajaan</p>
-				<div
-					class="upload-container relative mt-4 h-[200px] w-[270px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-black"
-				>
-					<input
-						type="file"
-						id="fileLambang"
-						class="hidden"
-						accept="image/*"
-						onchange={(e) => handleFileChange(e, 'lambang')}
-					/>
-					<label
-						for="fileLambang"
-						class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
-					>
-						{#if lambangUrl}
-							<img src={lambangUrl} alt="Lambang" class="h-full w-full rounded-lg object-cover" />
-							<button class="remove-btn" onclick={() => ganti('lambang')}>✎</button>
-						{:else}
-							<span class="pajamas--media"></span>
-							<p class="mt-3 text-center">Upload Lambang</p>
-						{/if}
-					</label>
-				</div>
-			</div>
-		</div>
-
-		<div class="w-full flex-col">
-			<p>Vidio Singkat Kerajaan</p>
-			<div
-				class="upload-container relative mt-4 h-[44px] w-full flex-shrink-0 rounded-lg border bg-gray-200"
-			>
-				<input
-					type="file"
-					id="fileVideo"
-					class="hidden"
-					accept="video/*"
-					onchange={(e) => handleFileChange(e, 'video')}
-				/>
-				<label
-					for="fileVideo"
-					class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
-				>
-				</label>
-				<div class="flex w-full items-center justify-between">
-					<p class="max-w-[40%] truncate px-2">{videoName}</p>
-					<button class="bg-customGold h-fit w-fit rounded-lg px-2 py-2.5 font-semibold text-white">
-						Choose file
-					</button>
-				</div>
-			</div>
-			<p class="text-md mt-2 opacity-70">* Max Size Video : 20 MB</p>
-		</div>
-
-		<!-- Navigasi -->
-		<p class="mt-5 text-lg font-semibold">Navigasi</p>
-
-		<div class="flex flex-col gap-1">
-			<label class="text-md mt-5 self-start text-left" for="nama">Link URL Web Kerajaan : </label>
-			<input
-				class="input-field rounded-lg border p-2 pr-8"
-				type="text"
-				id="nama"
-				bind:value={linkkerajaan}
-				placeholder="John Doe"
-			/>
 
 			<div class="w-full flex-col">
-				<label class="text-md mt-5 self-start text-left" for="nama">
-					Hint Promosi Web Kerajaan
+				<p>Vidio Singkat Kerajaan</p>
+				<div
+					class="upload-container relative mt-4 h-[44px] w-full flex-shrink-0 rounded-lg border bg-gray-200"
+				>
+					<input
+						type="file"
+						id="fileVideo"
+						class="hidden"
+						name="inputvideo"
+						accept="video/*"
+						onchange={(e) => handleFileChange(e, 'video')}
+					/>
+					<label
+						for="fileVideo"
+						class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
+					>
+					</label>
+					<div class="flex w-full items-center justify-between">
+						<p class="max-w-[40%] truncate px-2">{videoName}</p>
+						<button
+							class="bg-customGold h-fit w-fit rounded-lg px-2 py-2.5 font-semibold text-white"
+						>
+							Choose file
+						</button>
+					</div>
+				</div>
+				<p class="text-md mt-2 opacity-70">* Max Size Video : 20 MB</p>
+			</div>
+
+			<!-- Navigasi -->
+			<p class="mt-5 text-lg font-semibold">Navigasi</p>
+
+			<div class="flex flex-col gap-1">
+				<label class="text-md mt-5 self-start text-left" for="nama">Link URL Web Kerajaan : </label>
+				<input
+					class="input-field rounded-lg border p-2 pr-8"
+					type="text"
+					id="linkkerajaan"
+					name="linkkerajaan"
+					bind:value={linkkerajaan}
+					placeholder="John Doe"
+				/>
+
+				<div class="w-full flex-col">
+					<label class="text-md mt-5 self-start text-left" for="nama">
+						Hint Promosi Web Kerajaan
+					</label>
+					<input
+						class="input-field w-full rounded-lg border p-2 pr-8"
+						type="text"
+						id="promosi"
+						name="promosi"
+						bind:value={promosi}
+						placeholder="John Doe"
+					/>
+				</div>
+			</div>
+
+			<!-- URL Acara -->
+
+			<p class="mt-5 text-lg font-semibold">Acara Sorotan Kerajaan</p>
+
+			<div class="flex flex-col gap-1">
+				<label class="text-md mt-5 self-start text-left" for="nama"
+					>Link URL Acara Web Kerajaan 1 :
 				</label>
 				<input
-					class="input-field w-full rounded-lg border p-2 pr-8"
+					class="input-field rounded-lg border p-2 pr-8"
 					type="text"
-					id="nama"
-					bind:value={promosi}
+					id="linkacara1"
+					name="linkacara1"
+					bind:value={linkacara1}
+					placeholder="John Doe"
+				/>
+
+				<label class="text-md mt-5 self-start text-left" for="nama"
+					>Link URL Acara Web Kerajaan 2 :
+				</label>
+				<input
+					class="input-field rounded-lg border p-2 pr-8"
+					type="text"
+					id="linkacara2"
+					name="linkacara2"
+					bind:value={linkacara2}
+					placeholder="John Doe"
+				/>
+
+				<label class="text-md mt-5 self-start text-left" for="nama"
+					>Link URL Acara Web Kerajaan 3 :
+				</label>
+				<input
+					class="input-field rounded-lg border p-2 pr-8"
+					type="text"
+					id="linkacara3"
+					name="linkacara3"
+					bind:value={linkacara3}
 					placeholder="John Doe"
 				/>
 			</div>
-		</div>
 
-		<!-- URL Acara -->
+			<div class="mt-10 h-[2px] w-full bg-black"></div>
 
-		<p class="mt-5 text-lg font-semibold">Acara Sorotan Kerajaan</p>
-
-		<div class="flex flex-col gap-1">
-			<label class="text-md mt-5 self-start text-left" for="nama"
-				>Link URL Acara Web Kerajaan 1 :
-			</label>
-			<input
-				class="input-field rounded-lg border p-2 pr-8"
-				type="text"
-				id="nama"
-				bind:value={linkacara1}
-				placeholder="John Doe"
-			/>
-
-			<label class="text-md mt-5 self-start text-left" for="nama"
-				>Link URL Acara Web Kerajaan 2 :
-			</label>
-			<input
-				class="input-field rounded-lg border p-2 pr-8"
-				type="text"
-				id="nama"
-				bind:value={linkacara2}
-				placeholder="John Doe"
-			/>
-
-			<label class="text-md mt-5 self-start text-left" for="nama"
-				>Link URL Acara Web Kerajaan 3 :
-			</label>
-			<input
-				class="input-field rounded-lg border p-2 pr-8"
-				type="text"
-				id="nama"
-				bind:value={linkacara3}
-				placeholder="John Doe"
-			/>
-		</div>
-
-		<div class="mt-10 h-[2px] w-full bg-black"></div>
-
-		<div class="w-full">
-			<p class="mt-8 text-center text-2xl font-bold">History Raja</p>
-			<div class="flex items-center justify-between mt-2 lg:justify-end gap-2">
-				<!-- svelte-ignore a11y_click_events_have_key_events -->
-				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-				<p class="flex cursor-pointer items-center" onclick={toggleSort}>
-					Sort By: Date <span class={arrowDirection}></span>
-				</p>
-				<button
-					class="bg-customKrem w-fit rounded-lg border px-3 py-2 font-semibold"
-					onclick={OpenModal}
-				>
-					+Tambah Data
-				</button>
-			</div>
-			<div class="mt-8 w-full">
-				{#each dataubah as raja, index}
-					<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div class="w-full">
+				<p class="mt-8 text-center text-2xl font-bold">History Raja</p>
+				<div class="mt-2 flex items-center justify-between gap-2 lg:justify-end">
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
-					<div
-						class="mb-5 flex cursor-pointer flex-col overflow-hidden rounded-lg border-2 bg-yellow-300 transition-all duration-300"
-						onclick={() => toggleExpand(index)}
+					<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+					<p class="flex cursor-pointer items-center" onclick={toggleSort}>
+						Sort By: Date <span class={arrowDirection}></span>
+					</p>
+					<button
+						class="bg-customKrem w-fit rounded-lg border px-3 py-2 font-semibold"
+						onclick={OpenModal}
 					>
-						<div class="mr-5 flex h-[50px] w-full items-center justify-between gap-2 px-3">
-							<p class="text-xs lg:text-lg">
-								{raja.nama_lenkgap} ({raja.tahun_awal_jabatan} - {raja.tahun_akhir_jabatan})
-							</p>
-							<div
-								class="flex h-[24px] w-[24px] items-center justify-center rounded-full border bg-red-500"
-							>
-								<span
-									class="formkit--arrowdown transition-transform duration-300"
-									class:rotate-180={isExpand[index]}
-								></span>
+						+Tambah Data
+					</button>
+				</div>
+				<div class="mt-8 w-full">
+					{#each dataubah as raja, index}
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<div
+							class="mb-5 flex cursor-pointer flex-col overflow-hidden rounded-lg border-2 bg-yellow-300 transition-all duration-300"
+							onclick={() => toggleExpand(index)}
+						>
+							<div class="mr-5 flex h-[50px] w-full items-center justify-between gap-2 px-3">
+								<p class="text-xs lg:text-lg">
+									{raja.nama_lenkgap} ({raja.tahun_awal_jabatan} - {raja.tahun_akhir_jabatan})
+								</p>
+								<div
+									class="flex h-[24px] w-[24px] items-center justify-center rounded-full border bg-red-500"
+								>
+									<span
+										class="formkit--arrowdown transition-transform duration-300"
+										class:rotate-180={isExpand[index]}
+									></span>
+								</div>
 							</div>
-						</div>
-						{#if isExpand[index]}
-							<div class="border-t-2 border-black bg-white p-4">
-								<div class="flex lg:flex-row flex-col w-full gap-8">
-									<img src={gambartemp} class="lg:h-[25%] lg:w-[25%] h-[70%] w-[70%] self-center" alt="" />
-									<div class="w-full flex-col">
-										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
-											<p class="text-md px-2 py-2">
-												Nama Lengkap Raja : <span class="font-bold">{raja.nama_lenkgap}</span>
-											</p>
-										</div>
-										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
-											<p class="text-md px-2 py-2">
-												Tanggal Lahir : <span class="font-bold">{raja.tanggal}</span>
-											</p>
-										</div>
-										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
-											<p class="text-md px-2 py-2">
-												Kota Kelahiran : <span class="font-bold">{raja.kota_kelahiran}</span>
-											</p>
-										</div>
-										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
-											<p class="text-md px-2 py-2">
-												Wangsa : <span class="font-bold">{raja.wangsa}</span>
-											</p>
-										</div>
-										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
-											<p class="text-md px-2 py-2">
-												Nama Ayah : <span class="font-bold">{raja.nama_ayah}</span>
-											</p>
-										</div>
-										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
-											<p class="text-md px-2 py-2">
-												Nama Ibu : <span class="font-bold">{raja.nama_ibu}</span>
-											</p>
-										</div>
-										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
-											<p class="text-md px-2 py-2">
-												Agama : <span class="font-bold">{raja.agama}</span>
-											</p>
-										</div>
-										<div class="mt-5 flex justify-end gap-4">
-											<button
-												class="flex items-center gap-2 rounded-lg bg-red-500 px-5 py-2 text-white"
-												onclick={() => (value = true)}
-											>
-												<span class="tabler--trash"></span> Hapus Data
-											</button>
-											<button
-												class="flex items-center gap-2 rounded-lg bg-yellow-500 px-5 py-2 text-white"
-											>
-												<span class="solar--pen-outline"></span> Edit Data
-											</button>
+							{#if isExpand[index]}
+								<div class="border-t-2 border-black bg-white p-4">
+									<div class="flex w-full flex-col gap-8 lg:flex-row">
+										<img
+											src={gambartemp}
+											class="h-[70%] w-[70%] self-center lg:h-[25%] lg:w-[25%]"
+											alt=""
+										/>
+										<div class="w-full flex-col">
+											<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+												<p class="text-md px-2 py-2">
+													Nama Lengkap Raja : <span class="font-bold">{raja.nama_lenkgap}</span>
+												</p>
+											</div>
+											<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+												<p class="text-md px-2 py-2">
+													Tanggal Lahir : <span class="font-bold">{raja.tanggal}</span>
+												</p>
+											</div>
+											<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+												<p class="text-md px-2 py-2">
+													Kota Kelahiran : <span class="font-bold">{raja.kota_kelahiran}</span>
+												</p>
+											</div>
+											<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+												<p class="text-md px-2 py-2">
+													Wangsa : <span class="font-bold">{raja.wangsa}</span>
+												</p>
+											</div>
+											<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+												<p class="text-md px-2 py-2">
+													Nama Ayah : <span class="font-bold">{raja.nama_ayah}</span>
+												</p>
+											</div>
+											<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+												<p class="text-md px-2 py-2">
+													Nama Ibu : <span class="font-bold">{raja.nama_ibu}</span>
+												</p>
+											</div>
+											<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+												<p class="text-md px-2 py-2">
+													Agama : <span class="font-bold">{raja.agama}</span>
+												</p>
+											</div>
+											<div class="mt-5 flex justify-end gap-4">
+												<button
+													class="flex items-center gap-2 rounded-lg bg-red-500 px-5 py-2 text-white"
+													onclick={() => (value = true)}
+												>
+													<span class="tabler--trash"></span> Hapus Data
+												</button>
+												<button
+													class="flex items-center gap-2 rounded-lg bg-yellow-500 px-5 py-2 text-white"
+												>
+													<span class="solar--pen-outline"></span> Edit Data
+												</button>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-						{/if}
-					</div>
-				{/each}
+							{/if}
+						</div>
+					{/each}
+				</div>
+			</div>
+			<div class="flex w-full justify-end">
+				<button class="w-fit rounded-lg bg-yellow-500 px-4 py-2 text-white" type="submit">
+					Simpan
+				</button>
 			</div>
 		</div>
-	</div>
+	</form>
 </div>
 
 {#if value}
@@ -530,140 +654,226 @@
 {#if showModal}
 	<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
 		<div class="max-h-[90vh] w-[70%] overflow-y-auto rounded-lg bg-white p-5 shadow-lg">
-			<div class="flex justify-between">
-				<h2 class="font-bold lg:text-xl">Biodata Kerajaan</h2>
-				<!-- svelte-ignore a11y_consider_explicit_label -->
-				<button onclick={closeModal}>
-					<span class="carbon--close-outline items-center"></span>
-				</button>
-			</div>
-			<div class="h-1 bg-gray-300"></div>
-			<div class="flex flex-col gap-1">
-				<label class="text-md mt-2 self-start text-left" for="nama">Nama Lengkap Raja</label>
-				<input
-					class="input-field rounded-lg border p-2 pr-8"
-					type="text"
-					id="nama"
-					bind:value={namaRaja}
-					placeholder="John Doe"
-				/>
-
-				<label class="text-md mt-2 self-start text-left" for="nama">Gelar Raja</label>
-				<input
-					class="input-field rounded-lg border p-2 pr-8"
-					type="text"
-					id="nama"
-					bind:value={gelarRaja}
-					placeholder="John Doe"
-				/>
-
-				<div class="flex flex-grow gap-4">
-					<div class="flex w-1/3 flex-col">
-						<label class="text-md mt-2 w-full self-start text-left" for="tanggalLahir">
-							Tanggal Lahir:
-						</label>
-						<input
-							class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
-							type="date"
-							id="tanggalLahir"
-							bind:value={tanggalLahir}
-						/>
-					</div>
-
-					<div class="flex w-2/3 flex-col">
-						<label class="text-md mt-2 self-start text-left" for="kotaLahir">
-							Kota Kelahiran:
-						</label>
-						<input
-							class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
-							type="text"
-							id="kotaLahir"
-							bind:value={kotaLahir}
-							placeholder="John Doe"
-						/>
-					</div>
+			<form
+				method="post"
+				action="?/tambah"
+				use:enhance={() => {
+					return async ({ result }) => {
+						console.log(result);
+						if (result.type === 'success') {
+							success = true;
+							clearTimeout(timer);
+							timer = setTimeout(() => {
+								success = false;
+								showModal = false;
+							}, 3000);
+						} else if (result.type === 'failure') {
+							error = result?.data?.errors;
+						}
+					};
+				}}
+			>
+				<div class="flex justify-between">
+					<h2 class="font-bold lg:text-xl">Biodata Kerajaan</h2>
+					<!-- svelte-ignore a11y_consider_explicit_label -->
+					<button onclick={closeModal}>
+						<span class="carbon--close-outline items-center"></span>
+					</button>
 				</div>
+				<div class="h-1 bg-gray-300"></div>
+				<div class="flex flex-col gap-1">
+					<label class="text-md mt-2 self-start text-left" for="nama">Nama Lengkap Raja</label>
+					<input
+						class="input-field rounded-lg border p-2 pr-8"
+						type="text"
+						id="nama"
+						bind:value={namaraja}
+						name="namaraja"
+						placeholder="John Doe"
+					/>
+					{#if error}
+						{#each error.namaraja as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
 
-				<div class="flex flex-grow gap-4">
-					<div class="w-full flex-col">
-						<label class="text-md mt-2 w-full self-start text-left" for="nama"> Agama : </label>
-						<input
-							class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
-							type="text"
-							id="nama"
-							bind:value={agama}
-						/>
+					<label class="text-md mt-2 self-start text-left" for="nama">Gelar Raja</label>
+					<input
+						class="input-field rounded-lg border p-2 pr-8"
+						type="text"
+						id="nama"
+						name="gelarraja"
+						bind:value={gelarraja}
+						placeholder="John Doe"
+					/>
+					{#if error}
+						{#each error.gelarraja as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
+
+					<div class="flex flex-grow gap-4">
+						<div class="flex w-1/3 flex-col">
+							<label class="text-md mt-2 w-full self-start text-left" for="tanggalLahir">
+								Tanggal Lahir:
+							</label>
+							<input
+								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
+								type="date"
+								id="tanggalLahir"
+								name="tanggallahir"
+								bind:value={tanggallahir}
+							/>
+							{#if error}
+								{#each error.tanggallahir as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
+
+						<div class="flex w-2/3 flex-col">
+							<label class="text-md mt-2 self-start text-left" for="kotaLahir">
+								Kota Kelahiran:
+							</label>
+							<input
+								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
+								type="text"
+								id="kotaLahir"
+								name="kotalahir"
+								bind:value={kotalahir}
+								placeholder="John Doe"
+							/>
+							{#if error}
+								{#each error.kotalahir as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
 					</div>
 
-					<div class="w-full flex-col">
-						<label class="text-md mt-2 self-start text-left" for="nama"> Wangsa : </label>
-						<input
-							class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
-							type="text"
-							id="nama"
-							bind:value={wangsa}
-							placeholder="John Doe"
-						/>
+					<div class="flex flex-grow gap-4">
+						<div class="w-full flex-col">
+							<label class="text-md mt-2 w-full self-start text-left" for="nama"> Agama : </label>
+							<input
+								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
+								type="text"
+								id="nama"
+								name="agama"
+								bind:value={agama}
+							/>
+							{#if error}
+								{#each error.agama as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
+
+						<div class="w-full flex-col">
+							<label class="text-md mt-2 self-start text-left" for="nama"> Wangsa : </label>
+							<input
+								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
+								type="text"
+								id="nama"
+								name="wangsa"
+								bind:value={wangsa}
+								placeholder="John Doe"
+							/>
+							{#if error}
+								{#each error.wangsa as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
 					</div>
+
+					<label class="text-md mt-2 self-start text-left" for="nama">Nama Ayah</label>
+					<input
+						class="input-field mt-2 rounded-lg border p-2 pr-8"
+						type="text"
+						id="nama"
+						name="namaayah"
+						bind:value={namaayah}
+						placeholder="John Doe"
+					/>
+					{#if error}
+						{#each error.namaayah as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
+
+					<label class="text-md mt-2 self-start text-left" for="nama">Nama Ibu</label>
+					<input
+						class="input-field mt-2 rounded-lg border p-2 pr-8"
+						type="text"
+						id="nama"
+						name="namaibu"
+						bind:value={namaibu}
+						placeholder="John Doe"
+					/>
+					{#if error}
+						{#each error.namaibu as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
+
+					<div class="flex flex-grow gap-4">
+						<div class="mt-2 w-full flex-col">
+							<label class="text-md mt-4 w-full self-start text-left" for="nama">
+								Tanggal Awal Berkuasa :
+							</label>
+							<input
+								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
+								type="date"
+								id="nama"
+								name="tanggalawal"
+								bind:value={tanggalawal}
+							/>
+							{#if error}
+								{#each error.tanggalawal as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
+
+						<div class="mt-2 w-full flex-col">
+							<label class="text-md mt-4 self-start text-left" for="nama">
+								Tanggal Akhir Berkuasa :
+							</label>
+							<input
+								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
+								type="date"
+								id="nama"
+								name="tanggalakhir"
+								bind:value={tanggalakhir}
+								placeholder="John Doe"
+							/>
+							{#if error}
+								{#each error.tanggalakhir as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
+					</div>
+
+					<div class="mt-2 flex items-center">
+						<input
+							type="checkbox"
+							id="textsamping"
+							value="masih"
+							name="inputcheckbox"
+							bind:checked={isChecked}
+						/>
+						<label class="ml-2" for="textsamping">Masih Berkuasa Sampai Sekarang?</label>
+					</div>
+
+					<button
+						class="bg-customGold w-fit self-end rounded-lg px-3 py-2 text-white"
+						type="submit"
+					>
+						Tambah Data
+					</button>
 				</div>
-
-				<label class="text-md mt-2 self-start text-left" for="nama">Nama Ayah</label>
-				<input
-					class="input-field mt-2 rounded-lg border p-2 pr-8"
-					type="text"
-					id="nama"
-					bind:value={namaAyah}
-					placeholder="John Doe"
-				/>
-
-				<label class="text-md mt-2 self-start text-left" for="nama">Nama Ibu</label>
-				<input
-					class="input-field mt-2 rounded-lg border p-2 pr-8"
-					type="text"
-					id="nama"
-					bind:value={namaIbu}
-					placeholder="John Doe"
-				/>
-
-				<div class="flex flex-grow gap-4">
-					<div class="mt-2 w-full flex-col">
-						<label class="text-md mt-4 w-full self-start text-left" for="nama">
-							Tanggal Awal Berkuasa :
-						</label>
-						<input
-							class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
-							type="date"
-							id="nama"
-							bind:value={tanggalAwal}
-						/>
-					</div>
-
-					<div class="mt-2 w-full flex-col">
-						<label class="text-md mt-4 self-start text-left" for="nama">
-							Tanggal Akhir Berkuasa :
-						</label>
-						<input
-							class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
-							type="date"
-							id="nama"
-							bind:value={tanggalAkhir}
-							placeholder="John Doe"
-						/>
-					</div>
-				</div>
-
-				<div class="mt-2 flex items-center">
-					<input type="checkbox" id="textsamping" />
-					<label class="ml-2" for="textsamping">Masih Berkuasa Sampai Sekarang?</label>
-				</div>
-
-				<button
-					class="bg-customGold w-fit self-end rounded-lg px-3 py-2 text-white"
-					onclick={setTimer}
-				>
-					Tambah Data
-				</button>
-			</div>
+			</form>
 		</div>
 	</div>
 {/if}
@@ -672,23 +882,27 @@
 	<SModal text="Biodata kerajaan berhasil ditambah!"></SModal>
 {/if}
 
+{#if success}
+	<SModal text="History Raja berhasil ditambah!"></SModal>
+{/if}
+
 <style>
-    .dropdown {
-        position: absolute;
-        background: white;
-        border: 1px solid #ccc;
-        width: 100%;
-        max-height: 150px;
-        overflow-y: auto;
-        border-radius: 5px;
-    }
-    .dropdown li {
-        padding: 8px;
-        cursor: pointer;
-    }
-    .dropdown li:hover {
-        background: #f0f0f0;
-    }
+	.dropdown {
+		position: absolute;
+		background: white;
+		border: 1px solid #ccc;
+		width: 100%;
+		max-height: 150px;
+		overflow-y: auto;
+		border-radius: 5px;
+	}
+	.dropdown li {
+		padding: 8px;
+		cursor: pointer;
+	}
+	.dropdown li:hover {
+		background: #f0f0f0;
+	}
 	.mingcute--arrow-up-fill {
 		display: inline-block;
 		width: 24px;

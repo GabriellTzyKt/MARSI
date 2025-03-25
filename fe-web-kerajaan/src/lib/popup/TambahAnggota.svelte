@@ -10,6 +10,8 @@
 		dataambil
 	} = $props();
 
+	console.log("ini data2 : " , data2)
+
 	let keyword = $state(data2 ? data2.namaanggota : '');
 	let showDropdown = $state(false);
 

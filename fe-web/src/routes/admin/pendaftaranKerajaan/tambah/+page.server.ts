@@ -9,10 +9,22 @@ export const actions: Actions = {
         console.log(formData)
 
         const namaKerajaan = formData.get('nama');
-        const provinsi = formData.get('provinsi')
+        const alamat = formData.get('alamat')
+        const tanggalberdiri = formData.get('tanggalberdiri');
+        const era = formData.get('era')
+        const rumpun = formData.get('rumpun')
+        const jenis = formData.get('jenis')
+        const namaraja = formData.get('namaraja')
+        const deskripsi = formData.get('deskripsi')
 
-        console.log("nama kerajaan" , namaKerajaan)
-        console.log("provinsi" , provinsi)
+        console.log("nama kerajaa : " , namaKerajaan)
+        console.log("alamat : " , alamat)
+        console.log("tanggal berdiri : " , tanggalberdiri)
+        console.log("era : " , era)
+        console.log("rumpun : " , rumpun)
+        console.log("jenis : " , jenis)
+        console.log("namaraja : " , namaraja)
+        console.log("deskripsi : " , deskripsi)
     //     const password = formData.get('password');
 
     //     try {
