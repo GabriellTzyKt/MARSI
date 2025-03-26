@@ -10,7 +10,7 @@
 
 	let nama = $state(' ');
 	let lokasi = $state(' ');
-	let tanggal = $state(' ');
+	let tanggal = $state('');
 	let jenis = $state(' ');
 	let linkkerajaan = $state(' ');
 	let promosi = $state(' ');
@@ -205,7 +205,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						goto("/admin/biodata");
+						goto('/admin/biodata');
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
@@ -238,6 +238,9 @@
 						onkeydown={handleKeyDown}
 						placeholder="Cari lokasi..."
 					/>
+					<input type="hidden" name="long" bind:value={long}>
+					<input type="hidden" name="lat" bind:value={lat}>
+
 
 					{#if $showDropdown && lokasi !== ''}
 						<ul class="dropdown">
@@ -259,7 +262,7 @@
 						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 					>
 						<option value="" selected disabled>Pilih Jenis Kerajaan</option>
-						<option value="mataram">Kasunanan</option>
+						<option value="kasunanan">Kasunanan</option>
 					</select>
 				</div>
 
@@ -281,13 +284,23 @@
 						Tanggal Berdiri
 					</label>
 					<input
-						class="input-field w-full rounded-lg border p-2"
-						type="date"
+						class="input-field w-full rounded-lg border border-black p-2"
 						name="tanggalberdiri"
 						id="tanggalberdiri"
 						bind:value={tanggal}
-						placeholder="John Doe"
+						placeholder="Masukkan Tahun (Contoh: 2021)"
+						maxlength="4"
+						oninput={(e: any) => {
+							e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+							const errorMsg : any = document.getElementById('error-msg');
+							if (e.target.value.length > 0 && e.target.value.length < 3) {
+								errorMsg.textContent = 'Minimal 3 digit!';
+							} else {
+								errorMsg.textContent = '';
+							}
+						}}
 					/>
+					<p id="error-msg" class="text-red-500 text-sm"></p>
 				</div>
 
 				<div class="w-full flex-col">
@@ -543,6 +556,7 @@
 					<button
 						class="bg-customKrem w-fit rounded-lg border px-3 py-2 font-semibold"
 						onclick={OpenModal}
+						type="button"
 					>
 						+Tambah Data
 					</button>
@@ -634,7 +648,11 @@
 				</div>
 			</div>
 			<div class="flex w-full justify-end">
-				<button class="w-fit rounded-lg bg-yellow-500 px-4 py-2 text-white" type="submit">
+				<button
+					class="w-fit rounded-lg bg-yellow-500 px-4 py-2 text-white"
+					type="submit"
+					formaction="?/selesai"
+				>
 					Simpan
 				</button>
 			</div>
@@ -869,6 +887,7 @@
 					<button
 						class="bg-customGold w-fit self-end rounded-lg px-3 py-2 text-white"
 						type="submit"
+						formaction="?/tambah"
 					>
 						Tambah Data
 					</button>

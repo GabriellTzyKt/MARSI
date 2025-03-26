@@ -4,25 +4,10 @@ import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async () => {
     try {
-        // const header = {
-        //     method: "GET",
-        //     headers: {
-        //         "accept": "application/json"
-        //     }
-        // }
-        const data = await fetch(`${env.PUB_PORT}/kerajaan`, {
+        const data = await fetch(env.BASE_URL + "/kerajaan", {
             method: "GET"
         }).then((r)=> r.json())
-        console.log(data)
-        // const data = await fetch(env.URL_BASE,{
-        //     method: 'GET',
-        //     headers: {
-        //         'x-rapidapi-key': 'Sign Up for Key',
-        //         'x-rapidapi-host': 'covid-19-data.p.rapidapi.com'
-        //     }
-        // }).then((r)=>r.json())
-        // console.log(data)
-        // return {tabel: data}
+        console.log("data kerajaan : ", data)
     }
    catch (e){
     if(e instanceof Error) return console.log(e.message)
