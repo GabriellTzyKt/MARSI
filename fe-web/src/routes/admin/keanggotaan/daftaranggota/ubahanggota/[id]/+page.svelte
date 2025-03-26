@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import { onMount } from 'svelte';
 
@@ -58,6 +60,9 @@
 	};
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="test mx-4 flex w-full flex-col">
 	<div class=" flex flex-row items-center">
 		<a href="/admin/keanggotaan/daftaranggota" class="flec self-end text-2xl underline">⭠ Kembali</a

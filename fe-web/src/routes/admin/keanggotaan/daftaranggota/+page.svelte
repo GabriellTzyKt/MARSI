@@ -49,7 +49,7 @@
 </script>
 
 {#if navigating.to}
-	<Loader></Loader>
+	<Loader text="Navigating..."></Loader>
 {/if}
 <div class="mt-20 flex w-full flex-col xl:mt-0">
 	<div class=" flex flex-col justify-center xl:mt-0 xl:flex-row xl:justify-between">
