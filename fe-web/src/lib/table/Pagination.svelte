@@ -1,3 +1,5 @@
-<script lang="ts"></script>
+<script lang="ts">
+	let { value = $bindable() } = $props();
+</script>
 
-<input type="text" name="" id="" value="8" class="flex w-10 rounded-md text-center shadow-inner" />
+<input type="text" name="" id="" {value} class="flex w-10 rounded-md text-center shadow-inner" />
