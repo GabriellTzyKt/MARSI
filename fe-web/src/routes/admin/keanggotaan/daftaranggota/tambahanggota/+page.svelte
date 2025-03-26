@@ -1,174 +1,199 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import SucessModal from '$lib/popup/SucessModal.svelte';
-	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
-	let { form } = $props();
-	let success = $state(false);
-	let timer: Number;
-	onMount(() => {
-		if (form?.success) {
-			success = true;
-			if (timer) {
-				clearTimeout(timer);
-			}
-			timer = setTimeout(() => {
-				success = false;
-				goto('/admin/keanggotaan/daftaranggota');
-			}, 3000);
-		}
-	});
-	let nama = $state('');
-	let nomortelp = $state('');
-	let email = $state('');
-	let nama_kerajaan = $state('');
-	let jenis_kerajaan = $state('');
-	let gelar = $state('');
+	import Loader from '$lib/loader/Loader.svelte';
+	import SModal from '$lib/popup/SModal.svelte';
 
-	if (form?.formData) {
-		nama = form.formData.nama_anggota;
-		nomortelp = form.formData.no_telp;
-		email = form.formData.email;
-		jenis_kerajaan = form.formData.jenis_kerajaan;
-		nama_kerajaan = form.formData.nama_kerajaan;
-		gelar = form.formData.gelar;
-	}
-	let toggle = () => {
-		if (!success) {
-			success = true;
-		} else success = false;
-	};
+	import SucessModal from '$lib/popup/SucessModal.svelte';
+
+	let success = $state(false);
+	let timer: number;
+	let loading = $state(false);
+	let errors = $state();
+	let request = $state();
 </script>
 
-<div class="test flex w-full flex-col">
+<div class="test mx-4 flex w-full flex-col">
 	<div class=" flex flex-row items-center">
 		<a href="/admin/keanggotaan/daftaranggota" class="flec self-end text-2xl underline">⭠ Kembali</a
 		>
 	</div>
 
 	<div class="my-4 flex">
-		<p class="ml-5 mt-6 text-3xl font-bold underline">Tambah Anggota</p>
+		<p class=" text-3xl font-[600]">Form Pendaftaran Kerajaan</p>
 	</div>
-	<div class="form-container flex flex-col">
-		<form method="post" action="?/tambah">
-			<div class="input-group flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nama">Nama Kerajaan</label>
-				<input
-					class="input-field rounded-lg border p-2"
-					type="text"
-					id="nama"
-					name="nama_anggota"
-					bind:value={nama}
-					placeholder="John Doe"
-				/>
-				{#if form?.errors}
-					{#each form.errors.nama_anggota as a}
-						<p class="text-left text-red-500">{a}</p>
-					{/each}
-				{/if}
-			</div>
-			<div class="input-group mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nomor_telepon">Nomor Telepon</label>
-				<input
-					class="input-field rounded-lg border p-2"
-					type="text"
-					name="no_telp"
-					id="nomor_telepon"
-					bind:value={nomortelp}
-					placeholder="911"
-				/>
-				{#if form?.errors}
-					{#each form.errors.no_telp as a}
-						<p class="text-left text-red-500">{a}</p>
-					{/each}
-				{/if}
-			</div>
-			<div class="input-group mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nama">Email</label>
-				<input
-					class="input-field rounded-lg border p-2"
-					type="text"
-					id="nama"
-					name="email"
-					bind:value={email}
-					placeholder="azaza@gmail.com"
-				/>
-				{#if form?.errors}
-					{#each form.errors.email as a}
-						<p class="text-left text-red-500">{a}</p>
-					{/each}
-				{/if}
-			</div>
-			<div class="input-group mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nama">Jenis Kerajaan</label>
-				<input
-					class="input-field rounded-lg border p-2"
-					type="text"
-					id="nama"
-					name="jenis_kerajaan"
-					bind:value={jenis_kerajaan}
-					placeholder="Kerajaan A"
-				/>
-				{#if form?.errors}
-					{#each form.errors.jenis_kerajaan as a}
-						<p class="text-left text-red-500">{a}</p>
-					{/each}
-				{/if}
-			</div>
-			<div class="input-group mt-2 flex flex-col gap-1">
+	<div class=" flex flex-col">
+		<form
+			method="post"
+			action="?/tambah"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					if (result.type === 'success') {
+						errors = null;
+						success = true;
+						clearTimeout(timer);
+						timer = setTimeout(() => {
+							success = false;
+							goto('/admin/keanggotaan/daftaranggota');
+						}, 3000);
+					}
+					if (result.type === 'failure') {
+						errors = result.data?.errors;
+						request = result.data?.request;
+						console.log(errors);
+					}
+				};
+			}}
+		>
+			<div class=" flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Nama Kerajaan</label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"
 					id="nama"
 					name="nama_kerajaan"
-					bind:value={nama_kerajaan}
-					placeholder="Kerajaan A"
+					placeholder="John Doe"
 				/>
-				{#if form?.errors}
-					{#each form.errors.nama_kerajaan as a}
-						<p class="text-left text-red-500">{a}</p>
+				{#if errors}
+					{#each errors.nama_kerajaan as e}
+						<p class="text-left text-red-500">{e}</p>
 					{/each}
 				{/if}
 			</div>
-			<div class="input-group mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nama">Gelar</label>
+			<div class=" mt-2 flex flex-col gap-1">
+				<label class="text-md self-start text-left" for="alamat_kerajaan">Alamat Kerajaan</label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"
-					id="nama"
-					name="gelar"
-					bind:value={gelar}
-					placeholder="Radja"
+					id="alamat_kerajaan"
+					name="alamat_kerajaan"
+					placeholder="alamat..."
 				/>
-				{#if form?.errors}
-					{#each form.errors.gelar as a}
-						<p class="text-left text-red-500">{a}</p>
+				{#if errors}
+					{#each errors.alamat_kerajaan as e}
+						<p class="text-left text-red-500">{e}</p>
 					{/each}
 				{/if}
-				<button class="custom-button bg-customYellow w-40 self-end text-right" type="submit">
-					Tambah
+			</div>
+			<div class=" mt-2 grid grid-cols-1 gap-4 md:grid-cols-3">
+				<div class="flex flex-col">
+					<p class="text-md mb-1 self-start text-left">Tanggal Berdiri</p>
+					<input
+						class="input-field rounded-lg border p-2"
+						type="date"
+						id="nama"
+						name="tanggal_berdiri"
+						placeholder="azaza@gmail.com"
+					/>
+					{#if errors}
+						{#each errors.tanggal_berdiri as e}
+							<p class="text-left text-red-500">{e}</p>
+						{/each}
+					{/if}
+				</div>
+				<div class="flex flex-col">
+					<p class="text-md mb-1 self-start text-left">Era Kerajaan</p>
+					<input
+						class="input-field rounded-lg border p-2"
+						type="text"
+						id="nama"
+						name="era_kerajaan"
+						placeholder="era.."
+					/>
+					{#if errors}
+						{#each errors.era_kerajaan as e}
+							<p class="text-left text-red-500">{e}</p>
+						{/each}
+					{/if}
+				</div>
+				<div class="flex flex-col">
+					<p class="text-md mb-1 self-start text-left">Rumpun Kerajaan</p>
+					<input
+						class="input-field rounded-lg border p-2"
+						type="text"
+						id="nama"
+						name="rumpun_kerajaan"
+						placeholder="rumpun..."
+					/>
+					{#if errors}
+						{#each errors.rumpun_kerajaan as e}
+							<p class="text-left text-red-500">{e}</p>
+						{/each}
+					{/if}
+				</div>
+				<div class="flex flex-col">
+					<p class="text-md mb-1 self-start text-left">Jenis Kerajaan</p>
+					<input
+						class="input-field rounded-lg border p-2"
+						type="text"
+						id="nama"
+						name="jenis_kerajaan"
+						placeholder="jenis..."
+					/>
+					{#if errors}
+						{#each errors.jenis_kerajaan as e}
+							<p class="text-left text-red-500">{e}</p>
+						{/each}
+					{/if}
+				</div>
+				<div class="flex flex-col md:col-span-2">
+					<p class="text-md mb-1 self-start text-left">Nama Raja Sekarang</p>
+					<input
+						class="input-field rounded-lg border p-2"
+						type="text"
+						id="nama"
+						name="raja_sekarang"
+						placeholder="raja..."
+					/>
+					{#if errors}
+						{#each errors.raja_sekarang as e}
+							<p class="text-left text-red-500">{e}</p>
+						{/each}
+					{/if}
+				</div>
+			</div>
+
+			<div class=" mt-2 flex flex-col gap-1">
+				<label class="text-md self-start text-left" for="nama">Deskripsi Kerajaan</label>
+				<textarea
+					class="input-field rounded-lg border p-2"
+					id="nama"
+					name="deskripsi_kerajaan"
+					placeholder="deskripsi..."
+					rows="7"
+				></textarea>
+				{#if errors}
+					{#each errors.deskripsi_kerajaan as e}
+						<p class="text-left text-red-500">{e}</p>
+					{/each}
+				{/if}
+			</div>
+			<div class=" mt-2 flex flex-col gap-1">
+				<button
+					class="custom-button bg-customYellow w-40 self-end text-right {loading ? 'disabled' : ''}"
+					type="submit"
+				>
+					{loading ? 'Memuat...' : 'Tambah Data'}
 				</button>
+			</div>
+			<div>
+				{#if request}
+					<p class="text-left text-red-500 underline">{request}</p>
+				{/if}
 			</div>
 		</form>
 	</div>
 </div>
-
+{#if loading}
+	<Loader></Loader>
+{/if}
 {#if success}
-	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
-		<SucessModal
-			open={success}
-			text="Anggota Berhasil Ditambahkan"
-			to="/admin/keanggotaan/daftaranggota"
-		></SucessModal>
-	</div>
+	<SModal text="Berhasil ditambah"></SModal>
 {/if}
 
 <style>
-	.input-field {
-		width: auto;
-	}
-
 	.custom-button {
 		border: none;
 		padding: 10px;
@@ -180,18 +205,6 @@
 		border-radius: 10px;
 		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 		cursor: pointer;
-	}
-
-	.form-container {
-		margin-top: 30px;
-		margin-left: 20px;
-		margin-right: 20px;
-		background: #dddee4;
-		padding: 20px;
-		border-radius: 10px;
-		width: auto;
-		height: auto;
-		text-align: center;
 	}
 
 	@media (max-width: 768px) {
