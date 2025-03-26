@@ -5,7 +5,8 @@
 	import imageprofile from '../../asset/gambar_temp.jpg';
 	import Sidebar from '../Sidebar.svelte';
 	import SidebarMenu from '../SidebarMenu.svelte';
-	import { page } from '$app/state';
+	import { navigating, page } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 	const isActive = (path: string) => {
 		return page.url.pathname === path;
 	};
@@ -52,6 +53,9 @@
 </script>
 
 <header class="w-full lg:flex lg:h-full lg:min-w-full">
+	{#if navigating.to}
+		<Loader text="Navigating..."></Loader>
+	{/if}
 	<div
 		class="test2 width_head1 bg-customGold flex items-center justify-between p-2 lg:w-[16.7%] lg:justify-center"
 	>
@@ -77,14 +81,14 @@
 					anchor="Beranda"
 					active={isActive('/admin/beranda')}
 				/>
-	
+
 				<SidebarMenu
 					href="/admin/keanggotaan/daftaranggota"
 					icon="mdi:book"
 					anchor="Daftar Anggota"
 					active={page.route.id?.startsWith('/admin/keanggotaan/daftaranggota')}
 				></SidebarMenu>
-	
+
 				<SidebarMenu
 					href="/admin/acara"
 					icon="mdi:calendar"
