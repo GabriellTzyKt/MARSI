@@ -11,6 +11,9 @@
 	import { enhance } from '$app/forms';
 	import SModal from '$lib/popup/SModal.svelte';
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
+
 	let { data } = $props();
 	// import {dropId} from './DropDown.svelte'
 	let success = $state(false);
@@ -45,6 +48,9 @@
 	// console.log(data.tabel)
 </script>
 
+{#if navigating.to}
+	<Loader></Loader>
+{/if}
 <div class="mt-20 flex w-full flex-col xl:mt-0">
 	<div class=" flex flex-col justify-center xl:mt-0 xl:flex-row xl:justify-between">
 		<div class=" col-start-1 mb-4 flex flex-row items-center justify-center xl:mb-0">
@@ -93,7 +99,7 @@
 					link="/admin/keanggotaan/daftaranggota"
 					{index}
 					items={[
-						['Ubah', `/admin/keanggotaan/daftaranggota/ubahanggota/${data.id}`],
+						['Ubah', `/admin/keanggotaan/daftaranggota/ubahanggota/${data.id_kerajaan}`],
 						['children', 'Arsipkan']
 					]}
 					tipe="anggota"
