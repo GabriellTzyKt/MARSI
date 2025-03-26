@@ -11,19 +11,21 @@
 	import { enhance } from '$app/forms';
 	import SModal from '$lib/popup/SModal.svelte';
 	import { goto } from '$app/navigation';
-
+	let { data } = $props();
 	// import {dropId} from './DropDown.svelte'
 	let success = $state(false);
+	const dataKerajaan = data.dataKerajaan;
+	console.log(dataKerajaan);
 	let errors = $state();
 	let keyword = $state('');
 	let del = $state(false);
 	let edit = $state(false);
-	let data = $state(dummydata);
+	let dt = $state(dummydata);
 	let entries = $state(10);
 	let currPage = $state(1);
 	let tambah = $state(false);
 	$effect(() => {
-		data = keyword.trim()
+		dt = keyword.trim()
 			? dummydata.filter(
 					(d) =>
 						d.nama.toLowerCase().includes(keyword.toLowerCase().trim()) ||
@@ -37,8 +39,8 @@
 			errors = null;
 		}
 	});
-	let paginatedData = $derived(data.slice((currPage - 1) * entries, currPage * entries));
-	let ttlPage = $derived(Math.ceil(data.length / entries));
+	let paginatedData = $derived(dt.slice((currPage - 1) * entries, currPage * entries));
+	let ttlPage = $derived(Math.ceil(dt.length / entries));
 	// const {data} = $props()
 	// console.log(data.tabel)
 </script>
@@ -65,17 +67,22 @@
 			</div>
 		</div>
 	</div>
+	{#if !dataKerajaan}
+		Memuat...
+	{/if}
 	<Table
 		table_header={[
-			['nama', 'Nama Anggota'],
-			['email', 'Email'],
-			['telepon', 'Nomer Telepon'],
-			['kerajaan', 'Nama Kerajaan'],
+			['nama_kerajaan', 'Nama Kerajaan'],
+			['alamat_kerajaan', 'Alamat Kerajaan'],
+			['tanggal_berdiri', 'Tanggal Berdiri'],
+			['era', 'Era'],
 			['jenis_kerajaan', 'Jenis Kerajaan'],
-			['gelar', 'Gelar'],
+			['raja_sekarang', 'Nama Kerajaan'],
+			['bendera_kerajaan', 'Bendera & Lambang Kerajaan'],
+
 			['children', 'Aksi']
 		]}
-		table_data={paginatedData}
+		table_data={dataKerajaan}
 		isdrop={true}
 	>
 		{#snippet children({ header, data, index })}

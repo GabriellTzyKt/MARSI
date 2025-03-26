@@ -1,6 +1,6 @@
 import { env } from "$env/dynamic/private";
 import Table from "$lib/table/Table.svelte";
-import { z } from "zod";
+import {  z } from "zod";
 import type { Actions, PageServerLoad } from "./$types";
 import { schema } from "./schema";
 import { fail } from "@sveltejs/kit";
@@ -15,17 +15,21 @@ export const load: PageServerLoad = async () => {
         //         "accept": "application/json"
         //     }
         // }
-        const data = await fetch(`htttp://leap.crossnet.co.id:8888/history-raja/kerajaan/10`, {
+       const request =await fetch(`${env.PUB_PORT}/kerajaan`, {
             method: "GET",
             headers: {
-                accept: "application/json"
+                "Accept": "application/json"
             }
-        })
-        if (!data.ok) {
-            throw new Error(`HTTP error! Status: ${data.status}`);
-        }
+       })
         
-        console.log(data)
+        console.log(request)
+        if (request.ok) {
+            const data = await request.json()
+            return {dataKerajaan : data}
+        }
+        else return {dataKerajaan: "Failed"}
+        
+       
         // const data = await fetch(env.URL_BASE,{
         //     method: 'GET',
         //     headers: {

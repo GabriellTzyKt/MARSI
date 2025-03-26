@@ -1,65 +1,43 @@
-import type { Actions } from "@sveltejs/kit";
+import { error, fail, type Actions } from "@sveltejs/kit";
 import { string, z } from "zod";
+import { schema } from "./schema";
+import { env } from "$env/dynamic/private";
 
 
 export const actions: Actions = {
-    tambah: async ({request}) => {
+    tambah: async ({ request }) => {
         const data = await request.formData()
-        console.log(data)
-         let form = {
-            nama_anggota: "",
-            no_telp: "",
-            email: "",
-            nama_kerajaan: "",
-            jenis_kerajaan: "",
-            gelar : ""
-             
-        }
-                let ver = z.object({
-                    nama_anggota:
-                        z.string({ message: "nama_anggota Harus Berupa String" })
-                            .nonempty({ message: "Field ini jangan kosong" })
-                            .max(255, { message: "Kata mencapai Maximal (255)" })
-                            .trim(),
-                    no_telp:
-                        z.string({ message: "Input Harus Ada" })
-                            .min(10,{message:"nomer telepon minimal  10 angka"})
-                            .max(13, { message: "nomer telepon maximal 15 angka" })
-                            .regex(/^\d+$/, "Harus berupa nomer")
-                            .trim(),
-                    email:
-                        z.string({ message: "Input tidak boleh kosong / bukan string" })
-                            .email("Format Email Tidak Valid").trim(),
-                    nama_kerajaan:
-                        z.string({ message: "Field Tidak Boleh Kosong Atau Harus berupa Huruf" })
-                            .nonempty("Filed Tidak Boleh Kosong")
-                            .max(255, "Sudah Mencapai Max huruf (255)")
-                            .trim(),
-                    jenis_kerajaan:
-                        z.string({ message: "Input tidak boleh kosong / bukan string" })
-                            .nonempty("Field ini tidak boleh kosong")
-                            .max(255, "Tidak boleh lebih dari 255 kata")
-                            .trim(),
-                    gelar:
-                        z.string({ message: "Input tidak boleh kosong / bukan string" })
-                            .nonempty("Field ini tidak boleh kosong")
-                            .max(255, "Tidak boleh lebih dari 255 kata")
-                            .trim(),
-                })
-         form = {
-            nama_anggota: data.get("nama_anggota"),
-            no_telp: data.get("no_telp"),
-            email: data.get("email"),
-            nama_kerajaan: data.get("nama_kerajaan"),
-            jenis_kerajaan: data.get("jenis_kerajaan"),
-            gelar : data.get("gelar")
-             
-        }
-        const verif = ver.safeParse({ ...form })
+        const res = Object.fromEntries(data)
+        console.log(res)
+        const verif = schema.safeParse(res)
         
         if (!verif.success) {
-            return{errors: verif.error.flatten().fieldErrors, success: false, formData: form}
+           
+            return fail(418, { errors: verif.error.flatten().fieldErrors, success: false, form: res })
         }
-        return { errors: "no Error", success: true, formData: form}
+        try {
+            const formdata = new FormData()
+            formdata.append("nama_kerajaan",res.nama_kerajaan)
+            formdata.append("raja_sekarang",res.raja_sekarang)
+            formdata.append("jenis_kerajaan",res.jenis_kerajaan)
+            formdata.append("deskripsi_kerajaan",res.deskripsi_kerajaan)
+            formdata.append("alamat_kerajaan",res.alamat_kerajaan)
+            formdata.append("era",res.era_kerajaan)
+            formdata.append("rumpun",res.rumpun_kerajaan)
+            const send = await fetch(`${env.PUB_PORT}/kerajaan`, {
+                method: "POST",
+                body: formdata
+            })
+            const r = await send.json()
+            console.log(r)
+            if (send.ok) {
+                return { errors: "no Error", success: true, form: res }
+            }
+            return fail(400,{request:`Error Code : ${send.status} ${r.message}`})
+        }
+        catch (e) {
+            console.error("Fetch Error", e)
+        }
     }
-};
+       
+}
