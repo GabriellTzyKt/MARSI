@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
 	import SModal from '$lib/popup/SModal.svelte';
 
@@ -66,7 +67,7 @@
 
 <div class="test mx-4 flex w-full flex-col">
 	<div class=" flex flex-row items-center">
-		<a href="/admin/keanggotaan/daftaranggota" class="flec self-end text-2xl underline">⭠ Kembali</a
+		<a href="/admin/keanggotaan/daftaranggota" class="flex self-end text-2xl underline">⭠ Kembali</a
 		>
 	</div>
 
@@ -124,11 +125,11 @@
 					bind:value={lokasi}
 					onkeydown={handleKeyDown}
 				/>
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 				{#if $showDropdown && lokasi !== ''}
 					<ul class="dropdown">
 						{#each $results as name}
-							<!-- svelte-ignore a11y_click_events_have_key_events -->
-							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 							<li onclick={() => selectLocation(name)}>{name}</li>
 						{/each}
 					</ul>
@@ -249,6 +250,7 @@
 		</form>
 	</div>
 </div>
+
 {#if loading}
 	<Loader></Loader>
 {/if}

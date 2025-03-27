@@ -8,7 +8,7 @@
 	import SucessModal from './SucessModal.svelte';
 	import SModal from './SModal.svelte';
 
-	let { value = $bindable(), text, successText, choose } = $props();
+	let { value = $bindable(), text, successText, choose, name = '', data = null } = $props();
 	let open = $state(false);
 	let timer: number;
 	function setTimer() {
@@ -55,6 +55,7 @@
 				<div class="flex">
 					<button
 						class=" btn-batal rounded-xl px-10 py-3 font-[500] text-white hover:cursor-pointer hover:ring hover:ring-gray-600"
+						type="button"
 						onclick={() => {
 							value = false;
 						}}>Batalkan</button
@@ -71,12 +72,11 @@
 					{:else if choose == 'delete'}
 						<button
 							class="btn-setuju rounded-xl px-8 py-3 font-[500] text-white hover:cursor-pointer hover:ring hover:ring-gray-600"
-							onclick={() => {
-								setTimer();
-							}}>Iya, hapus</button
+							formaction="?/hapus">Iya, hapus</button
 						>
 					{/if}
 				</div>
+				<input type="text" hidden {name} value={data} id="" />
 			</div>
 		</div>
 	</div>

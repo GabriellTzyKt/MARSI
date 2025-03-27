@@ -23,19 +23,20 @@
 	let keyword = $state('');
 	let del = $state(false);
 	let edit = $state(false);
-	let dt = $state(dummydata);
+	let dt = $state(data.dataKerajaan);
 	let entries = $state(10);
 	let currPage = $state(1);
 	let tambah = $state(false);
 	$effect(() => {
 		dt = keyword.trim()
-			? dummydata.filter(
+			? data.dataKerajaan.filter(
 					(d) =>
-						d.nama.toLowerCase().includes(keyword.toLowerCase().trim()) ||
-						d.email.toLowerCase().includes(keyword.toLowerCase().trim()) ||
-						d.telepon.toLowerCase().includes(keyword.toLowerCase().trim())
+						d.nama_kerajaan.toLowerCase().includes(keyword.toLowerCase().trim()) ||
+						d.alamat_kerajaan.toLowerCase().includes(keyword.toLowerCase().trim()) ||
+						d.raja_sekarang.toLowerCase().includes(keyword.toLowerCase().trim()) ||
+						d.jenis_kerajaan.toLowerCase().includes(keyword.toLowerCase().trim())
 				)
-			: dummydata;
+			: data.dataKerajaan;
 	});
 	$effect(() => {
 		if (!edit || !tambah) {
@@ -83,12 +84,12 @@
 			['tanggal_berdiri', 'Tanggal Berdiri'],
 			['era', 'Era'],
 			['jenis_kerajaan', 'Jenis Kerajaan'],
-			['raja_sekarang', 'Nama Kerajaan'],
+			['raja_sekarang', 'Nama Raja'],
 			['bendera_kerajaan', 'Bendera & Lambang Kerajaan'],
 
 			['children', 'Aksi']
 		]}
-		table_data={dataKerajaan}
+		table_data={dt}
 		isdrop={true}
 	>
 		{#snippet children({ header, data, index })}

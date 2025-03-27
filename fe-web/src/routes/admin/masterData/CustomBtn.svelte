@@ -1,8 +1,20 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import Loader from '$lib/loader/Loader.svelte';
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import Modal from '$lib/popup/Modal.svelte';
-
-	let { data = null, del = $bindable(), edit = $bindable() } = $props();
+	import SModal from '$lib/popup/SModal.svelte';
+	import type { Snippet } from 'svelte';
+	import { any } from 'zod';
+	import Input from './Input.svelte';
+	let loading = $state(false);
+	let success = $state(false);
+	let timer: number;
+	let error = $state();
+	let { data = null, name = '' } = $props();
+	let edit = $state(false);
+	let del = $state(false);
 </script>
 
 <div class=" me-4 flex justify-end gap-2">
@@ -53,6 +65,71 @@
 		Delete</button
 	>
 </div>
+{#if del}
+	<form
+		action="?/tambah"
+		method="post"
+		use:enhance={() => {
+			loading = true;
+			return async ({ result }) => {
+				loading = false;
+				if (result.type === 'success') {
+					success = true;
+					invalidateAll();
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						success = false;
+						del = false;
+					}, 3000);
+				}
+				if (result.type === 'failure') {
+					console.log(result.data?.error);
+				}
+			};
+		}}
+	>
+		<DeleteModal
+			bind:value={del}
+			choose="delete"
+			text="APakah Yakin ingin di delete?"
+			successText="Berhasil Delete"
+			{name}
+			data={data.id_jenis_arsip}
+		></DeleteModal>
+	</form>
+{/if}
+{#if success}
+	<SModal text="sukses!"></SModal>
+{/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
+{#if edit}
+	<form
+		action="?/ubah"
+		method="post"
+		use:enhance={() => {
+			loading = true;
+			return async ({ result }) => {
+				loading = false;
+				if (result.type === 'success') {
+					success = true;
+					invalidateAll();
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						success = false;
+						edit = false;
+					}, 3000);
+				}
+				if (result.type === 'failure') {
+					error = result.data?.error;
+				}
+			};
+		}}
+	>
+		<Input bind:value={data} name="nama_jenis" {error} bind:input={edit}></Input>
+	</form>
+{/if}
 
 <style>
 	.carbon--close-outline {

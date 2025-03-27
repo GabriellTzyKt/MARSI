@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 
-	let { input = $bindable(), name = 'gelar' } = $props();
+	let { input = $bindable(), error = null, value = $bindable(), name = 'gelar' } = $props();
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -44,9 +44,14 @@
 				type="text"
 				{name}
 				class="mt-1 rounded-lg px-2 focus:outline-none"
+				bind:value={value.nama_jenis}
 				placeholder="jenis..."
 				id=""
 			/>
+			<input type="text" hidden value={value.id_jenis_arsip} />
+			{#if error}
+				<p class="text-red-500">{error.nama_jenis}</p>
+			{/if}
 		</div>
 		<div class="my-4 flex justify-center md:justify-end">
 			<button
