@@ -1,15 +1,26 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { goto, invalidate, invalidateAll } from '$app/navigation';
 	import { dummyGelar, dummyJenisKerajaan, dummyDokumen, dummyRoleAdmin } from '$lib/dummy';
+	import Loader from '$lib/loader/Loader.svelte';
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
+	import SModal from '$lib/popup/SModal.svelte';
 	import Table from '$lib/table/Table.svelte';
 	import CustomBtn from './CustomBtn.svelte';
-	let opt = ['Gelar', 'Jenis Kerajaan', 'Dokumen', 'Role Admin'];
+	import Input from './Input.svelte';
+	import ModalTambah from './ModalTambah.svelte';
+	let opt = ['Gelar', 'Jenis Kerajaan', 'Arsip'];
 	let { data } = $props();
-	const data_role = data.role;
+	const data_role = $state(data.dataArsip);
+	console.log(data_role);
+	let loading = $state(false);
+	let input = $state(false);
+
 	let success = $state(false);
 	let namagelar = $state('');
 	let timer: number;
 	let error: any = $state('');
+	let edit = $state(false);
 
 	let namagelartemp: any = $state('');
 	let daftarGelar: any = $state([]);
@@ -31,7 +42,7 @@
 	function change(p: string) {
 		select = p;
 	}
-
+	let del = $state(false);
 	function closeModal() {
 		if (openmodaltambah === true) {
 			openmodaltambah = false;
@@ -153,118 +164,53 @@
 					{/if}
 				{/snippet}
 			</Table>
-		{:else if select === 'Dokumen'}
+		{:else if select === 'Arsip'}
 			<Table
 				table_header={[
-					['nama', 'Nama Dokumen', 'justify-start flex grow'],
+					['nama_jenis', 'Jenis Arsip', 'justify-start flex grow'],
 					['children', 'Aksi', 'text-right pe-48']
 				]}
-				table_data={dummyDokumen}
+				table_data={data.dataArsip}
 			>
 				{#snippet children({ header, data, index })}
 					{#if header === 'Aksi'}
-						<CustomBtn></CustomBtn>
+						<CustomBtn {data} name="id_jenis_arsip"></CustomBtn>
 					{/if}
 				{/snippet}
 			</Table>
-		{:else if select === 'Role Admin'}
-			{#if !data_role}
-				<p>Loading...</p>
-			{:else}
-				<Table
-					table_header={[
-						['nama_role', 'Role', 'justify-start flex grow'],
-						['children', 'Aksi', 'text-right pe-48']
-					]}
-					table_data={data_role}
-				>
-					{#snippet children({ header, data, index })}
-						{#if header === 'Aksi'}
-							<CustomBtn></CustomBtn>
-						{/if}
-					{/snippet}
-				</Table>
-			{/if}
 		{/if}
 	</div>
 </div>
 
 {#if openmodaltambah}
-	<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-		<div class="max-h-[90vh] w-[70%] overflow-y-auto rounded-lg bg-white p-5 shadow-lg">
-			<form
-				method="post"
-				action="?/tambah"
-				use:enhance={() => {
-					return async ({ result }) => {
-						console.log(result);
-						if (result.type === 'success') {
-							success = true;
-							clearTimeout(timer);
-							timer = setTimeout(() => {
-								success = false;
-								openmodaltambah = false;
-							}, 3000);
-						} else if (result.type === 'failure') {
-							error = result?.data?.errors;
-						}
-					};
-				}}
-			>
-				<div class="flex justify-between">
-					<h2 class="font-bold lg:text-xl">Tambah Data</h2>
-					<!-- svelte-ignore a11y_consider_explicit_label -->
-					<button onclick={closeModal}>
-						<span class="carbon--close-outline items-center"></span>
-					</button>
-				</div>
-				<div class="h-1 bg-gray-300"></div>
-				<div class="mt-5 flex flex-col">
-					<label for="gelar">Nama Gelar:</label>
-					<div class="relative w-full">
-						<input
-							id="gelar"
-							name="namagelar"
-							bind:value={namagelar}
-							class="w-full rounded-lg border px-3 py-2 pr-12"
-							placeholder="Masukkan Gelar"
-						/>
-						<button
-							class="absolute bottom-0 right-0 top-0 h-full rounded-r-lg bg-yellow-500 px-8 text-white"
-							onclick={tambahGelar}
-							type="button"
-						>
-							Add
-						</button>
-					</div>
+	{#if select === 'Arsip'}
+		<form
+			method="post"
+			action="?/tambah"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					console.log(result);
+					if (result.type === 'success') {
+						success = true;
+						clearTimeout(timer);
+						invalidateAll();
+						timer = setTimeout(() => {
+							success = false;
+							openmodaltambah = false;
 
-					{#if daftarGelar.length > 0}
-						<div class="w-full overflow-x-auto">
-							<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-								{#each daftarGelar as gelar, index}
-									<div class="mt-3 flex items-center justify-between rounded-lg border p-3">
-										<p class="w-full max-w-[200px] truncate break-words">
-											{gelar}
-										</p>
-										<!-- svelte-ignore a11y_consider_explicit_label -->
-										<button class="text-red-500" onclick={() => hapusGelar(index)}>
-											<span class="carbon--close-outline2 ml-2 items-center"></span>
-										</button>
-									</div>
-								{/each}
-							</div>
-						</div>
-					{/if}
-
-					<div class="flex w-full justify-end">
-						<button class="mt-12 w-fit rounded-lg bg-yellow-600 px-5 py-3 text-white">
-							Simpan data
-						</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+							invalidateAll();
+						}, 3000);
+					} else if (result.type === 'failure') {
+						error = result?.data?.errors;
+					}
+				};
+			}}
+		>
+			<ModalTambah bind:value={openmodaltambah} name="nama_jenis" errors={error}></ModalTambah>
+		</form>
+	{/if}
 {/if}
 
 {#if openmodaledit}
@@ -276,6 +222,7 @@
 				use:enhance={() => {
 					return async ({ result }) => {
 						console.log(result);
+
 						if (result.type === 'success') {
 							success = true;
 							clearTimeout(timer);
@@ -315,6 +262,12 @@
 			</form>
 		</div>
 	</div>
+{/if}
+{#if success}
+	<SModal text="Sukses!"></SModal>
+{/if}
+{#if loading}
+	<Loader></Loader>
 {/if}
 
 <style>

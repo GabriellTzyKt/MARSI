@@ -53,9 +53,6 @@
 </script>
 
 <header class="w-full lg:flex lg:h-full lg:min-w-full">
-	{#if navigating.to}
-		<Loader text="Navigating..."></Loader>
-	{/if}
 	<div
 		class="test2 width_head1 bg-customGold flex items-center justify-between p-2 lg:w-[16.7%] lg:justify-center"
 	>
@@ -227,6 +224,10 @@
 		{@render children()}
 	</main>
 </div>
+
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 
 <style>
 	.buttonshow {
