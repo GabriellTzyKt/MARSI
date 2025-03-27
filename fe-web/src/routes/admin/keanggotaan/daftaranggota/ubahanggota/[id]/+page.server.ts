@@ -3,7 +3,6 @@ import { z } from "zod";
 
 import type { Actions, PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
-import { error } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async ({params}) => {
     try {

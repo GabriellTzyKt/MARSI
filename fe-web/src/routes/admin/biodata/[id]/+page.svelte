@@ -5,9 +5,11 @@
 	import SModal from '$lib/popup/SModal.svelte';
 	import gambartemp from '../../../../asset/gambarsementara.jpg';
 	import { writable } from 'svelte/store';
+	import { page } from '$app/state';
+
 
 	let success = $state(false);
-
+	let id = $state(page.params.id)
 	let nama = $state(' ');
 	let lokasi = $state(' ');
 	let tanggal = $state('');
@@ -18,6 +20,7 @@
 	let linkacara2 = $state(' ');
 	let linkacara3 = $state(' ');
 	let namaraja = $state(' ');
+	let tanggalmeninggal = $state('');
 	let gelarraja = $state('');
 	let tanggallahir = $state(' ');
 	let kotalahir = $state(' ');
@@ -33,6 +36,7 @@
 	let selectedLocation: any = $state(' ');
 	let namafoto: any = $state('');
 	let namabendera: any = $state('');
+	let namafotoraja: any = $state('');
 	let namalambang: any = $state('');
 	let lat: any = $state('');
 	let long: any = $state('');
@@ -46,11 +50,12 @@
 
 	let benderaUrl: string | null = $state(null);
 	let lambangUrl: string | null = $state(null);
+	let namarajaUrl: string | null = $state(null);
 	let videoName: string | null = $state(' No Video Selected ');
 
 	let results = writable<string[]>([]);
 	let showDropdown = writable(false);
-	let locationsData: any[] = []; // Simpan data lokasi untuk referensi
+	let locationsData: any[] = []; 
 
 	const API_KEY = 'pk.def50126ee21d7c7b667386e05fc8bcb';
 
@@ -142,6 +147,10 @@
 				lambangUrl = URL.createObjectURL(newFiles[0]);
 				console.log('Lambang yang di upload : ', newFiles[0].name);
 				namalambang = newFiles[0].name;
+			} else if (type === 'raja') {
+				namarajaUrl = URL.createObjectURL(newFiles[0]);
+				console.log('Foto Raja yang di upload : ', newFiles[0].name);
+				namafotoraja = newFiles[0].name;
 			} else if (type === 'video') {
 				videoName = newFiles[0].name;
 			} else {
@@ -161,6 +170,8 @@
 			benderaUrl = null;
 		} else if (type === 'lambang') {
 			lambangUrl = null;
+		} else if (type === 'raja') {
+			namarajaUrl = null;
 		} else if (type === 'video') {
 			videoName = 'No Video Selected';
 		}
@@ -675,6 +686,7 @@
 			<form
 				method="post"
 				action="?/tambah"
+				enctype="multipart/form-data"
 				use:enhance={() => {
 					return async ({ result }) => {
 						console.log(result);
@@ -698,7 +710,39 @@
 						<span class="carbon--close-outline items-center"></span>
 					</button>
 				</div>
+
 				<div class="h-1 bg-gray-300"></div>
+
+				<input hidden name="id" bind:value={id}>
+
+				<div class="flex justify-center flex-col items-center">
+					<p class="text-nowrap">Foto Raja</p>
+					<div
+						class="upload-container relative mt-4 h-[200px] w-[270px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-black"
+					>
+						<input
+							type="file"
+							id="fileRaja"
+							class="hidden"
+							name="inputfotoraja"
+							accept="image/*"
+							onchange={(e) => handleFileChange(e, 'raja')}
+						/>
+						<label
+							for="fileRaja"
+							class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
+						>
+							{#if namarajaUrl}
+								<img src={namarajaUrl} alt="Bendera" class="h-full w-full rounded-lg object-cover" />
+								<button class="remove-btn" onclick={() => ganti('raja')}>✎</button>
+							{:else}
+								<span class="pajamas--media"></span>
+								<p class="mt-3 text-center">Upload Foto Raja</p>
+							{/if}
+						</label>
+					</div>
+				</div>
+
 				<div class="flex flex-col gap-1">
 					<label class="text-md mt-2 self-start text-left" for="nama">Nama Lengkap Raja</label>
 					<input
@@ -731,7 +775,7 @@
 					{/if}
 
 					<div class="flex flex-grow gap-4">
-						<div class="flex w-1/3 flex-col">
+						<div class="flex w-2/4 flex-col">
 							<label class="text-md mt-2 w-full self-start text-left" for="tanggalLahir">
 								Tanggal Lahir:
 							</label>
@@ -749,24 +793,42 @@
 							{/if}
 						</div>
 
-						<div class="flex w-2/3 flex-col">
-							<label class="text-md mt-2 self-start text-left" for="kotaLahir">
-								Kota Kelahiran:
+						<div class="flex w-2/4 flex-col">
+							<label class="text-md mt-2 w-full self-start text-left" for="tanggalLahir">
+								Tanggal Meninggal:
 							</label>
 							<input
 								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
-								type="text"
-								id="kotaLahir"
-								name="kotalahir"
-								bind:value={kotalahir}
-								placeholder="John Doe"
+								type="date"
+								id="tanggalmeninggal"
+								name="tanggalmeninggal"
+								bind:value={tanggalmeninggal}
 							/>
 							{#if error}
-								{#each error.kotalahir as a}
+								{#each error.tanggalmeninggal as a}
 									<p class="text-left text-red-500">{a}</p>
 								{/each}
 							{/if}
 						</div>
+					</div>
+
+					<div class="flex w-full flex-col">
+						<label class="text-md mt-2 self-start text-left" for="kotaLahir">
+							Kota Kelahiran:
+						</label>
+						<input
+							class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
+							type="text"
+							id="kotaLahir"
+							name="kotalahir"
+							bind:value={kotalahir}
+							placeholder="John Doe"
+						/>
+						{#if error}
+							{#each error.kotalahir as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
 					</div>
 
 					<div class="flex flex-grow gap-4">

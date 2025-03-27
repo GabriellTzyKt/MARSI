@@ -24,7 +24,7 @@ export const actions: Actions = {
             formdata.append("alamat_kerajaan",res.alamat_kerajaan)
             formdata.append("era",res.era_kerajaan)
             formdata.append("rumpun",res.rumpun_kerajaan)
-            const send = await fetch(`${env.PUB_PORT}/kerajaan`, {
+            const send = await fetch(env.BASE_URL + "/kerajaan", {
                 method: "POST",
                 body: formdata
             })
