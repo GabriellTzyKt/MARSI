@@ -2,10 +2,13 @@
 	import { dummyGelar, dummyJenisKerajaan, dummyDokumen, dummyRoleAdmin } from '$lib/dummy';
 	import Table from '$lib/table/Table.svelte';
 	import CustomBtn from './CustomBtn.svelte';
-	let opt = ['Gelar', 'Jenis Kerajaan', 'Dokumen', 'Role Admin'];
+	import Input from './Input.svelte';
+	let opt = ['Gelar', 'Jenis Kerajaan', 'Arsip'];
 	let { data } = $props();
-	const data_role = data.role;
+	const data_role = data.dataArsip;
+	console.log(data_role);
 	let select = $state('Gelar');
+	let input = $state(false);
 	function change(p: string) {
 		select = p;
 	}
@@ -48,7 +51,7 @@
 		<div class="flex items-center justify-center">
 			<button
 				class="border-md w-full rounded-md border bg-[#FFA600] px-6 py-2 font-[700] text-white xl:w-auto"
-				>+ Tambah Data</button
+				onclick={() => (input = true)}>+ Tambah Data</button
 			>
 		</div>
 	</div>
@@ -121,13 +124,13 @@
 					{/if}
 				{/snippet}
 			</Table>
-		{:else if select === 'Dokumen'}
+		{:else if select === 'Arsip'}
 			<Table
 				table_header={[
-					['nama', 'Nama Dokumen', 'justify-start flex grow'],
+					['nama_jenis', 'Jenis Arsip', 'justify-start flex grow'],
 					['children', 'Aksi', 'text-right pe-48']
 				]}
-				table_data={dummyDokumen}
+				table_data={data_role}
 			>
 				{#snippet children({ header, data, index })}
 					{#if header === 'Aksi'}
@@ -135,24 +138,11 @@
 					{/if}
 				{/snippet}
 			</Table>
-		{:else if select === 'Role Admin'}
-			{#if !data_role}
-				<p>Loading...</p>
-			{:else}
-				<Table
-					table_header={[
-						['nama_role', 'Role', 'justify-start flex grow'],
-						['children', 'Aksi', 'text-right pe-48']
-					]}
-					table_data={data_role}
-				>
-					{#snippet children({ header, data, index })}
-						{#if header === 'Aksi'}
-							<CustomBtn></CustomBtn>
-						{/if}
-					{/snippet}
-				</Table>
-			{/if}
 		{/if}
 	</div>
+	{#if input}
+		{#if select === 'Arsip'}
+			<Input bind:input name={'nama_jenis'}></Input>
+		{/if}
+	{/if}
 </div>

@@ -99,7 +99,7 @@
 					link="/admin/keanggotaan/daftaranggota"
 					{index}
 					items={[
-						['Ubah', `/admin/keanggotaan/daftaranggota/ubahanggota/${data.id_kerajaan}`],
+						['Detail', `/admin/keanggotaan/daftaranggota/ubahanggota/${data.id_kerajaan}`],
 						['children', 'Arsipkan']
 					]}
 					tipe="anggota"
