@@ -15,7 +15,7 @@ export const load: PageServerLoad = async () => {
         //         "accept": "application/json"
         //     }
         // }
-       const request =await fetch(`${env.PUB_PORT}/kerajaan`, {
+       const request =await fetch(env.BASE_URL + "/kerajaan", {
             method: "GET",
             headers: {
                 "Accept": "application/json"
