@@ -48,9 +48,9 @@
 				placeholder="jenis..."
 				id=""
 			/>
-			<input type="text" hidden value={value.id_jenis_arsip} />
+			<input type="text" name="id_jenis_arsip" hidden value={value.id_jenis_arsip} />
 			{#if error}
-				<p class="text-red-500">{error.nama_jenis}</p>
+				<p class="text-red-500">{error}</p>
 			{/if}
 		</div>
 		<div class="my-4 flex justify-center md:justify-end">

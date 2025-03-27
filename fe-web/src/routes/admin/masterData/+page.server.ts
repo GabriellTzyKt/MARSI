@@ -2,7 +2,7 @@ import { addAPIProvider } from "@iconify/svelte";
 import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
 import { error, fail, type Actions } from "@sveltejs/kit";
-import { z } from "zod";
+import { number, z } from "zod";
 import { invalidate, invalidateAll } from "$app/navigation";
 import { filter } from "d3";
 
@@ -94,15 +94,27 @@ export const actions: Actions = {
             const req = await request.formData()
             const data = Object.fromEntries(req)
             const ver = z.object({
+                id_jenis_arsip: z.string().nullable(),
                 nama_jenis: z.string().nonempty("Field Ini Tidak Boleh Kosong")
-            });
+            }); 
+            console.log(data);
+        
             const verification = ver.safeParse(data)
             if (!verification.success) {
                 return fail(406,{error: verification.error.flatten().fieldErrors})
             }
+            const obj = {
+                id_jenis_arsip: Number(data.id_jenis_arsip),
+                nama_jenis: data.nama_jenis
+            }
+            console.log(JSON.stringify(obj));
+
             const edit = await fetch(`${env.PUB_PORT}/jenis-arsip`, {
                 method: "PUT",
-                body : JSON.stringify(data)
+                headers: {
+                    'Content-Type': "application/json"
+                },
+                body : JSON.stringify(obj),
             })
             if (!edit.ok) {
                 const m = await edit.json()
