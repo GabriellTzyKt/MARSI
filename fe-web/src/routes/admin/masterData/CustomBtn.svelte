@@ -98,9 +98,7 @@
 		></DeleteModal>
 	</form>
 {/if}
-{#if success}
-	<SModal text="sukses!"></SModal>
-{/if}
+
 {#if loading}
 	<Loader></Loader>
 {/if}
@@ -130,6 +128,9 @@
 	>
 		<Input bind:value={data} name="nama_jenis" {error} bind:input={edit}></Input>
 	</form>
+{/if}
+{#if success}
+	<SModal text="sukses!"></SModal>
 {/if}
 
 <style>

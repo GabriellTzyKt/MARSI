@@ -50,8 +50,9 @@ export const actions: Actions = {
                 return fail(406, { errors: "No Data" });
             }
              for (const nama of validation) {
-                const payload = { nama_jenis: nama };
-
+                 const payload = { nama_jenis: nama };
+                 console.log(payload)
+                
                 const submit = await fetch(`${env.PUB_PORT}/jenis-arsip`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" }, // Tambahkan header
@@ -62,7 +63,7 @@ export const actions: Actions = {
                     const m = await submit.json();
                     return fail(406, { errors: `Error ${submit.status}: ${m.message}` });
                  }
-                 invalidateAll()
+                 
             }
         }
         

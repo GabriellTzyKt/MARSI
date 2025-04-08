@@ -2,6 +2,8 @@
 	import { onMount } from 'svelte';
 	import logo_marsi from '../../../asset/logo_MARSI.png';
 	import SearchNav from './SearchNav.svelte';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	let pos = 0;
 	let hidden = false;
@@ -79,9 +81,15 @@
 			class="block border-b px-4 py-2"
 			on:click={() => (menuOpen = !menuOpen)}>Aset Kerajaan</a
 		>
-		<a href="/umum/daftaracara" class="block px-4 py-2" on:click={() => (menuOpen = !menuOpen)}>Acara</a>
+		<a href="/umum/daftaracara" class="block px-4 py-2" on:click={() => (menuOpen = !menuOpen)}
+			>Acara</a
+		>
 	</div>
 </nav>
+
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 
 <style>
 	.nav {

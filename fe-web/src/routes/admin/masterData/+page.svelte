@@ -15,6 +15,7 @@
 	console.log(data_role);
 	let loading = $state(false);
 	let input = $state(false);
+	let entries = $state(10);
 
 	let success = $state(false);
 	let namagelar = $state('');
@@ -130,6 +131,7 @@
 				type="number"
 				class="flex w-16 justify-center rounded-lg border border-[#818181] bg-white focus:outline-none"
 				name=""
+				bind:value={entries}
 				id=""
 			/>
 			<p>entries</p>
@@ -264,7 +266,9 @@
 	</div>
 {/if}
 {#if success}
-	<SModal text="Sukses!"></SModal>
+	<div class=" z-50">
+		<SModal text="Sukses!"></SModal>
+	</div>
 {/if}
 {#if loading}
 	<Loader></Loader>

@@ -25,7 +25,24 @@ export const load: PageServerLoad = async () => {
         console.log(request)
         if (request.ok) {
             const data = await request.json()
-            return {dataKerajaan : data}
+            const formatDate = (iso: string) => {
+                const date = new Date(iso);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}-${month}-${year}`;
+            };
+
+            const kerajaanFormatted = data.map((item: any) => ({
+                ...item,
+                tanggal_berdiri: formatDate(item.tanggal_berdiri),
+                tanggal_berakhir:
+                    item.tanggal_berakhir !== '0001-01-01T00:00:00Z'
+                        ? formatDate(item.tanggal_berakhir)
+                        : '-',
+            }));
+
+            return {dataKerajaan : kerajaanFormatted}
         }
         else return {dataKerajaan: "Failed"}
         
