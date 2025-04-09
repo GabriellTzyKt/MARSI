@@ -87,10 +87,6 @@
 	</div>
 </nav>
 
-{#if navigating.to}
-	<Loader text="Navigating..."></Loader>
-{/if}
-
 <style>
 	.nav {
 		transition: top 0.35s;

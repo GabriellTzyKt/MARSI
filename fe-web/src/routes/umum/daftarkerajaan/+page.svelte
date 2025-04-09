@@ -3,6 +3,8 @@
 	import Navbar from '../nav/Navbar.svelte';
 	import gambarHeader from '../../../asset/umum/keraton 2.png';
 	import Cardshow from '../Cardshow.svelte';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	let value = $state<number>(6);
 	let selectedDaerah = $state<string>('');
@@ -18,10 +20,9 @@
 	let longitude: number | null = null;
 	let userLocation: string | null = $state(' ');
 
-
 	const { data } = $props();
 	console.log('Data yang diterima ( Umum Kerajaan ):', data);
-	const dataGet = data.detil_kerajaan
+	const dataGet = data.detil_kerajaan;
 
 	function handleSortChange(event: Event) {
 		const target = event.target as HTMLSelectElement;
@@ -34,24 +35,22 @@
 			userLocation = ' ';
 			sortOrder = ' ';
 			selectTipe = '';
-			displayedCount = value
-		} else if (selectedLokasi === 'tahun-asc'){
-			sortOrder = 'asc'
-		} else if (selectedLokasi === 'tahun-desc'){
-			sortOrder = 'desc'
+			displayedCount = value;
+		} else if (selectedLokasi === 'tahun-asc') {
+			sortOrder = 'asc';
+		} else if (selectedLokasi === 'tahun-desc') {
+			sortOrder = 'desc';
 		}
 	}
 
 	// pakai API Geolocation untuk dapet latitude longitude
 	function getLocation() {
 		if ('geolocation' in navigator) {
-			navigator.geolocation.getCurrentPosition(
-				(position) => {
-					latitude = position.coords.latitude;
-					longitude = position.coords.longitude;
-					getCity(latitude, longitude);
-				},
-			);
+			navigator.geolocation.getCurrentPosition((position) => {
+				latitude = position.coords.latitude;
+				longitude = position.coords.longitude;
+				getCity(latitude, longitude);
+			});
 		} else {
 			console.error('Geolocation is not supported by this browser.');
 		}
@@ -63,7 +62,7 @@
 			`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
 		);
 		const data = await response.json();
-		console.log("data",data)
+		console.log('data', data);
 		console.log('User Location Before : ', userLocation);
 		if (data.address) {
 			userLocation =
@@ -84,18 +83,18 @@
 				? v.lokasi.toLowerCase().includes(selectedDaerah.toLowerCase())
 				: true;
 			const isKeywordMatch = v.nama_kerajaan.toLowerCase().includes(keyword.toLowerCase());
-			const isTipeMatch = v.nama_kerajaan.toLowerCase().includes(selectTipe.toLowerCase())
+			const isTipeMatch = v.nama_kerajaan.toLowerCase().includes(selectTipe.toLowerCase());
 
 			return isDaerahMatch && isKeywordMatch && isTipeMatch;
 		});
 
 		// kalau hasilnya > 0 maka swap
 		if (sortOrder === 'asc') {
-            filteredData.sort((a, b) => Number(a.tahun) - Number(b.tahun));
-		// kalau hasilnya < 0 maka swap
-        } else if (sortOrder === 'desc') {
-            filteredData.sort((a, b) => Number(b.tahun) - Number(a.tahun));
-        }
+			filteredData.sort((a, b) => Number(a.tahun) - Number(b.tahun));
+			// kalau hasilnya < 0 maka swap
+		} else if (sortOrder === 'desc') {
+			filteredData.sort((a, b) => Number(b.tahun) - Number(a.tahun));
+		}
 
 		console.log('Filtered Data:', filteredData);
 		return filteredData;
@@ -146,7 +145,7 @@
 		</div>
 	</div>
 
-	<div class="ml-11 flex lg:justify-between lg:flex-row flex-col lg:gap-y-0 gap-y-2">
+	<div class="ml-11 flex flex-col gap-y-2 lg:flex-row lg:justify-between lg:gap-y-0">
 		<div class="relative flex items-center gap-x-2">
 			<p>Sort By :</p>
 			<select
@@ -194,7 +193,7 @@
 		</div>
 		<div class="relative mr-11 flex items-center gap-x-2">
 			<p>Daerah :</p>
-			{#if (selectedDaerah === ' ' && userLocation === ' ') || (selectedDaerah !== ' ' && userLocation === ' ') || (selectedDaerah === ' ')}
+			{#if (selectedDaerah === ' ' && userLocation === ' ') || (selectedDaerah !== ' ' && userLocation === ' ') || selectedDaerah === ' '}
 				<select
 					bind:value={selectedDaerah}
 					class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -222,7 +221,13 @@
 
 	<div class="relative mb-20 ml-10 mr-10 mt-10 grid grid-cols-1 gap-x-4 gap-y-10 md:grid-cols-2">
 		{#each updateFilteredData().slice(0, displayedCount) as situs}
-			<Cardshow judul={situs.nama_kerajaan} lokasi={situs.lokasi} gambar={situs.gambardepan} id={situs.id} tahun={situs.tahun} />
+			<Cardshow
+				judul={situs.nama_kerajaan}
+				lokasi={situs.lokasi}
+				gambar={situs.gambardepan}
+				id={situs.id}
+				tahun={situs.tahun}
+			/>
 		{/each}
 	</div>
 
@@ -248,6 +253,9 @@
 <section class="h-full w-full overflow-hidden">
 	<Footer></Footer>
 </section>
+{#if navigating.to}
+	<Loader></Loader>
+{/if}
 
 <style>
 	@media (max-width: 820px) {

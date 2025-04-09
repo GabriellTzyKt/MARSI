@@ -56,9 +56,22 @@ export const actions: Actions = {
                     .max(13, { message: "nomer telepon maximal 15 angka" })
                     .regex(/^\d+$/, "Harus berupa nomer")
                     .trim(),
+            password:
+            z.string({ message: "password bukan string" })
+            .min(8, { message: "Password minimal 8 huruf" })
+            .max(255, { message: "Password sudah maximal!" })
+            .nonempty({ message: "Password tidak boleh kosong" })
+            .regex(/[A-Z]/, { message: "Password Harus ada minimal 1 huruf Kapital" })
+            .regex(/[0-9]/, { message: "Password Harus ada miniam 1 angka" })
+            .regex(/[^A-Za-z0-9]/,{message: "Password harus ada simbol"}),
             tgl_lahir:
                 z.coerce.date({ message: "Tanggal Tidak valid (YYYY-MM-DD)" }),
             kota_lahir: 
+                z.string({ message: "Harus diisi / harus berupa kata" })
+                    .nonempty("Tidak Boleh kosong")
+                    .max(255, "Input hanya bisa sampai 255 kata")
+                    .trim(),
+            jenis_kelamin: 
                 z.string({ message: "Harus diisi / harus berupa kata" })
                     .nonempty("Tidak Boleh kosong")
                     .max(255, "Input hanya bisa sampai 255 kata")
@@ -78,6 +91,8 @@ export const actions: Actions = {
         })
         const nama_lengkap = data.get("nama_lengkap")
         const email = data.get("email")
+        const password = data.get("password")
+        const jenis_kelamin = data.get("jenis_kelamin")
         const no_telp = data.get("no_telp")
         const tgl_lahir = data.get("tgl_lahir")
         const kota_lahir = data.get("kota_lahir")
@@ -87,8 +102,10 @@ export const actions: Actions = {
             nama_lengkap,
             email,
             no_telp,
+            password,
             tgl_lahir,
             kota_lahir,
+            jenis_kelamin,
             afiliasi,
             admin_role
          }
