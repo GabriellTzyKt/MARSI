@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
 	import SModal from '$lib/popup/SModal.svelte';
@@ -84,10 +84,12 @@
 					loading = false;
 					if (result.type === 'success') {
 						errors = null;
+						invalidateAll();
 						success = true;
 						clearTimeout(timer);
 						timer = setTimeout(() => {
 							success = false;
+
 							goto('/admin/keanggotaan/daftaranggota');
 						}, 3000);
 					}
@@ -125,6 +127,8 @@
 					bind:value={lokasi}
 					onkeydown={handleKeyDown}
 				/>
+				<input type="text" hidden value={lat} name="lat" />
+				<input type="text" hidden value={long} name="long" />
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 				{#if $showDropdown && lokasi !== ''}
@@ -202,6 +206,7 @@
 						{/each}
 					{/if}
 				</div>
+
 				<div class="flex flex-col md:col-span-2">
 					<p class="text-md mb-1 self-start text-left">Nama Raja Sekarang</p>
 					<input

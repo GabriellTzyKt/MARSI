@@ -1,48 +1,22 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
-	import SucessModal from '$lib/popup/SucessModal.svelte';
-	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
+	let searchRes = $state();
+	let showDropdown = $state(false);
 
 	let nama = $state('');
 	let jenisDokumen = $state(' ');
-	let asalKerajaan = $state(' ');
 	let kategori = $state(' ');
+	let keterkaitan = $state('');
+	let subkategori = $state('');
+	let urlFoto = $state('');
+
+	let error: any = $state('');
 
 	let success = $state(false);
+	let showModal = $state(false);
 	let uploadedFiles: File[] = [];
 	let uploadedFileUrls: string[] = $state([]);
 	let timer: Number;
-
-	onMount(() => {
-		if (form?.success) {
-			success = true;
-			if (timer) {
-				clearTimeout(timer);
-			}
-			if (success)
-				timer = setTimeout(() => {
-					success = false;
-					goto('/admin/suratDokumen');
-				}, 3000);
-		} else {
-			if (form?.values) {
-				nama = String(form?.values?.namaDokumen);
-				jenisDokumen = String(form?.values?.jenisDokumen);
-				asalKerajaan = String(form?.values?.asalKerajaan);
-				kategori = String(form?.values?.kategori);
-				// uploadedFileUrls = form?.values?.urlfoto
-				// 	? Array.isArray(form.values.urlfoto)
-				// 		? form.values.urlfoto.map(String)
-				// 		: [String(form.values.urlfoto)]
-				// 	: [];
-			}
-		}
-	});
-
-	let { form } = $props();
-	console.log('dataform : ', form?.values);
 
 	let toggle = () => {
 		if (!success) {
@@ -66,6 +40,19 @@
 	function removeImage(index: number) {
 		uploadedFiles = uploadedFiles.slice(0, index).concat(uploadedFiles.slice(index + 1));
 		uploadedFileUrls = uploadedFileUrls.slice(0, index).concat(uploadedFileUrls.slice(index + 1));
+
+		const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+		if (fileInput) {
+			fileInput.value = '';
+		}
+
+		const dataTransfer = new DataTransfer();
+		for (const file of uploadedFiles) {
+			dataTransfer.items.add(file);
+		}
+		if (fileInput) {
+			fileInput.files = dataTransfer.files;
+		}
 	}
 </script>
 
@@ -76,7 +63,26 @@
 	</div>
 
 	<div class="form-container flex flex-col">
-		<form method="post" action="?/submit" enctype="multipart/form-data">
+		<form
+			method="post"
+			action="?/submit"
+			enctype="multipart/form-data"
+			use:enhance={() => {
+				return async ({ result }) => {
+					console.log(result);
+					if (result.type === 'success') {
+						success = true;
+						clearTimeout(timer);
+						timer = setTimeout(() => {
+							success = false;
+							showModal = false;
+						}, 3000);
+					} else if (result.type === 'failure') {
+						error = result?.data?.errors;
+					}
+				};
+			}}
+		>
 			<div class="flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Nama Dokumen</label>
 				<input
@@ -87,29 +93,26 @@
 					bind:value={nama}
 					placeholder="John Doe"
 				/>
-				{#if form?.errors}
-					{#each form.errors.namaDokumen as error1}
+				{#if error}
+					{#each error.namaDokumen as error1}
 						<p class="text-left text-red-500">{error1}</p>
 					{/each}
 				{/if}
 			</div>
 
-			<div class="mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nomor_telepon">Asal Kerajaan</label>
-				<select
-					bind:value={asalKerajaan}
-					name="asalKerajaan"
-					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-				>
-					<option value=" " disabled>None</option>
-					<option value="kerajaanA">Kerajaan A </option>
-					<option value="kerajaanB">Kerajaan B</option>
-				</select>
-				{#if form?.errors}
-					{#each form.errors.asalKerajaan as error2}
-						<p class="text-left text-red-500">{error2}</p>
-					{/each}
-				{/if}
+			<div class="text-md mt-2 text-start">
+				<label for="keterkaitan">Keterkaitan</label>
+				<div class="relative flex flex-col gap-1">
+					<input class="input-field rounded-lg border p-2 pr-10" bind:value={keterkaitan} />
+
+					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
+
+					{#if error}
+						{#each error.keterkaitan as error1}
+							<p class="text-left text-red-500">{error1}</p>
+						{/each}
+					{/if}
+				</div>
 			</div>
 
 			<div class="mt-2 flex flex-col gap-1">
@@ -123,8 +126,8 @@
 					<option value="dokumenA">Dokumen A </option>
 					<option value="dokumenB">Dokumen B</option>
 				</select>
-				{#if form?.errors}
-					{#each form.errors.jenisDokumen as error3}
+				{#if error}
+					{#each error.jenisDokumen as error3}
 						<p class="text-left text-red-500">{error3}</p>
 					{/each}
 				{/if}
@@ -141,11 +144,26 @@
 					<option value="kategoriA">Kategori A </option>
 					<option value="kategoriB">Kategori B</option>
 				</select>
-				{#if form?.errors}
-					{#each form.errors.kategori as error4}
+				{#if error}
+					{#each error.kategori as error4}
 						<p class="text-left text-red-500">{error4}</p>
 					{/each}
 				{/if}
+			</div>
+
+			<div class="text-md mt-2 text-start">
+				<label for="keterkaitan">Sub Kategori</label>
+				<div class="relative flex flex-col gap-1">
+					<input class="input-field rounded-lg border p-2 pr-10" />
+
+					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
+
+					{#if error}
+						{#each error.subkategori as error1}
+							<p class="text-left text-red-500">{error1}</p>
+						{/each}
+					{/if}
+				</div>
 			</div>
 
 			<div class="mt-2 flex w-full flex-col gap-1">
@@ -159,6 +177,7 @@
 								type="file"
 								id="fileInput"
 								class="hidden"
+								bind:value={urlFoto}
 								name="uploadfile"
 								onchange={handleFileChange}
 								multiple
@@ -185,15 +204,19 @@
 						{/each}
 					</div>
 				</div>
-				{#if form?.errors}
-					{#each form.errors.urlfoto as error5}
+				{#if error}
+					{#each error.urlfoto as error5}
 						<p class="text-left text-red-500">{error5}</p>
 					{/each}
 				{/if}
 			</div>
 
 			<div class="flex w-full justify-end">
-				<button class="bg-customGold mt-2 rounded-lg border px-6 py-2 text-white" type="submit">
+				<button
+					class="bg-customGold mt-2 rounded-lg border px-6 py-2 text-white"
+					type="submit"
+					formaction="?/submit"
+				>
 					Tambah
 				</button>
 			</div>
@@ -201,14 +224,15 @@
 	</div>
 </div>
 
-{#if success}
-	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
-		<SucessModal open={success} text="Dokumen berhasil ditambahkan!" to="/admin/suratDokumen"
-		></SucessModal>
-	</div>
-{/if}
-
 <style>
+	.cil--magnifying-glass {
+		display: inline-block;
+		width: 18px;
+		height: 18px;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%23150000' d='m479.6 399.716l-81.084-81.084l-62.368-25.767A175 175 0 0 0 368 192c0-97.047-78.953-176-176-176S16 94.953 16 192s78.953 176 176 176a175.03 175.03 0 0 0 101.619-32.377l25.7 62.2l81.081 81.088a56 56 0 1 0 79.2-79.195M48 192c0-79.4 64.6-144 144-144s144 64.6 144 144s-64.6 144-144 144S48 271.4 48 192m408.971 264.284a24.03 24.03 0 0 1-33.942 0l-76.572-76.572l-23.894-57.835l57.837 23.894l76.573 76.572a24.03 24.03 0 0 1-.002 33.941'/%3E%3C/svg%3E");
+	}
 	.input-field {
 		width: auto;
 	}

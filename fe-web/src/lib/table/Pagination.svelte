@@ -2,4 +2,10 @@
 	let { value = $bindable() } = $props();
 </script>
 
-<input type="text" name="" id="" {value} class="flex w-10 rounded-md text-center shadow-inner" />
+<input
+	type="number"
+	name=""
+	id=""
+	bind:value
+	class="flex w-16 rounded-md text-center shadow-inner"
+/>
