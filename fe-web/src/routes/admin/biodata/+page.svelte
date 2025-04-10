@@ -30,12 +30,12 @@
 		</div>
 	</div>
 	<div class="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-		<BiodataKerajaan href="biodata/{1}"></BiodataKerajaan>
-		<BiodataKerajaan href="biodata/{1}"></BiodataKerajaan>
-		<BiodataKerajaan href="biodata/{1}"></BiodataKerajaan>
-		<BiodataKerajaan href="biodata/{1}"></BiodataKerajaan>
-		<BiodataKerajaan href="biodata/{1}"></BiodataKerajaan>
-		<BiodataKerajaan href="biodata/{1}"></BiodataKerajaan>
-		<BiodataKerajaan href="biodata/{1}"></BiodataKerajaan>
+		<BiodataKerajaan href="biodata/{10}"></BiodataKerajaan>
+		<BiodataKerajaan href="biodata/{11}"></BiodataKerajaan>
+		<BiodataKerajaan href="biodata"></BiodataKerajaan>
+		<BiodataKerajaan href="biodata"></BiodataKerajaan>
+		<BiodataKerajaan href="biodata"></BiodataKerajaan>
+		<BiodataKerajaan href="biodata"></BiodataKerajaan>
+		<BiodataKerajaan href="biodata"></BiodataKerajaan>
 	</div>
 </div>

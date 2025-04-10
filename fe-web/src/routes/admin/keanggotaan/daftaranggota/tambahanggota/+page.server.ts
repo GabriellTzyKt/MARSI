@@ -7,9 +7,9 @@ import { env } from "$env/dynamic/private";
 export const actions: Actions = {
     tambah: async ({ request }) => {
         const data = await request.formData()
-        console.log("data: ", data)
+        console.log("data: " , data)
         const res = Object.fromEntries(data)
-        console.log("RES: ", res)
+        console.log("RES: " , res)
         const verif = schema.safeParse(res)
 
         const nama_kerajaan = data.get('nama_kerajaan')
@@ -31,20 +31,20 @@ export const actions: Actions = {
             return fail(418, { errors: verif.error.flatten().fieldErrors, success: false, form: res })
         }
         try {
-            const send = await fetch(env.PUB_PORT + "/kerajaan", {
+            const send = await fetch(env.BASE_URL + "/kerajaan", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers : {"Content-Type" : "application/json"},
                 body: JSON.stringify({
-                    longitude: Number(long),
-                    latitude: Number(lat),
-                    nama_kerajaan: nama_kerajaan,
-                    raja_sekarang: raja_sekarang,
-                    jenis_kerajaan: jenis_kerajaan,
-                    deskripsi_kerajaan: deskripsi_kerajaan,
-                    alamat_kerajaan: alamat_kerajaan,
-                    tanggal_berdiri: tanggal_berdiri,
-                    era: era_kerajaan,
-                    rumpun: rumpun_kerajaan,
+                    longitude : Number(long),
+                    latitude : Number(lat),
+                    nama_kerajaan : nama_kerajaan,
+                    raja_sekarang : raja_sekarang,
+                    jenis_kerajaan : jenis_kerajaan,
+                    deskripsi_kerajaan : deskripsi_kerajaan,
+                    alamat_kerajaan : alamat_kerajaan,
+                    tanggal_berdiri : tanggal_berdiri,
+                    era : era_kerajaan,
+                    rumpun : rumpun_kerajaan,  
                 })
             })
             const r = await send.json()

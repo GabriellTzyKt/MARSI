@@ -7,14 +7,25 @@
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
 	import { fade } from 'svelte/transition';
+
 	let { data } = $props();
+	let dataambil = data.detil_anggota;
+	console.log(dataambil);
 
 	let open = $state(false);
 	let valo = $state(false);
 	let error = $state();
 	let data2 = $state();
+
 	let timer : any;
 
+	let toggle = () => {
+		if (!open) {
+			open = true;
+		} else open = false;
+		console.log(open);
+	};
+	
 </script>
 
 <div class="flex w-full flex-col">
@@ -98,9 +109,9 @@
 					<DropDown
 						text={`Apakah yakin ingin mengarsipkan ${data.nama_anggota}?`}
 						successText={`Berhasil mengarsipkan ${data.nama_anggota}!`}
-						link="/abdi/sekretariat/organisasi/daftaranggota"
+						link="/abdi/dashboard/organisasi/detail/daftaranggota"
 						items={[
-							['Edit', '/abdi/sekretariat/organisasi/daftaranggota/edit'],
+							['Edit', '/abdi/dashboard/organisasi/detail/daftaranggota/edit'],
 							['children', 'Non Aktifkan', '']
 						]}
 						id={`id-${index}`}
@@ -132,7 +143,7 @@
 		}}
 	>
 		<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
-			<TambahAnggota bind:value={open} bind:open={valo} errors={error} {data2} dataambil={data.detil_anggota} 
+			<TambahAnggota bind:value={open} bind:open={valo} errors={error} {data2} {dataambil}
 			></TambahAnggota>
 		</div>
 	</form>

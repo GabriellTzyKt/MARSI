@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	let searchRes = $state();
-	let showDropdown = $state(false);
 
 	let nama = $state('');
 	let jenisDokumen = $state(' ');
@@ -103,7 +101,7 @@
 			<div class="text-md mt-2 text-start">
 				<label for="keterkaitan">Keterkaitan</label>
 				<div class="relative flex flex-col gap-1">
-					<input class="input-field rounded-lg border p-2 pr-10" bind:value={keterkaitan} />
+					<input class="input-field rounded-lg border p-2 pr-10" />
 
 					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
 

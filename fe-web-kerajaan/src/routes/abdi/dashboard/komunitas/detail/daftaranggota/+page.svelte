@@ -8,22 +8,29 @@
 	import Table from '$lib/table/Table.svelte';
 	import { fade } from 'svelte/transition';
 	let { data } = $props();
+	let dataambil = data.detil_anggota;
+	console.log(dataambil);
 
 	let open = $state(false);
 	let valo = $state(false);
 	let error = $state();
 	let data2 = $state();
+
 	let timer : any;
 
+	let toggle = () => {
+		if (!open) {
+			open = true;
+		} else open = false;
+		console.log(open);
+	};
 </script>
 
 <div class="flex w-full flex-col">
-	<div class=" flex flex-col xl:flex-row xl:justify-between">
+	<div class="flex flex-col xl:flex-row xl:justify-between">
 		<button
-			class="bg-badran-bt cursor-pointer rounded-lg px-3 py-2 text-white"
-			onclick={() => {
-				open = true;
-			}}>+Tambah Data</button
+			class="bg-badran-bt rounded-lg px-3 py-2 text-white hover:cursor-pointer"
+			onclick={toggle}>+Tambah Data</button
 		>
 		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
@@ -96,15 +103,15 @@
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
 					<DropDown
-						text={`Apakah yakin ingin mengarsipkan ${data.nama_anggota}?`}
-						successText={`Berhasil mengarsipkan ${data.nama_anggota}!`}
-						link="/abdi/sekretariat/organisasi/daftaranggota"
-						items={[
-							['Edit', '/abdi/sekretariat/organisasi/daftaranggota/edit'],
-							['children', 'Non Aktifkan', '']
-						]}
+						text="Apakah yakin ingin di arsip?"
+						successText=""
+						link="/abdi/dashboard/komunitas/detail/daftaranggota"
 						id={`id-${index}`}
 						{data}
+						items={[
+							['Ubah', '/abdi/dashboard/komunitas/detail/daftaranggota/edit'],
+							['children', 'non-aktifkan', '/abdi/dashboard/komunitas/daftaranggota']
+						]}
 					></DropDown>
 				{/if}
 			{/snippet}
@@ -132,7 +139,7 @@
 		}}
 	>
 		<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
-			<TambahAnggota bind:value={open} bind:open={valo} errors={error} {data2} dataambil={data.detil_anggota} 
+			<TambahAnggota bind:value={open} bind:open={valo} errors={error} {data2} {dataambil}
 			></TambahAnggota>
 		</div>
 	</form>

@@ -47,7 +47,7 @@
 			};
 		}}
 	>
-		<div class="lg:rid-cols-2 mt-10 grid grid-cols-1 gap-4">
+		<div class="lg:grid-cols-2 mt-10 grid grid-cols-1 gap-4">
 			<!-- 1 -->
 			<div>
 				<div>
