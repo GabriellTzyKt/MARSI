@@ -125,6 +125,8 @@
 					bind:value={lokasi}
 					onkeydown={handleKeyDown}
 				/>
+				<input type="hidden" name="long" bind:value={long}>
+				<input type="hidden" name="lat" bind:value={lat}>
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 				{#if $showDropdown && lokasi !== ''}

@@ -44,6 +44,7 @@ export const load: PageServerLoad = async () => {
     if(e instanceof Error) return console.log(e.message)
    }
 };
+
 export const actions: Actions = {
     tambahKerajaan: async ({request}) => {
         const data = await request.formData()

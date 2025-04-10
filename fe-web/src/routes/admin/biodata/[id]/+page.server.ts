@@ -118,7 +118,7 @@ export const actions: Actions = {
 
         try {
             const formData = new FormData()
-            formData.append("id_kerajaan", String(res.id))
+            formData.append("id_kerajaan", String(res.id) || "11")
             formData.append("nama_raja", res.namaraja || "None")
             formData.append("tempat_lahir", res.kotalahir || " ")
             formData.append("tanggal_lahir", res.tanggallahir || " ")

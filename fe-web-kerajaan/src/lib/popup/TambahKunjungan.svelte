@@ -9,11 +9,10 @@
 	let tujuankunjungan = $state(data2 ? data2.tujuankunjungan : '');
 	console.log('ini data2 : ', data2);
 	console.log('ini error : ', errors);
-	
 </script>
 
 <div
-	class="lg:grid-cols-15 mt-5 grid h-fit p-10 w-full grid-cols-5 gap-2 rounded-lg border-2 border-gray-100 bg-gray-300 px-2 lg:h-fit"
+	class="lg:grid-cols-15 mt-5 grid h-fit w-full grid-cols-5 gap-2 rounded-lg border-2 border-gray-100 bg-gray-300 p-10 px-2 lg:h-fit"
 >
 	<div class="col-span-7 mt-5 lg:col-span-5 lg:mb-5">
 		<div class="flex flex-col">
@@ -49,26 +48,26 @@
 	<div class="col-span-7 mb-5 mt-5">
 		<div class="flex flex-col">
 			<div class="grid grid-cols-1 gap-2 lg:grid-cols-7">
-				<div class="relative col-span-3 flex items-center lg:col-span-4">
-					<input
-						type="text"
-						class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
-						placeholder="No Telepon"
-						bind:value={notelp}
-						name="notelp-{id}"
-						pattern="[0-9]*"
-						minlength="10"
-					/>
-
-					<span class="line-md--pencil absolute right-2"></span>
-				</div>
-				{#if errors && notelp === ''}
-					<div class="flex-col">
-						<p class="ml-5 text-left text-red-500">{errors.notelp[0]}</p>
-						<p class="ml-5 text-left text-red-500">{errors.notelp[1]}</p>
+				<div class="relative col-span-3 flex flex-col lg:col-span-4">
+					<div class="relative flex items-center">
+						<input
+							type="text"
+							class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
+							placeholder="No Telepon"
+							bind:value={notelp}
+							name="notelp-{id}"
+							pattern="[0-9]*"
+							minlength="10"
+						/>
+						<span class="line-md--pencil absolute right-2"></span>
 					</div>
-				{/if}
-				<div class="relative col-span-3 flex items-center">
+
+					{#if errors && notelp === ''}
+						<p class="ml-1 mt-1 text-left text-red-500">{errors.notelp[0]}</p>
+					{/if}
+				</div>
+
+				<div class="relative col-span-3 flex flex-col">
 					<input
 						type="text"
 						name="kotaasal-{id}"
@@ -76,11 +75,11 @@
 						class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
 						placeholder="Kota asal"
 					/>
-					<span class="line-md--pencil absolute right-2"></span>
+					<span class="line-md--pencil absolute right-2 top-2.5"></span>
+					{#if errors && kotaasal === ''}
+						<p class="ml-5 text-left text-red-500">{errors.kotaasal[0]}</p>
+					{/if}
 				</div>
-				{#if errors && kotaasal === ''}
-					<p class="ml-5 text-left text-red-500">{errors.kotaasal[0]}</p>
-				{/if}
 			</div>
 
 			<!-- Radio Button -->

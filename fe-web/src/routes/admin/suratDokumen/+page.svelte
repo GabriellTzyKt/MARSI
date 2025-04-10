@@ -6,6 +6,11 @@
 	import { dummyAcara, dummyDocs } from '$lib/dummy';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import Status from '$lib/table/Status.svelte';
+
+	let { data } = $props();
+	const dataArsip = data.dataArsip
+	console.log(dataArsip);
+	
 	let pop = $state(false);
 	function setpop() {
 		pop = true;
@@ -41,16 +46,17 @@
 	</div>
 	<Table
 		table_header={[
-			['id_dokumen', 'ID Dokumen'],
-			['nama_dokumen', 'Nama Dokumen'],
+			['nama_arsip', 'Nama Dokumen'],
 			['asal_kerajaan', 'Asal Kerajaan'],
 
-			['jenis_dokumen', 'Jenis Dokumen'],
-			['kategori', 'Kategori'],
+			['jenis_arsip', 'Jenis Dokumen'],
+			['kategori_arsip', 'Kategori'],
+			['sub_kategori_arsip', 'Sub Kategori'],
+			['dokumentasi', 'Dokumentasi'],
 
 			['children', 'Aksi']
 		]}
-		table_data={dummyDocs}
+		table_data={dataArsip}
 	>
 		{#snippet children({ header, data, index })}
 			{#if header === 'Aksi'}
