@@ -191,7 +191,12 @@
 			return 'Ubah Acara Situs';
 		} else if (page.route.id === '/abdi/dashboard/situs/detail/daftaracara/laporan') {
 			return 'Laporan Acara';
+		} else if (page.route.id === '/abdi/sekretariat/anggota/pelantikan/tambahabdi') {
+			return 'Tambah Abdi';
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit') {
+			return 'Edit Organisasi';
 		}
+
 
 	
 	});
@@ -329,9 +334,7 @@
 							href="/abdi/sekretariat/anggota/daftaranggota"
 							icon="mdi:book"
 							anchor="Daftar Anggota"
-							active={window.location.pathname.startsWith(
-								'/abdi/sekretariat/anggota/daftaranggota'
-							)}
+							active={page.route.id === "/abdi/sekretariat/anggota/daftaranggota"}
 						/>
 						<SidebarMenu
 							href="/abdi/sekretariat/anggota/pelantikan"
@@ -548,8 +551,8 @@
 						href="/abdi/sekretariat/anggota/daftaranggota"
 						icon="mdi:book"
 						anchor="Daftar Anggota"
-						active={window.location.pathname.startsWith('/abdi/sekretariat/anggota/daftaranggota')}
-					/>
+						active={page.route.id === "/abdi/sekretariat/anggota/daftaranggota"}
+						/>
 					<SidebarMenu
 						href="/abdi/sekretariat/anggota/pelantikan"
 						icon="mdi:book"
@@ -583,7 +586,7 @@
 						href="/abdi/sekretariat/organisasi/daftarOrganisasi"
 						icon="mdi:book"
 						anchor="Daftar Organisasi"
-						active={page.route.id?.startsWith('/abdi/sekretariat/anggota/daftarOrganisasi')}
+						active={page.route.id === ('/abdi/sekretariat/organisasi/daftarOrganisasi')}
 					/>
 					<SidebarMenu
 						href="/abdi/sekretariat/organisasi/daftaranggota"

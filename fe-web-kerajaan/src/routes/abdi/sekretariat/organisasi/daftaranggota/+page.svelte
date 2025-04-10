@@ -1,11 +1,20 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAnggota } from '$lib/dummy';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import TambahAnggota from '$lib/popup/TambahAnggota.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
 	import { fade } from 'svelte/transition';
+	let { data } = $props();
+
 	let open = $state(false);
+	let valo = $state(false);
+	let error = $state();
+	let data2 = $state();
+	let timer : any;
+
 </script>
 
 <div class="flex w-full flex-col">
@@ -103,7 +112,31 @@
 	</div>
 </div>
 {#if open}
-	<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
-		<TambahAnggota bind:value={open}></TambahAnggota>
-	</div>
+	<form
+		action="?/tambah"
+		method="post"
+		use:enhance={() => {
+			return async ({ result }) => {
+				console.log(result)
+				if (result.type === 'success') {
+					valo = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						valo = false;
+					}, 3000);
+					open = false;
+				} else if (result.type === 'failure') {
+					error = result.data?.errors || '';
+				}
+			};
+		}}
+	>
+		<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
+			<TambahAnggota bind:value={open} bind:open={valo} errors={error} {data2} dataambil={data.detil_anggota} 
+			></TambahAnggota>
+		</div>
+	</form>
+{/if}
+{#if valo}
+	<SuccessModal text="Anggota berhasil Ditambah!"></SuccessModal>
 {/if}
