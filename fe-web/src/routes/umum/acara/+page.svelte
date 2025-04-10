@@ -9,6 +9,8 @@
 	import Cardshow from '../Cardshow.svelte';
 	import PaginationUmum from '../PaginationUmum.svelte';
 	import { tempdata, tempasetdata } from '$lib/dummy';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	let value = $state(0);
 </script>
@@ -79,6 +81,9 @@
 <div class="relative">
 	<Footer></Footer>
 </div>
+{#if navigating.to}
+	<Loader></Loader>
+{/if}
 
 <style>
 	.no-arrow {

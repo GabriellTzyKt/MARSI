@@ -3,6 +3,8 @@
 	import Navbar from '../nav/Navbar.svelte';
 	import gambarHeader from '../../../asset/umum/aset_top.png';
 	import Cardshow from '../Cardshow.svelte';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	let value = $state<number>(6);
 	let selectedDaerah = $state<string>('');
@@ -272,6 +274,9 @@
 <section class="h-full w-full overflow-hidden">
 	<Footer></Footer>
 </section>
+{#if navigating.to}
+	<Loader></Loader>
+{/if}
 
 <style>
 </style>

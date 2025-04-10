@@ -7,8 +7,11 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black/70"
-	onclick={() => (input = false)}
+	class=" fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black/70"
+	onclick={(e) => {
+		input = false;
+		e.stopPropagation();
+	}}
 	transition:fade={{ duration: 200 }}
 >
 	<div
@@ -17,7 +20,7 @@
 	>
 		<div class="mx-4 mt-4 flex items-center justify-between">
 			<div>
-				<p class="text-2xl">Add Jenis Arsip</p>
+				<p class="text-2xl">Edit Jenis Arsip</p>
 			</div>
 			<div
 				class="rounded-full p-2 hover:bg-gray-500"
@@ -48,9 +51,9 @@
 				placeholder="jenis..."
 				id=""
 			/>
-			<input type="text" hidden value={value.id_jenis_arsip} />
+			<input type="text" name="id_jenis_arsip" hidden value={value.id_jenis_arsip} />
 			{#if error}
-				<p class="text-red-500">{error.nama_jenis}</p>
+				<p class="text-red-500">{error}</p>
 			{/if}
 		</div>
 		<div class="my-4 flex justify-center md:justify-end">

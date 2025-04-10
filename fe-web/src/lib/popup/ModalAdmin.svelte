@@ -5,7 +5,7 @@
 	let { value = $bindable(), textM, open = $bindable(), errors = null, data = null } = $props();
 
 	let timer: number;
-
+	let type = $state('password');
 	if (open) {
 		timer = setTimeout(() => {
 			value = false;
@@ -108,6 +108,60 @@
 					{/each}
 				{/if}
 			</div>
+			<!-- password -->
+			<div class="flex flex-col md:col-span-full">
+				<div class="">
+					<p>Password</p>
+				</div>
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<div class="flex w-full justify-between rounded-lg border border-gray-300 shadow-lg">
+					<input
+						{type}
+						class="grow rounded-lg border-none shadow-none focus:outline-none focus:ring-0"
+						name="password"
+						placeholder="password"
+						id=""
+						value={data ? data.password : ''}
+					/>
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<div
+						class="me-1 ms-1 flex cursor-pointer items-center"
+						onclick={() => {
+							if (type === 'password') {
+								type = 'text';
+							} else type = 'password';
+						}}
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+							class="size-6"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+							/>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+							/>
+						</svg>
+					</div>
+				</div>
+				<div>
+					<p>*Password harus memiliki kombinasi minimal8 huruf,angka, dan simbol</p>
+				</div>
+				{#if errors}
+					{#each errors.password as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+				{/if}
+			</div>
 			<!-- Tanggal Lahir -->
 			<div class="flex flex-col md:col-span-2">
 				<div class="">
@@ -153,6 +207,27 @@
 			<!-- Afiliasi -->
 			<div class="flex flex-col md:col-span-full">
 				<div class="">
+					<p>Jenis Kelamin</p>
+				</div>
+				<div>
+					<select
+						name="jenis_kelamin"
+						class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none"
+						value="Laki-laki"
+						id=""
+					>
+						<option value="Laki-Laki">Laki-Laki</option>
+						<option value="Perempuan">Perempuan</option>
+					</select>
+					{#if errors}
+						{#each errors.jenis_kelamin as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
+				</div>
+			</div>
+			<div class="flex flex-col md:col-span-full">
+				<div class="">
 					<p>Afiliasi</p>
 				</div>
 				<div>
@@ -174,9 +249,17 @@
 
 			<!-- Role Admin -->
 			<div class="flex flex-col md:col-span-full">
-				<div class="">
+				<div class="flex flex-col md:flex-row md:justify-between">
 					<p>Role Admin</p>
+					<div class="flex items-center gap-2">
+						<p>Buat Menjadi Super Admin Kerajaan juga?</p>
+						<input type="radio" value="superadmin_kerajaan_ya" name="superadmin" />
+						<p>Ya</p>
+						<input type="radio" value="superadmin_kerajaan_tidak" name="superadmin" />
+						<p>Tidak</p>
+					</div>
 				</div>
+
 				<div>
 					<select
 						name="admin_role"

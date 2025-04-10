@@ -17,6 +17,8 @@
 	import { goto } from '$app/navigation';
 	import { enhance } from '$app/forms';
 	import { resolveRoute } from '$app/paths';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	let resultBaru: any = $state([]);
 
@@ -38,6 +40,9 @@
 	// const selectedFlip = form?.selectedFlip || [];
 </script>
 
+{#if navigating.to}
+	<Loader></Loader>
+{/if}
 <!-- Section 1 -->
 <section class="relative overflow-x-hidden">
 	<div class=" min-w-screen bg-umum flex min-h-screen flex-col items-center justify-center">
@@ -228,7 +233,7 @@
 				</form>
 			</div>
 
-			<div class="mx-auto flex flex-wrap justify-center gap-12 gap-y-4 mt-5">
+			<div class="mx-auto mt-5 flex flex-wrap justify-center gap-12 gap-y-4">
 				{#if resultBaru}
 					{#each resultBaru as item, i}
 						<Flipcard

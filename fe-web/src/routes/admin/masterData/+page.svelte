@@ -6,6 +6,7 @@
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import SModal from '$lib/popup/SModal.svelte';
 	import Table from '$lib/table/Table.svelte';
+	import { array } from 'zod';
 	import CustomBtn from './CustomBtn.svelte';
 	import Input from './Input.svelte';
 	import ModalTambah from './ModalTambah.svelte';
@@ -15,26 +16,18 @@
 	console.log(data_role);
 	let loading = $state(false);
 	let input = $state(false);
+	let entries = $state(10);
 
+	let currPage = $state(1);
 	let success = $state(false);
 	let namagelar = $state('');
 	let timer: number;
 	let error: any = $state('');
+	let keyword = $state('');
 	let edit = $state(false);
 
 	let namagelartemp: any = $state('');
 	let daftarGelar: any = $state([]);
-
-	function tambahGelar() {
-		if (namagelar.trim() !== '') {
-			daftarGelar = [...daftarGelar, namagelar.trim()];
-			namagelar = ''; // Reset input setelah ditambahkan
-		}
-	}
-
-	function hapusGelar(index: number) {
-		daftarGelar = daftarGelar.filter((_: any, i: number) => i !== index);
-	}
 
 	let select = $state('Gelar');
 	let openmodaltambah = $state(false);
@@ -42,6 +35,18 @@
 	function change(p: string) {
 		select = p;
 	}
+	function filteredData(data: any[]) {
+		return data.filter((item) => item?.nama_jenis?.toLowerCase().includes(keyword.toLowerCase()));
+	}
+	function paginate(data: any[]) {
+		const filter = filteredData(data);
+		const start = (currPage - 1) * entries;
+		const end = start + entries;
+		console.log(filter);
+		return filter.slice(start, end);
+	}
+
+	let displayData = $derived(paginate(data.dataArsip));
 	let del = $state(false);
 	function closeModal() {
 		if (openmodaltambah === true) {
@@ -51,6 +56,9 @@
 			openmodaledit = false;
 		}
 	}
+	console.log('Keyword:', keyword);
+	console.log('Data:', data);
+	let total_pages = $derived(Math.ceil(filteredData(data.dataArsip).length / entries));
 </script>
 
 <div class="flex w-full flex-col gap-4 xl:mx-4">
@@ -103,6 +111,7 @@
 					type="text"
 					class="border-none focus:outline-none focus:ring-0"
 					placeholder={`cari ${select}`}
+					bind:value={keyword}
 					name=""
 					id=""
 				/>
@@ -130,6 +139,7 @@
 				type="number"
 				class="flex w-16 justify-center rounded-lg border border-[#818181] bg-white focus:outline-none"
 				name=""
+				bind:value={entries}
 				id=""
 			/>
 			<p>entries</p>
@@ -170,7 +180,7 @@
 					['nama_jenis', 'Jenis Arsip', 'justify-start flex grow'],
 					['children', 'Aksi', 'text-right pe-48']
 				]}
-				table_data={data.dataArsip}
+				table_data={displayData}
 			>
 				{#snippet children({ header, data, index })}
 					{#if header === 'Aksi'}
@@ -178,6 +188,39 @@
 					{/if}
 				{/snippet}
 			</Table>
+			<div class="mt-4 flex flex-col lg:flex-row lg:justify-between">
+				<div>
+					<p>
+						Showing {(currPage - 1) * entries + 1}
+						to {Math.min(currPage * entries, filteredData(data.dataArsip).length)}
+						of {filteredData(data.dataArsip).length}
+					</p>
+				</div>
+				<div class="flex flex-row gap-3">
+					<button
+						class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
+						disabled={currPage === 1}
+						onclick={() => {
+							currPage--;
+						}}>Previous</button
+					>
+					{#each Array(total_pages) as _, i}
+						<button
+							class="rounded-lg p-4"
+							class:bg-[#F9D48B]={currPage === i + 1}
+							class:text-white={currPage === i + 1}
+							onclick={() => (currPage = i + 1)}>{i + 1}</button
+						>
+					{/each}
+					<button
+						class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
+						disabled={currPage === total_pages}
+						onclick={() => {
+							currPage++;
+						}}>Next</button
+					>
+				</div>
+			</div>
 		{/if}
 	</div>
 </div>
@@ -264,7 +307,9 @@
 	</div>
 {/if}
 {#if success}
-	<SModal text="Sukses!"></SModal>
+	<div class=" z-50">
+		<SModal text="Sukses!"></SModal>
+	</div>
 {/if}
 {#if loading}
 	<Loader></Loader>

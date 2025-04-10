@@ -17,8 +17,7 @@
 	let { data } = $props();
 	// import {dropId} from './DropDown.svelte'
 	let success = $state(false);
-	const dataKerajaan = data.dataKerajaan;
-	console.log(dataKerajaan);
+
 	let errors = $state();
 	let keyword = $state('');
 	let del = $state(false);
@@ -74,7 +73,7 @@
 			</div>
 		</div>
 	</div>
-	{#if !dataKerajaan}
+	{#if !data.dataKerajaan}
 		Memuat...
 	{/if}
 	<Table
@@ -89,7 +88,7 @@
 
 			['children', 'Aksi']
 		]}
-		table_data={dt}
+		table_data={data.dataKerajaan}
 		isdrop={true}
 	>
 		{#snippet children({ header, data, index })}
