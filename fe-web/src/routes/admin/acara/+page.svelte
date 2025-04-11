@@ -5,7 +5,25 @@
 	import { colord, Colord } from 'colord';
 	import Icon from '@iconify/svelte';
 	import '@fontsource/lato';
-
+	import TableAcara from '$lib/table/TableAcara.svelte';
+	let dummyAcara = [
+		{
+			id: 0,
+			nama: 'Acara1'
+		},
+		{
+			id: 1,
+			nama: 'Acara2'
+		},
+		{
+			id: 2,
+			nama: 'Acara3'
+		},
+		{
+			id: 3,
+			nama: 'Acara4'
+		}
+	];
 	let hex = '#878272ed';
 
 	let rgb = {
@@ -58,8 +76,34 @@
 		</svg>
 	</div>
 
-	<div class="flex flex-grow rounded-md border border-gray-500 w-[97%] bg-white p-5 m-5">
-		<p class="font-bold text-xl">History Acara : </p>
+	<div class="flex w-full flex-col flex-wrap items-center gap-6 overflow-auto p-5 lg:flex-row">
+		<div
+			class="flex-shrink-1 h-fit flex-grow rounded-md border border-gray-500 bg-white p-5 lg:h-full"
+		>
+			<p class="mb-3 text-center text-xl font-bold">
+				Persentase Acara Kerajaan berdasarkan Jenis Kerajaan
+			</p>
+			<PieChart />
+		</div>
+		<div
+			class="flex-shrink-1 h-fit flex-grow rounded-md border border-gray-500 bg-white p-5 lg:h-full"
+		>
+			<p class="mb-3 text-center text-xl font-bold">Jumlah Acara yang Berlangsung di 2024</p>
+			<Barplot />
+		</div>
+	</div>
+
+	<div class="m-5 flex w-[97%] flex-grow flex-col rounded-md border border-gray-500 bg-white p-5">
+		<p class="text-xl font-bold">History Acara :</p>
+		<div class="w-full">
+			<TableAcara
+				table_data={dummyAcara}
+				table_header={[
+					['id', 'ID'],
+					['nama', 'Nama']
+				]}
+			></TableAcara>
+		</div>
 	</div>
 
 </div>
