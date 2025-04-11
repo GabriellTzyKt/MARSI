@@ -1,6 +1,6 @@
 import { data_flipcard } from "$lib/dummy";
 import type { Action, Actions } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
+// import type { PageServerLoad } from "./$types";
 export const ssr = false;
 
 function getRandomIDs(count: number, max: number): number[] {

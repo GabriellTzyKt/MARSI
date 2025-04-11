@@ -12,7 +12,7 @@
 	<table class=" w-full table-auto rounded-xl border">
 		<thead class="">
 			<tr>
-				<th class="whitespace-nowrap px-4 py-2 text-left">No</th>
+				<th class="flex whitespace-nowrap px-4 py-2 text-left">No</th>
 				{#each table_header as header, i}
 					{#if typeof header === 'string'}
 						<th class="whitespace-nowrap px-4 py-2 text-left">{header}</th>

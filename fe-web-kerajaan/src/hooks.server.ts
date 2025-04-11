@@ -1,12 +1,12 @@
-import { redirect, type Handle } from '@sveltejs/kit';
+// import { redirect, type Handle } from '@sveltejs/kit';
 
-export const handle: Handle = async ({ event, resolve }) => {
+// export const handle: Handle = async ({ event, resolve }) => {
     
-    if (event.url.pathname === '/') {
+//     if (event.url.pathname === '/') {
         
-        return redirect(308, '/beranda')
-    }
+//         return redirect(308, '/beranda')
+//     }
 
-	const response = await resolve(event);
-	return response;
-}
+// 	const response = await resolve(event);
+// 	return response;
+// }
