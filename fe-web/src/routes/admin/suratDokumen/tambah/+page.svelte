@@ -1,5 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	// import { env } from '$env/dynamic/private';
+	import DropDown from '$lib/dropdown/DropDown.svelte';
+	const { data } = $props();
+	console.log(data.data);
+	let showDropdown = $state(false);
 
 	let nama = $state('');
 	let jenisDokumen = $state(' ');
@@ -34,6 +39,18 @@
 			console.log('Updated file list:', uploadedFiles);
 		}
 	}
+	$effect(() => {
+		if (keterkaitan === '') {
+			showDropdown = false;
+		} else {
+			showDropdown = true;
+		}
+	});
+
+	function selectKeterkaitan(value: string) {
+		keterkaitan = value;
+		showDropdown = false;
+	}
 
 	function removeImage(index: number) {
 		uploadedFiles = uploadedFiles.slice(0, index).concat(uploadedFiles.slice(index + 1));
@@ -52,6 +69,12 @@
 			fileInput.files = dataTransfer.files;
 		}
 	}
+	function filter(data: any[]) {
+		return data.filter((item) =>
+			item?.nama_kerajaan?.toLowerCase().includes(keterkaitan.toLowerCase())
+		);
+	}
+	let searchRes = $derived(filter(data.data));
 </script>
 
 <div class="test flex w-full flex-col">
@@ -101,10 +124,23 @@
 			<div class="text-md mt-2 text-start">
 				<label for="keterkaitan">Keterkaitan</label>
 				<div class="relative flex flex-col gap-1">
-					<input class="input-field rounded-lg border p-2 pr-10" />
+					<input class="input-field rounded-lg border p-2 pr-10" bind:value={keterkaitan} />
 
 					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
-
+					{#if showDropdown && searchRes.length > 0}
+						<ul class="bordeer z-10 max-h-40 w-full overflow-y-auto rounded-lg bg-white shadow-lg">
+							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+							{#each searchRes as item}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<li
+									class="cursor-pointer hover:bg-gray-300"
+									onclick={() => selectKeterkaitan(item.nama_kerajaan)}
+								>
+									{item.nama_kerajaan}
+								</li>
+							{/each}
+						</ul>
+					{/if}
 					{#if error}
 						{#each error.keterkaitan as error1}
 							<p class="text-left text-red-500">{error1}</p>

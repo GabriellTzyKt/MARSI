@@ -15,6 +15,7 @@
 	import Loader from '$lib/loader/Loader.svelte';
 
 	let { data } = $props();
+	console.log(data.dataKerajaan);
 	// import {dropId} from './DropDown.svelte'
 	let success = $state(false);
 

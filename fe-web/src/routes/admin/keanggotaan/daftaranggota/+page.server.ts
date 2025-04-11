@@ -15,7 +15,7 @@ export const load: PageServerLoad = async () => {
         //         "accept": "application/json"
         //     }
         // }
-       const request =await fetch(env.PUB_PORT + "/kerajaan", {
+       const request =await fetch(env.PUB_PORT + "/kerajaan?limit=100000000000000", {
             method: "GET",
             headers: {
                 "Accept": "application/json"
@@ -41,7 +41,7 @@ export const load: PageServerLoad = async () => {
                         ? formatDate(item.tanggal_berakhir)
                         : '-',
             }));
-
+            console.log(kerajaanFormatted)
             return {dataKerajaan : kerajaanFormatted}
         }
         else return {dataKerajaan: "Failed"}

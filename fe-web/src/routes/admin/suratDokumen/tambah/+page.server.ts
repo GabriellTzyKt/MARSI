@@ -2,8 +2,24 @@ import { env } from "$env/dynamic/private";
 import { fail } from "@sveltejs/kit";
 import { error, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
+import type { PageServerLoad } from "../$types";
 
 
+export const load: PageServerLoad = async () => {
+   try {
+			const res = await fetch(`${env.PUB_PORT}/kerajaan`, {
+				method: 'GET',
+				headers: {
+					Accept: 'application/json'
+				}
+			});
+			if (res.ok) {
+				const data = await res.json();
+				console.log(data);
+				return {data}
+			}
+		} catch (error) {}
+};
 export const actions: Actions = {
     submit: async ({ request }) => {
         const data = await request.formData();
