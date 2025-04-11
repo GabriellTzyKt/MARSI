@@ -15,7 +15,7 @@ export const load: PageServerLoad = async () => {
         //         "accept": "application/json"
         //     }
         // }
-       const request =await fetch(env.PUB_PORT + "/kerajaan", {
+       const request =await fetch(env.PUB_PORT + "/kerajaan?limit=200", {
             method: "GET",
             headers: {
                 "Accept": "application/json"
@@ -25,6 +25,7 @@ export const load: PageServerLoad = async () => {
         console.log(request)
         if (request.ok) {
             const data = await request.json()
+            console.log("Ini data: ", data)
             const formatDate = (iso: string) => {
                 const date = new Date(iso);
                 const day = String(date.getDate()).padStart(2, '0');

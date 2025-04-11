@@ -28,8 +28,9 @@
 			<SekreAbdiInput span="1" placeholder="Nama Acara"></SekreAbdiInput>
 			<SekreAbdiInput span="1" placeholder="Dilantik oleh Siapa"></SekreAbdiInput>
 			<SekreAbdiInput span="1" placeholder="Bukti Pelantikan" img={true}></SekreAbdiInput>
-			<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang lama"></SekreAbdiInput>
+			<SekreAbdiInput span="1" placeholder="Nama Abdi Dalam yang lama"></SekreAbdiInput>
 			<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang baru"></SekreAbdiInput>
+			<SekreAbdiInput span="1" placeholder="Nama Gelar" gelar={true}></SekreAbdiInput>
 		</div>
 	{/if}
 </div>
