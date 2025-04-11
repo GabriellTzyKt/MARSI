@@ -31,7 +31,7 @@ export const actions: Actions = {
             return fail(418, { errors: verif.error.flatten().fieldErrors, success: false, form: res })
         }
         try {
-            const send = await fetch(env.BASE_URL + "/kerajaan", {
+            const send = await fetch(env.PUB_PORT + "/kerajaan", {
                 method: "POST",
                 headers : {"Content-Type" : "application/json"},
                 body: JSON.stringify({
@@ -52,7 +52,7 @@ export const actions: Actions = {
             if (send.ok) {
                 return { errors: "no Error", success: true, form: res }
             }
-            return fail(400,{request:`Error Code : ${send.status} ${r.message}`})
+            return fail(400, { request: `Error Code : ${send.status} ${r.message}` })
         }
         catch (e) {
             console.error("Fetch Error", e)

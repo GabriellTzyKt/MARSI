@@ -15,6 +15,7 @@
 	import Loader from '$lib/loader/Loader.svelte';
 
 	let { data } = $props();
+	console.log(data.dataKerajaan);
 	// import {dropId} from './DropDown.svelte'
 	let success = $state(false);
 
@@ -26,17 +27,7 @@
 	let entries = $state(10);
 	let currPage = $state(1);
 	let tambah = $state(false);
-	$effect(() => {
-		dt = keyword.trim()
-			? data.dataKerajaan.filter(
-					(d) =>
-						d.nama_kerajaan.toLowerCase().includes(keyword.toLowerCase().trim()) ||
-						d.alamat_kerajaan.toLowerCase().includes(keyword.toLowerCase().trim()) ||
-						d.raja_sekarang.toLowerCase().includes(keyword.toLowerCase().trim()) ||
-						d.jenis_kerajaan.toLowerCase().includes(keyword.toLowerCase().trim())
-				)
-			: data.dataKerajaan;
-	});
+
 	$effect(() => {
 		if (!edit || !tambah) {
 			errors = null;
@@ -46,6 +37,25 @@
 	let ttlPage = $derived(Math.ceil(dt.length / entries));
 	// const {data} = $props()
 	// console.log(data.tabel)
+	function filterData(data: any[]) {
+		return data.filter(
+			(item) =>
+				item?.nama_kerajaan?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.alamat_kerajaan?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.tanggal_berdiri?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.era?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.tanggal_berdiri?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.raja_sekarang?.toLowerCase().includes(keyword.toLowerCase())
+		);
+	}
+	function pagination(data: any[]) {
+		const filter = filterData(data);
+		const start = (currPage - 1) * entries;
+		const end = start + entries;
+		return filter.slice(start, end);
+	}
+	let resData = $derived(pagination(data.dataKerajaan));
+	let total_pages = $derived(Math.ceil(filterData(data.dataKerajaan).length / entries));
 </script>
 
 {#if navigating.to}
@@ -88,7 +98,7 @@
 
 			['children', 'Aksi']
 		]}
-		table_data={data.dataKerajaan}
+		table_data={resData}
 		isdrop={true}
 	>
 		{#snippet children({ header, data, index })}
@@ -139,24 +149,37 @@
 			</div>
 		{/snippet}
 	</Table>
-	<div class="mt-4 flex justify-between">
-		<div class="">
-			<p>Showing 1 to {entries} of 10 entries</p>
+
+	<div class="mt-4 flex flex-col lg:flex-row lg:justify-between">
+		<div>
+			<p>
+				Showing {(currPage - 1) * entries + 1}
+				to {Math.min(currPage * entries, filterData(data.dataKerajaan).length)}
+				of {filterData(data.dataKerajaan).length}
+			</p>
 		</div>
-		<div class="flex flex-row gap-2">
+		<div class="flex flex-row gap-3">
 			<button
-				class="rounded-lg border px-6 py-2 {currPage === 1 ? '' : 'hover:bg-[#F9D48B]'}"
+				class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
+				disabled={currPage === 1}
 				onclick={() => {
-					currPage = Math.max(1, currPage - 1);
-				}}
-				disabled={currPage === 1}>Previous</button
+					currPage--;
+				}}>Previous</button
 			>
+			{#each Array(total_pages) as _, i}
+				<button
+					class="rounded-lg p-4"
+					class:bg-[#F9D48B]={currPage === i + 1}
+					class:text-white={currPage === i + 1}
+					onclick={() => (currPage = i + 1)}>{i + 1}</button
+				>
+			{/each}
 			<button
-				class="rounded-lg border px-6 py-2 {currPage === ttlPage ? '' : 'hover:bg-[#F9D48B]'}"
+				class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
+				disabled={currPage === total_pages}
 				onclick={() => {
-					currPage = Math.min(ttlPage, currPage + 1);
-				}}
-				disabled={currPage === ttlPage}>Next</button
+					currPage++;
+				}}>Next</button
 			>
 		</div>
 	</div>

@@ -8,6 +8,7 @@
 	import SModal from '$lib/popup/SModal.svelte';
 	let { form } = $props();
 	let open = $state(false);
+	let admin = $state();
 	let valo = $state(false);
 	let edit = $state(false);
 	let list = ['Super Admin', 'Admin Kerajaan'];

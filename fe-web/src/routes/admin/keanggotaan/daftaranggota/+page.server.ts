@@ -42,7 +42,7 @@ export const load: PageServerLoad = async () => {
                         ? formatDate(item.tanggal_berakhir)
                         : '-',
             }));
-
+            console.log(kerajaanFormatted)
             return {dataKerajaan : kerajaanFormatted}
         }
         else return {dataKerajaan: "Failed"}
