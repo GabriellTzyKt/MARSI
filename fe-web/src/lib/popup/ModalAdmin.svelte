@@ -4,6 +4,8 @@
 	import SModal from './SModal.svelte';
 	let { value = $bindable(), textM, open = $bindable(), errors = null, data = null } = $props();
 
+	console.log("data : " , data)
+
 	let timer: number;
 	let type = $state('password');
 	if (open) {
@@ -66,6 +68,28 @@
 					{/if}
 				</div>
 			</div>
+
+			<div class="flex flex-col md:col-span-full">
+				<div class="">
+					<p>Username</p>
+				</div>
+				<div>
+					<input
+						type="text"
+						class="w-full rounded-lg border border-gray-300 focus:outline-none"
+						name="username"
+						placeholder="Jane Doe"
+						id=""
+						value={data ? data.username : ''}
+					/>
+					{#if errors}
+						{#each errors.username as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
+				</div>
+			</div>
+
 			<!-- Email -->
 			<div class="flex flex-col md:col-span-full">
 				<div class="">
@@ -253,11 +277,16 @@
 					<p>Role Admin</p>
 					<div class="flex items-center gap-2">
 						<p>Buat Menjadi Super Admin Kerajaan juga?</p>
-						<input type="radio" value="superadmin_kerajaan_ya" name="superadmin" />
+						<input type="radio" value="superadmin_kerajaan_ya"  name="superadmin" />
 						<p>Ya</p>
 						<input type="radio" value="superadmin_kerajaan_tidak" name="superadmin" />
 						<p>Tidak</p>
 					</div>
+					{#if errors}
+						{#each errors.inputradio as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
 				</div>
 
 				<div>

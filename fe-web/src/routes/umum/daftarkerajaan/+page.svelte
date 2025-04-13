@@ -78,7 +78,7 @@
 	}
 
 	function updateFilteredData() {
-		const filteredData = dataGet.filter((v) => {
+		const filteredData = dataGet.filter((v : any) => {
 			const isDaerahMatch = selectedDaerah
 				? v.lokasi.toLowerCase().includes(selectedDaerah.toLowerCase())
 				: true;
@@ -90,10 +90,10 @@
 
 		// kalau hasilnya > 0 maka swap
 		if (sortOrder === 'asc') {
-			filteredData.sort((a, b) => Number(a.tahun) - Number(b.tahun));
+			filteredData.sort((a : any, b : any) => Number(a.tahun) - Number(b.tahun));
 			// kalau hasilnya < 0 maka swap
 		} else if (sortOrder === 'desc') {
-			filteredData.sort((a, b) => Number(b.tahun) - Number(a.tahun));
+			filteredData.sort((a : any, b : any) => Number(b.tahun) - Number(a.tahun));
 		}
 
 		console.log('Filtered Data:', filteredData);

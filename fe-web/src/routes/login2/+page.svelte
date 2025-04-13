@@ -1,11 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { timeout } from 'd3';
 	import image from '../../asset/Logo_MARSI_login.png';
 	import SModal from '$lib/popup/SModal.svelte';
-	import { redirect } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
-	import { getRequest } from '@sveltejs/kit/node';
 	let { form } = $props();
 
 	let open = $state(false);

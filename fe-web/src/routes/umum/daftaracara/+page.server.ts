@@ -1,8 +1,27 @@
-import { detail_acara } from "$lib/dummy";
+import { env } from "$env/dynamic/private";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async () => {
-    const detil_acara = detail_acara
+    try {
+    
+        const request = await fetch(env.BASE_URL_8008 + "/acara?limit=200", {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        })
 
-    return { detil_acara };
+        console.log(request)
+        if (request.ok) {
+            const data = await request.json()
+            console.log("Ini data: ", data)
+            
+            return { dataKerajaan: data }
+        }
+        else return { dataKerajaan: "Failed" }
+
+    }
+    catch (e) {
+        if (e instanceof Error) return console.log(e.message)
+    }
 };

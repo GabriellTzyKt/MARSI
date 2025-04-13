@@ -4,8 +4,11 @@
 	import { slide } from 'svelte/transition';
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import ModalAdmin from '$lib/popup/ModalAdmin.svelte';
+	import { enhance } from '$app/forms';
+	import SModal from '$lib/popup/SModal.svelte';
 	let open = $state(false);
 	let value = $state(false);
+	let timer: number;
 	// let edit = $state(false);
 	let isAktif = $state(true);
 	let valo = $state(false);
@@ -151,9 +154,26 @@
 	></DeleteModal>
 {/if}
 {#if edit}
-	<form action="?/ubah" method="POST">
+	<form action="?/ubah" method="POST" use:enhance={() => {
+		return async ({ result }) => {
+			console.log(result);
+			if (result.type === 'success') {
+				valo = true;
+				clearTimeout(timer);
+				timer = setTimeout(() => {
+					valo = false;
+					edit = false;
+				}, 3000);
+			} else if (result.type === 'failure') {
+				error = result?.data?.errors;
+			}
+		};
+	}}>
 		<ModalAdmin textM="Ubah" bind:value={edit} bind:open={valo} errors={error} {data}></ModalAdmin>
 	</form>
+{/if}
+{#if valo}
+	<SModal text="Admin Berhasil Dirubah"></SModal>
 {/if}
 
 <style>

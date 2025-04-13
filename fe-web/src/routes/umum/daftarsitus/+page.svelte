@@ -22,7 +22,7 @@
 	const { data } = $props();
 	console.log('Data diterima ', data);
 	// judul lokasi gambar
-	const dataGet = data.find;
+	const dataGet = data.detil_situs;
 
 	function handleSortChange(event: Event) {
 		const target = event.target as HTMLSelectElement;
@@ -81,20 +81,20 @@
 	}
 
 	function updateFilteredData() {
-		const filteredData = dataGet.filter((v) => {
+		const filteredData = dataGet.filter((v : any) => {
 			const isDaerahMatch = selectedDaerah
-				? v.lokasi.toLowerCase().includes(selectedDaerah.toLowerCase())
+				? v.alamat.toLowerCase().includes(selectedDaerah.toLowerCase())
 				: true;
-			const isKeywordMatch = v.nama_tempat.toLowerCase().includes(keyword.toLowerCase());
-			const isKategoriMatch = v.nama_tempat.toLowerCase().includes(selectKategori.toLowerCase());
+			const isKeywordMatch = v.nama_situs.toLowerCase().includes(keyword.toLowerCase());
+			const isKategoriMatch = v.nama_situs.toLowerCase().includes(selectKategori.toLowerCase());
 
 			return isDaerahMatch && isKeywordMatch && isKategoriMatch;
 		});
 
 		if (sortOrder === 'asc') {
-			filteredData.sort((a, b) => Number(a.tahun) - Number(b.tahun));
+			filteredData.sort((a : any, b : any) => Number(a.tahun) - Number(b.tahun));
 		} else if (sortOrder === 'desc') {
-			filteredData.sort((a, b) => Number(b.tahun) - Number(a.tahun));
+			filteredData.sort((a : any, b : any) => Number(b.tahun) - Number(a.tahun));
 		} else {
 			filteredData
 		}
@@ -238,8 +238,8 @@
 	<div class="relative mb-20 ml-10 mr-10 mt-10 grid grid-cols-1 gap-x-4 gap-y-10 md:grid-cols-2">
 		{#each updateFilteredData().slice(0, displayedCount) as situs}
 			<Cardshow
-				judul={situs.nama_tempat}
-				lokasi={situs.lokasi}
+				judul={situs.nama_situs}
+				lokasi={situs.alamat}
 				gambar={situs.gambartop}
 				id={situs.id}
 				tahun={situs.tahun}

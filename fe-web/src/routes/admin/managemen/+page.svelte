@@ -6,6 +6,7 @@
 	import jd from '../../../asset/profile/jdpp.jpg';
 	import { onMount } from 'svelte';
 	import SModal from '$lib/popup/SModal.svelte';
+	import { enhance } from '$app/forms';
 	let { form } = $props();
 	let open = $state(false);
 	let admin = $state();
@@ -107,7 +108,21 @@
 	<!-- line -->
 </div>
 {#if open}
-	<form action="?/tambah" method="post">
+	<form action="?/tambah" method="post" use:enhance={() => {
+		return async ({ result }) => {
+			console.log(result);
+			if (result.type === 'success') {
+				valo = true;
+				clearTimeout(timer);
+				timer = setTimeout(() => {
+					valo = false;
+					open = false;
+				}, 3000);
+			} else if (result.type === 'failure') {
+				error = result?.data?.errors;
+			}
+		};
+	}}>
 		<ModalAdmin textM="Tambah" bind:value={open} bind:open={valo} errors={error} {data}
 		></ModalAdmin>
 	</form>

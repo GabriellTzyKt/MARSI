@@ -76,31 +76,18 @@
 		</svg>
 	</div>
 
-	<div class="flex w-full flex-col flex-wrap items-center gap-6 overflow-auto p-5 lg:flex-row">
-		<div
-			class="flex-shrink-1 h-fit flex-grow rounded-md border border-gray-500 bg-white p-5 lg:h-full"
-		>
-			<p class="mb-3 text-center text-xl font-bold">
-				Persentase Acara Kerajaan berdasarkan Jenis Kerajaan
-			</p>
-			<PieChart />
-		</div>
-		<div
-			class="flex-shrink-1 h-fit flex-grow rounded-md border border-gray-500 bg-white p-5 lg:h-full"
-		>
-			<p class="mb-3 text-center text-xl font-bold">Jumlah Acara yang Berlangsung di 2024</p>
-			<Barplot />
-		</div>
-	</div>
-
 	<div class="m-5 flex w-[97%] flex-grow flex-col rounded-md border border-gray-500 bg-white p-5">
 		<p class="text-xl font-bold">History Acara :</p>
 		<div class="w-full">
 			<TableAcara
 				table_data={dummyAcara}
 				table_header={[
-					['id', 'ID'],
-					['nama', 'Nama']
+					['nama', 'Nama Acara'],
+					['tanggal', 'Tanggal Acara'],
+					['lokasi', 'Lokasi Acara'],
+					['penyelenggara', 'Penyelenggara Acara'],
+					['jenis', 'Jenis Acara'],
+					['status', 'Status'],
 				]}
 			></TableAcara>
 		</div>

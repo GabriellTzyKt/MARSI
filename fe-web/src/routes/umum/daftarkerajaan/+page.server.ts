@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({fetch}) => {
     const detil_kerajaan = tempdata
 
     try {
-        const res = await fetch(env.BASE_URL + "/kerajaan");
+        const res = await fetch(env.BASE_URL + "/kerajaan?limit=200");
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }

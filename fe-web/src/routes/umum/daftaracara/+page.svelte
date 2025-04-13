@@ -21,7 +21,7 @@
 	let userLocation: string | null = $state(' ');
 
 	const { data } = $props();
-	const dataGet = data.detil_acara;
+	const dataGet = data.dataKerajaan;
 	console.log('Acara : ', dataGet);
 
 	function handleSortChange(event: Event) {
@@ -80,19 +80,22 @@
 	}
 
 	function updateFilteredData() {
-		const filteredData = dataGet.filter((v) => {
-			const isDaerahMatch = selectedDaerah
-				? v.daerah.toLowerCase().includes(selectedDaerah.toLowerCase())
-				: true;
-			const isKeywordMatch = v.nama_tempat.toLowerCase().includes(keyword.toLowerCase());
+		const filteredData = dataGet.filter((v: any) => {
+			const daerah = v.lokasi_acara?.toLowerCase?.() ?? '';
+			const namaTempat = v.nama_acara?.toLowerCase?.() ?? '';
+			const keywordLower = keyword?.toLowerCase?.() ?? '';
+			const selectedDaerahLower = selectedDaerah?.toLowerCase?.() ?? '';
+
+			const isDaerahMatch = selectedDaerah ? daerah.includes(selectedDaerahLower) : true;
+			const isKeywordMatch = namaTempat.includes(keywordLower);
 
 			return isDaerahMatch && isKeywordMatch;
 		});
 
 		if (sortOrder === 'asc') {
-			filteredData.sort((a, b) => Number(a.tahun) - Number(b.tahun));
+			filteredData.sort((a: any, b: any) => Number(a.tahun) - Number(b.tahun));
 		} else if (sortOrder === 'desc') {
-			filteredData.sort((a, b) => Number(b.tahun) - Number(a.tahun));
+			filteredData.sort((a: any, b: any) => Number(b.tahun) - Number(a.tahun));
 		}
 
 		console.log('Filtered Data:', filteredData);
@@ -218,11 +221,10 @@
 	<div class="relative mb-20 ml-10 mr-10 mt-10 grid grid-cols-1 gap-x-4 gap-y-10 md:grid-cols-2">
 		{#each updateFilteredData().slice(0, displayedCount) as situs}
 			<Cardshow
-				judul={situs.nama_tempat}
+				judul={situs.nama_acara}
 				lokasi={situs.kepemilikan}
 				gambar={situs.gambar1}
-				id={situs.id}
-				tahun={situs.tahun}
+				id={situs.id_acara}
 			/>
 		{/each}
 	</div>
