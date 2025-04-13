@@ -1,8 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { scaleUtc, timeout } from 'd3';
 	import image from '../../asset/Logo_MARSI_login.png';
 	import SModal from '$lib/popup/SModal.svelte';
+	// import { redirect } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
+	import { enhance } from '$app/forms';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
+	// import { getRequest } from '@sveltejs/kit/node';
 	let { form } = $props();
 
 	let open = $state(false);
@@ -15,22 +21,25 @@
 			}, 2000);
 		}
 	});
+	let error = $state();
 
 	let inputt = $state('');
 	if (form?.email) {
 		inputt = form.email.toString();
 	}
 	let tipe = $state('password');
-
-	let notelp = $state('08963333333333');
-
-	let tipelogin = $state('email');
-	let txtlogin = $state('Email');
 	let trans = $state(false);
+	let loading = $state(false);
+	let errB = $state();
 </script>
 
 {#if open}
 	<SModal text="Berhasil Login"></SModal>
+{/if}
+{#if navigating.to}
+	<Loader text="Navigating.."></Loader>
+{:else if loading}
+	<Loader text="Loading.."></Loader>
 {/if}
 <div class="bg-login flex items-center justify-center">
 	<div class="rounded-lg border bg-white px-2 py-3 sm:px-10 sm:py-8 md:px-16 md:py-8">
@@ -42,21 +51,42 @@
 				<p class="text-center text-4xl font-[600]">Selamat Datang!</p>
 				<p class="text-md mt-4 text-center">Silahkan Sign in dibawah Untuk Melanjutkan</p>
 			</div>
-			<form method="post" action="?/register">
+			<form
+				method="post"
+				action="?/register"
+				use:enhance={() => {
+					loading = true;
+					return async ({ result }) => {
+						loading = false;
+						if (result.type === 'success') {
+							let timer: number;
+							open = true;
+							timer = setTimeout(() => {
+								open = false;
+								goto('/admin/beranda');
+							}, 3000);
+						}
+						if (result.type === 'failure') {
+							error = result.data?.errors;
+							errB = result.data?.errorB;
+						}
+					};
+				}}
+			>
 				<div class="mt-3">
 					<div class="flex flex-col">
-						<p class="mb-2">Masukkan Email / Nomer Telepon</p>
+						<p class="mb-2">Masukkan Username</p>
 
 						<input
 							type="text"
-							name="emailno"
-							id="emailno"
-							placeholder="Masukkan Email/notelp Anda"
+							name="username"
+							id="username"
+							placeholder="Masukkan Userame Anda"
 							class="bg-input border-none py-2"
 							bind:value={inputt}
 						/>
-						{#if form?.errors.notelporEmail}
-							{#each form.errors.notelporEmail as e}
+						{#if error}
+							{#each error.username as e}
 								<p class="my-2 text-red-500">{e}</p>
 							{/each}
 						{/if}
@@ -131,8 +161,8 @@
 							<p class="text-xs">
 								It must be a combination of minimum 8 letters, numbers & symbols
 							</p>
-							{#if form?.errors.pass}
-								{#each form.errors.pass as p}
+							{#if error}
+								{#each error.pass as p}
 									<p class="my-1 text-red-500">{p}</p>
 								{/each}
 							{/if}
@@ -146,6 +176,9 @@
 								<a href="/login" class="txt-pass">Forgot Password?</a>
 							</div>
 						</div>
+						{#if errB}
+							<p class="text-left text-red-500">{errB}</p>
+						{/if}
 						<div class="flex items-center justify-center text-center">
 							<button class="bg-bt w-full py-3 font-[650] text-white" type="submit">Log In</button>
 						</div>

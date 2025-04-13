@@ -1,21 +1,15 @@
-import { every, scaleUtc } from "d3";
+import { every, local, scaleUtc, timeFormatDefaultLocale } from "d3";
 
 import type { Actions } from "./$types";
 import { z } from 'zod';
-import { redirect } from "@sveltejs/kit";
+import { fail } from "@sveltejs/kit";
+import { env } from "$env/dynamic/private";
 
 export const actions: Actions = {
-    register: async ({ cookies, request }) => {
+    register: async ({ cookies, request, locals }) => {
         
         const User = z.object({
-            notelporEmail: z.string()
-                .min(5, { message: "Minimal 5 karakter" })
-                .max(255, { message: "Maksimal 255 karakter" })
-                .refine(val => {
-                    const email = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(val)
-                    const notelp = /^[0-9]{5,15}$/.test(val)
-                    return email||notelp
-                },{message: "Harus berupa email atau nomor telepon yang valid"})
+            username: z.string().nonempty("Field username Tidak Boleh Kosong")
             ,
             // notelp: z.string()
             //     .min(5, { message: "Notelp Minimal 5 digit" })
@@ -30,28 +24,56 @@ export const actions: Actions = {
                 .max(255, { message: "Password sudah maximal!" })
                 .nonempty({ message: "Password tidak boleh kosong" })
                 .regex(/[A-Z]/, { message: "Password Harus ada minimal 1 huruf Kapital" })
-                .regex(/[0-9]/, { message: "Password Harus ada miniam 1 angka" })
+                .regex(/[0-9]/, { message: "Password Harus ada minimal 1 angka" })
                 .regex(/[^A-Za-z0-9]/,{message: "Password harus ada simbol"})
         })
 
         const data = await request.formData()
-        const email = data.get('emailno')
+        const username = data.get('username')
         const validation = User.safeParse({
-            notelporEmail: data.get("emailno"),
-            pass: data.get("pass")
+            username: data.get("username")||"",
+            pass: data.get("pass")||""
         })
-        console.log(data)
+        console.log(validation.data)
+        
         if (!validation.success) {
             console.log(validation.error.flatten().fieldErrors)
-            return { errors: validation.error.flatten().fieldErrors, success: false, email  }
+            return fail(406,{ errors: validation.error.flatten().fieldErrors, success: false, username  })
         }
-        cookies.set("userSession", JSON.stringify({ nama: "eric" }), {
+        const dataaa = new FormData()
+        dataaa.append("username",data.get("username") as string)
+        dataaa.append("password", data.get("pass") as string)
+        const r = {
+            username: data.get("username"),
+            password: data.get("pass")
+        }
+        const res = await fetch(`${env.PUB_PORT}/sign-in`, {
+            method: "POST",
+            headers: {
+               "Accept":"*/*"
+            },
+            body: dataaa
+        });
+        
+            const s = await res.json()
+        
+        if (res.ok) {
+            console.log(s)
+             console.log(res)
+        cookies.set("userSession", JSON.stringify({ nama: s.username,token: s.jwt_token }), {
             path: '/',
             maxAge: 60 * 100000,
             sameSite: 'strict'
-         })
-        
-        return {errors: false ,success: true, email}
+        })
+           return {errors:false,success: true}
+           
+            
+        }
+       
+       
+        console.log(locals.token)
+        return fail(406,{ errorB:s.message, success: false, username  })
+       
        
     }
 };

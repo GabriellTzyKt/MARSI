@@ -19,6 +19,9 @@
 	import { resolveRoute } from '$app/paths';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
+	import LoaderUmum from '$lib/loader/LoaderUmum.svelte';
+	import Loader1 from '$lib/loader/Loader1.svelte';
+	import Loader2 from '$lib/loader/Loader2.svelte';
 
 	let resultBaru: any = $state([]);
 
@@ -41,7 +44,9 @@
 </script>
 
 {#if navigating.to}
-	<Loader></Loader>
+	<!-- <LoaderUmum></LoaderUmum> -->
+	<Loader2></Loader2>
+	<!-- <Loader1></Loader1> -->
 {/if}
 <!-- Section 1 -->
 <section class="relative overflow-x-hidden">

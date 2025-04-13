@@ -1,280 +1,532 @@
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="fixed left-0 top-0 z-40 flex h-full w-full cursor-wait flex-col items-center justify-center bg-black/60
-	"
-	onclick={(e) => e.stopPropagation()}
+	class="fixed left-0 top-0 z-40 flex h-full w-full flex-col items-center justify-center bg-black/70"
 >
-	<div class="hexagon" aria-label="Animated hexagonal ripples">
-		<div class="hexagon__group">
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
+	<div class="socket">
+		<div class="gel center-gel">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
 		</div>
-		<div class="hexagon__group">
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
+		<div class="gel c1 r1">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
 		</div>
-		<div class="hexagon__group">
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
+		<div class="gel c2 r1">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
 		</div>
-		<div class="hexagon__group">
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
+		<div class="gel c3 r1">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
 		</div>
-		<div class="hexagon__group">
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
+		<div class="gel c4 r1">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
 		</div>
-		<div class="hexagon__group">
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
-			<div class="hexagon__sector"></div>
+		<div class="gel c5 r1">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c6 r1">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+
+		<div class="gel c7 r2">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+
+		<div class="gel c8 r2">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c9 r2">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c10 r2">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c11 r2">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c12 r2">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c13 r2">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c14 r2">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c15 r2">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c16 r2">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c17 r2">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c18 r2">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c19 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c20 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c21 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c22 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c23 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c24 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c25 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c26 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c28 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c29 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c30 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c31 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c32 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c33 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c34 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c35 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c36 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
+		</div>
+		<div class="gel c37 r3">
+			<div class="hex-brick h1"></div>
+			<div class="hex-brick h2"></div>
+			<div class="hex-brick h3"></div>
 		</div>
 	</div>
-	<p aria-label="Loading">Loading...</p>
 </div>
 
 <style>
-	* {
-		border: 0;
-		box-sizing: border-box;
-		margin: 0;
-		padding: 0;
-	}
-	:root {
-		--bg: #e3e4e8;
-		--fg: #17181c;
-		--dur: 8s;
-		font-size: calc(20px + (30 - 20) * (100vw - 320px) / (1280 - 320));
-	}
-	body {
-		background: var(--bg);
-		color: var(--fg);
-		font:
-			bold 1em/1.5 'Comfortaa',
-			sans-serif;
-		display: grid;
-		place-items: center;
-		align-content: center;
-		height: 100vh;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-	}
-	.hexagon {
-		margin-bottom: 1.5em;
-		overflow: hidden;
-		position: relative;
-		width: 15em;
-		height: 15em;
-	}
-	.hexagon__group,
-	.hexagon__sector,
-	.hexagon__sector:before,
-	.hexagon__sector:after {
+	.socket {
+		width: 200px;
+		height: 200px;
 		position: absolute;
+		left: 50%;
+		margin-left: -100px;
+		top: 50%;
+		margin-top: -100px;
 	}
-	.hexagon__group {
-		width: 100%;
-		height: 100%;
-	}
-	.hexagon__group:nth-child(2) .hexagon__sector,
-	.hexagon__group:nth-child(2) .hexagon__sector:before,
-	.hexagon__group:nth-child(2) .hexagon__sector:after {
-		animation-delay: calc(var(--dur) * -1 / 6);
-	}
-	.hexagon__group:nth-child(3) .hexagon__sector,
-	.hexagon__group:nth-child(3) .hexagon__sector:before,
-	.hexagon__group:nth-child(3) .hexagon__sector:after {
-		animation-delay: calc(var(--dur) * -2 / 6);
-	}
-	.hexagon__group:nth-child(4) .hexagon__sector,
-	.hexagon__group:nth-child(4) .hexagon__sector:before,
-	.hexagon__group:nth-child(4) .hexagon__sector:after {
-		animation-delay: calc(var(--dur) * -3 / 6);
-	}
-	.hexagon__group:nth-child(5) .hexagon__sector,
-	.hexagon__group:nth-child(5) .hexagon__sector:before,
-	.hexagon__group:nth-child(5) .hexagon__sector:after {
-		animation-delay: calc(var(--dur) * -4 / 6);
-	}
-	.hexagon__group:nth-child(6) .hexagon__sector,
-	.hexagon__group:nth-child(6) .hexagon__sector:before,
-	.hexagon__group:nth-child(6) .hexagon__sector:after {
-		animation-delay: calc(var(--dur) * -5 / 6);
-	}
-	.hexagon__group:nth-child(odd) {
-		transform: rotate(30deg);
-	}
-	.hexagon__sector,
-	.hexagon__sector:before,
-	.hexagon__sector:after {
-		animation-duration: var(--dur);
+
+	.hex-brick {
+		background: white;
+		width: 30px;
+		height: 17px;
+		position: absolute;
+		top: 5px;
+		animation-name: fade00;
+		animation-duration: 2s;
 		animation-iteration-count: infinite;
-		animation-timing-function: linear;
-		/*animation-play-state: paused;*/
-		width: 0.2em;
-		height: 0.2em;
+		-webkit-animation-name: fade00;
+		-webkit-animation-duration: 2s;
+		-webkit-animation-iteration-count: infinite;
 	}
-	.hexagon__sector {
-		animation-name: moveOut1;
-		top: calc(50% - 0.1em);
-		left: calc(50% - 0.1em);
+
+	.h2 {
+		transform: rotate(60deg);
+		-webkit-transform: rotate(60deg);
 	}
-	.hexagon__sector:nth-child(2) {
-		animation-name: moveOut2;
+
+	.h3 {
+		transform: rotate(-60deg);
+		-webkit-transform: rotate(-60deg);
 	}
-	.hexagon__sector:nth-child(3) {
-		animation-name: moveOut3;
+
+	.gel {
+		height: 30px;
+		width: 30px;
+		transition: all 0.3s;
+		-webkit-transition: all 0.3s;
+		position: absolute;
+		top: 50%;
+		left: 50%;
 	}
-	.hexagon__sector:nth-child(4) {
-		animation-name: moveOut4;
+
+	.center-gel {
+		margin-left: -15px;
+		margin-top: -15px;
+		animation-name: pulse00;
+		animation-duration: 2s;
+		animation-iteration-count: infinite;
+		-webkit-animation-name: pulse00;
+		-webkit-animation-duration: 2s;
+		-webkit-animation-iteration-count: infinite;
 	}
-	.hexagon__sector:nth-child(5) {
-		animation-name: moveOut5;
+
+	.c1 {
+		margin-left: -47px;
+		margin-top: -15px;
 	}
-	.hexagon__sector:nth-child(6) {
-		animation-name: moveOut6;
+
+	.c2 {
+		margin-left: -31px;
+		margin-top: -43px;
 	}
-	.hexagon__sector:before,
-	.hexagon__sector:after {
-		animation-name: ripple;
-		background-color: currentColor;
-		border-radius: 0.1em;
-		content: '';
-		display: block;
-		top: 0;
-		left: 0;
-		transform-origin: 0.1em 0.1em;
+
+	.c3 {
+		margin-left: 1px;
+		margin-top: -43px;
 	}
-	.hexagon__sector:before {
-		transform: rotate(-30deg);
+
+	.c4 {
+		margin-left: 17px;
+		margin-top: -15px;
 	}
-	.hexagon__sector:after {
-		transform: rotate(-150deg);
+
+	.c5 {
+		margin-left: -31px;
+		margin-top: 13px;
 	}
-	/* Dark theme */
-	@media (prefers-color-scheme: dark) {
-		:root {
-			--bg: #17181c;
-			--fg: #e3e4e8;
+
+	.c6 {
+		margin-left: 1px;
+		margin-top: 13px;
+	}
+
+	.c7 {
+		margin-left: -63px;
+		margin-top: -43px;
+	}
+
+	.c8 {
+		margin-left: 33px;
+		margin-top: -43px;
+	}
+
+	.c9 {
+		margin-left: -15px;
+		margin-top: 41px;
+	}
+
+	.c10 {
+		margin-left: -63px;
+		margin-top: 13px;
+	}
+
+	.c11 {
+		margin-left: 33px;
+		margin-top: 13px;
+	}
+
+	.c12 {
+		margin-left: -15px;
+		margin-top: -71px;
+	}
+
+	.c13 {
+		margin-left: -47px;
+		margin-top: -71px;
+	}
+
+	.c14 {
+		margin-left: 17px;
+		margin-top: -71px;
+	}
+
+	.c15 {
+		margin-left: -47px;
+		margin-top: 41px;
+	}
+
+	.c16 {
+		margin-left: 17px;
+		margin-top: 41px;
+	}
+
+	.c17 {
+		margin-left: -79px;
+		margin-top: -15px;
+	}
+
+	.c18 {
+		margin-left: 49px;
+		margin-top: -15px;
+	}
+
+	.c19 {
+		margin-left: -63px;
+		margin-top: -99px;
+	}
+
+	.c20 {
+		margin-left: 33px;
+		margin-top: -99px;
+	}
+
+	.c21 {
+		margin-left: 1px;
+		margin-top: -99px;
+	}
+
+	.c22 {
+		margin-left: -31px;
+		margin-top: -99px;
+	}
+
+	.c23 {
+		margin-left: -63px;
+		margin-top: 69px;
+	}
+
+	.c24 {
+		margin-left: 33px;
+		margin-top: 69px;
+	}
+
+	.c25 {
+		margin-left: 1px;
+		margin-top: 69px;
+	}
+
+	.c26 {
+		margin-left: -31px;
+		margin-top: 69px;
+	}
+
+	.c27 {
+		margin-left: -79px;
+		margin-top: -15px;
+	}
+
+	.c28 {
+		margin-left: -95px;
+		margin-top: -43px;
+	}
+
+	.c29 {
+		margin-left: -95px;
+		margin-top: 13px;
+	}
+
+	.c30 {
+		margin-left: 49px;
+		margin-top: 41px;
+	}
+
+	.c31 {
+		margin-left: -79px;
+		margin-top: -71px;
+	}
+
+	.c32 {
+		margin-left: -111px;
+		margin-top: -15px;
+	}
+
+	.c33 {
+		margin-left: 65px;
+		margin-top: -43px;
+	}
+
+	.c34 {
+		margin-left: 65px;
+		margin-top: 13px;
+	}
+
+	.c35 {
+		margin-left: -79px;
+		margin-top: 41px;
+	}
+
+	.c36 {
+		margin-left: 49px;
+		margin-top: -71px;
+	}
+
+	.c37 {
+		margin-left: 81px;
+		margin-top: -15px;
+	}
+
+	.r1 {
+		animation-name: pulse00;
+		animation-duration: 2s;
+		animation-iteration-count: infinite;
+		animation-delay: 0.2s;
+		-webkit-animation-name: pulse00;
+		-webkit-animation-duration: 2s;
+		-webkit-animation-iteration-count: infinite;
+		-webkit-animation-delay: 0.2s;
+	}
+
+	.r2 {
+		animation-name: pulse00;
+		animation-duration: 2s;
+		animation-iteration-count: infinite;
+		animation-delay: 0.4s;
+		-webkit-animation-name: pulse00;
+		-webkit-animation-duration: 2s;
+		-webkit-animation-iteration-count: infinite;
+		-webkit-animation-delay: 0.4s;
+	}
+
+	.r3 {
+		animation-name: pulse00;
+		animation-duration: 2s;
+		animation-iteration-count: infinite;
+		animation-delay: 0.6s;
+		-webkit-animation-name: pulse00;
+		-webkit-animation-duration: 2s;
+		-webkit-animation-iteration-count: infinite;
+		-webkit-animation-delay: 0.6s;
+	}
+
+	.r1 > .hex-brick {
+		animation-name: fade00;
+		animation-duration: 2s;
+		animation-iteration-count: infinite;
+		animation-delay: 0.2s;
+		-webkit-animation-name: fade00;
+		-webkit-animation-duration: 2s;
+		-webkit-animation-iteration-count: infinite;
+		-webkit-animation-delay: 0.2s;
+	}
+
+	.r2 > .hex-brick {
+		animation-name: fade00;
+		animation-duration: 2s;
+		animation-iteration-count: infinite;
+		animation-delay: 0.4s;
+		-webkit-animation-name: fade00;
+		-webkit-animation-duration: 2s;
+		-webkit-animation-iteration-count: infinite;
+		-webkit-animation-delay: 0.4s;
+	}
+
+	.r3 > .hex-brick {
+		animation-name: fade00;
+		animation-duration: 2s;
+		animation-iteration-count: infinite;
+		animation-delay: 0.6s;
+		-webkit-animation-name: fade00;
+		-webkit-animation-duration: 2s;
+		-webkit-animation-iteration-count: infinite;
+		-webkit-animation-delay: 0.6s;
+	}
+
+	@keyframes pulse00 {
+		0% {
+			-webkit-transform: scale(1);
+			transform: scale(1);
+		}
+
+		50% {
+			-webkit-transform: scale(0.01);
+			transform: scale(0.01);
+		}
+
+		100% {
+			-webkit-transform: scale(1);
+			transform: scale(1);
 		}
 	}
-	/* Animations */
-	@keyframes moveOut1 {
-		from {
-			transform: translateY(0) scale(0);
+
+	@keyframes fade00 {
+		0% {
+			background: #c1a411;
 		}
-		3% {
-			transform: translateY(0.2em) scale(1);
+
+		50% {
+			background: #d0ba4a;
 		}
-		97% {
-			transform: translateY(7.3em) scale(1);
-		}
-		to {
-			transform: translateY(7.5em) scale(0);
-		}
-	}
-	@keyframes moveOut2 {
-		from {
-			transform: rotate(60deg) translateY(0) scale(0);
-		}
-		3% {
-			transform: rotate(60deg) translateY(0.2em) scale(1);
-		}
-		97% {
-			transform: rotate(60deg) translateY(7.3em) scale(1);
-		}
-		to {
-			transform: rotate(60deg) translateY(7.5em) scale(0);
-		}
-	}
-	@keyframes moveOut3 {
-		from {
-			transform: rotate(120deg) translateY(0) scale(0);
-		}
-		3% {
-			transform: rotate(120deg) translateY(0.2em) scale(1);
-		}
-		97% {
-			transform: rotate(120deg) translateY(7.3em) scale(1);
-		}
-		to {
-			transform: rotate(120deg) translateY(7.5em) scale(0);
-		}
-	}
-	@keyframes moveOut4 {
-		from {
-			transform: rotate(180deg) translateY(0) scale(0);
-		}
-		3% {
-			transform: rotate(180deg) translateY(0.2em) scale(1);
-		}
-		97% {
-			transform: rotate(180deg) translateY(7.3em) scale(1);
-		}
-		to {
-			transform: rotate(180deg) translateY(7.5em) scale(0);
-		}
-	}
-	@keyframes moveOut5 {
-		from {
-			transform: rotate(240deg) translateY(0) scale(0);
-		}
-		3% {
-			transform: rotate(240deg) translateY(0.2em) scale(1);
-		}
-		97% {
-			transform: rotate(240deg) translateY(7.3em) scale(1);
-		}
-		to {
-			transform: rotate(240deg) translateY(7.5em) scale(0);
-		}
-	}
-	@keyframes moveOut6 {
-		from {
-			transform: rotate(300deg) translateY(0) scale(0);
-		}
-		3% {
-			transform: rotate(300deg) translateY(0.2em) scale(1);
-		}
-		97% {
-			transform: rotate(300deg) translateY(7.3em) scale(1);
-		}
-		to {
-			transform: rotate(300deg) translateY(7.5em) scale(0);
-		}
-	}
-	@keyframes ripple {
-		from,
-		to {
-			width: 0.2em;
-		}
-		33% {
-			width: 2.4em;
+
+		100% {
+			background: #ff8303;
 		}
 	}
 </style>
