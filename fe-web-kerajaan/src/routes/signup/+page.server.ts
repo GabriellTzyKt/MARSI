@@ -1,0 +1,66 @@
+import { fail, type Actions } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
+import { env } from "$env/dynamic/private";
+import { schema } from "./schema";
+export const load: PageServerLoad = async () => {
+    try {
+        
+    }
+    catch {
+        
+    }
+};
+
+export const actions: Actions = {
+    signin: async ({ request }) => {
+        let data
+        const dt = await request.formData()
+        console.log(dt)
+        let formdata = Object.fromEntries(dt)
+
+        let validation = schema.safeParse(formdata)
+        if (!validation.success) {
+            console.log(validation.error.flatten().fieldErrors)
+            return fail(406,{errors: validation.error.flatten().fieldErrors})
+        }
+        console.log(validation.data)
+        const send = {
+            nama_lengkap: validation.data.nama_lengkap,
+            alamat: validation.data.alamat,
+            tempat_lahir: validation.data.tempat_lahir,
+            tanggal_lahir: validation.data.tanggal_lahir,
+            username: validation.data.username,
+            password: validation.data.password,
+            email: validation.data.email,
+            no_telp: validation.data.no_hp,
+            jenis_kelamin: validation.data.jenis_kelamin,
+            
+          
+        }
+        try {
+            const res = await fetch(`${env.PUB_PORT}/sign-up`, {
+                method: "POST",
+                headers: {
+                    "Content-Type":"application/json",
+                    "Accept": "*/*"
+                },
+                body: JSON.stringify(send)
+            })  
+            data = await res.json()
+            console.log(res)
+            if (res.ok) {
+                
+                return{ success: true, data}
+            } else {
+                
+                return fail(406,{resError: `Error:${data.message}`})
+            }
+            
+        }
+        catch(error) {
+            console.log(error)
+            
+            return fail(406,{resError: `Network error or invalid URL`})
+        }
+    }
+};
