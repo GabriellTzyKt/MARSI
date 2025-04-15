@@ -44,8 +44,8 @@
 </script>
 
 {#if navigating.to}
-	<!-- <LoaderUmum></LoaderUmum> -->
-	<Loader2></Loader2>
+	<LoaderUmum></LoaderUmum>
+	<!-- <Loader2></Loader2> -->
 	<!-- <Loader1></Loader1> -->
 {/if}
 <!-- Section 1 -->

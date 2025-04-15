@@ -1,6 +1,30 @@
 import { fail, type Actions } from "@sveltejs/kit";
-import { xml } from "d3";
+import { InternMap, xml } from "d3";
 import { z } from "zod";
+import type { PageServerLoad } from "./$types";
+import { env } from "$env/dynamic/private";
+
+export const load: PageServerLoad = async () => {
+
+    // try {
+        
+    //     // const res = await fetch(`${env.PUB_PORT}/kerajaan`)
+    //     // if (res.ok) {
+    //     //     const data = await res.json()
+    //     //     const adminKerajaan = data.filter((item) => { item?.role === "admin" })
+            
+
+    //     //     const superAdmin = data.filter((item) => { item?.role === "superADmin" })
+    //     //     return {superadmin: superAdmin, adminKerajaan: adminKerajaan}
+    //     // }
+    // }
+    // catch {
+        
+    // }
+
+
+    // return {admin: }
+};
 
 class Form {
     nama_lengkap: string | undefined

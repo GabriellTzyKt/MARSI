@@ -4,6 +4,7 @@ import type { Actions } from "./$types";
 import { z } from 'zod';
 import { fail } from "@sveltejs/kit";
 import { env } from "$env/dynamic/private";
+import { jwtDecode } from "jwt-decode";
 
 export const actions: Actions = {
     register: async ({ cookies, request, locals }) => {
@@ -59,10 +60,11 @@ export const actions: Actions = {
         
         if (res.ok) {
             console.log(s)
-             console.log(res)
-        cookies.set("userSession", JSON.stringify({ nama: s.username,token: s.jwt_token }), {
+            const data = jwtDecode(s.jwt_token)
+            
+        cookies.set("userSession", JSON.stringify({ nama: s.username, data:data }), {
             path: '/',
-            maxAge: 60 * 100000,
+            maxAge: 60 * 60 * 60000,
             sameSite: 'strict'
         })
            return {errors:false,success: true}
