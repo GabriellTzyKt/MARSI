@@ -8,8 +8,8 @@ export const detail_kelompok = [
   {
     id: 1,
     lokasi: "Surakarta",
-    penanggungjawab: " Sigma Boy ",
-    pembina:" Boy Sigma ",
+    penanggungjawab: " Alo",
+    pembina:" B ",
     pelindung: " A ",
     email: "Sigma@gmail.com",
     nama_kegiatan: "Bregada - Prajurit Keraton Surakarta Hadiningrat",
@@ -45,13 +45,14 @@ export const detail_acara = [
 ]
 
 
+
 export const detail_situs = [
   {
     id: 1,
     pendiri: " Sri Sultan Pangku Buwono (PB) X ",
     tahun_berdiri: 1925,
     pemilik: " Keraton Surakarta ",
-    penanggungjawab: " Sigma Boy ",
+    penanggungjawab: " S ",
     nama_tempat: "Umbul Titro Mulyo",
     jam_buka: '06:00 - 18:00',
     jenis_tempat: 'Petirtaan',

@@ -69,6 +69,7 @@
 				data.address.city || data.address.village || data.address.country || 'Tidak diketahui';
 			alert(`Mencari kerajaan di daerah : ${userLocation}`);
 			selectedDaerah = userLocation || '';
+			console.log(selectedDaerah);
 		}
 		console.log('User Location After : ', userLocation);
 	}
@@ -78,9 +79,9 @@
 	}
 
 	function updateFilteredData() {
-		const filteredData = dataGet.filter((v : any) => {
+		const filteredData = dataGet.filter((v: any) => {
 			const isDaerahMatch = selectedDaerah
-				? v.lokasi.toLowerCase().includes(selectedDaerah.toLowerCase())
+				? (v.lokasi?.toLowerCase() || '').includes(selectedDaerah.toLowerCase())
 				: true;
 			const isKeywordMatch = v.nama_kerajaan.toLowerCase().includes(keyword.toLowerCase());
 			const isTipeMatch = v.nama_kerajaan.toLowerCase().includes(selectTipe.toLowerCase());
@@ -90,10 +91,10 @@
 
 		// kalau hasilnya > 0 maka swap
 		if (sortOrder === 'asc') {
-			filteredData.sort((a : any, b : any) => Number(a.tahun) - Number(b.tahun));
+			filteredData.sort((a: any, b: any) => Number(a.tahun) - Number(b.tahun));
 			// kalau hasilnya < 0 maka swap
 		} else if (sortOrder === 'desc') {
-			filteredData.sort((a : any, b : any) => Number(b.tahun) - Number(a.tahun));
+			filteredData.sort((a: any, b: any) => Number(b.tahun) - Number(a.tahun));
 		}
 
 		console.log('Filtered Data:', filteredData);
@@ -193,29 +194,15 @@
 		</div>
 		<div class="relative mr-11 flex items-center gap-x-2">
 			<p>Daerah :</p>
-			{#if (selectedDaerah === ' ' && userLocation === ' ') || (selectedDaerah !== ' ' && userLocation === ' ') || selectedDaerah === ' '}
-				<select
-					bind:value={selectedDaerah}
-					class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-				>
-					<option value="">None</option>
-					<option value="surakarta">Surakarta</option>
-					<option value="yogyakarta">Yogyakarta</option>
-					<option value="Surabaya">Surabaya</option>
-				</select>
-			{:else if userLocation !== ' '}
-				<select
-					bind:value={userLocation}
-					onchange={handleSortChange}
-					disabled
-					class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-				>
-					<option value="">None</option>
-					<option value="surakarta">Surakarta</option>
-					<option value="yogyakarta">Yogyakarta</option>
-					<option value="Surabaya">Surabaya</option>
-				</select>
-			{/if}
+			<select
+				bind:value={selectedDaerah}
+				class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+			>
+				<option value="">None</option>
+				<option value="surakarta">Surakarta</option>
+				<option value="yogyakarta">Yogyakarta</option>
+				<option value="Surabaya">Surabaya</option>
+			</select>
 		</div>
 	</div>
 

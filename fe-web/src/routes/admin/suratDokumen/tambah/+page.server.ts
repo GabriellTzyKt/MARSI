@@ -6,19 +6,19 @@ import type { PageServerLoad } from "../$types";
 
 
 export const load: PageServerLoad = async () => {
-   try {
-			const res = await fetch(`${env.PUB_PORT}/kerajaan`, {
-				method: 'GET',
-				headers: {
-					Accept: 'application/json'
-				}
-			});
-			if (res.ok) {
-				const data = await res.json();
-				console.log(data);
-				return {data}
-			}
-		} catch (error) {}
+    try {
+        const res = await fetch(`${env.PUB_PORT}/kerajaan`, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json'
+            }
+        });
+        if (res.ok) {
+            const data = await res.json();
+            console.log(data);
+            return { data }
+        }
+    } catch (error) { }
 };
 export const actions: Actions = {
     submit: async ({ request }) => {
@@ -41,10 +41,12 @@ export const actions: Actions = {
         const keterkaitan = data.get("keterkaitan");
         const subkategori = data.get("subkategori");
         const urlFoto = data.getAll("uploadfile")
-            .filter((item) => item instanceof File && item.name !== "") 
-            .map((file) => (file as File).name);
+            .filter((item) => item instanceof File && item.name !== "")
+            .map((file) => file as File);
 
-        console.log("Nama file yang diproses:", urlFoto);
+
+        const fileNames = urlFoto.map((file) => file.name); // Ambil hanya nama file
+
 
         const validation = ver.safeParse({
             namaDokumen,
@@ -52,7 +54,7 @@ export const actions: Actions = {
             subkategori,
             jenisDokumen,
             keterkaitan,
-            urlfoto: urlFoto,
+            urlfoto: fileNames,
         });
 
         if (!validation.success) {
@@ -63,33 +65,40 @@ export const actions: Actions = {
             return fail(406, {
                 errors: fieldErrors,
                 success: false,
-                formData: { namaDokumen, kategori, jenisDokumen, subkategori, keterkaitan, urlFoto },
+                formData: { namaDokumen, kategori, jenisDokumen, subkategori, keterkaitan, urlFoto: fileNames },
                 type: "add"
             });
         }
 
         try {
-            const send = await fetch(env.BASE_URL + "/kerajaan", {
+            const formData = new FormData();
+            formData.append("nama_arsip", namaDokumen || "");
+            // formData.append("keterkaitan", keterkaitan || "");
+            formData.append("kategori_arsip", kategori || "");
+            formData.append("jenis_arsip", jenisDokumen || "");
+            formData.append("sub_kategori_arsip", subkategori || "");
+
+            // Tambahkan file ke FormData
+            urlFoto.forEach((file) => {
+                formData.append("dokumentasi", file);
+            });
+
+            console.log("FormData:", formData); 
+
+            const send = await fetch(env.BASE_URL + "/arsip", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    nama_arsip: namaDokumen,
-                    // keterkaitan: keterkaitan,
-                    kategori_arsip: kategori,
-                    jenis_arsip: jenisDokumen,
-                    sub_kategori_arsip: subkategori,
-                    dokumentasi: urlFoto,
-                })
-            })
-            const r = await send.json()
-            console.log(r)
+                body: formData,
+            });
+
+            const r = await send.json();
+            console.log(r);
+
             if (send.ok) {
-                return { errors: "no Error", success: true, form: res }
+                return { errors: "no Error", success: true, form: res };
             }
-            return fail(400, { request: `Error Code : ${send.status} ${r.message}` })
-        }
-        catch (e) {
-            console.error("Fetch Error", e)
+            return fail(400, { request: `Error Code : ${send.status} ${r.message}` });
+        } catch (e) {
+            console.error("Fetch Error", e);
         }
     }
 
