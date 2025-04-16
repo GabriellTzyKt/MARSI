@@ -2,6 +2,8 @@ import { fail, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
 import { schema } from "./schema";
+import { jwtDecode } from "jwt-decode";
+import { events } from "$lib/dummy";
 export const load: PageServerLoad = async () => {
     try {
         
@@ -12,8 +14,9 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-    signin: async ({ request }) => {
+    signin: async ({ request, locals, cookies }) => {
         let data
+        let token
         const dt = await request.formData()
         console.log(dt)
         let formdata = Object.fromEntries(dt)
@@ -29,27 +32,42 @@ export const actions: Actions = {
             alamat: validation.data.alamat,
             tempat_lahir: validation.data.tempat_lahir,
             tanggal_lahir: validation.data.tanggal_lahir,
+            // nama_ayah: "",
+            // nama_ibu: "",
+            // panggilan: "",
             username: validation.data.username,
             password: validation.data.password,
             email: validation.data.email,
-            no_telp: validation.data.no_hp,
+            nomor_telepon: validation.data.no_hp,
+            // pekerjaan: '',
+            // agama:"",
             jenis_kelamin: validation.data.jenis_kelamin,
-            
-          
+            // hobi:''
         }
         try {
+            console.log("Sending to:", `${env.PUB_PORT}/sign-up`);
             const res = await fetch(`${env.PUB_PORT}/sign-up`, {
                 method: "POST",
                 headers: {
-                    "Content-Type":"application/json",
+                    "Content-Type": "application/json",
                     "Accept": "*/*"
                 },
                 body: JSON.stringify(send)
             })  
             data = await res.json()
             console.log(res)
+            console.log(data)
             if (res.ok) {
-                
+                if (!data) {
+                    return fail(406,{resError: `Error:Username sudah diambil`})
+                }
+                token = jwtDecode(data.jwt_token) 
+                cookies.set("userSession", JSON.stringify({ username: data.username, user_data: token }), {
+                    path: "/",
+                    maxAge: 60 * 60 * 60,
+                    sameSite: "strict"
+                })
+               
                 return{ success: true, data}
             } else {
                 

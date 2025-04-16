@@ -10,6 +10,7 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import Loader from '$lib/loader/Loader.svelte';
+	import { navigating } from '$app/state';
 
 	let success = $state(false);
 	let lanjut = $state(false);
@@ -59,6 +60,9 @@
 
 <!-- Navbar -->
 <Navbar></Navbar>
+{#if navigating.to}
+	<Loader></Loader>
+{/if}
 <form
 	action="?/signin"
 	method="post"
