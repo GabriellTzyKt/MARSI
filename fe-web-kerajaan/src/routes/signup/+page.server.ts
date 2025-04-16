@@ -57,11 +57,15 @@ export const actions: Actions = {
             data = await res.json()
             console.log(res)
             console.log(data)
+            if (data === null) {
+                return fail(406,{resError: `Error:Username sudah diambil`})
+            }
             if (res.ok) {
-                if (!data) {
+                if (data === null) {
                     return fail(406,{resError: `Error:Username sudah diambil`})
                 }
                 token = jwtDecode(data.jwt_token) 
+                console.log(token)
                 cookies.set("userSession", JSON.stringify({ username: data.username, user_data: token }), {
                     path: "/",
                     maxAge: 60 * 60 * 60,
