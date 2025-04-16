@@ -1,30 +1,26 @@
-import { error, fail, type Actions } from "@sveltejs/kit";
-import { any, z } from "zod";
-
+import { fail } from "@sveltejs/kit";
+import { error, type Actions } from "@sveltejs/kit";
+import { z } from "zod";
 
 export const actions: Actions = {
-    tambah: async ({ request }) => {
+    edit: async ({ request }) => {
         const data = await request.formData();
 
         const ids = data.getAll("id").map(String);
         const ids2 = data.getAll("id2").map(String);
 
-
-        console.log(ids)
-
-        let form: any = {
+        let form : any = {
             namaacara: "",
             lokasiacara: "",
             tujuanacara: "",
             deskripsiacara: "",
             penanggungjawab: "",
             kapasitasacara: "",
+            jenis_acara: "",
             tanggalmulai: "",
             tanggalselesai: "",
             waktumulai: "",
             waktuselesai: "",
-            buttonselect: "",
-            inputradio: "",
             namabawah: {},
             notelpbawah: {},
             panggilan: {},
@@ -33,17 +29,16 @@ export const actions: Actions = {
         }
 
         const ver = z.object({
-            buttonselect: z.string().trim().min(1, "Minimal 1!"),
-            inputradio: z.string().trim().min(1, "Minimal 1!"),
-            namaacara: z.string().trim().min(1, "Isi Nama acara"),
-            lokasiacara: z.string().trim().min(1, "Alamat harus diisi!"),
+            namaacara: z.string().trim().min(1, "Isi Nama Acara!"),
+            lokasiacara: z.string().trim().min(1, "Lokasi harus diisi!"),
             tujuanacara: z.string().trim().min(1, "Tujuan harus diisi!"),
             deskripsiacara: z.string().trim().min(1, "Deskripsi harus terisi!"),
             penanggungjawab: z.string().trim().min(1, "Isi penanggungjawab!"),
             kapasitasacara: z.string()
                 .trim()
-                .min(1, "Kapasitas harus terisi!")
+                .min(1, "Minimal 1 anggota") // trim hapus spasi awal dan akhir, min 1 itu mastiin "" dan null tdk valid
                 .regex(/^\d+$/, "Jumlah anggota harus angka"),
+            jenis_acara: z.string().trim().min(1, "Pilih jenis acara!"),
             tanggalmulai: z.coerce.date({ message: "Tanggal Tidak valid (YYYY-MM-DD)" }),
             tanggalselesai: z.coerce.date({ message: "Tanggal Tidak valid (YYYY-MM-DD)" }),
             waktumulai: z.string().regex(/^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/, {
@@ -52,7 +47,7 @@ export const actions: Actions = {
             waktuselesai: z.string().regex(/^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/, {
                 message: "pakai format : HH(jam):mm(menit).",
             }),
-            panggilan: z.record(z.string().min(1, "Panggilan gaboleh kosong!")),
+            panggilan: z.record(z.string().trim().min(1, "Panggilan gaboleh kosong!")),
             namabawah: z.record(z.string().min(1, "Masih ada input field yg kosong!")),
             notelpbawah: z.record(
                 z.string()
@@ -83,6 +78,7 @@ export const actions: Actions = {
             namajabatan : {},
         };
 
+
         for (const id of ids) {
             form.namabawah[id] = data.get(`namabawah_${id}`) ?? "";
             form.notelpbawah[id] = data.get(`notelpbawah_${id}`) ?? "";
@@ -95,15 +91,13 @@ export const actions: Actions = {
         }
 
 
-        console.log(form)
-
         const validation = ver.safeParse({ ...form });
 
         if (!validation.success) {
             const fieldErrors = validation.error.flatten().fieldErrors;
 
-            console.log("errors : " , fieldErrors)
-            
+            console.log("errors : ", fieldErrors)
+
             return fail(406, {
                 errors: fieldErrors,
                 success: false,
@@ -112,6 +106,6 @@ export const actions: Actions = {
             });
         }
 
-        return { errors: "Success", success: true, formData: form, type: "add" };
+        return { errors: "Success", success: true, formData: form };
     }
 };

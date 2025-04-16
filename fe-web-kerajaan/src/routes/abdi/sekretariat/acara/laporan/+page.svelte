@@ -9,9 +9,6 @@
 	<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="flex w-full justify-between">
 			<p class="mt-2">Informasi Acara</p>
-			<a href="/abdi/sekretariat/acara/edit"
-				><button class="w-40 rounded-lg border-2 bg-yellow-500 px-2 py-2">Ubah</button></a
-			>
 		</div>
 
 		<div class="mt-5 grid grid-cols-2 gap-12 lg:grid-cols-4">
@@ -59,7 +56,7 @@
 
 			<div class="col-span-2 lg:col-span-1">
 				<div class="mt-2 w-full">
-					<p>Nama Acara:</p>
+					<p>Jenis Acara:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -67,7 +64,7 @@
 					/>
 				</div>
 				<div class="mt-2 w-full">
-					<p>Penanggung Jawab:</p>
+					<p>Tanggal Mulai:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -75,7 +72,7 @@
 					/>
 				</div>
 				<div class="mt-2 w-full">
-					<p>Penanggung Jawab:</p>
+					<p>Jam Mulai:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -86,7 +83,7 @@
 
 			<div class="col-span-2 lg:col-span-1">
 				<div class="mt-2 w-full">
-					<p>Nama Acara:</p>
+					<p>Kapasitas Acara:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -94,7 +91,7 @@
 					/>
 				</div>
 				<div class="mt-2 w-full">
-					<p>Penanggung Jawab:</p>
+					<p>Tanggal Selesai:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -102,7 +99,7 @@
 					/>
 				</div>
 				<div class="mt-2 w-full">
-					<p>Penanggung Jawab:</p>
+					<p>Jam Selesai:</p>
 					<input
 						type="text"
 						placeholder="Masukkan Nama"
@@ -123,6 +120,19 @@
 				<div class="col-span-1 w-full rounded-lg border px-1 py-1 lg:px-2">Tn</div>
 				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
 				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
+			{/each}
+		</div>
+
+		<div class="mt-5 h-1 w-full bg-slate-300"></div>
+
+		<!-- bawah -->
+
+		<p class="mb-5 mt-5 text-start text-xl font-bold text-blue-600">Panitia Acara</p>
+		<div class="grid grid-cols-8 gap-2">
+			{#each Array(total) as _, i}
+				<div class="col-span-1 w-full">{i + 1}</div>
+				<div class="col-span-4 w-full rounded-lg border px-2 py-1">Nama Lengkap</div>
+				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Jabatan</div>
 			{/each}
 		</div>
 
@@ -238,52 +248,54 @@
 			</div>
 		</div>
 
-		<div class="mt-12 h-1 w-full bg-slate-300"></div>
+		<div class="mt-12 h-1 w-full bg-slate-500"></div>
 
 		<div class="mt-5 flex w-full justify-between">
-			<p class="mt-2 w-full font-bold text-blue-600">Dokumentasi Acara</p>
+			<p class="mt-2 w-full font-bold text-blue-600">Bukti Dokumentasi Acara</p>
 			<button class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white">
 				Tambah Gambar
 			</button>
 		</div>
 
-		<div class="mt-5 grid grid-cols-2 gap-2 lg:grid-cols-4">
-			<div class="relative">
-				<img src={gambartemp} class="rounded-lg" alt="Gambar" />
-				<span
-					class="absolute bottom-0.5 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
-				>
-					<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"
-					></i>
-				</span>
-			</div>
-			<div class="relative">
-				<img src={gambartemp} class="rounded-lg" alt="Gambar" />
-				<span
-					class="absolute bottom-0.5 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
-				>
-					<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"
-					></i>
-				</span>
-			</div>
-			<div class="relative">
-				<img src={gambartemp} class="rounded-lg" alt="Gambar" />
-				<span
-					class="absolute bottom-0.5 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
-				>
-					<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"
-					></i>
-				</span>
-			</div>
-			<div class="relative">
-				<img src={gambartemp} class="rounded-lg" alt="Gambar" />
-				<span
-					class="absolute bottom-0.5 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
-				>
-					<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"
-					></i>
-				</span>
-			</div>
+		<div class="mt-5 flex gap-4 mx-auto overflow-x-auto">
+			{#each Array(4) as _, index}
+				<div class="relative flex-shrink-0">
+					<img src={gambartemp} class="rounded-lg" alt="Gambar {index}" />
+					<span
+						class="absolute bottom-0.5 right-3 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
+					>
+						<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"></i>
+					</span>
+				</div>
+			{/each}
+		</div>
+
+		<div class="mt-12 h-1 w-full bg-slate-500"></div>
+
+		<div class="mt-5 flex w-full justify-between">
+			<p class="mt-2 w-full font-bold text-blue-600">Illustrasi Acara</p>
+			<button class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white">
+				Tambah Gambar
+			</button>
+		</div>
+
+		<div class="mt-5 flex gap-4 mx-auto overflow-x-auto">
+			{#each Array(4) as _, index}
+				<div class="relative flex-shrink-0">
+					<img src={gambartemp} class="rounded-lg" alt="Gambar {index}" />
+					<span
+						class="absolute bottom-0.5 right-3 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
+					>
+						<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"></i>
+					</span>
+				</div>
+			{/each}
+		</div>
+
+		<div class="w-full flex justify-end mt-3">
+			<button class="mt-8 w-fit rounded-lg bg-green-500 px-8 py-2 text-white">
+				Simpan Laporan
+			</button>
 		</div>
 	</div>
 </div>
