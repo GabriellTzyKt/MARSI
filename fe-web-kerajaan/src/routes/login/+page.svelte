@@ -2,9 +2,14 @@
 	import Nav from '$lib/nav/Nav.svelte';
 	import bg from '$lib/assets/icon/badran-logo-big.png';
 	import Footer from '$lib/footer/Footer.svelte';
+	import { enhance } from '$app/forms';
+	import Loader from '$lib/loader/Loader.svelte';
+	import { navigating } from '$app/state';
 	let temp: string[] = $state([]);
 	let username = $state('');
 	let pass = $state('');
+	let errors = $state();
+	let loading = $state(false);
 	let cek = $derived(() => {
 		temp = [];
 		if (username.length < 8) {
@@ -17,6 +22,10 @@
 </script>
 
 <Nav></Nav>
+
+{#if loading || navigating.to}
+	<Loader></Loader>
+{/if}
 <div class="flex min-h-screen w-screen flex-col">
 	<div class="bg min-w-screen flex w-full grow flex-col items-center justify-center">
 		<div
@@ -29,7 +38,7 @@
 				<p class="text-3xl font-[500]">Masuk</p>
 			</div>
 			<div class="flex w-full flex-col">
-				<form action="" class="w-full">
+				<form action="" class="w-full" method="post" use:enhance={() => {}}>
 					<div class="mt-3 flex min-w-full flex-col justify-start">
 						<div class="flex text-start">
 							<p>Username</p>
@@ -54,6 +63,7 @@
 								required
 								bind:value={pass}
 							/>
+							<p></p>
 						</div>
 					</div>
 				</form>

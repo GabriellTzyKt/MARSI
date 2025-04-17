@@ -2,8 +2,9 @@ import { fail, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
 import { schema } from "./schema";
-import { jwtDecode } from "jwt-decode";
+// import { jwtDecode } from "jwt-decode";
 import { events } from "$lib/dummy";
+import { jwtDecode } from "jwt-decode";
 export const load: PageServerLoad = async () => {
     try {
         
@@ -76,7 +77,7 @@ export const actions: Actions = {
                 }
                 token = jwtDecode(data.jwt_token) 
                 console.log(token)
-                cookies.set("userSession", JSON.stringify({ username: data.username, user_data: token }), {
+                cookies.set("userSession", JSON.stringify({ username: data.username, user_data: token, token:data.jwt_token }), {
                     path: "/",
                     maxAge: 60 * 60 * 60,
                     sameSite: "strict"
