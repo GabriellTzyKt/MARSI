@@ -7,9 +7,27 @@
 	import SidebarMenu from '../SidebarMenu.svelte';
 	import { navigating, page } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
+	import { slide } from 'svelte/transition';
+	import type { Actions } from '@sveltejs/kit';
 	const isActive = (path: string) => {
 		return page.url.pathname === path;
 	};
+	let isShow = $state(false);
+
+	// export const actions: Actions = {
+	// 	logout: async ({ cookies }) => {
+	// 		const sessionId = cookies.get('session_id');
+	// 		if (sessionId) {
+	// 			cookies.delete('session_id', { path: '/' });
+	// 		}
+	// 		return {
+	// 			status: 302,
+	// 			headers: {
+	// 				location: '/',
+	// 			},
+	// 		};
+	// 	},
+	// };
 
 	$inspect(page);
 	$inspect(page.route.id === '/admin/acara/detail/[id]');
@@ -139,15 +157,49 @@
 	{/if}
 	<div class="width_head2 hidden items-center justify-between lg:flex lg:w-[83.3%]">
 		<p class="ml-5 p-5 text-3xl font-bold text-black">{pageTitle}</p>
-		<div class="mr-5 flex items-center rounded-md border-2 border-blue-600 p-2">
-			<span class="ml-5 text-black"
-				>{#if data}
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div
+			class="bg-customGold relative mr-5 flex w-[350px] cursor-pointer items-center justify-center rounded-t p-2 text-center"
+			onclick={() => (isShow = !isShow)}
+		>
+			<span class="ml-5 text-2xl text-white">
+				{#if data}
 					{data.hasil}
 				{:else}
 					Admin MARSI
-				{/if}</span
-			>
+				{/if}
+			</span>
 			<img src={imageprofile} alt="duar" class="ml-5 mr-5 h-10 w-10 rounded-full" />
+
+			{#if isShow}
+				<div
+					class="absolute right-0 top-full h-[150px] w-full bg-white"
+					transition:slide={{ duration: 200 }}
+				>
+					<p class="mt-5">Apakah Anda ingin logout?</p>
+					<div class=" col-span-2 mt-10 flex flex-wrap justify-center gap-10">
+						<div class="col-span-1 px-5">
+							<button
+								class="rounded-lg bg-gray-300 px-2 py-2 text-white"
+								onclick={(event) => {
+									event.stopPropagation();
+									isShow = false;
+								}}
+							>
+								Tidak
+							</button>
+						</div>
+						<div class="col-span-1 px-5">
+							<form action="?/logout" method="POST">
+								<button class="rounded-lg bg-red-400 px-2 py-2 text-white" type="submit">
+									Logout
+								</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			{/if}
 		</div>
 	</div>
 </header>

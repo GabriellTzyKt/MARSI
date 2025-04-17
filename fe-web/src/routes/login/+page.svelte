@@ -93,7 +93,7 @@
 		</div>
 
 		<p class="mt-4 text-center text-gray-600">
-			Belum ada akun? <a href="/" class="text-blue-600 underline">Daftar disini</a>
+			Belum ada akun? <a href="/signup" class="text-blue-600 underline">Daftar disini</a>
 		</p>
 	</div>
 </div>

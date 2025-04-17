@@ -191,6 +191,19 @@
 				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
 			{/each}
 		</div>
+
+		<div class="mt-5 h-1 w-full bg-slate-300"></div>
+
+		<!-- bawah -->
+
+		<p class="mb-5 mt-5 text-start text-xl font-bold text-blue-600">Panitia Acara</p>
+		<div class="grid grid-cols-8 gap-2">
+			{#each Array(total) as _, i}
+				<div class="col-span-1 w-full">{i + 1}</div>
+				<div class="col-span-4 w-full rounded-lg border px-2 py-1">Tn</div>
+				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
+			{/each}
+		</div>
 	</div>
 </div>
 

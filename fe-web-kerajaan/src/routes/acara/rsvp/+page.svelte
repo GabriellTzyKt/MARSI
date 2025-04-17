@@ -104,12 +104,13 @@
 				{#each Array(number) as _}
 					<Rsvp></Rsvp>
 				{/each}
-                <div class="w-full flex justify-end">
-                    <button class="rounded-lg bg-blue-600 px-4 py-2 text-white">
-                        Simpan
-                    </button>
-                </div>
 			{/if}
+
+			<div class="w-full flex justify-end mt-12">
+				<button class="rounded-lg bg-blue-600 px-4 py-2 text-white">
+					Simpan
+				</button>
+			</div>
 
 		</div>
 	</div>

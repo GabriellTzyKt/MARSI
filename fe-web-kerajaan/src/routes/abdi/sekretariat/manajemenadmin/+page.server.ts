@@ -1,82 +1,17 @@
 import { fail, type Actions } from "@sveltejs/kit";
-import { InternMap, xml } from "d3";
 import { z } from "zod";
-import type { PageServerLoad } from "./$types";
-import { env } from "$env/dynamic/private";
-
-export const load: PageServerLoad = async () => {
-
-    // try {
-        
-    //     // const res = await fetch(`${env.PUB_PORT}/kerajaan`)
-    //     // if (res.ok) {
-    //     //     const data = await res.json()
-    //     //     const adminKerajaan = data.filter((item) => { item?.role === "admin" })
-            
-
-    //     //     const superAdmin = data.filter((item) => { item?.role === "superADmin" })
-    //     //     return {superadmin: superAdmin, adminKerajaan: adminKerajaan}
-    //     // }
-    // }
-    // catch {
-        
-    // }
-
-
-    // return {admin: }
-};
-
-class Form {
-    nama_lengkap: string | undefined
-    username: string | undefined
-    email: string | undefined
-    no_telp: string | undefined
-    password: string | undefined
-    tgl_lahir: string | undefined
-    kota_lahir: string | undefined
-    jenis_kelamin: string | undefined
-    afiliasi: string | undefined
-    admin_role: string | undefined
-    constructor(
-        nama_lengkap?: string,
-        username?: string,
-        email?: string,
-        no_telp?: string,
-        password?: string,
-        tgl_lahir?: string,
-        kota_lahir?: string,
-        jenis_kelamin?: string,
-        afiliasi?: string,
-        admin_role?: string
-
-    ) {
-        this.nama_lengkap = nama_lengkap;
-        this.username = username;
-        this.email = email
-        this.no_telp = no_telp
-        this.tgl_lahir = tgl_lahir
-        this.password = password
-        this.kota_lahir = kota_lahir
-        this.jenis_kelamin = jenis_kelamin
-        this.afiliasi = afiliasi
-        this.admin_role = admin_role
-
-    }
-
-}
 
 export const actions: Actions = {
     tambah: async ({ request }) => {
         const data = await request.formData()
         console.log(data)
+
         const ver = z.object({
             nama_lengkap:
                 z.string({ message: "Harus diisi / harus berupa string" })
                     .nonempty("Tidak Boleh kosong")
                     .max(300, "Nama Terlalu Panjang (max = 300)")
                     .trim(),
-
-            inputradio: z.string().trim().min(1, "Minimal 1!"),
 
             email:
                 z.string({ message: "Harus diisi / harus berupa string" })
@@ -122,15 +57,13 @@ export const actions: Actions = {
                     .trim(),
 
             afiliasi:
-                z.string({ message: "Harus diisi / harus berupa kata" })
-                    .nonempty("Filed Tidak Boleh Kosong")
-                    .max(255, "Input Terlalu Banyak (Max 255 Kata)")
-                    .trim(),
+                z.array(z.string().nonempty("Tidak Boleh Kosong"))
+                    .min(1, { message: "Minimal 1 Afiliasi" }),
 
             admin_role:
-                z.string({ message: "Harus diisi / harus berupa string" })
-                    .nonempty("FieldTidak Boleh Kosong")
-                    .max(255, "Max 255 Kata")
+                z.string({ message: "Harus diisi" })
+                    .nonempty("Field Tidak Boleh Kosong")
+                    .min(1, "Minimal pilih 1")
                     .trim()
 
 
@@ -138,18 +71,16 @@ export const actions: Actions = {
         const nama_lengkap = data.get("nama_lengkap")
         const username = data.get("username")
         const email = data.get("email")
-        const inputradio = data.get("superadmin")
         const password = data.get("password")
         const jenis_kelamin = data.get("jenis_kelamin")
         const no_telp = data.get("no_telp")
         const tgl_lahir = data.get("tgl_lahir")
         const kota_lahir = data.get("kota_lahir")
-        const afiliasi = data.get("afiliasi")
+        const afiliasi = data.getAll("afiliasi").filter((item) => item !== "");
         const admin_role = data.get("admin_role")
         const formData = {
             nama_lengkap,
             username,
-            inputradio,
             email,
             no_telp,
             password,
@@ -188,10 +119,6 @@ export const actions: Actions = {
                     .max(300, "Nama Terlalu Panjang (max = 300)")
                     .trim(),
 
-
-            inputradio: z.string().trim().min(1, "Minimal 1!"),
-
-
             username:
                 z.string({ message: "Harus diisi / harus berupa string" })
                     .nonempty("Field Tidak Boleh Kosong")
@@ -238,33 +165,29 @@ export const actions: Actions = {
                     .max(255, "Input hanya bisa sampai 255 kata")
                     .trim(),
             afiliasi:
-                z.string({ message: "Harus diisi / harus berupa kata" })
-                    .nonempty("Filed Tidak Boleh Kosong")
-                    .max(255, "Input Terlalu Banyak (Max 255 Kata)")
-                    .trim(),
+                z.array(z.string().nonempty("Tidak Boleh Kosong"))
+                    .min(1, { message: "Minimal 1 Afiliasi" }),
             admin_role:
-                z.string({ message: "Harus diisi / harus berupa string" })
-                    .nonempty("FieldTidak Boleh Kosong")
-                    .max(255, "Max 255 Kata")
+                z.string({ message: "Harus diisi" })
+                    .nonempty("Field Tidak Boleh Kosong")
+                    .min(1, "Minimal pilih 1")
                     .trim()
 
 
         })
         const nama_lengkap = data.get("nama_lengkap")
         const username = data.get("username")
-        const inputradio = data.get("superadmin")
         const email = data.get("email")
         const no_telp = data.get("no_telp")
         const password = data.get("password")
         const tgl_lahir = data.get("tgl_lahir")
         const kota_lahir = data.get("kota_lahir")
         const jenis_kelamin = data.get("jenis_kelamin")
-        const afiliasi = data.get("afiliasi")
+        const afiliasi = data.getAll("afiliasi").filter((item) => item !== "");
         const admin_role = data.get("admin_role")
         const formData = {
             nama_lengkap,
             username,
-            inputradio,
             email,
             no_telp,
             password,

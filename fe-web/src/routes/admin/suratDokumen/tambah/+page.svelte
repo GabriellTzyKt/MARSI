@@ -124,7 +124,7 @@
 			<div class="text-md mt-2 text-start">
 				<label for="keterkaitan">Keterkaitan</label>
 				<div class="relative flex flex-col gap-1">
-					<input class="input-field rounded-lg border p-2 pr-10" bind:value={keterkaitan} />
+					<input class="input-field rounded-lg border p-2 pr-10" name="keterkaitan" bind:value={keterkaitan} />
 
 					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
 					{#if showDropdown && searchRes.length > 0}
@@ -157,8 +157,8 @@
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
 					<option value=" " disabled>None</option>
-					<option value="dokumenA">Dokumen A </option>
-					<option value="dokumenB">Dokumen B</option>
+					<option value="1">1 </option>
+					<option value="2">2</option>
 				</select>
 				{#if error}
 					{#each error.jenisDokumen as error3}
@@ -175,8 +175,8 @@
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
 					<option value=" " disabled>None</option>
-					<option value="kategoriA">Kategori A </option>
-					<option value="kategoriB">Kategori B</option>
+					<option value="masuk">Masuk </option>
+					<option value="keluar">Keluar</option>
 				</select>
 				{#if error}
 					{#each error.kategori as error4}
@@ -188,7 +188,7 @@
 			<div class="text-md mt-2 text-start">
 				<label for="keterkaitan">Sub Kategori</label>
 				<div class="relative flex flex-col gap-1">
-					<input class="input-field rounded-lg border p-2 pr-10" />
+					<input class="input-field rounded-lg border p-2 pr-10" name="subkategori" />
 
 					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
 

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import xbutton from '../../asset/icons/xbutton.png';
-	import SModal from './SModal.svelte';
+	import xbutton from '$lib/asset/icon/xbutton.png';
 	let { value = $bindable(), textM, open = $bindable(), errors = null, data = null } = $props();
 
 	console.log("data : " , data)

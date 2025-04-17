@@ -7,3 +7,12 @@ export const load: PageServerLoad = async ({cookies}) => {
     console.log(hasil)
     return {hasil : hasil.nama}
 };
+
+export const actions: Actions = {
+    logout: async ({ cookies }) => {
+        cookies.delete('userSession')
+        console.log("Logout")
+        return { success: true };
+    }
+
+};

@@ -179,7 +179,7 @@
 			return 'Tambah Acara Organisasi';
 		} else if (page.route.id === '/abdi/dashboard/organisasi/detail/edit') {
 			return 'Ubah Organisasi';
-		}  else if (page.route.id === '/abdi/dashboard/situs/detail/bukutamu') {
+		} else if (page.route.id === '/abdi/dashboard/situs/detail/bukutamu') {
 			return 'Buku Tamu Situs';
 		} else if (page.route.id === '/abdi/dashboard/situs/detail/daftaracara') {
 			return 'Daftar Acara Situs';
@@ -195,10 +195,11 @@
 			return 'Tambah Abdi';
 		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit') {
 			return 'Edit Organisasi';
+		} else if (page.route.id === '/abdi/sekretariat/manajemenadmin') {
+			return 'Manajemen Role Administrasi';
+		} else if (page.route.id === '/abdi/dashboard/komunitas/detail/edit') {
+			return 'Ubah Komunitas';
 		}
-
-
-	
 	});
 
 	let { children } = $props();
@@ -334,7 +335,7 @@
 							href="/abdi/sekretariat/anggota/daftaranggota"
 							icon="mdi:book"
 							anchor="Daftar Anggota"
-							active={page.route.id === "/abdi/sekretariat/anggota/daftaranggota"}
+							active={page.route.id === '/abdi/sekretariat/anggota/daftaranggota'}
 						/>
 						<SidebarMenu
 							href="/abdi/sekretariat/anggota/pelantikan"
@@ -409,8 +410,15 @@
 					<SidebarMenu
 						href="/abdi/sekretariat/landingpage"
 						icon="mdi:book"
-						anchor="Landinig Page"
+						anchor="Landing Page"
 						active={page.route.id?.startsWith('/abdi/sekretariat/landingpage')}
+						hasChildren={false}
+					></SidebarMenu>
+					<SidebarMenu
+						href="/abdi/sekretariat/manajemenadmin"
+						icon="mdi:book"
+						anchor="Manajemen Admin"
+						active={page.route.id?.startsWith('/abdi/sekretariat/manajemenadmin')}
 						hasChildren={false}
 					></SidebarMenu>
 				</Sidebar>
@@ -551,8 +559,8 @@
 						href="/abdi/sekretariat/anggota/daftaranggota"
 						icon="mdi:book"
 						anchor="Daftar Anggota"
-						active={page.route.id === "/abdi/sekretariat/anggota/daftaranggota"}
-						/>
+						active={page.route.id === '/abdi/sekretariat/anggota/daftaranggota'}
+					/>
 					<SidebarMenu
 						href="/abdi/sekretariat/anggota/pelantikan"
 						icon="mdi:book"
@@ -586,7 +594,7 @@
 						href="/abdi/sekretariat/organisasi/daftarOrganisasi"
 						icon="mdi:book"
 						anchor="Daftar Organisasi"
-						active={page.route.id === ('/abdi/sekretariat/organisasi/daftarOrganisasi')}
+						active={page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi'}
 					/>
 					<SidebarMenu
 						href="/abdi/sekretariat/organisasi/daftaranggota"
@@ -626,8 +634,15 @@
 				<SidebarMenu
 					href="/abdi/sekretariat/landingpage"
 					icon="mdi:book"
-					anchor="Landinig Page"
+					anchor="Landing Page"
 					active={page.route.id?.startsWith('/abdi/sekretariat/landingpage')}
+					hasChildren={false}
+				></SidebarMenu>
+				<SidebarMenu
+					href="/abdi/sekretariat/manajemenadmin"
+					icon="mdi:book"
+					anchor="Manajemen Admin"
+					active={page.route.id?.startsWith('/abdi/sekretariat/manajemenadmin')}
 					hasChildren={false}
 				></SidebarMenu>
 			</Sidebar>

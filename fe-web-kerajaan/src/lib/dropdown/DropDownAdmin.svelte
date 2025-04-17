@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { easeBack } from 'd3';
-	import jd from '../../asset/profile/jdpp.jpg';
+	import jd from '$lib/asset/profile/jdpp.jpg';
 	import { slide } from 'svelte/transition';
+	import { enhance } from '$app/forms';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import ModalAdmin from '$lib/popup/ModalAdmin.svelte';
-	import { enhance } from '$app/forms';
-	import SModal from '$lib/popup/SModal.svelte';
+	import TambahAdminSekre from '$lib/popup/TambahAdminSekre.svelte';
+
 	let open = $state(false);
 	let value = $state(false);
 	let timer: number;
@@ -36,7 +37,10 @@
 	class="flex w-full max-w-[800px] flex-col place-self-start rounded-lg border border-[#76768033] bg-white shadow-2xl"
 >
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<div class="mx-2 flex lg:flex-row flex-col cursor-pointer justify-between gap-3 p-4" onclick={() => toggle()}>
+	<div
+		class="mx-2 flex cursor-pointer flex-col justify-between gap-3 p-4 lg:flex-row"
+		onclick={() => toggle()}
+	>
 		<div class="flex items-center">
 			<img src={jd} class="h-auto max-w-[55px] rounded-full" alt="" />
 		</div>
@@ -45,9 +49,6 @@
 				<p class="ml-2 text-lg font-[600]">Eric Yoel</p>
 			</div>
 			<div class="flex w-full items-center justify-between text-nowrap px-2">
-				<div>
-					<p class="text-md mr-5">Super Admin</p>
-				</div>
 				<div
 					class="status cursor-pointer rounded-md px-3 py-1 {isAktif ? 'aktif' : 'non-aktif'}"
 					onclick={isAktiforNon}
@@ -65,6 +66,12 @@
 			>
 		</div>
 	</div>
+	<div
+		class="flex w-full max-w-[800px] flex-col place-self-start rounded-lg border border-[#76768033] bg-white shadow-2xl"
+	>
+		<p> P </p>
+	</div>
+
 	{#if open}
 		<div
 			class="  flex w-full flex-col rounded-lg border border-[#76768033] shadow-2xl"
@@ -154,26 +161,31 @@
 	></DeleteModal>
 {/if}
 {#if edit}
-	<form action="?/ubah" method="POST" use:enhance={() => {
-		return async ({ result }) => {
-			console.log(result);
-			if (result.type === 'success') {
-				valo = true;
-				clearTimeout(timer);
-				timer = setTimeout(() => {
-					valo = false;
-					edit = false;
-				}, 3000);
-			} else if (result.type === 'failure') {
-				error = result?.data?.errors;
-			}
-		};
-	}}>
-		<ModalAdmin textM="Ubah" bind:value={edit} bind:open={valo} errors={error} {data}></ModalAdmin>
+	<form
+		action="?/ubah"
+		method="POST"
+		use:enhance={() => {
+			return async ({ result }) => {
+				console.log(result);
+				if (result.type === 'success') {
+					valo = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						valo = false;
+						edit = false;
+					}, 3000);
+				} else if (result.type === 'failure') {
+					error = result?.data?.errors;
+				}
+			};
+		}}
+	>
+		<TambahAdminSekre textM="Ubah" bind:value={edit} bind:open={valo} errors={error} {data}
+		></TambahAdminSekre>
 	</form>
 {/if}
 {#if valo}
-	<SModal text="Admin Berhasil Dirubah"></SModal>
+	<SuccessModal text="Admin Berhasil Dirubah"></SuccessModal>
 {/if}
 
 <style>

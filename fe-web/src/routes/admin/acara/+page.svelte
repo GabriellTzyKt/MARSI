@@ -43,9 +43,25 @@
 	let color: Colord = colord(hex);
 </script>
 
-<div class="flex h-full w-full flex-col">
+<div class="flex w-full h-full flex-col">
+
+	<p></p>
+
+	<div class="flex w-full flex-col flex-wrap items-center gap-6 overflow-auto p-5 lg:flex-row">
+		<div class="flex-shrink-1 lg:h-full h-fit flex-grow rounded-md border border-gray-500 bg-white p-5">
+			<p class="mb-3 text-center text-xl font-bold">
+				Persentase Acara Kerajaan berdasarkan Jenis Kerajaan
+			</p>
+			<PieChart />
+		</div>
+		<div class="flex-shrink-1 lg:h-full h-fit flex-grow rounded-md border border-gray-500 bg-white p-5">
+			<p class="mb-3 text-center text-xl font-bold">Jumlah Acara yang Berlangsung di 2024</p>
+			<Barplot />
+		</div>
+	</div>
+
 	<div class="relative w-[70%] items-center lg:w-[97%] lg:items-start">
-		<input name="input-field" class="m-5 w-full pr-12 text-start" placeholder="Cari Kerajaan..." />
+		<input name="input-field" class="m-5 w-full pr-12 text-start" placeholder="Cari Acara..." />
 		<svg
 			class="absolute right-0 top-1/2 -translate-y-1/2 transform"
 			xmlns="http://www.w3.org/2000/svg"
@@ -60,35 +76,23 @@
 		</svg>
 	</div>
 
-	<div class="flex w-full flex-col flex-wrap items-center gap-6 overflow-auto p-5 lg:flex-row">
-		<div
-			class="flex-shrink-1 h-fit flex-grow rounded-md border border-gray-500 bg-white p-5 lg:h-full"
-		>
-			<p class="mb-3 text-center text-xl font-bold">
-				Persentase Acara Kerajaan berdasarkan Jenis Kerajaan
-			</p>
-			<PieChart />
-		</div>
-		<div
-			class="flex-shrink-1 h-fit flex-grow rounded-md border border-gray-500 bg-white p-5 lg:h-full"
-		>
-			<p class="mb-3 text-center text-xl font-bold">Jumlah Acara yang Berlangsung di 2024</p>
-			<Barplot />
-		</div>
-	</div>
-
 	<div class="m-5 flex w-[97%] flex-grow flex-col rounded-md border border-gray-500 bg-white p-5">
 		<p class="text-xl font-bold">History Acara :</p>
 		<div class="w-full">
 			<TableAcara
 				table_data={dummyAcara}
 				table_header={[
-					['id', 'ID'],
-					['nama', 'Nama']
+					['nama', 'Nama Acara'],
+					['tanggal', 'Tanggal Acara'],
+					['lokasi', 'Lokasi Acara'],
+					['penyelenggara', 'Penyelenggara Acara'],
+					['jenis', 'Jenis Acara'],
+					['status', 'Status'],
 				]}
 			></TableAcara>
 		</div>
 	</div>
+
 </div>
 
 <style>
