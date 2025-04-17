@@ -11,20 +11,21 @@ export const handle = async ({ event, resolve }) => {
         }
     }
     // event.locals.token= "JHGVHJHJHKJHJBJKJHJKJLJK"
-    // if (auth) {
-    //     if (event.url.pathname === '/login2') {
-    //         redirect(308,'/admin/beranda')
-    //     }
-    //      if (event.url.pathname === "/admin") {
-    //         redirect(308, '/admin/beranda')
-    //     }
-    // }
-    // else {
-    //     if ( event.url.pathname !== "/login2") {
-    //         console.log("red")
-    //         redirect(308, '/login2')
-    //     }
-    // }
+    if (auth) {
+        if (event.url.pathname === '/login2') {
+            redirect(308,'/admin/beranda')
+        }
+         if (event.url.pathname === "/admin") {
+            redirect(308, '/admin/beranda')
+        }
+    }
+    else {
+        event.locals.token = ""
+        if ( event.url.pathname.startsWith("/admin") ) {
+            console.log("red")
+            redirect(308, '/login2')
+        }
+    }
     console.log("Token" +event.locals.token)
     
     const response = await resolve(event)

@@ -29,11 +29,18 @@ export const actions: Actions = {
             alamat: validation.data.alamat,
             tempat_lahir: validation.data.tempat_lahir,
             tanggal_lahir: validation.data.tanggal_lahir,
+            nama_ayah: "",
+            nama_ibu: '',
+            panggilan: "",
             username: validation.data.username,
             password: validation.data.password,
             email: validation.data.email,
-            no_telp: validation.data.no_hp,
+            nomor_telepon: validation.data.no_hp,
+            pekerjaan: "",
+            agama: "",
+
             jenis_kelamin: validation.data.jenis_kelamin,
+            hobi:''
             
           
         }
