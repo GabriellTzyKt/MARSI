@@ -9,14 +9,34 @@
 	import { fade } from 'svelte/transition';
 	let { data } = $props();
 	let dataambil = data.detil_anggota;
-	console.log(dataambil);
-
+	// console.log(dummyAnggota);
+	let currPage = $state(1);
+	let entries = $state(10);
 	let open = $state(false);
 	let valo = $state(false);
 	let error = $state();
 	let data2 = $state();
-
-	let timer : any;
+	let keyword = $state('');
+	function filterD(data: any[]) {
+		return data.filter(
+			(item) =>
+				item?.nama_anggota?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.tanggal_bergabung?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.jabatan_organisasi?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.nomor_telepon?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.email?.toLowerCase().includes(keyword.toLowerCase())
+		);
+	}
+	function pagination(data: any[]) {
+		let d = filterD(data);
+		let start = (currPage - 1) * entries;
+		let end = start + entries;
+		console.log(d);
+		return d.slice(start, end);
+	}
+	let resdata = $derived(pagination(dummyAnggota));
+	let total_pages = $derived(Math.ceil(filterD(dummyAnggota).length / entries));
+	let timer: any;
 
 	let toggle = () => {
 		if (!open) {
@@ -24,6 +44,7 @@
 		} else open = false;
 		console.log(open);
 	};
+	$effect(() => {});
 </script>
 
 <div class="flex w-full flex-col">
@@ -51,6 +72,7 @@
 				<input
 					type="text"
 					placeholder="Cari.."
+					bind:value={keyword}
 					class=" w-full bg-transparent px-2 py-2 focus:outline-none"
 				/>
 
@@ -77,7 +99,7 @@
 				<input
 					type="number"
 					class="w-12 rounded-md border py-2 text-center focus:outline-none"
-					value="8"
+					bind:value={entries}
 					name=""
 					id=""
 				/>
@@ -98,7 +120,7 @@
 				['email', 'Email'],
 				['children', 'Aksi']
 			]}
-			table_data={dummyAnggota}
+			table_data={resdata}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
@@ -117,6 +139,43 @@
 			{/snippet}
 		</Table>
 	</div>
+	<div
+		class="mt-4 flex w-full flex-col items-center justify-center gap-2 md:flex-row md:justify-between"
+	>
+		<div>
+			<p>
+				Showing {(currPage - 1) * entries + 1} to {Math.min(
+					currPage * entries,
+					filterD(dummyAnggota).length
+				)} of {total_pages} entries
+			</p>
+		</div>
+		<div class="flex flex-row">
+			<button
+				class=" hover:bg-badran-bt me-3 rounded-lg bg-white px-6 py-2 hover:text-white"
+				disabled={currPage === 1}
+				onclick={() => {
+					currPage--;
+				}}>Previous</button
+			>
+			{#each Array(total_pages) as _, i}
+				<button
+					class="hover:bg-badran-bt mx-1 rounded-lg px-3 py-2 hover:text-white {i + 1 === currPage
+						? 'bg-badran-bt text-white'
+						: 'bg-white'}"
+					onclick={() => (currPage = i + 1)}>{i + 1}</button
+				>
+			{/each}
+
+			<button
+				class="hover:bg-badran-bt ms-3 rounded-lg bg-white px-6 py-2 hover:text-white"
+				disabled={currPage === total_pages}
+				onclick={() => {
+					currPage++;
+				}}>Next</button
+			>
+		</div>
+	</div>
 </div>
 {#if open}
 	<form
@@ -124,7 +183,7 @@
 		method="post"
 		use:enhance={() => {
 			return async ({ result }) => {
-				console.log(result)
+				console.log(result);
 				if (result.type === 'success') {
 					valo = true;
 					clearTimeout(timer);

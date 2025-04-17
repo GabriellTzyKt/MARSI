@@ -10,6 +10,7 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import Loader from '$lib/loader/Loader.svelte';
+	import { navigating } from '$app/state';
 
 	let success = $state(false);
 	let lanjut = $state(false);
@@ -24,6 +25,7 @@
 	let valPC = $state('');
 	let errors = $state([]);
 	let errors2 = $state();
+	console.log();
 	const toggle = () => {
 		if (!success) {
 			success = true;
@@ -59,6 +61,9 @@
 
 <!-- Navbar -->
 <Navbar></Navbar>
+{#if navigating.to}
+	<Loader></Loader>
+{/if}
 <form
 	action="?/signin"
 	method="post"
@@ -455,12 +460,25 @@
 							{/if}
 						</div>
 					</div>
-
+					{#if resError}
+						<div class="col-span-full flex w-full p-2">
+							<p class="text-red-500">{resError}</p>
+						</div>
+					{/if}
 					<div class="col-span-full flex w-full p-2">
 						<button
 							class="bg-badran-bt w-full cursor-pointer rounded-lg py-2 text-white"
 							type="submit"
 							onclick={() => {}}>Submit</button
+						>
+					</div>
+					<div class="col-span-full flex w-full p-2">
+						<button
+							class="bg-badran-bt w-full cursor-pointer rounded-lg py-2 text-white"
+							type="button"
+							onclick={() => {
+								lanjut = false;
+							}}>Back To 1st Page</button
 						>
 					</div>
 				</div>
