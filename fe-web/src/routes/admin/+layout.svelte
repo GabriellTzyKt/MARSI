@@ -9,6 +9,8 @@
 	import Loader from '$lib/loader/Loader.svelte';
 	import { slide } from 'svelte/transition';
 	import type { Actions } from '@sveltejs/kit';
+	import type { LayoutProps } from './$types';
+
 	const isActive = (path: string) => {
 		return page.url.pathname === path;
 	};

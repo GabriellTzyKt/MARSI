@@ -13,19 +13,20 @@
 	import { goto } from '$app/navigation';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
+	import { easeBack } from 'd3';
 
 	let { data } = $props();
 	console.log(data.dataKerajaan);
 	// import {dropId} from './DropDown.svelte'
 	let success = $state(false);
 
-	let errors = $state();
+	let currPage = $state(1);
 	let keyword = $state('');
+	let entries = $state(10);
+	let errors = $state();
 	let del = $state(false);
 	let edit = $state(false);
 	let dt = $state(data.dataKerajaan);
-	let entries = $state(10);
-	let currPage = $state(1);
 	let tambah = $state(false);
 
 	$effect(() => {
@@ -33,8 +34,7 @@
 			errors = null;
 		}
 	});
-	let paginatedData = $derived(dt.slice((currPage - 1) * entries, currPage * entries));
-	let ttlPage = $derived(Math.ceil(dt.length / entries));
+
 	// const {data} = $props()
 	// console.log(data.tabel)
 	function filterData(data: any[]) {
@@ -56,6 +56,13 @@
 	}
 	let resData = $derived(pagination(data.dataKerajaan));
 	let total_pages = $derived(Math.ceil(filterData(data.dataKerajaan).length / entries));
+
+	// Reset to first page when entries or keyword changes
+	$effect(() => {
+		if (keyword || entries) {
+			currPage = 1;
+		}
+	});
 </script>
 
 {#if navigating.to}
@@ -166,14 +173,45 @@
 					currPage--;
 				}}>Previous</button
 			>
-			{#each Array(total_pages) as _, i}
+			{#if total_pages <= 5}
+				{#each Array(total_pages) as _, i}
+					<button
+						class="rounded-lg p-4"
+						class:bg-[#F9D48B]={currPage === i + 1}
+						class:text-white={currPage === i + 1}
+						onclick={() => (currPage = i + 1)}>{i + 1}</button
+					>
+				{/each}
+			{:else}
 				<button
 					class="rounded-lg p-4"
-					class:bg-[#F9D48B]={currPage === i + 1}
-					class:text-white={currPage === i + 1}
-					onclick={() => (currPage = i + 1)}>{i + 1}</button
+					class:bg-[#F9D48B]={currPage === 1}
+					class:text-white={currPage === 1}
+					onclick={() => (currPage = 1)}>1</button
 				>
-			{/each}
+				{#if currPage > 3}
+					<span class="flex items-center px-2">...</span>
+				{/if}
+				{#each Array(3) as _, i}
+					{#if currPage - 1 + i > 1 && currPage - 1 + i < total_pages}
+						<button
+							class="rounded-lg p-4"
+							class:bg-[#F9D48B]={currPage === i}
+							class:text-white={currPage === i}
+							onclick={() => (currPage = currPage - 1 + i)}>{currPage - 1 + i}</button
+						>
+					{/if}
+				{/each}
+				{#if currPage < total_pages - 2}
+					<span class="flex items-center px-2">...</span>
+				{/if}
+				<button
+					class="rounded-lg px-3 py-2"
+					class:bg-[#F9D48B]={currPage === total_pages}
+					class:text-white={currPage === total_pages}
+					onclick={() => (currPage = total_pages)}>{total_pages}</button
+				>
+			{/if}
 			<button
 				class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
 				disabled={currPage === total_pages}
