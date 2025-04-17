@@ -59,6 +59,7 @@ export const actions: Actions = {
 
         if (!validation.success) {
             const fieldErrors = validation.error.flatten().fieldErrors;
+            console.log("Form Data:", { namaDokumen, kategori, jenisDokumen, subkategori, keterkaitan, urlFoto: fileNames });
 
             console.log("Field Errors:", fieldErrors); // Debugging untuk memastikan error dikembalikan
 
@@ -94,6 +95,7 @@ export const actions: Actions = {
             console.log(r);
 
             if (send.ok) {
+                console.log("Form Data:", res);
                 return { errors: "no Error", success: true, form: res };
             }
             return fail(400, { request: `Error Code : ${send.status} ${r.message}` });

@@ -157,8 +157,8 @@
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
 					<option value=" " disabled>None</option>
-					<option value="dokumenA">Dokumen A </option>
-					<option value="dokumenB">Dokumen B</option>
+					<option value="1">1 </option>
+					<option value="2">2</option>
 				</select>
 				{#if error}
 					{#each error.jenisDokumen as error3}
