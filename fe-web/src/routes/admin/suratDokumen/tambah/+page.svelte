@@ -2,6 +2,8 @@
 	import { enhance } from '$app/forms';
 	// import { env } from '$env/dynamic/private';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
+	import SucessModal from '$lib/popup/SucessModal.svelte';
+	import { fade } from 'svelte/transition';
 	const { data } = $props();
 	console.log(data.data);
 	let showDropdown = $state(false);
@@ -257,6 +259,13 @@
 		</form>
 	</div>
 </div>
+
+{#if success}
+	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
+		<SucessModal open={success} text="Dokumen berhasil ditambahkan!" to="/admin/suratDokumen"
+		></SucessModal>
+	</div>
+{/if}
 
 <style>
 	.cil--magnifying-glass {

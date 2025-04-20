@@ -31,7 +31,7 @@ export const actions: Actions = {
             return fail(418, { errors: verif.error.flatten().fieldErrors, success: false, form: res })
         }
         try {
-            const send = await fetch(env.PUB_PORT + "/kerajaan", {
+            const send = await fetch(env.PUB_PORT + "/kerajaan?limit=200", {
                 method: "POST",
                 headers : {"Content-Type" : "application/json"},
                 body: JSON.stringify({

@@ -96,7 +96,7 @@ export const actions: Actions = {
 
             if (send.ok) {
                 console.log("Form Data:", res);
-                return { errors: "no Error", success: true, form: res };
+                return { errors: "no Error", success: true };
             }
             return fail(400, { request: `Error Code : ${send.status} ${r.message}` });
         } catch (e) {

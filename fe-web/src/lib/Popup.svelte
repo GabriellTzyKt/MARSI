@@ -63,7 +63,7 @@
 			<!-- svelte-ignore a11y_img_redundant_alt -->
 			<div class="flex">
 				<img src={image} alt="Popup Image" class="h-12 w-12" />
-				<h3 class="ml-3 text-lg font-bold">{text}</h3>
+				<h3 class="ml-3 text-lg font-bold mt-3">{text}</h3>
 			</div>
 			<p class="text-gray-700">📍 {location}</p>
 			<a href={link} class="text-blue-500">Lihat Detail →</a>

@@ -23,24 +23,27 @@
 	import Loader1 from '$lib/loader/Loader1.svelte';
 	import Loader2 from '$lib/loader/Loader2.svelte';
 
+	let { data } = $props();
+	console.log("data dari belakang", data)
 	let resultBaru: any = $state([]);
 
 	const initialView: LatLngExpression = [-2.5489, 118.0149]; // Pusat Indonesia (biar tampilan awal pas)
 
 	// Lokasi marker di beberapa wilayah Indonesia
-	const markerLocations: Array<{ latLng: LatLngExpression; text: string; location: string }> = [
-		{ latLng: [5.5483, 95.3238], text: 'Keraton Surakarta', location: 'Sumatera' }, // Sumatera (Aceh)
-		// { latLng: [-0.7893, 113.9213], text: 'Keraton Surakarta 2', location: 'Kalimantan' }, // Kalimantan
-		{ latLng: [-7.2504, 112.7688], text: 'Keraton Surakarta 3', location: 'Jawa' }, // Jawa (Surabaya)
-		{ latLng: [-7.2504, 112.77], text: 'Keraton Surakarta 4', location: 'Jawa lagi' }, // Jawa (Surabaya)
-		{ latLng: [-6.2088, 106.8456], text: 'Keraton Surakarta 5', location: 'Jakarta' }, // Jakarta
-		{ latLng: [-8.3405, 115.3], text: 'Keraton Surakarta 6', location: 'Bali' }, // Bali
-		{ latLng: [-3.3194, 114.5908], text: 'Keraton Surakarta 7', location: 'Kalsel' } // Kalimantan Selatan
-	];
+    const markerLocations: Array<{ latLng: LatLngExpression; text: string; location: string }> = [];
 
-	// let { form } = $props();
-	// console.log('Data yang dikirim : ', form?.selectedFlip);
-	// const selectedFlip = form?.selectedFlip || [];
+	if (data && data.dataKerajaan && Array.isArray(data.dataKerajaan)) {
+        data.dataKerajaan.forEach((kerajaan: any) => {
+            if (kerajaan.latitude && kerajaan.longitude) {
+                markerLocations.push({
+                    latLng: [parseFloat(kerajaan.latitude), parseFloat(kerajaan.longitude)],
+                    text: kerajaan.nama_kerajaan || 'Kerajaan',
+                    location: kerajaan.place_name || 'Indonesia'
+                });
+            }
+        });
+    }
+
 </script>
 
 {#if navigating.to}

@@ -58,7 +58,7 @@
 	}
 	console.log('Keyword:', keyword);
 	console.log('Data:', data);
-	let total_pages = $derived(Math.ceil(filteredData(data.dataArsip).length / entries));
+	let total_pages = $derived(Math.max(1, Math.ceil(filteredData(data.dataArsip).length / Math.max(1, entries))));
 </script>
 
 <div class="flex w-full flex-col gap-4 xl:mx-4">
@@ -204,14 +204,16 @@
 							currPage--;
 						}}>Previous</button
 					>
-					{#each Array(total_pages) as _, i}
-						<button
-							class="rounded-lg p-4"
-							class:bg-[#F9D48B]={currPage === i + 1}
-							class:text-white={currPage === i + 1}
-							onclick={() => (currPage = i + 1)}>{i + 1}</button
-						>
-					{/each}
+					{#if total_pages > 0 && total_pages <= 1000}
+						{#each Array(total_pages) as _, i}
+							<button
+								class="rounded-lg p-4"
+								class:bg-[#F9D48B]={currPage === i + 1}
+								class:text-white={currPage === i + 1}
+								onclick={() => (currPage = i + 1)}>{i + 1}</button
+							>
+						{/each}
+					{/if}
 					<button
 						class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
 						disabled={currPage === total_pages}

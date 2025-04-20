@@ -191,7 +191,7 @@
 							</button>
 						</div>
 						<div class="col-span-1 px-5">
-							<form action="?/logout" method="POST">
+							<form action="/admin/logout" method="POST">
 								<button class="rounded-lg bg-red-400 px-2 py-2 text-white" type="submit">
 									Logout
 								</button>
