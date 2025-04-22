@@ -13,6 +13,7 @@
 	let success = $state(false);
 	let uploadedFiles: File[] = [];
 	let uploadedFileUrls: string[] = $state([]);
+	let uploadedFileIds: (number | null)[] = $state([]);
 	let timer: Number;
 
 	onMount(() => {
@@ -39,10 +40,43 @@
 				// 	: [];
 			}
 		}
+		// Tambahkan: Inisialisasi gambar yang sudah ada ke uploadedFiles dan uploadedFileUrls
+		if (data.files && data.files.length > 0) {
+			// Untuk gambar yang sudah ada, kita tidak memiliki File object
+			// tapi kita bisa menyimpan URL dan ID-nya
+			uploadedFileUrls = data.files.map(file => file.url);
+			uploadedFileIds = data.files.map(file => file.id);
+			// uploadedFiles tetap kosong untuk gambar yang sudah ada
+			uploadedFiles = Array(data.files.length).fill(null);
+		}
 	});
 
-	let { form } = $props();
+	let { form, data } = $props();
 	console.log('dataform : ', form?.values);
+	console.log('data : ', data);
+	let dataambil = data.document;
+	let datagambar = data.files;
+	
+	// Debug URL gambar
+	console.log('Data gambar:', datagambar);
+	if (datagambar && datagambar.length > 0) {
+		console.log('URL gambar:', datagambar[0].url);
+	}
+
+	// Fungsi untuk memvalidasi URL
+	function isValidUrl(url: string) {
+		try {
+			new URL(url);
+			return true;
+		} catch (e) {
+			return false;
+		}
+	}
+
+	let namadokumen = $state(dataambil.nama_arsip);
+	let jenisdokumen = $state(dataambil.jenis_arsip);
+	let sub_kategori_arsip = $state(dataambil.sub_kategori_arsip);
+	let kategori_arsip = $state(dataambil.kategori_arsip.toLowerCase());
 
 	let toggle = () => {
 		if (!success) {
@@ -52,27 +86,43 @@
 
 	function handleFileChange(event: Event) {
 		const target = event.target as HTMLInputElement;
+		console.log("File input changed:", target.files); // Tambahkan log di sini
+		
 		if (target.files && target.files.length > 0) {
 			const newFiles = Array.from(target.files);
-			uploadedFiles = [...uploadedFiles, ...newFiles]; // Tambahkan file baru ke daftar lama
+			console.log('New files selected:', newFiles); // Tambahkan log di sini
+			
+			// Tambahkan file baru ke daftar lama
+			uploadedFiles = [...uploadedFiles, ...newFiles]; 
+			
+			// Tambahkan URL untuk preview
 			uploadedFileUrls = [
 				...uploadedFileUrls,
 				...newFiles.map((file) => URL.createObjectURL(file))
 			];
+			
+			// Tambahkan null untuk ID file baru
+			uploadedFileIds = [...uploadedFileIds, ...Array(newFiles.length).fill(null)];
+			
 			console.log('Updated file list:', uploadedFiles);
 		}
 	}
 
 	function removeImage(index: number) {
-		uploadedFiles = uploadedFiles.slice(0, index).concat(uploadedFiles.slice(index + 1));
-		uploadedFileUrls = uploadedFileUrls.slice(0, index).concat(uploadedFileUrls.slice(index + 1));
+		// Simpan ID gambar yang dihapus untuk dikirim ke server
+		const deletedId = uploadedFileIds[index];
+		
+		// Hapus dari array
+		uploadedFiles = uploadedFiles.filter((_, i) => i !== index);
+		uploadedFileUrls = uploadedFileUrls.filter((_, i) => i !== index);
+		uploadedFileIds = uploadedFileIds.filter((_, i) => i !== index);
 	}
 </script>
 
 <div class="test flex w-full flex-col">
 	<div class="flex flex-row">
 		<a href="/admin/suratDokumen"><button class="custom-button bg-customRed">⭠ Kembali</button></a>
-		<p class="ml-5 mt-6 text-3xl font-bold underline">Tambah Dokumen</p>
+		<p class="ml-5 mt-6 text-3xl font-bold underline">Ubah Dokumen</p>
 	</div>
 
 	<div class="form-container flex flex-col">
@@ -84,7 +134,7 @@
 					type="text"
 					id="nama"
 					name="nama"
-					bind:value={nama}
+					bind:value={namadokumen}
 					placeholder="John Doe"
 				/>
 				{#if form?.errors}
@@ -115,13 +165,13 @@
 			<div class="mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nomor_telepon">Jenis Dokumen</label>
 				<select
-					bind:value={jenisDokumen}
+					bind:value={jenisdokumen}
 					name="jenisDokumen"
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
 					<option value=" " disabled>None</option>
-					<option value="dokumenA">Dokumen A </option>
-					<option value="dokumenB">Dokumen B</option>
+					<option value={1}>1 </option>
+					<option value={2}>2</option>
 				</select>
 				{#if form?.errors}
 					{#each form.errors.jenisDokumen as error3}
@@ -133,13 +183,13 @@
 			<div class=" mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nomor_telepon">Kategori</label>
 				<select
-					bind:value={kategori}
+					bind:value={kategori_arsip}
 					name="kategori"
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
 					<option value=" " disabled>None</option>
-					<option value="kategoriA">Kategori A </option>
-					<option value="kategoriB">Kategori B</option>
+					<option value="masuk">Masuk </option>
+					<option value="keluar">Keluar</option>
 				</select>
 				{#if form?.errors}
 					{#each form.errors.kategori as error4}
@@ -148,10 +198,22 @@
 				{/if}
 			</div>
 
+			<div class="text-md mt-2 text-start">
+				<label for="keterkaitan">Sub Kategori</label>
+				<div class="relative flex flex-col gap-1">
+					<input class="input-field rounded-lg border p-2 pr-10" name="subkategori" 
+					bind:value={sub_kategori_arsip}
+					/>
+
+					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
+				</div>
+			</div>
+
 			<div class="mt-2 flex w-full flex-col gap-1">
 				<label class="text-md self-start text-left" for="fileInput">Dokumen</label>
 				<div class="h-full w-full overflow-x-auto rounded-lg border-2 border-black px-2 py-2">
 					<div class="flex flex-row gap-x-5">
+						<!-- Upload container -->
 						<div
 							class="upload-container relative h-[200px] w-[270px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-black"
 						>
@@ -173,6 +235,7 @@
 							</label>
 						</div>
 
+						<!-- Tampilkan gambar yang baru diupload -->
 						{#each uploadedFileUrls as url, index}
 							<div class="relative flex-shrink-0">
 								<img
@@ -180,13 +243,13 @@
 									alt="Uploaded file"
 									class="h-[200px] w-[270px] rounded-lg border object-cover"
 								/>
-								<button class="remove-btn" onclick={() => removeImage(index)}>✕</button>
+								<button type="button" class="remove-btn" onclick={() => removeImage(index)}>✕</button>
 							</div>
 						{/each}
 					</div>
 				</div>
 				{#if form?.errors}
-					{#each form.errors.urlfoto as error5}
+					{#each form.errors.urlfoto || [] as error5}
 						<p class="text-left text-red-500">{error5}</p>
 					{/each}
 				{/if}
@@ -203,7 +266,7 @@
 
 {#if success}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
-		<SucessModal open={success} text="Dokumen berhasil ditambahkan!" to="/admin/suratDokumen"
+		<SucessModal open={success} text="Dokumen berhasil diubah!" to="/admin/suratDokumen"
 		></SucessModal>
 	</div>
 {/if}

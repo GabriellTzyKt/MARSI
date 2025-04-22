@@ -59,8 +59,11 @@
 			return 'Master Data';
 		} else if (page.route.id?.startsWith('/admin/pendaftaranKerajaan')) {
 			return 'Pendaftaran Kerajaan';
+		} else if (page.route.id?.startsWith('/admin/suratDokumen/ubah')) {
+			return 'Ubah Dokumen';
 		}
 	});
+
 	const { children, data } = $props();
 	console.log(data);
 	let sidebarActive = writable(false);

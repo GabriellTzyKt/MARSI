@@ -4,6 +4,10 @@
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import { fade } from 'svelte/transition';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
+	import Search from '$lib/table/Search.svelte';
+
 	const { data } = $props();
 	console.log(data.data);
 	let showDropdown = $state(false);
@@ -13,6 +17,9 @@
 	let kategori = $state(' ');
 	let keterkaitan = $state('');
 	let subkategori = $state('');
+
+	let loading = $state(false);
+
 	let urlFoto = $state('');
 
 	let error: any = $state('');
@@ -77,7 +84,12 @@
 		);
 	}
 	let searchRes = $derived(filter(data.data));
+	console.log(searchRes)
 </script>
+
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 
 <div class="test flex w-full flex-col">
 	<div class="flex flex-row">
@@ -91,9 +103,11 @@
 			action="?/submit"
 			enctype="multipart/form-data"
 			use:enhance={() => {
+				loading = true;
 				return async ({ result }) => {
 					console.log(result);
 					if (result.type === 'success') {
+						loading = false;
 						success = true;
 						clearTimeout(timer);
 						timer = setTimeout(() => {
@@ -126,7 +140,11 @@
 			<div class="text-md mt-2 text-start">
 				<label for="keterkaitan">Keterkaitan</label>
 				<div class="relative flex flex-col gap-1">
-					<input class="input-field rounded-lg border p-2 pr-10" name="keterkaitan" bind:value={keterkaitan} />
+					<input
+						class="input-field rounded-lg border p-2 pr-10"
+						name="keterkaitan"
+						bind:value={keterkaitan}
+					/>
 
 					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
 					{#if showDropdown && searchRes.length > 0}
@@ -265,6 +283,10 @@
 		<SucessModal open={success} text="Dokumen berhasil ditambahkan!" to="/admin/suratDokumen"
 		></SucessModal>
 	</div>
+{/if}
+
+{#if loading}
+	<Loader></Loader>
 {/if}
 
 <style>

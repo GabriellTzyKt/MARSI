@@ -68,7 +68,7 @@
 		table_header={[
 			['nama_arsip', 'Nama Dokumen'],
 			['asal_kerajaan', 'Asal Kerajaan'],
-			['jenis_arsip', 'Jenis Dokumen'],
+			['jenis_arsip_detail', 'Jenis Dokumen'],
 			['kategori_arsip', 'Kategori'],
 			['sub_kategori_arsip', 'Sub Kategori'],
 			['files', 'Dokumentasi', 'custom'],  // ada gambar, jadi perlu khusus
