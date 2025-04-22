@@ -20,6 +20,7 @@ export const actions: Actions = {
         const asalKerajaan = data.get("asalKerajaan");
         const kategori = data.get("kategori");
         const jenisDokumen = data.get("jenisDokumen");
+        const subkategori = data.get("subkategori")
         const urlFoto = data.getAll("uploadfile")
             .filter((file) => file instanceof File && file.size > 0)
             .map((file) => (file as File).name);
@@ -29,6 +30,7 @@ export const actions: Actions = {
             asalKerajaan,
             kategori,
             jenisDokumen,
+            subkategori,
             urlfoto: urlFoto,
         });
 
@@ -46,6 +48,7 @@ export const actions: Actions = {
             formData.append("nama_arsip", namaDokumen?.toString() || "");
             formData.append("kategori_arsip", kategori?.toString() || "");
             formData.append("jenis_arsip", jenisDokumen?.toString() || "");
+            formData.append("sub_kategori_arsip", subkategori?.toString() || "");
             
             // Tambahkan file ke FormData jika ada
             const files = data.getAll("uploadfile")

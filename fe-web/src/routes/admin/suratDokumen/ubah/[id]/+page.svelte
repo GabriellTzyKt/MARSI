@@ -199,7 +199,7 @@
 			</div>
 
 			<div class="text-md mt-2 text-start">
-				<label for="keterkaitan">Sub Kategori</label>
+				<label for="subkategori">Sub Kategori</label>
 				<div class="relative flex flex-col gap-1">
 					<input class="input-field rounded-lg border p-2 pr-10" name="subkategori" 
 					bind:value={sub_kategori_arsip}
