@@ -5,15 +5,19 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
+	let { data, form } = $props();
 	let nama = $state('');
 	let jenisDokumen = $state(' ');
 	let asalKerajaan = $state(' ');
 	let kategori = $state(' ');
+	let keterkaitan = $state('');
+	let showDropdown = $state(false);
 
 	let success = $state(false);
 	let uploadedFiles: File[] = [];
 	let uploadedFileUrls: string[] = $state([]);
 	let timer: Number;
+	let error = $state('');
 
 	onMount(() => {
 		if (form?.success) {
@@ -41,7 +45,6 @@
 		}
 	});
 
-	let { form } = $props();
 	console.log('dataform : ', form?.values);
 
 	let toggle = () => {
@@ -49,6 +52,18 @@
 			success = true;
 		} else success = false;
 	};
+	$effect(() => {
+		if (keterkaitan === '') {
+			showDropdown = false;
+		} else {
+			showDropdown = true;
+		}
+	});
+
+	function selectKeterkaitan(value: string) {
+		keterkaitan = value;
+		showDropdown = false;
+	}
 
 	function handleFileChange(event: Event) {
 		const target = event.target as HTMLInputElement;
@@ -67,6 +82,12 @@
 		uploadedFiles = uploadedFiles.slice(0, index).concat(uploadedFiles.slice(index + 1));
 		uploadedFileUrls = uploadedFileUrls.slice(0, index).concat(uploadedFileUrls.slice(index + 1));
 	}
+	function filter(data: any[]) {
+		return data.filter((item) =>
+			item?.nama_kerajaan?.toLowerCase().includes(keterkaitan.toLowerCase())
+		);
+	}
+	let searchRes = $derived(filter(data.data));
 </script>
 
 <div class="test flex w-full flex-col">
@@ -113,7 +134,37 @@
 					{/each}
 				{/if}
 			</div>
+			<div class="text-md mt-2 text-start">
+				<label for="keterkaitan">Keterkaitan</label>
+				<div class="relative flex flex-col gap-1">
+					<input
+						class="input-field rounded-lg border p-2 pr-10"
+						name="keterkaitan"
+						bind:value={keterkaitan}
+					/>
 
+					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
+					{#if showDropdown && searchRes.length > 0}
+						<ul class="bordeer z-10 max-h-40 w-full overflow-y-auto rounded-lg bg-white shadow-lg">
+							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+							{#each searchRes as item}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<li
+									class="cursor-pointer p-2 hover:bg-gray-300"
+									onclick={() => selectKeterkaitan(item.nama_kerajaan)}
+								>
+									{item.nama_kerajaan}
+								</li>
+							{/each}
+						</ul>
+					{/if}
+					{#if error}
+						{#each error.keterkaitan as error1}
+							<p class="text-left text-red-500">{error1}</p>
+						{/each}
+					{/if}
+				</div>
+			</div>
 			<div class="mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nomor_telepon">Asal Kerajaan</label>
 				<select

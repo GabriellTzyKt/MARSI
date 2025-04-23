@@ -124,7 +124,11 @@
 			<div class="text-md mt-2 text-start">
 				<label for="keterkaitan">Keterkaitan</label>
 				<div class="relative flex flex-col gap-1">
-					<input class="input-field rounded-lg border p-2 pr-10" name="keterkaitan" bind:value={keterkaitan} />
+					<input
+						class="input-field rounded-lg border p-2 pr-10"
+						name="keterkaitan"
+						bind:value={keterkaitan}
+					/>
 
 					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
 					{#if showDropdown && searchRes.length > 0}
@@ -133,7 +137,7 @@
 							{#each searchRes as item}
 								<!-- svelte-ignore a11y_click_events_have_key_events -->
 								<li
-									class="cursor-pointer hover:bg-gray-300"
+									class="cursor-pointer p-2 hover:bg-gray-300"
 									onclick={() => selectKeterkaitan(item.nama_kerajaan)}
 								>
 									{item.nama_kerajaan}

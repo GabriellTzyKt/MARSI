@@ -1,12 +1,28 @@
 import { error, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
+import type { PageServerLoad } from "../$types";
+import { env } from "$env/dynamic/private";
 
-
+export const load: PageServerLoad = async () => {
+    try {
+        const res = await fetch(`${env.PUB_PORT}/kerajaan`, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json'
+            }
+        });
+        if (res.ok) {
+            const data = await res.json();
+            console.log(data);
+            return { data }
+        }
+    } catch (error) { }
+};
 export const actions: Actions = {
     ubah: async ({ request }) => {
         const data = await request.formData();
         const objForm = Object.fromEntries(data)
-        console.log("data : "+ objForm)
+        console.log("data : ",objForm)
         const ver = z.object({
             namaDokumen: z.string({ message: "Input Tidak Boleh Kosong" }).max(255).nonempty("Isi Nama"),
             asalKerajaan: z.string({ message: "Pilih 1 pilihan!" }),

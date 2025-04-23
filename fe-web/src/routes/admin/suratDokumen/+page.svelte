@@ -8,8 +8,8 @@
 	import Status from '$lib/table/Status.svelte';
 
 	let { data } = $props();
-	const d = data.dataArsip;
-	console.log(data.dataArsip);
+	const d = data?.dataArsip?.data;
+	console.log(data.dataArsip.data);
 
 	let pop = $state(false);
 	function setpop() {
@@ -59,8 +59,8 @@
 		{#snippet children({ header, data, index })}
 			{#if header === 'Aksi'}
 				<DropDown
-					text="apakah yakin ingin mengarsip dokumen {data.nama_dokumen} ini?"
-					successText={`Dokumen ${data.nama_dokumen} berhasil diarsipkan!`}
+					text="apakah yakin ingin mengarsip dokumen {data.nama_arsip} ini?"
+					successText={`Dokumen ${data.nama_arsip} berhasil diarsipkan!`}
 					link="/admin/suratDokumen"
 					{index}
 					items={[
