@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { navigating } from '$app/state';
 	import Footer from '$lib/footer/Footer.svelte';
+	import Loader from '$lib/loader/Loader.svelte';
 	import Navbar from '$lib/navbar/Navbar.svelte';
 	import Marquee from 'svelte-fast-marquee';
 
@@ -28,7 +30,9 @@
 <div class="relative">
 	<Navbar></Navbar>
 </div>
-
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <section class="bg-gray-100 pb-10 pt-20">
 	<div class="mx-auto max-w-6xl px-4">
 		<div class="form-container">

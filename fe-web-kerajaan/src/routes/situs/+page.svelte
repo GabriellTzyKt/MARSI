@@ -3,12 +3,16 @@
 	import Navbar from '$lib/navbar/Navbar.svelte';
 	import situs1 from '$lib/asset/kerajaan/situs1.png';
 	import Card2 from '$lib/card2/Card2.svelte';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	let value = $state('Keterangan');
 </script>
 
 <Navbar></Navbar>
-
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <section class="h-auto w-full bg-slate-200 py-5">
 	<div class="mb-3 flex w-full flex-col items-end px-5">
 		<p class="w-full text-center text-lg font-bold text-black">Situs Bersejarah</p>
@@ -16,7 +20,7 @@
 			<div class="relative">
 				<select
 					bind:value
-					class="block w-full rounded border border-gray-300 bg-white pr-2 pl-4 py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+					class="block w-full rounded border border-gray-300 bg-white py-2 pl-4 pr-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
 					<option>Keterangan</option>
 					<option>Opsi 1</option>
@@ -39,7 +43,7 @@
 	</div>
 
 	<div class="ml-5 mr-5 flex justify-center">
-		<div class="mx-auto grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1  gap-4">
+		<div class="mx-auto grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 			<Card2
 				situs={situs1}
 				header="Keraton Surakarta Hadiningrat"
@@ -49,7 +53,7 @@
 					pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
 					menyegarkan."
 				icon="air"
-                id=1
+				id="1"
 			></Card2>
 
 			<Card2
@@ -61,7 +65,7 @@
                     pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
                     menyegarkan."
 				icon="tempatIstirahat"
-                id=2
+				id="2"
 			></Card2>
 
 			<Card2
@@ -73,7 +77,7 @@
                     pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
                     menyegarkan."
 				icon="tempatBersejarah"
-                id=3
+				id="3"
 			></Card2>
 
 			<Card2
@@ -85,56 +89,56 @@
                     pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
                     menyegarkan."
 				icon="tempatIstirahat"
-                id=4
+				id="4"
 			></Card2>
 
-            <Card2
-            situs={situs1}
-            header="Keraton Surakarta Hadiningrat"
-            isi="Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
+			<Card2
+				situs={situs1}
+				header="Keraton Surakarta Hadiningrat"
+				isi="Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
                 Dikenal karena kejernihan airnya yang memukau, tempat ini menjadi salah satu tujuan
                 wisata populer bagi penduduk lokal maupun wisatawan. Dengan suasana yang tenang dan
                 pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
                 menyegarkan."
-            icon="air"
-            id=5
-        ></Card2>
+				icon="air"
+				id="5"
+			></Card2>
 
-        <Card2
-            situs={situs1}
-            header="Keraton Surakarta Hadiningrat"
-            isi="Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
+			<Card2
+				situs={situs1}
+				header="Keraton Surakarta Hadiningrat"
+				isi="Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
                 Dikenal karena kejernihan airnya yang memukau, tempat ini menjadi salah satu tujuan
                 wisata populer bagi penduduk lokal maupun wisatawan. Dengan suasana yang tenang dan
                 pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
                 menyegarkan."
-            icon="tempatBersejarah"
-            id=6
-        ></Card2>
+				icon="tempatBersejarah"
+				id="6"
+			></Card2>
 
-        <Card2
-            situs={situs1}
-            header="Keraton Surakarta Hadiningrat"
-            isi="Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
+			<Card2
+				situs={situs1}
+				header="Keraton Surakarta Hadiningrat"
+				isi="Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
                 Dikenal karena kejernihan airnya yang memukau, tempat ini menjadi salah satu tujuan
                 wisata populer bagi penduduk lokal maupun wisatawan. Dengan suasana yang tenang dan
                 pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
                 menyegarkan."
-            icon="air"
-            id=7
-        ></Card2>
+				icon="air"
+				id="7"
+			></Card2>
 
-        <Card2
-            situs={situs1}
-            header="Keraton Surakarta Hadiningrat"
-            isi="Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
+			<Card2
+				situs={situs1}
+				header="Keraton Surakarta Hadiningrat"
+				isi="Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
                 Dikenal karena kejernihan airnya yang memukau, tempat ini menjadi salah satu tujuan
                 wisata populer bagi penduduk lokal maupun wisatawan. Dengan suasana yang tenang dan
                 pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
                 menyegarkan."
-            icon="tempatIstirahat"
-            id=8
-        ></Card2>
+				icon="tempatIstirahat"
+				id="8"
+			></Card2>
 		</div>
 	</div>
 </section>

@@ -2,11 +2,15 @@
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '$lib/navbar/Navbar.svelte';
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 </script>
 
 <Navbar></Navbar>
-
-<section class="h-auto w-full mb-5">
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+<section class="mb-5 h-auto w-full">
 	<div class="flex flex-col items-center">
 		<p class="mt-10 text-center text-2xl font-bold">Kelompok</p>
 		<div class="mb-5 ml-12 mt-2 flex w-[95%] items-center gap-2 text-start">
@@ -15,7 +19,7 @@
 			<button class="w-15 h-10 rounded-lg border-2 bg-blue-600 text-white"> Cari </button>
 		</div>
 		<div class="w-[90%] rounded-lg border bg-gray-300">
-			<div class="grid lg:grid-cols-3 grid-cols-1">
+			<div class="grid grid-cols-1 lg:grid-cols-3">
 				<div class="h-136 m-2 flex flex-col rounded-lg border">
 					<div class="relative mx-auto mt-5 flex w-full items-center justify-center">
 						<img src={gambardefault} class="relative ml-5 mr-5 h-16 w-16 rounded-full" alt="" />
@@ -42,7 +46,7 @@
 				</div>
 				<div class="m-2 rounded-lg border">
 					<p class="ml-5 mt-3">Riwayat Komunitas</p>
-					<div class="mt-2 mx-auto h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
+					<div class="mx-auto mt-2 h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
 						<p>Nama Acara</p>
 						<p>Didirikan</p>
 						<p>Tanggal</p>
@@ -50,54 +54,54 @@
 					</div>
 				</div>
 				<div class="flex flex-col">
-					<div class="h-66 m-2 rounded-lg border overflow-auto mt-2">
-						<p class="ml-5 mt-3 mb-4">Riwayat Acara</p>
-						<div class="mt-2 mx-auto h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
+					<div class="h-66 m-2 mt-2 overflow-auto rounded-lg border">
+						<p class="mb-4 ml-5 mt-3">Riwayat Acara</p>
+						<div class="mx-auto mt-2 h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
 							<p>Nama Acara</p>
 							<p>Didirikan</p>
 							<p>Tanggal</p>
 							<p>Oleh</p>
 						</div>
-                        <div class="mt-2 mx-auto h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
+						<div class="mx-auto mt-2 h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
 							<p>Nama Acara</p>
 							<p>Didirikan</p>
 							<p>Tanggal</p>
 							<p>Oleh</p>
 						</div>
-                        <div class="mt-2 mx-auto h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
+						<div class="mx-auto mt-2 h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
 							<p>Nama Acara</p>
 							<p>Didirikan</p>
 							<p>Tanggal</p>
 							<p>Oleh</p>
 						</div>
-                        <div class="mt-2 mx-auto h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
+						<div class="mx-auto mt-2 h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
 							<p>Nama Acara</p>
 							<p>Didirikan</p>
 							<p>Tanggal</p>
 							<p>Oleh</p>
 						</div>
 					</div>
-                    <div class="h-66 m-2 rounded-lg border overflow-auto mt-2">
-						<p class="ml-5 mt-3 mb-4">Riwayat Situs</p>
-						<div class="mt-2 mx-auto h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
+					<div class="h-66 m-2 mt-2 overflow-auto rounded-lg border">
+						<p class="mb-4 ml-5 mt-3">Riwayat Situs</p>
+						<div class="mx-auto mt-2 h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
 							<p>Nama Acara</p>
 							<p>Didirikan</p>
 							<p>Tanggal</p>
 							<p>Oleh</p>
 						</div>
-                        <div class="mt-2 mx-auto h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
+						<div class="mx-auto mt-2 h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
 							<p>Nama Acara</p>
 							<p>Didirikan</p>
 							<p>Tanggal</p>
 							<p>Oleh</p>
 						</div>
-                        <div class="mt-2 mx-auto h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
+						<div class="mx-auto mt-2 h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
 							<p>Nama Acara</p>
 							<p>Didirikan</p>
 							<p>Tanggal</p>
 							<p>Oleh</p>
 						</div>
-                        <div class="mt-2 mx-auto h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
+						<div class="mx-auto mt-2 h-20 w-[90%] rounded-lg border px-2 py-2 text-xs">
 							<p>Nama Acara</p>
 							<p>Didirikan</p>
 							<p>Tanggal</p>

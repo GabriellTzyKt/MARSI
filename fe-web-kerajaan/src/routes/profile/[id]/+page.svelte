@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/state';
+	import { navigating, page } from '$app/state';
 	import Navbar from '$lib/navbar/Navbar.svelte';
 	import jd from '$lib/asset/profile/jdpp.jpg';
 	import Input from '../Input.svelte';
@@ -10,6 +10,7 @@
 	import DropDownRunes from '$lib/dropdown/dropdownrunes.svelte';
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
+	import Loader from '$lib/loader/Loader.svelte';
 	let { form, data } = $props();
 
 	console.log(form?.errors);
@@ -49,15 +50,24 @@
 	};
 
 	const akun = data.akun;
+	let loading = $state(false);
 </script>
 
 <Navbar></Navbar>
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
 <form
 	action="?/ubah"
 	onsubmit={(e) => cekRadio(e)}
 	method="post"
 	use:enhance={() => {
+		loading = true;
 		return async ({ result }) => {
+			loading = false;
 			console.log(result.data.errors);
 			if (result.type === 'success') {
 			} else if (result.type === 'failure') {

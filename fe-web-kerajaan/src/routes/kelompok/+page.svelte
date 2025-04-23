@@ -3,6 +3,8 @@
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '$lib/navbar/Navbar.svelte';
 	import situs1 from '$lib/asset/kerajaan/situs1.png';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	const events = [
 		{
@@ -59,7 +61,9 @@
 </script>
 
 <Navbar></Navbar>
-
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <section class="h-auto w-auto">
 	<div class="flex flex-col items-center">
 		<p class="mt-10 text-center text-2xl font-bold">Kelompok</p>
@@ -102,7 +106,7 @@
 	</div>
 
 	<div class="mb-10 ml-5 mr-5 mt-10 flex justify-center">
-		<div class="mx-auto grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-4">
+		<div class="mx-auto grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 			{#each filteredData as event}
 				<Card2 situs={event.situs} header={event.header} isi={event.isi} icon="" id={event.id} />
 			{/each}

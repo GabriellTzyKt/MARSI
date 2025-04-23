@@ -61,7 +61,11 @@
 
 <!-- Navbar -->
 <Navbar></Navbar>
+
 {#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
 	<Loader></Loader>
 {/if}
 <form

@@ -3,10 +3,14 @@
 	import Navbar from '$lib/navbar/Navbar.svelte';
 	import situs1 from '$lib/asset/kerajaan/situs1.png';
 	import Card2 from '$lib/card2/Card2.svelte';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 </script>
 
 <Navbar></Navbar>
-
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <section class="h-auto w-full bg-slate-200 py-5">
 	<div class="mb-3 flex w-full flex-col px-5">
 		<p class="w-full text-center text-lg font-bold text-black">Riwayat Acara</p>
@@ -22,7 +26,7 @@
 	</div>
 
 	<div class="ml-5 mr-5 flex justify-center">
-		<div class="mx-auto grid-cols-1 md:grid-cols-2 grid lg:grid-cols-4 gap-4">
+		<div class="mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
 			<Card2
 				situs={situs1}
 				header="Keraton Surakarta Hadiningrat"

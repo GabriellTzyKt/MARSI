@@ -12,18 +12,22 @@
 	import CardAbout from '$lib/card1/CardAbout.svelte';
 	import Card2 from '$lib/card2/Card2.svelte';
 	import Card3 from '$lib/card3/Card3.svelte';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 </script>
 
 <Navbar></Navbar>
-
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <!-- 1  -->
 <section class="h-fit w-full">
 	<div class="relative">
 		<img src={gambarAtas} alt="" class="min-h-screen w-full object-cover" />
-		<div class="absolute lg:top-[25%] top-[35%] flex h-full w-full flex-col text-center">
-			<p class="items-center sm:text-2xl md:text-8xl text-white">Maha Menteri</p>
+		<div class="absolute top-[35%] flex h-full w-full flex-col text-center lg:top-[25%]">
+			<p class="items-center text-white sm:text-2xl md:text-8xl">Maha Menteri</p>
 			<div>
-				<p class="mt-4 items-center text-2xl lg:text-8xl text-white">Keraton Surakarta</p>
+				<p class="mt-4 items-center text-2xl text-white lg:text-8xl">Keraton Surakarta</p>
 				<p class="mt-4 items-center text-2xl text-white">
 					Deskripsi singkat mengenai Maha Menteri Keraton Surakarta
 				</p>
@@ -44,7 +48,7 @@
 <section class="h-auto w-full bg-slate-200 py-5">
 	<p class="mb-5 py-5 text-center text-2xl font-bold text-blue-500">Tentang Keraton Solo</p>
 	<div class="flex justify-center">
-		<div class="mx-auto p-5 grid lg:grid-cols-3 grid-cols-1 gap-2">
+		<div class="mx-auto grid grid-cols-1 gap-2 p-5 lg:grid-cols-3">
 			<!-- Grid item 1 -->
 			<CardAbout
 				gambarAbout={gambarAbout1}
@@ -98,7 +102,7 @@
 	</div>
 	<!-- Situs -->
 	<div class="ml-5 mr-5 flex justify-center">
-		<div class="mx-auto grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1  gap-4">
+		<div class="mx-auto grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 			<Card2
 				situs={situs1}
 				header="Keraton Surakarta Hadiningrat"
@@ -108,8 +112,7 @@
 					pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
 					menyegarkan."
 				icon=""
-				id=0
-
+				id="0"
 			></Card2>
 
 			<Card2
@@ -121,8 +124,7 @@
                     pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
                     menyegarkan."
 				icon=""
-				id=0
-
+				id="0"
 			></Card2>
 
 			<Card2
@@ -134,8 +136,7 @@
                     pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
                     menyegarkan."
 				icon=""
-				id=0
-
+				id="0"
 			></Card2>
 
 			<Card2
@@ -147,8 +148,7 @@
                     pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
                     menyegarkan."
 				icon=""
-				id=0
-
+				id="0"
 			></Card2>
 		</div>
 	</div>
@@ -170,7 +170,7 @@
 	</div>
 	<!-- Situs -->
 	<div class="ml-5 mr-5 flex justify-center">
-		<div class="mx-auto grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1  gap-4">
+		<div class="mx-auto grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 			<Card2
 				situs={situs1}
 				header="Keraton Surakarta Hadiningrat"
@@ -180,7 +180,7 @@
 					pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
 					menyegarkan."
 				icon=""
-				id=0
+				id="0"
 			></Card2>
 
 			<Card2
@@ -192,8 +192,7 @@
                     pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
                     menyegarkan."
 				icon=""
-				id=0
-
+				id="0"
 			></Card2>
 
 			<Card2
@@ -205,8 +204,7 @@
                     pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
                     menyegarkan."
 				icon=""
-				id=0
-
+				id="0"
 			></Card2>
 
 			<Card2
@@ -218,8 +216,7 @@
                     pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
                     menyegarkan."
 				icon=""
-				id=0
-
+				id="0"
 			></Card2>
 		</div>
 	</div>
@@ -240,7 +237,7 @@
 		</div>
 	</div>
 	<div class="ml-5 mr-5">
-		<div class="mx-auto grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-8">
+		<div class="mx-auto grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
 
 			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
@@ -267,7 +264,7 @@
 		</div>
 	</div>
 	<div class="ml-5 mr-5">
-		<div class="mx-auto grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1  gap-8">
+		<div class="mx-auto grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
 
 			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
