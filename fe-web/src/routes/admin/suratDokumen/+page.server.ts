@@ -19,11 +19,11 @@ export const load: PageServerLoad = async () => {
             }
        })
         
-        console.log(request)
+        // console.log(request)
         if (request.ok) {
             const data = await request.json()
             console.log("Ini arsip : ", data)
-            return {dataArsip : data}
+            return {dataArsip : {data}}
         }
         else return {dataArsip: "Failed"}
         

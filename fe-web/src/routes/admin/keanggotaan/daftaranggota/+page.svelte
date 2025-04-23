@@ -83,7 +83,7 @@
 				<p>Show</p>
 			</div>
 			<div class="text-center">
-				<Pagination bind:value={entries}></Pagination>
+				<!-- <Pagination bind:value={entries}></Pagination> -->
 			</div>
 			<div class="mx-2">
 				<p>entries</p>

@@ -72,11 +72,31 @@
 <div class="test flex w-full flex-col">
 	<div class="flex flex-row">
 		<a href="/admin/suratDokumen"><button class="custom-button bg-customRed">⭠ Kembali</button></a>
-		<p class="ml-5 mt-6 text-3xl font-bold underline">Tambah Dokumen</p>
+		<p class="ml-5 mt-6 text-3xl font-bold underline">Ubah Dokumen</p>
 	</div>
 
 	<div class="form-container flex flex-col">
-		<form method="post" action="?/submit" enctype="multipart/form-data">
+		<form
+			method="POST"
+			action="?/ubah"
+			enctype="multipart/form-data"
+			use:enhance={() => {
+				return async ({ result }) => {
+					if (result.type === 'success') {
+						// success = true;
+						// clearTimeout(timer);
+						// timer = setTimeout(() => {
+						// 	success = false;
+						// }, 3000);
+						console.log(result?.data?.formData);
+					}
+					if (result.type === 'failure') {
+						// error = result?.data?.errors;
+						console.log(result?.data?.formData);
+					}
+				};
+			}}
+		>
 			<div class="flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Nama Dokumen</label>
 				<input
@@ -194,7 +214,7 @@
 
 			<div class="flex w-full justify-end">
 				<button class="bg-customGold mt-2 rounded-lg border px-6 py-2 text-white" type="submit">
-					Tambah
+					Ubah
 				</button>
 			</div>
 		</form>

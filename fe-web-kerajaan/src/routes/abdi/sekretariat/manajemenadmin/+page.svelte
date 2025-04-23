@@ -5,8 +5,11 @@
 	import { enhance } from '$app/forms';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import TambahAdminSekre from '$lib/popup/TambahAdminSekre.svelte';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
+	// import { load } from '../organisasi/daftaranggota/proxy+page.server.js';
 	let selectTipe = $state<string>('');
-		
+
 	let { form } = $props();
 	let open = $state(false);
 	let valo = $state(false);
@@ -50,8 +53,15 @@
 	// 		edit = false;
 	// 	}
 	// });
+	let loading = $state(false);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
 <div class="flex w-full flex-col md:mx-6">
 	<div class="flex flex-col justify-center gap-4 md:flex-row md:justify-between md:gap-0">
 		<div class="flex justify-center">

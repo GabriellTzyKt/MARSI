@@ -1,17 +1,28 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	let errors = $state();
 	let open = $state(false);
 	let timer: number;
+	let loading = $state(false);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
 <div class="mx-6 flex w-full flex-col">
 	<form
 		action="?/tambahMobile"
 		method="post"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result }) => {
+				loading = false;
 				if (result.type === 'success') {
 					open = true;
 					clearTimeout(timer);

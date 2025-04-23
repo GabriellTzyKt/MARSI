@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Modal from '$lib/popup/Modal.svelte';
-	import Pagination from '$lib/table/Pagination.svelte';
+	// import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
 	import { dummyAcara, dummyDocs } from '$lib/dummy';
@@ -8,9 +8,9 @@
 	import Status from '$lib/table/Status.svelte';
 
 	let { data } = $props();
-	const dataArsip = data.dataArsip
-	console.log(dataArsip);
-	
+	const d = data.dataArsip;
+	console.log(data.dataArsip);
+
 	let pop = $state(false);
 	function setpop() {
 		pop = true;
@@ -36,9 +36,7 @@
 			<div class="me-4 ms-2">
 				<p>Show</p>
 			</div>
-			<div class="text-center">
-				<Pagination></Pagination>
-			</div>
+			<div class="text-center"></div>
 			<div class="mx-2">
 				<p>entries</p>
 			</div>
@@ -56,7 +54,7 @@
 
 			['children', 'Aksi']
 		]}
-		table_data={dataArsip}
+		table_data={d}
 	>
 		{#snippet children({ header, data, index })}
 			{#if header === 'Aksi'}

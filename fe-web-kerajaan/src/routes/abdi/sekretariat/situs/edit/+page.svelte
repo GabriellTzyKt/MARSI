@@ -4,6 +4,8 @@
 	import { goto } from '$app/navigation';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import { enhance } from '$app/forms';
+	import Loader from '$lib/loader/Loader.svelte';
+	import { navigating } from '$app/state';
 	let open = $state(false);
 	let timer: number;
 	let errors = $state();
@@ -18,14 +20,23 @@
 				goto('/abdi/sekretariat/situs');
 			}, 3000);
 	}
+	let loading = $state(false);
 </script>
 
+{#if loading}
+	<Loader></Loader>
+{/if}
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="h-full w-full">
 	<form
 		action="?/editSitus"
 		method="post"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result, update }) => {
+				loading = false;
 				if (result.type === 'success') {
 					open = true;
 					clearTimeout(timer);

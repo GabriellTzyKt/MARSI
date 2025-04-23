@@ -6,6 +6,8 @@
 	import { enhance } from '$app/forms';
 	import Input from '$lib/input/Input.svelte';
 	import { events } from '$lib/dummy';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	let { judulSection } = $props();
 	let errors = $state();
@@ -72,8 +74,15 @@
 		if (!value) value = true;
 		else value = false;
 	}
+	let loading = $state(false);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -94,7 +103,9 @@
 			method="post"
 			enctype="multipart/form-data"
 			use:enhance={() => {
+				loading = true;
 				return async ({ result, update }) => {
+					loading = false;
 					if (result.type === 'success') {
 						open = true;
 						clearTimeout(timer);

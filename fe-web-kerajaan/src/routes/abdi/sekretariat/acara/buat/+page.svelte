@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import TambahArray from '$lib/tambah/TambahArray.svelte';
 	import { fade } from 'svelte/transition';
@@ -53,9 +55,7 @@
 	);
 	let invitationIds: number[] = $state([]); // Array that stores only the invitation ids
 
-	let invitations2: { id: number; namalengkap: string; namajabatan: string }[] = $state(
-		[]
-	);
+	let invitations2: { id: number; namalengkap: string; namajabatan: string }[] = $state([]);
 	let invitationIds2: number[] = $state([]); // Array that stores only the invitation ids
 
 	function tambah() {
@@ -77,7 +77,6 @@
 		console.log('invitations id: ', invitationIds);
 	}
 
-
 	function tambah2() {
 		// id nya dipakei date.now itu supaya pasti beda
 		const newId = Date.now();
@@ -86,8 +85,8 @@
 			...invitations2,
 			{
 				id: newId,
-				namalengkap : "",
-				namajabatan : "",
+				namalengkap: '',
+				namajabatan: ''
 			}
 		];
 		console.log('invitations: ', invitations2);
@@ -130,14 +129,23 @@
 			success = true;
 		} else success = false;
 	};
+	let loading = $state(false);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
 <div class="min-h-screen w-full">
 	<form
 		method="post"
 		action="?/tambah"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result }) => {
+				loading = false;
 				console.log(result);
 				console.log(input_radio);
 				if (result.type === 'success') {
@@ -155,7 +163,6 @@
 		}}
 	>
 		<div class="min-h-screen rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-			
 			<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 				<div class="col-span-2">
 					<div class="mt-2 w-full">
@@ -240,7 +247,7 @@
 						<div class="ml-10 flex">
 							<div class="mr-10 w-full items-center text-center">
 								<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara</p>
-								<div class="mt-2 flex justify-center items-center self-center">
+								<div class="mt-2 flex items-center justify-center self-center">
 									<div class="mx-2 flex items-center justify-center">
 										<input
 											id="default-radio-1"

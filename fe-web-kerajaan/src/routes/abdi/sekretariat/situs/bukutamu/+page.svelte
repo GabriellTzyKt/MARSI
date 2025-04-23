@@ -2,6 +2,7 @@
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAcara, dummyAnggota, dummyBukuTamu } from '$lib/dummy';
 	import TambahKunjungan from '$lib/popup/TambahKunjungan.svelte';
+	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
@@ -9,7 +10,35 @@
 	let count = $state(1);
 	let id = $state(1);
 	let showModal = $state(false);
-
+	let entries = $state(10);
+	let keyword = $state('');
+	let currPage = $state(1);
+	function filterD(data: any[]) {
+		return data.filter(
+			(item) =>
+				item?.nama_pengunjung?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.tanggal?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.no_telepon?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.keterangan?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.status?.toLowerCase().includes(keyword.toLowerCase())
+		);
+	}
+	function pagination(data: any[]) {
+		let d = filterD(data);
+		let start = (currPage - 1) * entries;
+		let end = start + entries;
+		console.log(d);
+		return d.slice(start, end);
+	}
+	let resData = $derived(pagination(dummyBukuTamu));
+	$effect(() => {
+		if (keyword || entries) {
+			currPage = 1;
+		}
+		if (entries < 0) {
+			entries = 0;
+		}
+	});
 	function increment() {
 		count += 1;
 		id += 1;
@@ -54,6 +83,7 @@
 				<input
 					type="text"
 					placeholder="Cari.."
+					bind:value={keyword}
 					class=" w-full bg-transparent px-2 py-2 focus:outline-none"
 				/>
 
@@ -80,7 +110,7 @@
 				<input
 					type="number"
 					class="w-12 rounded-md border py-2 text-center focus:outline-none"
-					value="8"
+					bind:value={entries}
 					name=""
 					id=""
 				/>
@@ -90,7 +120,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="flex w-full">
+	<div class="flex w-full flex-col">
 		<Table
 			table_header={[
 				['id_kunjungan', 'Id Kunjungan'],
@@ -101,7 +131,7 @@
 				['children', 'Status'],
 				['children', 'Aksi']
 			]}
-			table_data={dummyBukuTamu}
+			table_data={resData}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
@@ -118,6 +148,7 @@
 				{/if}
 			{/snippet}
 		</Table>
+		<Pagination bind:currPage bind:entries totalItems={filterD(dummyBukuTamu).length}></Pagination>
 	</div>
 </div>
 {#if showModal}

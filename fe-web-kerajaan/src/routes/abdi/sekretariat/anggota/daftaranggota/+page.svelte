@@ -36,12 +36,14 @@
 	<Loader text="Navigating..."></Loader>
 {/if}
 <div class="flex w-full flex-col">
-	<div class=" flex flex-col xl:flex-row xl:justify-between">
+	<div class=" flex flex-col lg:flex-row lg:justify-between">
 		<button
 			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
 			onclick={() => goto('daftaranggota/tambah')}>+Tambah Data</button
 		>
-		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
+		<div
+			class="mt-4 flex flex-col items-center justify-center gap-2 lg:mt-0 lg:flex-row lg:justify-start"
+		>
 			<!-- select -->
 			<select
 				name="Organisasi"

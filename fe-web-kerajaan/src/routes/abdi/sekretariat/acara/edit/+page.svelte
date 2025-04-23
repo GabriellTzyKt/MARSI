@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -23,9 +25,8 @@
 	let namajabatan = $state([]);
 	let notelpbawah = $state([]);
 
-
 	let { form } = $props();
-	console.log("hi : ", form)
+	console.log('hi : ', form);
 
 	if (form?.formData) {
 		namaacara = form.formData.namaacara;
@@ -46,9 +47,7 @@
 	);
 	let invitationIds: number[] = $state([]); // Array that stores only the invitation ids
 
-	let invitations2: { id: number; namalengkap: string; namajabatan: string }[] = $state(
-		[]
-	);
+	let invitations2: { id: number; namalengkap: string; namajabatan: string }[] = $state([]);
 	let invitationIds2: number[] = $state([]); // Array that stores only the invitation ids
 
 	function tambah() {
@@ -70,7 +69,6 @@
 		console.log('invitations id: ', invitationIds);
 	}
 
-
 	function tambah2() {
 		// id nya dipakei date.now itu supaya pasti beda
 		const newId = Date.now();
@@ -79,8 +77,8 @@
 			...invitations2,
 			{
 				id: newId,
-				namalengkap : "",
-				namajabatan : "",
+				namalengkap: '',
+				namajabatan: ''
 			}
 		];
 		console.log('invitations: ', invitations2);
@@ -114,25 +112,37 @@
 	let open = $state(false);
 
 	let timer: Number;
-
+	let loading = $state(false);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
 <div class="min-h-full w-full">
-	<form method="post" action="?/edit" use:enhance={() => {
-		return async ({ result }) => {
-			console.log(result);
-			if (result.type === 'success') {
-				open = true;
-				clearTimeout(timer);
-				timer = setTimeout(() => {
-					open = false;
-					goto('/abdi/dashboard/organisasi/acara');
-				}, 3000);
-			} else if (result.type === 'failure') {
-				error = result?.data?.errors;
-			}
-		};
-	}}>
+	<form
+		method="post"
+		action="?/edit"
+		use:enhance={() => {
+			loading = true;
+			return async ({ result }) => {
+				console.log(result);
+				loading = false;
+				if (result.type === 'success') {
+					open = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						open = false;
+						goto('/abdi/dashboard/organisasi/acara');
+					}, 3000);
+				} else if (result.type === 'failure') {
+					error = result?.data?.errors;
+				}
+			};
+		}}
+	>
 		<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 			<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 				<div class="col-span-2">
@@ -459,7 +469,6 @@
 					</div>
 
 					<div class="col-span-4 w-full rounded-lg border px-2 py-1">
-
 						<select
 							bind:value={namajabatan[invitation.id]}
 							name={`namajabatan_${invitation.id}`}

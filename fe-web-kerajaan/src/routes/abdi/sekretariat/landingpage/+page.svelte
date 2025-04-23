@@ -4,11 +4,20 @@
 	import { goto } from '$app/navigation';
 	import { enhance } from '$app/forms';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import Loader from '$lib/loader/Loader.svelte';
+	import { navigating } from '$app/state';
 	let error = $state();
 	let timer: number;
 	let open = $state(false);
+	let loading = $state(false);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
 <div class="my-6 me-6 ms-6 flex w-full flex-col">
 	<div class="flex gap-4">
 		<div class="my-2">
@@ -33,7 +42,9 @@
 		action="?/tambahLanding"
 		method="post"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result }) => {
+				loading = false;
 				if (result.type === 'success') {
 					open = true;
 					clearTimeout(timer);

@@ -3,9 +3,10 @@ import { z } from "zod";
 
 
 export const actions: Actions = {
-    submit: async ({ request }) => {
+    ubah: async ({ request }) => {
         const data = await request.formData();
-
+        const objForm = Object.fromEntries(data)
+        console.log("data : "+ objForm)
         const ver = z.object({
             namaDokumen: z.string({ message: "Input Tidak Boleh Kosong" }).max(255).nonempty("Isi Nama"),
             asalKerajaan: z.string({ message: "Pilih 1 pilihan!" }),
@@ -37,6 +38,12 @@ export const actions: Actions = {
             };
         }
 
-        return { errors: "Success", success: true };
+        return { errors: "Success", success: true, formData: {
+            namaDokumen,
+            asalKerajaan,
+            kategori,
+            jenisDokumen,
+            urlFoto
+        } };
     }
 };
