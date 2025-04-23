@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 
 	let namalengkap = $state('');
@@ -20,6 +22,7 @@
 	let pekerjaan = $state('');
 	let agama = $state('');
 	let deskripsitugas = $state('');
+	let loading = $state(false);
 
 	let error: any = $state('');
 
@@ -49,12 +52,20 @@
 	let timer: number;
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating"></Loader>
+{/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
 <div class="min-h-full w-full">
 	<form
 		method="post"
 		action="?/edit"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result }) => {
+				loading = false;
 				console.log(result);
 				if (result.type === 'success') {
 					open = true;

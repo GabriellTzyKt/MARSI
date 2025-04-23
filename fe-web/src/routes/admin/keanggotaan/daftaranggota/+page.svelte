@@ -189,24 +189,55 @@
 					class:text-white={currPage === 1}
 					onclick={() => (currPage = 1)}>1</button
 				>
+
+				<!-- Ellipsis after first page if current page is far enough -->
 				{#if currPage > 3}
 					<span class="flex items-center px-2">...</span>
 				{/if}
-				{#each Array(3) as _, i}
-					{#if currPage - 1 + i > 1 && currPage - 1 + i < total_pages}
-						<button
-							class="rounded-lg p-4"
-							class:bg-[#F9D48B]={currPage === i}
-							class:text-white={currPage === i}
-							onclick={() => (currPage = currPage - 1 + i)}>{currPage - 1 + i}</button
-						>
+
+				<!-- Pages around current page -->
+				{#each Array(Math.min(3, total_pages - 2)) as _, i}
+					{#if currPage > 2 && currPage < total_pages - 1}
+						<!-- Show pages around current page -->
+						{#if currPage - 1 + i > 1 && currPage - 1 + i < total_pages}
+							<button
+								class="rounded-lg p-4"
+								class:bg-[#F9D48B]={currPage === currPage - 1 + i}
+								class:text-white={currPage === currPage - 1 + i}
+								onclick={() => (currPage = currPage - 1 + i)}>{currPage - 1 + i}</button
+							>
+						{/if}
+					{:else if currPage <= 2}
+						<!-- Show first few pages -->
+						{#if i + 2 < total_pages}
+							<button
+								class="rounded-lg p-4"
+								class:bg-[#F9D48B]={currPage === i + 2}
+								class:text-white={currPage === i + 2}
+								onclick={() => (currPage = i + 2)}>{i + 2}</button
+							>
+						{/if}
+					{:else}
+						<!-- Show last few pages -->
+						{#if total_pages - 3 + i > 1}
+							<button
+								class="rounded-lg p-4"
+								class:bg-[#F9D48B]={currPage === total_pages - 3 + i}
+								class:text-white={currPage === total_pages - 3 + i}
+								onclick={() => (currPage = total_pages - 3 + i)}>{total_pages - 3 + i}</button
+							>
+						{/if}
 					{/if}
 				{/each}
+
+				<!-- Ellipsis before last page if current page is far enough -->
 				{#if currPage < total_pages - 2}
 					<span class="flex items-center px-2">...</span>
 				{/if}
+
+				<!-- Last page -->
 				<button
-					class="rounded-lg px-3 py-2"
+					class="rounded-lg p-4"
 					class:bg-[#F9D48B]={currPage === total_pages}
 					class:text-white={currPage === total_pages}
 					onclick={() => (currPage = total_pages)}>{total_pages}</button

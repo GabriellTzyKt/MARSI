@@ -1,19 +1,49 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAcara, dummyAnggota } from '$lib/dummy';
+	import Loader from '$lib/loader/Loader.svelte';
+	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
+
+	let keyword = $state('');
+	let entries = $state(10);
+	let currPage = $state(1);
+	function pagination(data: any[]) {
+		let start = (currPage - 1) * entries;
+		let end = start + entries;
+		return data.slice(start, end);
+	}
+	function filterD(data: any[]) {
+		return data.filter(
+			(item) =>
+				item?.nama_acara?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.tanggal?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.lokasi?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.penanggungjawab?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.jenis_acara?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.kapasitas?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.status?.toLowerCase().includes(keyword.toLowerCase())
+		);
+	}
+	let resdata = $derived(pagination(filterD(dummyAcara)));
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
 		<button
 			class="bg-badran-bt cursor-pointer rounded-lg px-3 py-2 text-white"
 			onclick={() => goto('acara/tambah')}>+Tambah Data</button
 		>
-		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
+		<div
+			class="mt-4 flex flex-col items-center justify-center gap-2 md:flex-row xl:mt-0 xl:justify-start"
+		>
 			<!-- select -->
 			<select
 				name="Organisasi"
@@ -31,6 +61,7 @@
 			<div class="flex items-center rounded-lg border px-2">
 				<input
 					type="text"
+					bind:value={keyword}
 					placeholder="Cari.."
 					class=" w-full bg-transparent px-2 py-2 focus:outline-none"
 				/>
@@ -58,7 +89,7 @@
 				<input
 					type="number"
 					class="w-12 rounded-md border py-2 text-center focus:outline-none"
-					value="8"
+					bind:value={entries}
 					name=""
 					id=""
 				/>
@@ -68,7 +99,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="flex w-full">
+	<div class="flex w-full flex-col">
 		<Table
 			table_header={[
 				['id_acara', 'Id Acara'],
@@ -81,7 +112,7 @@
 				['children', 'Status'],
 				['children', 'Aksi']
 			]}
-			table_data={dummyAcara}
+			table_data={resdata}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
@@ -96,12 +127,15 @@
 							['children', 'Arsip', '']
 						]}
 						id={`id-${index}`}
-						{data}
+						data={resdata}
 					></DropDown>
 				{:else if header === 'Status'}
 					<Status status={data.status}></Status>
 				{/if}
 			{/snippet}
 		</Table>
+		<div>
+			<Pagination bind:currPage bind:entries totalItems={filterD(dummyAcara).length} />
+		</div>
 	</div>
 </div>

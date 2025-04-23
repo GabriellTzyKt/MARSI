@@ -1,5 +1,16 @@
-<div class="fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black/75">
+<script lang="ts">
+	let { text = '' } = $props();
+</script>
+
+<div
+	class="fixed left-0 top-0 flex h-full w-full flex-col items-center justify-center gap-2 bg-black/75"
+>
 	<div class="loader"></div>
+	<div class="flex w-full justify-center">
+		<p class="text-white">
+			{text}
+		</p>
+	</div>
 </div>
 
 <style>

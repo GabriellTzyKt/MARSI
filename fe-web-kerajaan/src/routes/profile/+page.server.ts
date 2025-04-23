@@ -1,20 +1,25 @@
 import { fail, type Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {
-    logout: async ({request,  cookies}) => {
+    logout: async ({cookies}) => {
         try {
-            const session =  cookies.get("userSession")
+            const session = cookies.get("userSession")
+            console.log(session)
             if (!session) {
+                return {success: true}
+            }
+            else {
+                const sess = JSON.parse(session as string)
+            
                 
                 cookies.delete("userSession", { path: "/" })
-                return true
+                return {success: true}
             }
            
-            else {
-                return fail(406,{error: "Cant Be Logged Off"})
-            }
         }
-        catch {
+        catch (error) {
+            console.log("Logout Error", error)
+            return fail(500, {error: "An error occurred during logout"})
             
         }
     }

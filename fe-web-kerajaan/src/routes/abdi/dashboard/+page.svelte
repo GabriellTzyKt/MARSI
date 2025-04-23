@@ -4,14 +4,21 @@
 	import kom from '$lib/asset/icon/com.png';
 	import situs from '$lib/asset/icon/landmark.png';
 	import sekre from '$lib/asset/icon/gov.png';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 	let total = $state(16);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="mx-4 mb-2 mt-5 flex h-full w-full flex-col">
 	<div class="">
 		<p class="text-xl font-[600]">Menu Manajemen</p>
 	</div>
-	<div class="mt-4 grid md:grid-cols-2 sm:grid-cols-1 items-center justify-center gap-4 lg:grid-cols-3">
+	<div
+		class="mt-4 grid items-center justify-center gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+	>
 		<a href="/abdi/dashboard/organisasi/beranda">
 			<div
 				class="an border-badran-bt mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer"

@@ -1,8 +1,13 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
 	import SekreAbdiInput from '$lib/input/SekreAbdiInput.svelte';
+	import Loader from '$lib/loader/Loader.svelte';
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="mt-6 flex h-full w-full flex-col md:h-auto">
 	<!-- tanggal & btn lantik -->
 	<div class="mx-6 flex justify-between gap-2">

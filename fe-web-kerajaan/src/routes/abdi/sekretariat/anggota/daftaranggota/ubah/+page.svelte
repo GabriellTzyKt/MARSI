@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 
 	import { fade } from 'svelte/transition';
@@ -25,6 +27,12 @@
 	}
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
 <div class="min-h-full w-full">
 	<form
 		action="?/ubahAbdi"
@@ -47,7 +55,7 @@
 			};
 		}}
 	>
-		<div class="lg:grid-cols-2 mt-10 grid grid-cols-1 gap-4">
+		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<!-- 1 -->
 			<div>
 				<div>

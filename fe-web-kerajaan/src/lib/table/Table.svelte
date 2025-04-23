@@ -68,40 +68,6 @@
 			{/each}
 		</tbody>
 	</table>
-	<div class="mt-4 flex w-full flex-col md:flex-row md:justify-between">
-		<div>
-			<p class=" text-gray-500">Showing 1 to 10 of 20 entries</p>
-		</div>
-		<div class="flex flex-row">
-			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white"
-					>Previous</button
-				>
-			</div>
-			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white">1</button>
-			</div>
-			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white">2</button>
-			</div>
-			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white">3</button>
-			</div>
-			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white">4</button>
-			</div>
-			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white">...</button>
-			</div>
-			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white">10</button>
-			</div>
-			<div>
-				<button class="border-badran-bt hover:bg-badran-bt border p-2 hover:text-white">Next</button
-				>
-			</div>
-		</div>
-	</div>
 </div>
 
 <style>

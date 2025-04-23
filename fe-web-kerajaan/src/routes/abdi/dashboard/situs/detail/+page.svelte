@@ -1,8 +1,13 @@
 <script lang="ts">
 	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="h-full w-full">
 	<div class="block h-fit rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="relative mx-auto flex w-full items-center justify-center">

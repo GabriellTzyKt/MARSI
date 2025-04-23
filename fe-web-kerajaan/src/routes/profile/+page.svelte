@@ -10,6 +10,8 @@
 	import Bracode from '$lib/popup/Bracode.svelte';
 	import { enhance } from '$app/forms';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 	// import { load } from './[id]/proxy+page.server';
 	let chose: number | null = $state(null);
 	let open = $state(false);
@@ -34,6 +36,8 @@
 </script>
 
 <Navbar></Navbar>
+{#if loading || navigating.to}
+	<Loader text="Loading..."></Loader>{/if}
 <div class="relative">
 	<div class="absolute">
 		<form

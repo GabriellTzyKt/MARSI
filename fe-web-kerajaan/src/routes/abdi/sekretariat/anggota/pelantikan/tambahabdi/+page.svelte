@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import { fade } from 'svelte/transition';
 
@@ -18,8 +20,11 @@
 	}
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="min-h-full w-full">
-	<div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-4">
+	<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 		<!-- 1 -->
 		<div>
 			<div>
@@ -34,7 +39,7 @@
 				</div>
 			</div>
 
-			<div class="mt-5 flex lg:flex-row flex-col gap-12">
+			<div class="mt-5 flex flex-col gap-12 lg:flex-row">
 				<div class="w-full">
 					<p>Tempat Lahir :</p>
 					<input
@@ -66,7 +71,7 @@
 				</div>
 			</div>
 
-			<div class="mt-5 flex lg:flex-row flex-col gap-12">
+			<div class="mt-5 flex flex-col gap-12 lg:flex-row">
 				<div class="w-full">
 					<p>No telepon :</p>
 					<input

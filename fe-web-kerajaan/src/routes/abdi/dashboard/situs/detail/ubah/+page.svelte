@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import { fade } from 'svelte/transition';
 
@@ -43,15 +45,24 @@
 
 	let open = $state(false);
 	let timer: any;
+	let loading = $state(false);
 	let error: any = $state('');
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
 <div class="h-full w-full">
 	<form
 		method="post"
 		action="?/edit"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result }) => {
+				loading = false;
 				console.log(result);
 				if (result.type === 'success') {
 					open = true;

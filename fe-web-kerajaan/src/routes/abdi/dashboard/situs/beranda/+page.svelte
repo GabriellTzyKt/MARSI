@@ -1,9 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
 	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
+	import Loader from '$lib/loader/Loader.svelte';
 	let total = $state(16);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="mx-auto grid gap-12 overflow-auto sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 	{#each Array(total) as _}
 		<div class="relative h-full">

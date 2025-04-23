@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { navigating } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAnggota } from '$lib/dummy';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import TambahAnggota from '$lib/popup/TambahAnggota.svelte';
+	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
 	import { fade } from 'svelte/transition';
@@ -35,7 +38,7 @@
 		return d.slice(start, end);
 	}
 	let resdata = $derived(pagination(dummyAnggota));
-	let total_pages = $derived(Math.ceil(filterD(dummyAnggota).length / entries));
+	// let total_pages = $derived(Math.ceil(filterD(dummyAnggota).length / entries));
 	let timer: any;
 
 	let toggle = () => {
@@ -47,13 +50,19 @@
 	$effect(() => {});
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+
 <div class="flex w-full flex-col">
 	<div class="flex flex-col xl:flex-row xl:justify-between">
 		<button
 			class="bg-badran-bt rounded-lg px-3 py-2 text-white hover:cursor-pointer"
 			onclick={toggle}>+Tambah Data</button
 		>
-		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
+		<div
+			class="mt-4 flex flex-col items-center justify-center gap-2 md:flex-row xl:mt-0 xl:justify-start"
+		>
 			<!-- select -->
 			<select
 				name="Organisasi"
@@ -139,43 +148,7 @@
 			{/snippet}
 		</Table>
 	</div>
-	<div
-		class="mt-4 flex w-full flex-col items-center justify-center gap-2 md:flex-row md:justify-between"
-	>
-		<div>
-			<p>
-				Showing {(currPage - 1) * entries + 1} to {Math.min(
-					currPage * entries,
-					filterD(dummyAnggota).length
-				)} of {total_pages} entries
-			</p>
-		</div>
-		<div class="flex flex-row">
-			<button
-				class=" hover:bg-badran-bt me-3 rounded-lg bg-white px-6 py-2 hover:text-white"
-				disabled={currPage === 1}
-				onclick={() => {
-					currPage--;
-				}}>Previous</button
-			>
-			{#each Array(total_pages) as _, i}
-				<button
-					class="hover:bg-badran-bt mx-1 rounded-lg px-3 py-2 hover:text-white {i + 1 === currPage
-						? 'bg-badran-bt text-white'
-						: 'bg-white'}"
-					onclick={() => (currPage = i + 1)}>{i + 1}</button
-				>
-			{/each}
-
-			<button
-				class="hover:bg-badran-bt ms-3 rounded-lg bg-white px-6 py-2 hover:text-white"
-				disabled={currPage === total_pages}
-				onclick={() => {
-					currPage++;
-				}}>Next</button
-			>
-		</div>
-	</div>
+	<Pagination bind:currPage bind:entries totalItems={filterD(dummyAnggota).length} />
 </div>
 {#if open}
 	<form
