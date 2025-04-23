@@ -649,7 +649,7 @@
 		{/if}
 	</div>
 
-	<main class="flex min-h-full w-full flex-1 bg-gray-100 p-5">
+	<main class="flex min-h-screen w-full flex-1 bg-gray-100 p-5">
 		{@render children()}
 	</main>
 </div>

@@ -59,9 +59,9 @@ export const actions: Actions = {
 
         if (!validation.success) {
             const fieldErrors = validation.error.flatten().fieldErrors;
-            console.log("Form Data:", { namaDokumen, kategori, jenisDokumen, subkategori, keterkaitan, urlFoto: fileNames });
+            // console.log("Form Data:", { namaDokumen, kategori, jenisDokumen, subkategori, keterkaitan, urlFoto: fileNames });
 
-            console.log("Field Errors:", fieldErrors); // Debugging untuk memastikan error dikembalikan
+            // console.log("Field Errors:", fieldErrors); // Debugging untuk memastikan error dikembalikan
 
             return fail(406, {
                 errors: fieldErrors,
@@ -84,7 +84,7 @@ export const actions: Actions = {
                 formData.append("dokumentasi", file);
             });
 
-            console.log("FormData:", formData); 
+            // console.log("FormData:", formData); 
 
             const send = await fetch(env.BASE_URL + "/arsip", {
                 method: "POST",
@@ -92,10 +92,10 @@ export const actions: Actions = {
             });
 
             const r = await send.json();
-            console.log(r);
+            // console.log(r);
 
             if (send.ok) {
-                console.log("Form Data:", res);
+                // console.log("Form Data:", res);
                 return { errors: "no Error", success: true };
             }
             return fail(400, { request: `Error Code : ${send.status} ${r.message}` });

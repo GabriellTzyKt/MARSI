@@ -5,113 +5,118 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	let nama = $state('');
-	let jenisDokumen = $state(' ');
-	let asalKerajaan = $state(' ');
-	let kategori = $state(' ');
-
 	let success = $state(false);
 	let uploadedFiles: File[] = [];
 	let uploadedFileUrls: string[] = $state([]);
 	let uploadedFileIds: (number | null)[] = $state([]);
 	let timer: Number;
 
-	onMount(() => {
-		if (form?.success) {
-			success = true;
-			if (timer) {
-				clearTimeout(timer);
-			}
-			if (success)
-				timer = setTimeout(() => {
-					success = false;
-					goto('/admin/suratDokumen');
-				}, 3000);
-		} else {
-			if (form?.values) {
-				nama = String(form?.values?.namaDokumen);
-				jenisDokumen = String(form?.values?.jenisDokumen);
-				asalKerajaan = String(form?.values?.asalKerajaan);
-				kategori = String(form?.values?.kategori);
-				// uploadedFileUrls = form?.values?.urlfoto
-				// 	? Array.isArray(form.values.urlfoto)
-				// 		? form.values.urlfoto.map(String)
-				// 		: [String(form.values.urlfoto)]
-				// 	: [];
-			}
-		}
-		// Tambahkan: Inisialisasi gambar yang sudah ada ke uploadedFiles dan uploadedFileUrls
-		if (data.files && data.files.length > 0) {
-			// Untuk gambar yang sudah ada, kita tidak memiliki File object
-			// tapi kita bisa menyimpan URL dan ID-nya
-			uploadedFileUrls = data.files.map(file => file.url);
-			uploadedFileIds = data.files.map(file => file.id);
-			// uploadedFiles tetap kosong untuk gambar yang sudah ada
-			uploadedFiles = Array(data.files.length).fill(null);
-		}
-	});
+	    onMount(() => {
+        if (datagambar && datagambar.length > 0) {
+            // Langsung masukkan URL gambar ke array
+            uploadedFileUrls = datagambar.map(file => file.url);
+            uploadedFileIds = datagambar.map(file => file.id);
+            uploadedFiles = Array(datagambar.length).fill(null);
+            
+            console.log('Loaded existing images:', uploadedFileUrls);
+        }
+    });
+	// 	if (form?.success) {
+	// 		success = true;
+	// 		if (timer) {
+	// 			clearTimeout(timer);
+	// 		}
+	// 		if (success)
+	// 			timer = setTimeout(() => {
+	// 				success = false;
+	// 				goto('/admin/suratDokumen');
+	// 			}, 3000);
+	// 	} else {
+	// 		if (form?.values) {
+	// 			nama = String(form?.values?.namaDokumen);
+	// 			jenisDokumen = String(form?.values?.jenisDokumen);
+	// 			asalKerajaan = String(form?.values?.asalKerajaan);
+	// 			kategori = String(form?.values?.kategori);
+	// 			// uploadedFileUrls = form?.values?.urlfoto
+	// 			// 	? Array.isArray(form.values.urlfoto)
+	// 			// 		? form.values.urlfoto.map(String)
+	// 			// 		: [String(form.values.urlfoto)]
+	// 			// 	: [];
+	// 		}
+	// 	}
+	// 	// Tambahkan: Inisialisasi gambar yang sudah ada ke uploadedFiles dan uploadedFileUrls
+	// 	if (data.files && data.files.length > 0) {
+	// 		// Untuk gambar yang sudah ada, kita tidak memiliki File object
+	// 		// tapi kita bisa menyimpan URL dan ID-nya
+	// 		uploadedFileUrls = data.files.map((file) => file.url);
+	// 		uploadedFileIds = data.files.map((file) => file.id);
+	// 		// uploadedFiles tetap kosong untuk gambar yang sudah ada
+	// 		uploadedFiles = Array(data.files.length).fill(null);
+	// 	}
+	// });
 
 	let { form, data } = $props();
-	console.log('dataform : ', form?.values);
-	console.log('data : ', data);
+	console.log('data 1: ', data);
 	let dataambil = data.document;
 	let datagambar = data.files;
-	
+
 	// Debug URL gambar
 	console.log('Data gambar:', datagambar);
 	if (datagambar && datagambar.length > 0) {
 		console.log('URL gambar:', datagambar[0].url);
 	}
 
-	// Fungsi untuk memvalidasi URL
-	function isValidUrl(url: string) {
-		try {
-			new URL(url);
-			return true;
-		} catch (e) {
-			return false;
-		}
-	}
-
 	let namadokumen = $state(dataambil.nama_arsip);
 	let jenisdokumen = $state(dataambil.jenis_arsip);
 	let sub_kategori_arsip = $state(dataambil.sub_kategori_arsip);
 	let kategori_arsip = $state(dataambil.kategori_arsip.toLowerCase());
+	let keterkaitan = $state('');
+	let showDropdown = $state(false);
+	let loading = $state(false);
+	function filter(data: any[]) {
+		return data.filter((item) =>
+			item?.nama_kerajaan?.toLowerCase().includes(keterkaitan.toLowerCase())
+		);
+	}
+	let searchRes = $derived(filter(data.data));
 
-	let toggle = () => {
-		if (!success) {
-			success = true;
-		} else success = false;
-	};
+
+	function selectKeterkaitan(value: string) {
+		keterkaitan = value;
+		showDropdown = false;
+	}
 
 	function handleFileChange(event: Event) {
 		const target = event.target as HTMLInputElement;
-		console.log("File input changed:", target.files); // Tambahkan log di sini
-		
+		console.log('File input changed:', target.files); // Tambahkan log di sini
+
 		if (target.files && target.files.length > 0) {
 			const newFiles = Array.from(target.files);
 			console.log('New files selected:', newFiles); // Tambahkan log di sini
-			
+
 			// Tambahkan file baru ke daftar lama
-			uploadedFiles = [...uploadedFiles, ...newFiles]; 
-			
+			uploadedFiles = [...uploadedFiles, ...newFiles];
+
 			// Tambahkan URL untuk preview
 			uploadedFileUrls = [
 				...uploadedFileUrls,
 				...newFiles.map((file) => URL.createObjectURL(file))
 			];
-			
+
 			// Tambahkan null untuk ID file baru
 			uploadedFileIds = [...uploadedFileIds, ...Array(newFiles.length).fill(null)];
-			
+
 			console.log('Updated file list:', uploadedFiles);
 		}
 	}
 
+	let error: any = $state('');
+
+
 	function removeImage(index: number) {
 		// Simpan ID gambar yang dihapus untuk dikirim ke server
 		const deletedId = uploadedFileIds[index];
-		
+
 		// Hapus dari array
 		uploadedFiles = uploadedFiles.filter((_, i) => i !== index);
 		uploadedFileUrls = uploadedFileUrls.filter((_, i) => i !== index);
@@ -126,7 +131,27 @@
 	</div>
 
 	<div class="form-container flex flex-col">
-		<form method="post" action="?/submit" enctype="multipart/form-data">
+		<form
+			method="post"
+			action="?/submit"
+			enctype="multipart/form-data"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					console.log(result);
+					if (result.type === 'success') {
+						loading = false;
+						success = true;
+						clearTimeout(timer);
+						timer = setTimeout(() => {
+							success = false;
+						}, 3000);
+					} else if (result.type === 'failure') {
+						error = result?.data?.errors;
+					}
+				};
+			}}
+		>
 			<div class="flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Nama Dokumen</label>
 				<input
@@ -137,29 +162,43 @@
 					bind:value={namadokumen}
 					placeholder="John Doe"
 				/>
-				{#if form?.errors}
-					{#each form.errors.namaDokumen as error1}
+				{#if error}
+					{#each error.namaDokumen as error1}
 						<p class="text-left text-red-500">{error1}</p>
 					{/each}
 				{/if}
 			</div>
 
-			<div class="mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nomor_telepon">Asal Kerajaan</label>
-				<select
-					bind:value={asalKerajaan}
-					name="asalKerajaan"
-					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-				>
-					<option value=" " disabled>None</option>
-					<option value="kerajaanA">Kerajaan A </option>
-					<option value="kerajaanB">Kerajaan B</option>
-				</select>
-				{#if form?.errors}
-					{#each form.errors.asalKerajaan as error2}
-						<p class="text-left text-red-500">{error2}</p>
-					{/each}
-				{/if}
+			<div class="text-md mt-2 text-start">
+				<label for="keterkaitan">Keterkaitan</label>
+				<div class="relative flex flex-col gap-1">
+					<input
+						class="input-field rounded-lg border p-2 pr-10"
+						name="keterkaitan"
+						bind:value={keterkaitan}
+					/>
+
+					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
+					{#if showDropdown && searchRes.length > 0}
+						<ul class="bordeer z-10 max-h-40 w-full overflow-y-auto rounded-lg bg-white shadow-lg">
+							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+							{#each searchRes as item}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<li
+									class="cursor-pointer hover:bg-gray-300"
+									onclick={() => selectKeterkaitan(item.nama_kerajaan)}
+								>
+									{item.nama_kerajaan}
+								</li>
+							{/each}
+						</ul>
+					{/if}
+					{#if error}
+						{#each error.keterkaitan as error1}
+							<p class="text-left text-red-500">{error1}</p>
+						{/each}
+					{/if}
+				</div>
 			</div>
 
 			<div class="mt-2 flex flex-col gap-1">
@@ -173,11 +212,7 @@
 					<option value={1}>1 </option>
 					<option value={2}>2</option>
 				</select>
-				{#if form?.errors}
-					{#each form.errors.jenisDokumen as error3}
-						<p class="text-left text-red-500">{error3}</p>
-					{/each}
-				{/if}
+			
 			</div>
 
 			<div class=" mt-2 flex flex-col gap-1">
@@ -191,18 +226,16 @@
 					<option value="masuk">Masuk </option>
 					<option value="keluar">Keluar</option>
 				</select>
-				{#if form?.errors}
-					{#each form.errors.kategori as error4}
-						<p class="text-left text-red-500">{error4}</p>
-					{/each}
-				{/if}
+				
 			</div>
 
 			<div class="text-md mt-2 text-start">
 				<label for="subkategori">Sub Kategori</label>
 				<div class="relative flex flex-col gap-1">
-					<input class="input-field rounded-lg border p-2 pr-10" name="subkategori" 
-					bind:value={sub_kategori_arsip}
+					<input
+						class="input-field rounded-lg border p-2 pr-10"
+						name="subkategori"
+						bind:value={sub_kategori_arsip}
 					/>
 
 					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
@@ -243,16 +276,14 @@
 									alt="Uploaded file"
 									class="h-[200px] w-[270px] rounded-lg border object-cover"
 								/>
-								<button type="button" class="remove-btn" onclick={() => removeImage(index)}>✕</button>
+								<button type="button" class="remove-btn" onclick={() => removeImage(index)}
+									>✕</button
+								>
 							</div>
 						{/each}
 					</div>
 				</div>
-				{#if form?.errors}
-					{#each form.errors.urlfoto || [] as error5}
-						<p class="text-left text-red-500">{error5}</p>
-					{/each}
-				{/if}
+				
 			</div>
 
 			<div class="flex w-full justify-end">

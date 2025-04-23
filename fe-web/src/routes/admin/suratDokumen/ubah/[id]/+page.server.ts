@@ -5,65 +5,113 @@ import { z } from "zod";
 export const actions: Actions = {
     submit: async ({ request, params }) => {
         const data = await request.formData();
-        const id = params.id; // Mengambil ID dari parameter URL
-        console.log('ubah : ',data)
+        const id = params.id;
+        console.log('ubah 1 : ',data)
 
         const ver = z.object({
             namaDokumen: z.string({ message: "Input Tidak Boleh Kosong" }).max(255).nonempty("Isi Nama"),
-            asalKerajaan: z.string({ message: "Pilih 1 pilihan!" }),
             jenisDokumen: z.string({ message: "Pilih 1 pilihan!" }),
             kategori: z.string({ message: "Pilih 1 pilihan!" }),
-            urlfoto: z.array(z.string({message : "Input Minimal 1 Foto!"})).min(1, { message: "Minimal 1 Foto!" }), // Ubah jadi array
         });
 
         const namaDokumen = data.get("nama");
-        const asalKerajaan = data.get("asalKerajaan");
         const kategori = data.get("kategori");
         const jenisDokumen = data.get("jenisDokumen");
-        const subkategori = data.get("subkategori")
+        const subkategori = data.get("subkategori");
+        const keterkaitan = data.get("keterkaitan") || ""; // Menambahkan definisi keterkaitan
         const urlFoto = data.getAll("uploadfile")
             .filter((file) => file instanceof File && file.size > 0)
             .map((file) => (file as File).name);
 
+        console.log('urlfoto : ', urlFoto)    
+
         const validation = ver.safeParse({
             namaDokumen,
-            asalKerajaan,
             kategori,
             jenisDokumen,
-            subkategori,
-            urlfoto: urlFoto,
         });
 
         if (!validation.success) {
-            return {
-                errors: validation.error.flatten().fieldErrors, success: false,
-                values: { namaDokumen, asalKerajaan, kategori, jenisDokumen, urlfoto: urlFoto },
-            };
+            const fieldErrors = validation.error.flatten().fieldErrors;
+            
+            return fail(406, {
+                errors: fieldErrors,
+                success: false,
+                formData: { namaDokumen, kategori, jenisDokumen, subkategori, keterkaitan, urlFoto },
+                type: "add"
+            });
         }
 
         try {
-            // Persiapkan FormData untuk dikirim ke API
-            const formData = new FormData();
-            formData.append("id_arsip", id || "");
-            formData.append("nama_arsip", namaDokumen?.toString() || "");
-            formData.append("kategori_arsip", kategori?.toString() || "");
-            formData.append("jenis_arsip", jenisDokumen?.toString() || "");
-            formData.append("sub_kategori_arsip", subkategori?.toString() || "");
-            
-            // Tambahkan file ke FormData jika ada
+            // Ambil file untuk dikirim ke endpoint /file/arsip
             const files = data.getAll("uploadfile")
                 .filter((file) => file instanceof File && file.size > 0);
             
+                console.log("files 1: ", files)
+            
+            let id_path = null;
+            
+            // Hanya kirim request ke /file/arsip jika ada file yang diupload
             if (files.length > 0) {
+                console.log("Isi file ada")
+                // Persiapkan FormData untuk endpoint /file/arsip
+                const fileFormData = new FormData();
+                fileFormData.append("kategori_arsip", kategori?.toString() || "");
+                fileFormData.append("jenis_arsip", jenisDokumen?.toString() || "");
+                
+                // Tambahkan file ke FormData
                 files.forEach((file) => {
-                    formData.append("dokumentasi", file);
+                    fileFormData.append("dokumentasi", file);
                 });
+                
+                console.log("Mengirim data ke /file/arsip");
+                
+                // Kirim request POST ke endpoint /file/arsip
+                const fileResponse = await fetch(`${env.PUB_PORT}/file/arsip`, {
+                    method: "POST",
+                    body: fileFormData,
+                });
+                
+                if (!fileResponse.ok) {
+                    const errorData = await fileResponse.json();
+                    return fail(fileResponse.status, { 
+                        errors: `Error ${fileResponse.status}: ${errorData.message || 'Gagal mengupload file'}`,
+                        success: false
+                    });
+                }
+                
+                // Ambil id_path dari response
+                const fileResult = await fileResponse.json();
+                console.log("file result: ", fileResult)
+                id_path = fileResult.id_path;
+                
+                console.log("ID Path dari /file/arsip:", id_path);
             }
+            
+            // Persiapkan JSON payload untuk dikirim ke API /arsip
+            const payload = {
+                id_arsip: Number(id),
+                nama_arsip: namaDokumen?.toString() || "",
+                kategori_arsip: kategori?.toString() || "",
+                jenis_arsip: Number(jenisDokumen) || 0,
+                sub_kategori_arsip: Number(subkategori) || 0,
+                dokumentasi : id_path?.toString() || ""
+            };
+            
+            // Tambahkan id_path jika ada
+            // if (id_path) {
+            //     payload.dokumentasi = id_path;
+            // }
+            
+            console.log("JSON payload untuk /arsip:", payload);
 
-            // Kirim request PUT ke endpoint /arsip
+            // Kirim request PUT ke endpoint /arsip dengan JSON
             const response = await fetch(`${env.PUB_PORT}/arsip`, {
                 method: "PUT",
-                body: formData,
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload),
             });
 
             if (!response.ok) {
@@ -129,7 +177,7 @@ export const load = async ({ params, fetch }) => {
         
         if (filePathsRequest.ok) {
             const filePathsData = await filePathsRequest.json();
-            console.log("File paths data:", filePathsData);
+            // console.log("File paths data:", filePathsData);
             
             // Jika file_dokumentasi adalah string, konversi ke array
             const filePaths = Array.isArray(filePathsData.file_dokumentasi) 
@@ -175,7 +223,7 @@ export const load = async ({ params, fetch }) => {
             }));
             
             fileDetails = fileDetails.filter(file => file !== null);
-            console.log("file details: ", fileDetails)
+            console.log("file details 11: ", fileDetails)
         } else {
             console.error(`Failed to fetch file paths for doc ${id}:`, filePathsRequest.status);
         }

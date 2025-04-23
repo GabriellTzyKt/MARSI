@@ -15,11 +15,7 @@
 	function filterData(data: any[]) {
 		return data.filter(
 			(item) =>
-				item?.nama_arsip?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.asal_kerajaan?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.jenis_arsip?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.kategori_arsip?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.sub_kategori_arsip?.toLowerCase().includes(keyword.toLowerCase())
+				item?.nama_arsip?.toLowerCase().includes(keyword.toLowerCase()) 
 		);
 	}
 
@@ -49,17 +45,44 @@
 				><button class=" custom-button bg-customKrem px-6 py-2"> +Tambah Data </button></a
 			>
 		</div>
-		<div class="col-span-2 col-end-5 flex flex-row items-center justify-center">
-			<div>
-				<Search bind:keyword></Search>
+		<div class="flex flex-col items-center justify-center gap-3 xl:flex-row xl:justify-end">
+			<div class="flex justify-between gap-3 rounded-lg border border-[#818181] bg-white">
+				<div class="ms-2 flex grow">
+					<input
+						type="text"
+						class="border-none focus:outline-none focus:ring-0"
+						placeholder='cari arsip' 
+						bind:value={keyword}
+						name=""
+						id=""
+					/>
+				</div>
+				<div class="me-2 flex items-center">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="1.5"
+						stroke="currentColor"
+						class="size-6"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+						/>
+					</svg>
+				</div>
 			</div>
-			<div class="me-4 ms-2">
+			<div class="flex items-center gap-3">
 				<p>Show</p>
-			</div>
-			<div class="text-center">
-				<Pagination bind:value={entries}></Pagination>
-			</div>
-			<div class="mx-2">
+				<input
+					type="number"
+					class="flex w-16 justify-center rounded-lg border border-[#818181] bg-white focus:outline-none"
+					name=""
+					bind:value={entries}
+					id=""
+				/>
 				<p>entries</p>
 			</div>
 		</div>

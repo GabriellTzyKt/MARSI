@@ -27,7 +27,7 @@ export const load: PageServerLoad = async () => {
         
         if (request.ok) {
             const data = await request.json();
-            console.log("ini dari beranda: ", data)
+            // console.log("ini dari beranda: ", data)
             
             // Format dates and extract place names
             const kerajaanFormatted = await Promise.all(data.map(async (item: any) => {
@@ -44,7 +44,7 @@ export const load: PageServerLoad = async () => {
                                     'maluku', 'nusa tenggara', 'jakarta', 'yogyakarta'];
                     
                     const addressLower = address.toLowerCase();
-                    console.log("address : ", addressLower)
+                    // console.log("address : ", addressLower)
                     for (const region of regions) {
                         if (addressLower.includes(region)) {
                             // kalo ada ambil huruf pertama, dibuat kapital + ngambil sisanya

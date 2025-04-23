@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
         }
         
         const arsipData = await arsipRequest.json();
-        console.log("Arsip data fetched:", arsipData);
+        // console.log("Arsip data fetched:", arsipData);
         
         // ngambil jenis arsip data
         const jenisArsipRequest = await fetch(env.PUB_PORT + "/jenis-arsip?limit=1000", {
