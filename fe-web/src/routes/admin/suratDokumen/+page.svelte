@@ -111,6 +111,7 @@
 						['children', 'Arsipkan']
 					]}
 					tipe="acara"
+					id_arsip={data.id_arsip}
 					id={`id-acara-${index}`}
 					{data}
 				></DropDown>

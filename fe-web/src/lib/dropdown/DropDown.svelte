@@ -13,6 +13,7 @@
 	// Unique ID for this dropdown
 	const {
 		id = null,
+		id_arsip = null,
 		data = null,
 		index = '',
 		tipe = '',
@@ -23,7 +24,6 @@
 	} = $props();
 	let isOpen = $state(false);
 	let temp = $state('');
-
 	const toggleDropdown = () => {
 		// console.log(data);
 		openDropdown.update((current) => {
@@ -60,6 +60,7 @@
 	 			2. link kalau ada -->
 	{#if $openDropdown === id}
 		{console.log(data)}
+		<!-- {console.log(id_arsip)} -->
 		{console.log('Dropdown terbuka untuk: ' + id)}
 		<div class="absolute -bottom-24 right-12 z-50 flex flex-col rounded-xl bg-white">
 			{#each items as i, p}
@@ -85,7 +86,7 @@
 		</div>
 	{/if}
 </div>
-<Modal {pop} {successText} {data} {text} {link}></Modal>
+<Modal {id_arsip} {pop} {successText} {data} {text} {link}></Modal>
 
 <!-- onclick={() => {
     if (open) {
