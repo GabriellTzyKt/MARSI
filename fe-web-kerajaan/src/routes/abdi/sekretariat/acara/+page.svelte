@@ -127,7 +127,7 @@
 						successText="berhasil diarsip"
 						link="/abdi/dashboard/komunitas/acara"
 						items={[
-							['Detail', '/abdi/sekretariat/acara/detail'],
+							['Detail', `/abdi/sekretariat/acara/detail/${data.id_acara}`],
 							['Edit', '/abdi/sekretariat/acara/edit'],
 							['Laporan', '/abdi/sekretariat/acara/laporan'],
 							['children', 'Non Aktifkan'],
