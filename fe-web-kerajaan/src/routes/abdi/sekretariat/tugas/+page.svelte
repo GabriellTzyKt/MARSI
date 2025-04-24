@@ -5,16 +5,17 @@
 	import { dummyTugas } from '$lib/dummy';
 	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
-	import TambahKunjungan from '$lib/popup/TambahKunjungan.svelte';
 	import TambahTugas from '$lib/popup/TambahTugas.svelte';
 	import Pagination from '$lib/table/Pagination.svelte';
 
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
-	import { error } from '@sveltejs/kit';
 
-	let today = String(new Date().toISOString().split('T')[0]);
+	let { data } = $props();
+	console.log('data : ', data);
+	const dataAmbil = data.data;
+
 	let open = $state(false);
 	let success = $state(false);
 	let errors = $state();
@@ -132,15 +133,15 @@
 			table_header={[
 				['id_tugas', 'Id Tugas'],
 				['nama_tugas', 'Nama Tugas'],
-				['pemberi_tugas', 'Pemberi Tugas'],
-				['anggota_yang_ditugaskan', 'Anggota yang Ditugaskan'],
-				['tanggal_pemberian', 'Tanggal Pemberian'],
+				['id_pemberi_tugas', 'Pemberi Tugas'],
+				['id_penerima_tugas', 'Anggota yang Ditugaskan'],
+				['tanggal_mulai', 'Tanggal Pemberian'],
 				['deskripsi_tugas', 'Deskripsi Tugas'],
 
 				['children', 'Status'],
 				['children', 'Aksi']
 			]}
-			table_data={resData}
+			table_data={dataAmbil}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
@@ -159,7 +160,7 @@
 					></DropDown>
 				{/if}
 				{#if header === 'Status'}
-					<Status status={data.status}></Status>
+					<Status status={data.status_tugas}></Status>
 				{/if}
 			{/snippet}
 		</Table>

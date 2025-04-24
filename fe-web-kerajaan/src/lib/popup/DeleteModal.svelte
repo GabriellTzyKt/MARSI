@@ -25,7 +25,7 @@
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<!-- svelte-ignore event_directive_deprecated -->
 	<div
-		class="fixed left-0 top-0 flex min-h-full min-w-full items-center justify-center bg-black/75"
+		class="fixed left-0 top-0 flex min-h-full min-w-full items-center justify-center bg-black/30"
 	>
 		<div
 			class="relative flex flex-col items-center rounded-3xl border bg-white"
@@ -68,7 +68,7 @@
 					{:else if choose == 'delete'}
 						<button
 							class="btn-setuju rounded-xl px-8 py-3 font-[500] text-white hover:cursor-pointer hover:ring hover:ring-gray-600"
-							formaction="?/hapus">Iya, hapus</button
+							>Iya, hapus</button
 						>
 					{/if}
 				</div>

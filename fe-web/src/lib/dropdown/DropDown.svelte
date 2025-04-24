@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, type Snippet } from 'svelte';
 	import menu from '../../asset/icons/threedot.png';
 	import { stopPropagation } from 'svelte/legacy';
 	import { get, writable } from 'svelte/store';
@@ -17,10 +17,23 @@
 		index = '',
 		tipe = '',
 		items = null,
+		deleteD = $bindable(),
+		children,
 		text = '',
 		link = '',
 		successText = ''
-	} = $props();
+	} = $props<{
+		id?: string | null;
+		data?: any;
+		index?: string;
+		tipe?: string;
+		items?: any[] | null;
+		deleteD?: any;
+		children?: Snippet<[any]>;
+		text?: string;
+		link?: string;
+		successText?: string;
+	}>();
 	let isOpen = $state(false);
 	let temp = $state('');
 

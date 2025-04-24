@@ -30,8 +30,8 @@ export const actions: Actions = {
             namaDokumen: z.string({ message: "Input Tidak Boleh Kosong" }).max(255).nonempty("Isi Nama"),
             jenisDokumen: z.string({ message: "Pilih 1 pilihan!" }).nonempty(),
             kategori: z.string({ message: "Pilih 1 pilihan!" }).nonempty(),
-            keterkaitan: z.string({ message: "Harus diisi!" }).nonempty("Isi Keterkaitan"),
-            subkategori: z.string({ message: "Harus diisi!" }).nonempty("Isi Sub Kategori"),
+            // keterkaitan: z.string({ message: "Harus diisi!" }).nonempty("Isi Keterkaitan"),
+            // subkategori: z.string({ message: "Harus diisi!" }).nonempty("Isi Sub Kategori"),
             urlfoto: z.array(z.string().min(1, { message: "Nama file tidak boleh kosong" })).min(1, { message: "Minimal 1 Foto!" }),
         });
 
@@ -45,23 +45,23 @@ export const actions: Actions = {
             .map((file) => file as File);
 
 
-        const fileNames = urlFoto.map((file) => file.name); // Ambil hanya nama file
+        const fileNames = urlFoto.map((file) => file.name); // ngambil nama file
 
 
         const validation = ver.safeParse({
             namaDokumen,
             kategori,
-            subkategori,
+            // subkategori,
             jenisDokumen,
-            keterkaitan,
+            // keterkaitan,
             urlfoto: fileNames,
         });
 
         if (!validation.success) {
             const fieldErrors = validation.error.flatten().fieldErrors;
-            console.log("Form Data:", { namaDokumen, kategori, jenisDokumen, subkategori, keterkaitan, urlFoto: fileNames });
+            // console.log("Form Data:", { namaDokumen, kategori, jenisDokumen, subkategori, keterkaitan, urlFoto: fileNames });
 
-            console.log("Field Errors:", fieldErrors); // Debugging untuk memastikan error dikembalikan
+            // console.log("Field Errors:", fieldErrors); // Debugging untuk memastikan error dikembalikan
 
             return fail(406, {
                 errors: fieldErrors,
@@ -84,7 +84,7 @@ export const actions: Actions = {
                 formData.append("dokumentasi", file);
             });
 
-            console.log("FormData:", formData); 
+            // console.log("FormData:", formData); 
 
             const send = await fetch(env.PUB_PORT + "/arsip", {
                 method: "POST",
@@ -92,17 +92,18 @@ export const actions: Actions = {
             });
 
             const r = await send.json();
-            console.log(r);
+            // console.log(r);
 
             if (send.ok) {
-                console.log("Form Data:", res);
-                return { errors: "no Error", success: true, form: res };
+                // console.log("Form Data:", res);
+                return { errors: "no Error", success: true };
             }
             return fail(400, { request: `Error Code : ${send.status} ${r.message}` });
         } catch (e) {
             console.error("Fetch Error", e);
         }
     }
+    
 
     // return { errors: "Success", success: true };
 };

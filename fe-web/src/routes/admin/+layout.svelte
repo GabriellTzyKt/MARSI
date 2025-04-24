@@ -61,8 +61,11 @@
 			return 'Master Data';
 		} else if (page.route.id?.startsWith('/admin/pendaftaranKerajaan')) {
 			return 'Pendaftaran Kerajaan';
+		} else if (page.route.id?.startsWith('/admin/suratDokumen/ubah')) {
+			return 'Ubah Dokumen';
 		}
 	});
+
 	const { children, data } = $props();
 	console.log(data);
 	let sidebarActive = writable(false);
@@ -193,7 +196,7 @@
 							</button>
 						</div>
 						<div class="col-span-1 px-5">
-							<form action="?/logout" method="POST">
+							<form action="/admin/logout" method="POST">
 								<button class="rounded-lg bg-red-400 px-2 py-2 text-white" type="submit">
 									Logout
 								</button>
@@ -274,7 +277,7 @@
 		</Sidebar>
 	</div>
 
-	<main class="flex min-h-full w-full flex-1 bg-gray-100 p-5">
+	<main class="flex min-h-screen w-full flex-1 bg-gray-100 p-5">
 		{@render children()}
 	</main>
 </div>

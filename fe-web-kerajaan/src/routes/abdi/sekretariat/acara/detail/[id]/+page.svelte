@@ -128,7 +128,7 @@
 				</div>
 
 				<div class="mt-12 flex gap-2 px-4">
-					<div class="mt-2 flex w-full">
+					<!-- <div class="mt-2 flex w-full">
 						<button
 							class="flex w-full items-center justify-center rounded-lg border bg-green-600 px-2 py-2 text-white"
 						>
@@ -174,7 +174,7 @@
 							<span class="material-symbols--cancel mr-2 flex items-center justify-center"></span>
 							Tolak
 						</button>
-					</div>
+					</div> -->
 				</div>
 			</div>
 		</div>
