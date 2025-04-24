@@ -17,6 +17,7 @@
 		index = '',
 		tipe = '',
 		items = null,
+		deleteD = $bindable(),
 		children,
 		text = '',
 		link = '',
@@ -27,6 +28,7 @@
 		index?: string;
 		tipe?: string;
 		items?: any[] | null;
+		deleteD?: any;
 		children?: Snippet<[any]>;
 		text?: string;
 		link?: string;

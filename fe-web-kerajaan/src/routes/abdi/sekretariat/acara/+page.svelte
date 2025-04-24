@@ -1,17 +1,22 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { enhance } from '$app/forms';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { navigating } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAcara, dummyAnggota } from '$lib/dummy';
 	import Loader from '$lib/loader/Loader.svelte';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
+	import { Children } from 'react';
 	let { data } = $props();
 	let entries = $state(10);
 	let keyword = $state('');
 	let currPage = $state(1);
+	let success = $state(false);
 	function filterD(data: any[]) {
 		return data.filter(
 			(item) =>
@@ -40,6 +45,9 @@
 		}
 	});
 	let resData = $derived(pagination(data.data));
+	// Add this derived value to track the total filtered items
+	let filteredTotal = $derived(filterD(data.data).length);
+	let deleteD = $state(false);
 </script>
 
 {#if navigating.to}
@@ -133,15 +141,50 @@
 							['children', 'Non Aktifkan'],
 							['children', 'Hapus', '']
 						]}
+						bind:deleteD
 						id={`id-${index}`}
 						{data}
-					></DropDown>
+					>
+						{#snippet children()}
+							<form
+								action="?/delete"
+								method="post"
+								use:enhance={() => {
+									return async ({ result }) => {
+										if (result.type === 'success') {
+											success = true;
+											deleteD = false;
+											setTimeout(() => {
+												success = false;
+												invalidateAll();
+											}, 3000);
+										}
+										if (result.type === 'failure') {
+											console.log(result.data?.errors);
+										}
+									};
+								}}
+							>
+								<DeleteModal
+									text="apa yakin ingin menghapus acara ini?"
+									successText="berhasil dihapus"
+									choose="delete"
+									bind:value={deleteD}
+									name="id_acara"
+									data={data.id_acara}
+								></DeleteModal>
+							</form>
+						{/snippet}
+					</DropDown>
 				{/if}
 				{#if header === 'Status'}
 					<Status status={data.status}></Status>
 				{/if}
 			{/snippet}
 		</Table>
-		<Pagination bind:currPage bind:entries totalItems={filterD(dummyAcara).length}></Pagination>
+		<Pagination bind:currPage bind:entries totalItems={filteredTotal}></Pagination>
 	</div>
 </div>
+{#if success}
+	<SuccessModal text="berhasil dihapus"></SuccessModal>
+{/if}
