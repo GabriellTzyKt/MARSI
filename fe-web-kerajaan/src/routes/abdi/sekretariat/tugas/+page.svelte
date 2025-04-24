@@ -40,7 +40,6 @@
 		console.log(d);
 		return d.slice(start, end);
 	}
-	let resData = $derived(pagination(dummyTugas));
 	$effect(() => {
 		if (keyword || entries) {
 			currPage = 1;
@@ -164,7 +163,7 @@
 				{/if}
 			{/snippet}
 		</Table>
-		<Pagination bind:currPage bind:entries totalItems={filterD(dummyTugas).length}></Pagination>
+		<Pagination bind:currPage bind:entries totalItems={filterD(dataAmbil).length}></Pagination>
 	</div>
 </div>
 

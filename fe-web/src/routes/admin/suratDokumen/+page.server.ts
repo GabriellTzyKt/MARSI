@@ -4,7 +4,7 @@ import type { PageServerLoad } from "./$types";
 export const load: PageServerLoad = async ({ fetch }) => {
     try {
         // ngambil data arsip
-        const arsipRequest = await fetch(env.PUB_PORT + "/arsip?limit=200", {
+        const arsipRequest = await fetch(env.PUB_PORT + "/arsip?limit=100", {
             method: "GET",
             headers: {
                 "Accept": "application/json"

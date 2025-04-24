@@ -6,6 +6,7 @@
 	let total = $state(8);
 	let open = $state(false);
 	let timer: number;
+	let jenisTugas = $state('');
 	let today = $state(String(new Date().toISOString().split('T')[0]));
 	function setTimer() {
 		open = true;
@@ -186,28 +187,150 @@
 				{/each}
 			{/if}
 		</div>
-		<div class="mt-2 flex w-full flex-col">
-			<div>
-				<p class="text-sm">Deskripsi Tugas</p>
-			</div>
-			<!-- nama Tugas -->
-			<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
-				<div class="grow">
-					<textarea
-						name="deskripsi_tugas"
-						class="w-full pe-2 ps-2 pt-2 focus:outline-none"
-						placeholder="Deskripsi"
-						id=""
-						rows="5"
-					></textarea>
-				</div>
-			</div>
-			{#if errors}
-				{#each errors.deskripsi_tugas as e}
-					<p class="text-left text-red-500">{e}</p>
-				{/each}
-			{/if}
+
+		<div class="flex-col">
+			<label for="tugas">Jenis Tugas</label>
+
+			<select
+				name="tugas"
+				id="tugas"
+				bind:value={jenisTugas}
+				class="w-full rounded-lg border-2 border-black px-2 py-2"
+			>
+				<option disabled value = ""> Pilih Jenis! </option>
+				<option value="pribadi" selected>Tugas Pribadi</option>
+				<option value="acara">Tugas Acara</option>
+			</select>
 		</div>
+
+		{#if jenisTugas === 'pribadi'}
+			<div class="mt-2 flex w-full flex-col">
+				<div>
+					<p class="text-sm">Nama Situs :</p>
+				</div>
+				<!-- nama Tugas -->
+				<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
+					<div class="grow">
+						<input
+							type="text"
+							class="my-2 w-full pe-2 ps-2 focus:outline-none"
+							placeholder="Jane Doe"
+							name="nama_situs"
+							id=""
+						/>
+					</div>
+					<div class="me-2 ms-2 flex items-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="2"
+							stroke="gray"
+							class="size-6"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+							/>
+						</svg>
+					</div>
+				</div>
+				{#if errors}
+					<!-- {#each errors.anggota_yg_ditugaskan as e}
+						<p class="text-left text-red-500">{e}</p>
+					{/each} -->
+				{/if}
+			</div>
+
+			<div class="mt-2 flex w-full flex-col">
+				<div>
+					<p class="text-sm">Deskripsi Tugas</p>
+				</div>
+				<!-- nama Tugas -->
+				<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
+					<div class="grow">
+						<textarea
+							name="deskripsi_tugas"
+							class="w-full pe-2 ps-2 pt-2 focus:outline-none"
+							placeholder="Deskripsi"
+							id=""
+							rows="5"
+						></textarea>
+					</div>
+				</div>
+				{#if errors}
+					{#each errors.deskripsi_tugas as e}
+						<p class="text-left text-red-500">{e}</p>
+					{/each}
+				{/if}
+			</div>
+		{/if}
+
+		{#if jenisTugas === 'acara'}
+			<div class="mt-2 flex w-full flex-col">
+				<div>
+					<p class="text-sm">Nama Acara :</p>
+				</div>
+				<!-- nama Tugas -->
+				<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
+					<div class="grow">
+						<input
+							type="text"
+							class="my-2 w-full pe-2 ps-2 focus:outline-none"
+							placeholder="Jane Doe"
+							name="nama_acara"
+							id=""
+						/>
+					</div>
+					<div class="me-2 ms-2 flex items-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="2"
+							stroke="gray"
+							class="size-6"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+							/>
+						</svg>
+					</div>
+				</div>
+				{#if errors}
+					<!-- {#each errors.anggota_yg_ditugaskan as e}
+					<p class="text-left text-red-500">{e}</p>
+				{/each} -->
+				{/if}
+			</div>
+
+			<div class="mt-2 flex w-full flex-col">
+				<div>
+					<p class="text-sm">Deskripsi Tugas</p>
+				</div>
+				<!-- nama Tugas -->
+				<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
+					<div class="grow">
+						<textarea
+							name="deskripsi_tugas"
+							class="w-full pe-2 ps-2 pt-2 focus:outline-none"
+							placeholder="Deskripsi"
+							id=""
+							rows="5"
+						></textarea>
+					</div>
+				</div>
+				{#if errors}
+					{#each errors.deskripsi_tugas as e}
+						<p class="text-left text-red-500">{e}</p>
+					{/each}
+				{/if}
+			</div>
+		{/if}
+
 		<div class="mt-4 flex w-full lg:justify-end">
 			<button
 				class="w-full cursor-pointer rounded-lg bg-green-500 px-4 py-2 text-white lg:w-auto"
