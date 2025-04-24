@@ -4,135 +4,125 @@ import { z } from "zod";
 
 export const actions: Actions = {
     submit: async ({ request, params }) => {
-        const data = await request.formData();
-        const id = params.id;
-        console.log('ubah 1 : ',data)
-
-        const ver = z.object({
-            namaDokumen: z.string({ message: "Input Tidak Boleh Kosong" }).max(255).nonempty("Isi Nama"),
-            jenisDokumen: z.string({ message: "Pilih 1 pilihan!" }),
-            kategori: z.string({ message: "Pilih 1 pilihan!" }),
-        });
-
-        const namaDokumen = data.get("nama");
-        const kategori = data.get("kategori");
-        const jenisDokumen = data.get("jenisDokumen");
-        const subkategori = data.get("subkategori");
-        const keterkaitan = data.get("keterkaitan") || ""; // Menambahkan definisi keterkaitan
-        const urlFoto = data.getAll("uploadfile")
-            .filter((file) => file instanceof File && file.size > 0)
-            .map((file) => (file as File).name);
-
-        console.log('urlfoto : ', urlFoto)    
-
-        const validation = ver.safeParse({
-            namaDokumen,
-            kategori,
-            jenisDokumen,
-        });
-
-        if (!validation.success) {
-            const fieldErrors = validation.error.flatten().fieldErrors;
-            
-            return fail(406, {
-                errors: fieldErrors,
-                success: false,
-                formData: { namaDokumen, kategori, jenisDokumen, subkategori, keterkaitan, urlFoto },
-                type: "add"
-            });
-        }
-
         try {
-            // Ambil file untuk dikirim ke endpoint /file/arsip
-            const files = data.getAll("uploadfile")
-                .filter((file) => file instanceof File && file.size > 0);
+            const data = await request.formData();
+            const id = params.id;
             
-                console.log("files 1: ", files)
+            console.log('Form data received:', Object.fromEntries(data.entries()));
+            
+            // ngambil data dari form yg diubah
+            const namaDokumen = data.get('nama')?.toString();
+            const kategori = data.get('kategori')?.toString();
+            const jenisDokumen = data.get('jenisDokumen')?.toString();
+            const subkategori = data.get('subkategori')?.toString();
+            
+            // ngambil file
+            const existingFileIds = data.getAll('existingFileId')
+                .map(id => id?.toString())
+                .filter(Boolean);
+            
+            // ngambil file baru 
+            const newFiles = data.getAll('uploadfile')
+                .filter(file => file instanceof File && file.size > 0) as File[];
+            
+            // Validasi data
+            if (!namaDokumen) {
+                return fail(400, { 
+                    errors: { namaDokumen: ['Nama dokumen tidak boleh kosong'] },
+                    success: false 
+                });
+            }
             
             let id_path = null;
             
-            // Hanya kirim request ke /file/arsip jika ada file yang diupload
-            if (files.length > 0) {
-                console.log("Isi file ada")
-                // Persiapkan FormData untuk endpoint /file/arsip
+            // upload file baru
+            if (newFiles.length > 0) {
                 const fileFormData = new FormData();
-                fileFormData.append("kategori_arsip", kategori?.toString() || "");
-                fileFormData.append("jenis_arsip", jenisDokumen?.toString() || "");
                 
-                // Tambahkan file ke FormData
-                files.forEach((file) => {
-                    fileFormData.append("dokumentasi", file);
+                // nambahin data kedalem api
+                fileFormData.append('kategori_arsip', kategori || '');
+                fileFormData.append('jenis_arsip', jenisDokumen || '');
+                
+                // file baru yg diubah
+                newFiles.forEach(file => {
+                    fileFormData.append('dokumentasi', file);
                 });
-                
-                console.log("Mengirim data ke /file/arsip");
-                
-                // Kirim request POST ke endpoint /file/arsip
+                                
+                // nnyari id path foto lewat api 
                 const fileResponse = await fetch(`${env.PUB_PORT}/file/arsip`, {
-                    method: "POST",
-                    body: fileFormData,
+                    method: 'POST',
+                    body: fileFormData
                 });
                 
                 if (!fileResponse.ok) {
-                    const errorData = await fileResponse.json();
-                    return fail(fileResponse.status, { 
-                        errors: `Error ${fileResponse.status}: ${errorData.message || 'Gagal mengupload file'}`,
+                    console.error('File upload failed:', await fileResponse.text());
+                    return fail(fileResponse.status, {
+                        errors: `Error uploading files: ${fileResponse.statusText}`,
                         success: false
                     });
                 }
                 
-                // Ambil id_path dari response
+                // menambahkan id path yg didapat kedalam variabel
                 const fileResult = await fileResponse.json();
-                console.log("file result: ", fileResult)
+                console.log('File upload result:', fileResult);
                 id_path = fileResult.id_path;
-                
-                console.log("ID Path dari /file/arsip:", id_path);
             }
             
-            // Persiapkan JSON payload untuk dikirim ke API /arsip
-            const payload = {
-                id_arsip: Number(id),
-                nama_arsip: namaDokumen?.toString() || "",
-                kategori_arsip: kategori?.toString() || "",
-                jenis_arsip: Number(jenisDokumen) || 0,
-                sub_kategori_arsip: Number(subkategori) || 0,
-                dokumentasi : id_path?.toString() || ""
-            };
-            
-            // Tambahkan id_path jika ada
-            // if (id_path) {
-            //     payload.dokumentasi = id_path;
-            // }
-            
-            console.log("JSON payload untuk /arsip:", payload);
-
-            // Kirim request PUT ke endpoint /arsip dengan JSON
-            const response = await fetch(`${env.PUB_PORT}/arsip`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                return fail(response.status, { 
-                    errors: `Error ${response.status}: ${errorData.message || 'Unknown error'}`,
+            // Ambil dokumentasi dari arsip jika ada dan tidak ada file yang diubah
+            const docResponse = await fetch(`${env.PUB_PORT}/arsip?limit=1000`);
+            if (!docResponse.ok) {
+                return fail(docResponse.status, {
+                    errors: `Error fetching existing document: ${docResponse.statusText}`,
                     success: false
                 });
             }
-
-            const result = await response.json();
-            return { 
-                success: true, 
-                message: "Dokumen berhasil diperbarui",
-                data: result
+            
+            const documents = await docResponse.json();
+            const existingDoc = documents.find((doc: { id_arsip: number }) => doc.id_arsip === Number(id));
+            
+            if (!existingDoc) {
+                return fail(404, {
+                    errors: `Document with ID ${id} not found`,
+                    success: false
+                });
+            }
+            
+            // data-data yg akan dikirim ke api ( untuk edit )
+            const payload = {
+                id_arsip: Number(id),
+                nama_arsip: namaDokumen || '',
+                kategori_arsip: kategori || '',
+                jenis_arsip: Number(jenisDokumen) || 0,
+                sub_kategori_arsip: Number(subkategori) || 0,
+                dokumentasi: id_path ? id_path.toString() : existingDoc.dokumentasi
             };
-        } catch (error) {
-            console.error("Error updating document:", error);
-            return fail(500, { 
-                errors: "Terjadi kesalahan saat memperbarui dokumen", 
-                success: false 
+                        
+            // update perubahan
+            const response = await fetch(`${env.PUB_PORT}/arsip`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            
+            if (!response.ok) {
+                console.error('API response error:', await response.text());
+                return fail(response.status, {
+                    errors: `Error updating document: ${response.statusText}`,
+                    success: false
+                });
+            }
+            
+            return { 
+                success: true,
+                message: 'Dokumen berhasil diperbarui'
+            };
+        } catch (error : any) {
+            console.error('Error in submit action:', error);
+            return fail(500, {
+                errors: `Terjadi kesalahan: ${error.message}`,
+                success: false
             });
         }
     }

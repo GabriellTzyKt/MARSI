@@ -1,37 +1,20 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
-	import SuccessModal from '$lib/modal/SuccessModal.svelte';
-	import TambahTugas from '$lib/popup/TambahTugas.svelte';
+	import { dummyAcara, dummyAnggota } from '$lib/dummy';
 
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
-
-
-	let { data } = $props()
-	console.log("data : ", data)
-	const dataAmbil = data.data
-
-	let open = $state(false);
-	let success = $state(false);
-	let errors = $state();
-	$effect(() => {
-		if (!open) {
-			errors = '';
-		}
-	});
 </script>
 
 <div class="flex w-full flex-col">
-	<div class="mx-4 flex flex-col justify-center gap-4 lg:mx-10 lg:flex-row lg:justify-between">
+	<div class="mx-10 flex justify-between">
 		<button
 			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
-			onclick={() => {
-				open = true;
-			}}>+Tambah Data</button
+			onclick={() => goto('/abdi/dashboard/komunitas/detail/acara/buat')}>+Tambah Data</button
 		>
-		<div class="flex flex-col items-center justify-center gap-2 lg:flex-row lg:justify-start">
+		<div class="flex items-center gap-2">
 			<!-- select -->
 			<select
 				name="Organisasi"
@@ -86,31 +69,31 @@
 			</div>
 		</div>
 	</div>
-	<div class="mx-4 flex lg:mx-10">
+	<div class="mx-10 flex">
 		<Table
 			table_header={[
-				['id_tugas', 'Id Tugas'],
-				['nama_tugas', 'Nama Tugas'],
-				['id_pemberi_tugas', 'Pemberi Tugas'],
-				['id_penerima_tugas', 'Anggota yang Ditugaskan'],
-				['tanggal_mulai', 'Tanggal Pemberian'],
-				['deskripsi_tugas', 'Deskripsi Tugas'],
-
+				['id_acara', 'Id Acara'],
+				['nama_acara', 'Nama Acara'],
+				['tanggal', 'Tanggal Acara'],
+				['lokasi', 'Lokasi'],
+				['penanggungjawab', 'Penanggung Jawab'],
+				['jenis_acara', 'Jenis Acara'],
+				['kapasitas', 'Kapasitas'],
 				['children', 'Status'],
 				['children', 'Aksi']
 			]}
-			table_data={dataAmbil}
+			table_data={dummyAcara}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
 					<DropDown
 						text=" apa yakin mau menghapus acara ini?"
 						successText="berhasil diarsip"
-						link="/abdi/sekretariat/tugas"
+						link="/abdi/dashboard/komunitas/detail/acara"
 						items={[
-							['children', 'Bukti', 'Bukti Laporan'],
-							['children', 'Ubah Tugas', 'Ubah Tugas'],
-
+							['Detail', '/abdi/dashboard/komunitas/detail/acara/detail'],
+							['Ubah', '/abdi/dashboard/komunitas/detail/acara/edit'],
+							['Laporan', '/abdi/dashboard/komunitas/detail/acara/laporan'],
 							['children', 'Arsip', '']
 						]}
 						id={`id-${index}`}
@@ -118,43 +101,9 @@
 					></DropDown>
 				{/if}
 				{#if header === 'Status'}
-					<Status status={data.status_tugas}></Status>
+					<Status status={data.status}></Status>
 				{/if}
 			{/snippet}
 		</Table>
 	</div>
 </div>
-
-{#if open}
-	<form
-		action="?/tambahTugas"
-		method="post"
-		use:enhance={() => {
-			return async ({ result, update }) => {
-				if (result.type === 'success') {
-					let timer: number;
-					success = true;
-
-					timer = setTimeout(() => {
-						open = false;
-						success = false;
-						errors = null;
-					}, 3000);
-				}
-				if (result.type === 'failure') {
-					errors = result.data?.errors;
-				}
-			};
-		}}
-	>
-		<TambahTugas
-			bind:value={open}
-			text="Tambah Tugas"
-			{errors}
-			successText="Tugas Berhasil Ditambah"
-		></TambahTugas>
-	</form>
-{/if}
-{#if success}
-	<SuccessModal text="Tugas BErhasil Ditambah"></SuccessModal>
-{/if}

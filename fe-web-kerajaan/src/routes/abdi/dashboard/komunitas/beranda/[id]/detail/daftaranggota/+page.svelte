@@ -1,37 +1,38 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
+	import { dummyAnggota } from '$lib/dummy';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
-	import TambahTugas from '$lib/popup/TambahTugas.svelte';
-
+	import TambahAnggota from '$lib/popup/TambahAnggota.svelte';
 	import Search from '$lib/table/Search.svelte';
-	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
-
-
-	let { data } = $props()
-	console.log("data : ", data)
-	const dataAmbil = data.data
+	import { fade } from 'svelte/transition';
+	let { data } = $props();
+	let dataambil = data.detil_anggota;
+	console.log(dataambil);
 
 	let open = $state(false);
-	let success = $state(false);
-	let errors = $state();
-	$effect(() => {
+	let valo = $state(false);
+	let error = $state();
+	let data2 = $state();
+
+	let timer : any;
+
+	let toggle = () => {
 		if (!open) {
-			errors = '';
-		}
-	});
+			open = true;
+		} else open = false;
+		console.log(open);
+	};
 </script>
 
 <div class="flex w-full flex-col">
-	<div class="mx-4 flex flex-col justify-center gap-4 lg:mx-10 lg:flex-row lg:justify-between">
+	<div class="flex flex-col xl:flex-row xl:justify-between">
 		<button
-			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
-			onclick={() => {
-				open = true;
-			}}>+Tambah Data</button
+			class="bg-badran-bt rounded-lg px-3 py-2 text-white hover:cursor-pointer"
+			onclick={toggle}>+Tambah Data</button
 		>
-		<div class="flex flex-col items-center justify-center gap-2 lg:flex-row lg:justify-start">
+		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
 			<!-- select -->
 			<select
 				name="Organisasi"
@@ -86,75 +87,63 @@
 			</div>
 		</div>
 	</div>
-	<div class="mx-4 flex lg:mx-10">
+	<div class="flex w-full">
 		<Table
 			table_header={[
-				['id_tugas', 'Id Tugas'],
-				['nama_tugas', 'Nama Tugas'],
-				['id_pemberi_tugas', 'Pemberi Tugas'],
-				['id_penerima_tugas', 'Anggota yang Ditugaskan'],
-				['tanggal_mulai', 'Tanggal Pemberian'],
-				['deskripsi_tugas', 'Deskripsi Tugas'],
-
-				['children', 'Status'],
+				['id_anggota', 'Id Anggota'],
+				['nama_anggota', 'Nama Anggota'],
+				['tanggal_bergabung', 'Tanggal Bergabung'],
+				['jabatan_organisasi', 'Jabatan Organisasi'],
+				['nomor_telepon', 'Nomer Telpon'],
+				['email', 'Email'],
 				['children', 'Aksi']
 			]}
-			table_data={dataAmbil}
+			table_data={dummyAnggota}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
 					<DropDown
-						text=" apa yakin mau menghapus acara ini?"
-						successText="berhasil diarsip"
-						link="/abdi/sekretariat/tugas"
-						items={[
-							['children', 'Bukti', 'Bukti Laporan'],
-							['children', 'Ubah Tugas', 'Ubah Tugas'],
-
-							['children', 'Arsip', '']
-						]}
+						text="Apakah yakin ingin di arsip?"
+						successText=""
+						link="/abdi/dashboard/komunitas/detail/daftaranggota"
 						id={`id-${index}`}
 						{data}
+						items={[
+							['Ubah', '/abdi/dashboard/komunitas/detail/daftaranggota/edit'],
+							['children', 'non-aktifkan', '/abdi/dashboard/komunitas/daftaranggota']
+						]}
 					></DropDown>
-				{/if}
-				{#if header === 'Status'}
-					<Status status={data.status_tugas}></Status>
 				{/if}
 			{/snippet}
 		</Table>
 	</div>
 </div>
-
 {#if open}
 	<form
-		action="?/tambahTugas"
+		action="?/tambah"
 		method="post"
 		use:enhance={() => {
-			return async ({ result, update }) => {
+			return async ({ result }) => {
+				console.log(result)
 				if (result.type === 'success') {
-					let timer: number;
-					success = true;
-
+					valo = true;
+					clearTimeout(timer);
 					timer = setTimeout(() => {
-						open = false;
-						success = false;
-						errors = null;
+						valo = false;
 					}, 3000);
-				}
-				if (result.type === 'failure') {
-					errors = result.data?.errors;
+					open = false;
+				} else if (result.type === 'failure') {
+					error = result.data?.errors || '';
 				}
 			};
 		}}
 	>
-		<TambahTugas
-			bind:value={open}
-			text="Tambah Tugas"
-			{errors}
-			successText="Tugas Berhasil Ditambah"
-		></TambahTugas>
+		<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
+			<TambahAnggota bind:value={open} bind:open={valo} errors={error} {data2} {dataambil}
+			></TambahAnggota>
+		</div>
 	</form>
 {/if}
-{#if success}
-	<SuccessModal text="Tugas BErhasil Ditambah"></SuccessModal>
+{#if valo}
+	<SuccessModal text="Anggota berhasil Ditambah!"></SuccessModal>
 {/if}

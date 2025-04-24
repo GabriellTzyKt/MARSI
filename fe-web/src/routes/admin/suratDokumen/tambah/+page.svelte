@@ -116,6 +116,7 @@
 						}, 3000);
 					} else if (result.type === 'failure') {
 						error = result?.data?.errors;
+						loading = false;
 					}
 				};
 			}}

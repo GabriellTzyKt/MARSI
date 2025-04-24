@@ -1,61 +1,57 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	let success = $state(false);
-	let uploadedFiles: File[] = [];
+	let uploadedFiles: (File | null)[] = [];
 	let uploadedFileUrls: string[] = $state([]);
 	let uploadedFileIds: (number | null)[] = $state([]);
 	let timer: Number;
 
-	    onMount(() => {
-        if (datagambar && datagambar.length > 0) {
-            // Langsung masukkan URL gambar ke array
-            uploadedFileUrls = datagambar.map(file => file.url);
-            uploadedFileIds = datagambar.map(file => file.id);
-            uploadedFiles = Array(datagambar.length).fill(null);
-            
-            console.log('Loaded existing images:', uploadedFileUrls);
-        }
-    });
-	// 	if (form?.success) {
-	// 		success = true;
-	// 		if (timer) {
-	// 			clearTimeout(timer);
-	// 		}
-	// 		if (success)
-	// 			timer = setTimeout(() => {
-	// 				success = false;
-	// 				goto('/admin/suratDokumen');
-	// 			}, 3000);
-	// 	} else {
-	// 		if (form?.values) {
-	// 			nama = String(form?.values?.namaDokumen);
-	// 			jenisDokumen = String(form?.values?.jenisDokumen);
-	// 			asalKerajaan = String(form?.values?.asalKerajaan);
-	// 			kategori = String(form?.values?.kategori);
-	// 			// uploadedFileUrls = form?.values?.urlfoto
-	// 			// 	? Array.isArray(form.values.urlfoto)
-	// 			// 		? form.values.urlfoto.map(String)
-	// 			// 		: [String(form.values.urlfoto)]
-	// 			// 	: [];
-	// 		}
-	// 	}
-	// 	// Tambahkan: Inisialisasi gambar yang sudah ada ke uploadedFiles dan uploadedFileUrls
-	// 	if (data.files && data.files.length > 0) {
-	// 		// Untuk gambar yang sudah ada, kita tidak memiliki File object
-	// 		// tapi kita bisa menyimpan URL dan ID-nya
-	// 		uploadedFileUrls = data.files.map((file) => file.url);
-	// 		uploadedFileIds = data.files.map((file) => file.id);
-	// 		// uploadedFiles tetap kosong untuk gambar yang sudah ada
-	// 		uploadedFiles = Array(data.files.length).fill(null);
-	// 	}
-	// });
+	// Function to convert URL to File object
+	async function urlToFile(url: string, filename: string): Promise<File | null> {
+		try {
+			const response = await fetch(url);
+			if (!response.ok) {
+				console.error(`Failed to fetch image: ${response.statusText}`);
+				return null;
+			}
+			
+			const blob = await response.blob();
+			// Determine file type from blob or URL
+			const fileType = blob.type || 'image/jpeg';
+			// Create a File object from the blob
+			return new File([blob], filename, { type: fileType });
+		} catch (error) {
+			console.error('Error converting URL to File:', error);
+			return null;
+		}
+	}
 
-	let { form, data } = $props();
+	// Load existing images and convert to File objects
+	onMount(async () => {
+		if (datagambar && datagambar.length > 0) {
+			// Initialize arrays
+			uploadedFileUrls = datagambar.map(file => file.url);
+			uploadedFileIds = datagambar.map(file => file.id || null);
+			
+			// Convert URLs to File objects
+			const filePromises = datagambar.map(async (file, index) => {
+				const filename = file.name || `existing-image-${index}.jpg`;
+				return await urlToFile(file.url, filename);
+			});
+			
+			// Wait for all conversions to complete
+			uploadedFiles = await Promise.all(filePromises);
+			console.log('Converted existing images to Files:', uploadedFiles);
+		}
+	});
+
+	let { data } = $props();
 	console.log('data 1: ', data);
 	let dataambil = data.document;
 	let datagambar = data.files;
@@ -122,6 +118,33 @@
 		uploadedFileUrls = uploadedFileUrls.filter((_, i) => i !== index);
 		uploadedFileIds = uploadedFileIds.filter((_, i) => i !== index);
 	}
+
+	// Modified form submission to include existing files
+	function prepareFormData(form: HTMLFormElement): FormData {
+		const formData = new FormData(form);
+		
+		// Hapus input file kosong yang mungkin ada
+		const emptyFile = formData.get('uploadfile');
+		if (emptyFile instanceof File && emptyFile.size === 0) {
+			formData.delete('uploadfile');
+		}
+		
+		// Tambahkan file yang sudah ada dan file baru
+		uploadedFiles.forEach((file, index) => {
+			if (file) {
+				if (uploadedFileIds[index]) {
+					// File yang sudah ada
+					formData.append('existingFile', file);
+					formData.append('existingFileId', uploadedFileIds[index]?.toString() || '');
+				} else {
+					// File baru yang ditambahkan saat edit
+					formData.append('uploadfile', file);
+				}
+			}
+		});
+		
+		return formData;
+	}
 </script>
 
 <div class="test flex w-full flex-col">
@@ -135,8 +158,11 @@
 			method="post"
 			action="?/submit"
 			enctype="multipart/form-data"
-			use:enhance={() => {
+			use:enhance={({ formData, formElement }) => {
 				loading = true;
+				// Use custom FormData preparation
+				const customFormData = prepareFormData(formElement);
+				
 				return async ({ result }) => {
 					console.log(result);
 					if (result.type === 'success') {
@@ -145,9 +171,11 @@
 						clearTimeout(timer);
 						timer = setTimeout(() => {
 							success = false;
+							goto('/admin/suratDokumen');
 						}, 3000);
 					} else if (result.type === 'failure') {
 						error = result?.data?.errors;
+						loading = false;
 					}
 				};
 			}}
@@ -300,6 +328,10 @@
 		<SucessModal open={success} text="Dokumen berhasil diubah!" to="/admin/suratDokumen"
 		></SucessModal>
 	</div>
+{/if}
+
+{#if loading}
+	<Loader></Loader>
 {/if}
 
 <style>
