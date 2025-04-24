@@ -4,10 +4,9 @@
 
 <div
 	class="rounded-full px-2 py-1 text-center"
-	class:bg-berlangsung={status === 'Berlangsung'}
-	class:bg-disetujui={status === 'Disetujui'}
+	class:bg-berlangsung={status === 'Berlangsung' || status === "Ditugaskan"}
+	class:bg-disetujui={status === 'Disetujui' || status === "Selesai"}
 	class:bg-ditolak={status === 'Ditolak'}
-	class:bg-selesai={status === 'Selesai'}
 	class:bg-pending={status === 'Pending'}
 	class:bg-tugas-berlangsung={status === 'Ditugaskan'}
 	class:bg-tugas-selesai={status === 'Selesai'}

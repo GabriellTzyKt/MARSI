@@ -1,5 +1,5 @@
-import type { LayoutServerData } from './$types';
+import type { Actions, LayoutServerData } from './$types';
 
-export async function load() {
-    return{halo: "Alo "}
-}
+export const load: PageLoad = async () => {
+    
+};

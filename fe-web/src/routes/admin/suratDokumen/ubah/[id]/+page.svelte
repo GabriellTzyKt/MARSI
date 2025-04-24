@@ -1,100 +1,156 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	// import { env } from '$env/dynamic/private';
-	import DropDown from '$lib/dropdown/DropDown.svelte';
-	import SucessModal from '$lib/popup/SucessModal.svelte';
-	import { fade } from 'svelte/transition';
-	import { navigating } from '$app/state';
+	import { goto } from '$app/navigation';
 	import Loader from '$lib/loader/Loader.svelte';
-	import Search from '$lib/table/Search.svelte';
-
-	const { data } = $props();
-	console.log(data.data);
-	let showDropdown = $state(false);
-
-	let nama = $state('');
-	let jenisDokumen = $state(' ');
-	let kategori = $state(' ');
-	let keterkaitan = $state('');
-	let subkategori = $state('');
-
-	let loading = $state(false);
-
-	let urlFoto = $state('');
-
-	let error: any = $state('');
+	import SucessModal from '$lib/popup/SucessModal.svelte';
+	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 
 	let success = $state(false);
-	let showModal = $state(false);
-	let uploadedFiles: File[] = [];
+	let uploadedFiles: (File | null)[] = [];
 	let uploadedFileUrls: string[] = $state([]);
+	let uploadedFileIds: (number | null)[] = $state([]);
 	let timer: Number;
 
-	let toggle = () => {
-		if (!success) {
-			success = true;
-		} else success = false;
-	};
-
-	function handleFileChange(event: Event) {
-		const target = event.target as HTMLInputElement;
-		if (target.files && target.files.length > 0) {
-			const newFiles = Array.from(target.files);
-			uploadedFiles = [...uploadedFiles, ...newFiles]; // Tambahkan file baru ke daftar lama
-			uploadedFileUrls = [
-				...uploadedFileUrls,
-				...newFiles.map((file) => URL.createObjectURL(file))
-			];
-			console.log('Updated file list:', uploadedFiles);
+	// Function to convert URL to File object
+	async function urlToFile(url: string, filename: string): Promise<File | null> {
+		try {
+			const response = await fetch(url);
+			if (!response.ok) {
+				console.error(`Failed to fetch image: ${response.statusText}`);
+				return null;
+			}
+			
+			const blob = await response.blob();
+			// Determine file type from blob or URL
+			const fileType = blob.type || 'image/jpeg';
+			// Create a File object from the blob
+			return new File([blob], filename, { type: fileType });
+		} catch (error) {
+			console.error('Error converting URL to File:', error);
+			return null;
 		}
 	}
-	$effect(() => {
-		if (keterkaitan === '') {
-			showDropdown = false;
-		} else {
-			showDropdown = true;
+
+	// Load existing images and convert to File objects
+	onMount(async () => {
+		if (datagambar && datagambar.length > 0) {
+			// Initialize arrays
+			uploadedFileUrls = datagambar.map(file => file.url);
+			uploadedFileIds = datagambar.map(file => file.id || null);
+			
+			// Convert URLs to File objects
+			const filePromises = datagambar.map(async (file, index) => {
+				const filename = file.name || `existing-image-${index}.jpg`;
+				return await urlToFile(file.url, filename);
+			});
+			
+			// Wait for all conversions to complete
+			uploadedFiles = await Promise.all(filePromises);
+			console.log('Converted existing images to Files:', uploadedFiles);
 		}
 	});
 
-	function selectKeterkaitan(value: string) {
-		keterkaitan = value;
-		showDropdown = false;
+	let { data } = $props();
+	console.log('data 1: ', data);
+	let dataambil = data.document;
+	let datagambar = data.files;
+
+	// Debug URL gambar
+	console.log('Data gambar:', datagambar);
+	if (datagambar && datagambar.length > 0) {
+		console.log('URL gambar:', datagambar[0].url);
 	}
 
-	function removeImage(index: number) {
-		uploadedFiles = uploadedFiles.slice(0, index).concat(uploadedFiles.slice(index + 1));
-		uploadedFileUrls = uploadedFileUrls.slice(0, index).concat(uploadedFileUrls.slice(index + 1));
-
-		const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-		if (fileInput) {
-			fileInput.value = '';
-		}
-
-		const dataTransfer = new DataTransfer();
-		for (const file of uploadedFiles) {
-			dataTransfer.items.add(file);
-		}
-		if (fileInput) {
-			fileInput.files = dataTransfer.files;
-		}
-	}
+	let namadokumen = $state(dataambil.nama_arsip);
+	let jenisdokumen = $state(dataambil.jenis_arsip);
+	let sub_kategori_arsip = $state(dataambil.sub_kategori_arsip);
+	let kategori_arsip = $state(dataambil.kategori_arsip.toLowerCase());
+	let keterkaitan = $state('');
+	let showDropdown = $state(false);
+	let loading = $state(false);
 	function filter(data: any[]) {
 		return data.filter((item) =>
 			item?.nama_kerajaan?.toLowerCase().includes(keterkaitan.toLowerCase())
 		);
 	}
 	let searchRes = $derived(filter(data.data));
-	console.log(searchRes)
-</script>
 
-{#if navigating.to}
-	<Loader text="Navigating..."></Loader>
-{/if}
+
+	function selectKeterkaitan(value: string) {
+		keterkaitan = value;
+		showDropdown = false;
+	}
+
+	function handleFileChange(event: Event) {
+		const target = event.target as HTMLInputElement;
+		console.log('File input changed:', target.files); // Tambahkan log di sini
+
+		if (target.files && target.files.length > 0) {
+			const newFiles = Array.from(target.files);
+			console.log('New files selected:', newFiles); // Tambahkan log di sini
+
+			// Tambahkan file baru ke daftar lama
+			uploadedFiles = [...uploadedFiles, ...newFiles];
+
+			// Tambahkan URL untuk preview
+			uploadedFileUrls = [
+				...uploadedFileUrls,
+				...newFiles.map((file) => URL.createObjectURL(file))
+			];
+
+			// Tambahkan null untuk ID file baru
+			uploadedFileIds = [...uploadedFileIds, ...Array(newFiles.length).fill(null)];
+
+			console.log('Updated file list:', uploadedFiles);
+		}
+	}
+
+	let error: any = $state('');
+
+
+	function removeImage(index: number) {
+		// Simpan ID gambar yang dihapus untuk dikirim ke server
+		const deletedId = uploadedFileIds[index];
+
+		// Hapus dari array
+		uploadedFiles = uploadedFiles.filter((_, i) => i !== index);
+		uploadedFileUrls = uploadedFileUrls.filter((_, i) => i !== index);
+		uploadedFileIds = uploadedFileIds.filter((_, i) => i !== index);
+	}
+
+	// Modified form submission to include existing files
+	function prepareFormData(form: HTMLFormElement): FormData {
+		const formData = new FormData(form);
+		
+		// Hapus input file kosong yang mungkin ada
+		const emptyFile = formData.get('uploadfile');
+		if (emptyFile instanceof File && emptyFile.size === 0) {
+			formData.delete('uploadfile');
+		}
+		
+		// Tambahkan file yang sudah ada dan file baru
+		uploadedFiles.forEach((file, index) => {
+			if (file) {
+				if (uploadedFileIds[index]) {
+					// File yang sudah ada
+					formData.append('existingFile', file);
+					formData.append('existingFileId', uploadedFileIds[index]?.toString() || '');
+				} else {
+					// File baru yang ditambahkan saat edit
+					formData.append('uploadfile', file);
+				}
+			}
+		});
+		
+		return formData;
+	}
+</script>
 
 <div class="test flex w-full flex-col">
 	<div class="flex flex-row">
 		<a href="/admin/suratDokumen"><button class="custom-button bg-customRed">⭠ Kembali</button></a>
-		<p class="ml-5 mt-6 text-3xl font-bold underline">Tambah Dokumen</p>
+		<p class="ml-5 mt-6 text-3xl font-bold underline">Ubah Dokumen</p>
 	</div>
 
 	<div class="form-container flex flex-col">
@@ -102,8 +158,11 @@
 			method="post"
 			action="?/submit"
 			enctype="multipart/form-data"
-			use:enhance={() => {
+			use:enhance={({ formData, formElement }) => {
 				loading = true;
+				// Use custom FormData preparation
+				const customFormData = prepareFormData(formElement);
+				
 				return async ({ result }) => {
 					console.log(result);
 					if (result.type === 'success') {
@@ -112,7 +171,7 @@
 						clearTimeout(timer);
 						timer = setTimeout(() => {
 							success = false;
-							showModal = false;
+							goto('/admin/suratDokumen');
 						}, 3000);
 					} else if (result.type === 'failure') {
 						error = result?.data?.errors;
@@ -128,7 +187,7 @@
 					type="text"
 					id="nama"
 					name="nama"
-					bind:value={nama}
+					bind:value={namadokumen}
 					placeholder="John Doe"
 				/>
 				{#if error}
@@ -154,7 +213,7 @@
 							{#each searchRes as item}
 								<!-- svelte-ignore a11y_click_events_have_key_events -->
 								<li
-									class="cursor-pointer p-2 hover:bg-gray-300"
+									class="cursor-pointer hover:bg-gray-300"
 									onclick={() => selectKeterkaitan(item.nama_kerajaan)}
 								>
 									{item.nama_kerajaan}
@@ -173,25 +232,21 @@
 			<div class="mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nomor_telepon">Jenis Dokumen</label>
 				<select
-					bind:value={jenisDokumen}
+					bind:value={jenisdokumen}
 					name="jenisDokumen"
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
 					<option value=" " disabled>None</option>
-					<option value="1">1 </option>
-					<option value="2">2</option>
+					<option value={1}>1 </option>
+					<option value={2}>2</option>
 				</select>
-				{#if error}
-					{#each error.jenisDokumen as error3}
-						<p class="text-left text-red-500">{error3}</p>
-					{/each}
-				{/if}
+			
 			</div>
 
 			<div class=" mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nomor_telepon">Kategori</label>
 				<select
-					bind:value={kategori}
+					bind:value={kategori_arsip}
 					name="kategori"
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
@@ -199,25 +254,19 @@
 					<option value="masuk">Masuk </option>
 					<option value="keluar">Keluar</option>
 				</select>
-				{#if error}
-					{#each error.kategori as error4}
-						<p class="text-left text-red-500">{error4}</p>
-					{/each}
-				{/if}
+				
 			</div>
 
 			<div class="text-md mt-2 text-start">
-				<label for="keterkaitan">Sub Kategori</label>
+				<label for="subkategori">Sub Kategori</label>
 				<div class="relative flex flex-col gap-1">
-					<input class="input-field rounded-lg border p-2 pr-10" name="subkategori" />
+					<input
+						class="input-field rounded-lg border p-2 pr-10"
+						name="subkategori"
+						bind:value={sub_kategori_arsip}
+					/>
 
 					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
-
-					{#if error}
-						{#each error.subkategori as error1}
-							<p class="text-left text-red-500">{error1}</p>
-						{/each}
-					{/if}
 				</div>
 			</div>
 
@@ -225,6 +274,7 @@
 				<label class="text-md self-start text-left" for="fileInput">Dokumen</label>
 				<div class="h-full w-full overflow-x-auto rounded-lg border-2 border-black px-2 py-2">
 					<div class="flex flex-row gap-x-5">
+						<!-- Upload container -->
 						<div
 							class="upload-container relative h-[200px] w-[270px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-black"
 						>
@@ -232,7 +282,6 @@
 								type="file"
 								id="fileInput"
 								class="hidden"
-								bind:value={urlFoto}
 								name="uploadfile"
 								onchange={handleFileChange}
 								multiple
@@ -247,6 +296,7 @@
 							</label>
 						</div>
 
+						<!-- Tampilkan gambar yang baru diupload -->
 						{#each uploadedFileUrls as url, index}
 							<div class="relative flex-shrink-0">
 								<img
@@ -254,24 +304,18 @@
 									alt="Uploaded file"
 									class="h-[200px] w-[270px] rounded-lg border object-cover"
 								/>
-								<button class="remove-btn" onclick={() => removeImage(index)}>✕</button>
+								<button type="button" class="remove-btn" onclick={() => removeImage(index)}
+									>✕</button
+								>
 							</div>
 						{/each}
 					</div>
 				</div>
-				{#if error}
-					{#each error.urlfoto as error5}
-						<p class="text-left text-red-500">{error5}</p>
-					{/each}
-				{/if}
+				
 			</div>
 
 			<div class="flex w-full justify-end">
-				<button
-					class="bg-customGold mt-2 rounded-lg border px-6 py-2 text-white"
-					type="submit"
-					formaction="?/submit"
-				>
+				<button class="bg-customGold mt-2 rounded-lg border px-6 py-2 text-white" type="submit">
 					Tambah
 				</button>
 			</div>
@@ -281,7 +325,7 @@
 
 {#if success}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
-		<SucessModal open={success} text="Dokumen berhasil ditambahkan!" to="/admin/suratDokumen"
+		<SucessModal open={success} text="Dokumen berhasil diubah!" to="/admin/suratDokumen"
 		></SucessModal>
 	</div>
 {/if}
@@ -291,14 +335,6 @@
 {/if}
 
 <style>
-	.cil--magnifying-glass {
-		display: inline-block;
-		width: 18px;
-		height: 18px;
-		background-repeat: no-repeat;
-		background-size: 100% 100%;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%23150000' d='m479.6 399.716l-81.084-81.084l-62.368-25.767A175 175 0 0 0 368 192c0-97.047-78.953-176-176-176S16 94.953 16 192s78.953 176 176 176a175.03 175.03 0 0 0 101.619-32.377l25.7 62.2l81.081 81.088a56 56 0 1 0 79.2-79.195M48 192c0-79.4 64.6-144 144-144s144 64.6 144 144s-64.6 144-144 144S48 271.4 48 192m408.971 264.284a24.03 24.03 0 0 1-33.942 0l-76.572-76.572l-23.894-57.835l57.837 23.894l76.573 76.572a24.03 24.03 0 0 1-.002 33.941'/%3E%3C/svg%3E");
-	}
 	.input-field {
 		width: auto;
 	}
