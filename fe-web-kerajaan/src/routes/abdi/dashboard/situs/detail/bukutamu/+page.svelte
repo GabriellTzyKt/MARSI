@@ -1,11 +1,15 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { navigating } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAcara, dummyAnggota, dummyBukuTamu } from '$lib/dummy';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import TambahKunjungan from '$lib/popup/TambahKunjungan.svelte';
+	import Pagination from '$lib/table/Pagination.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
+	// import { load } from '../../../komunitas/detail/daftaranggota/proxy+page.server.js';
 
 	let count = $state(1);
 	let id = $state(1);
@@ -14,13 +18,15 @@
 	let valo = $state(false);
 	let error = $state();
 	let data2 = $state();
+	let { form } = $props();
+	console.log('form data', form?.formData);
 
-	let timer : any;
+	let timer: any;
 
 	function increment() {
 		count += 1;
 		id += 1;
-		console.log("id: ", count, id)
+		console.log('id: ', count, id);
 	}
 
 	function OpenModal() {
@@ -35,14 +41,50 @@
 	function hapus() {
 		count -= 1;
 	}
+	let entries = $state(10);
+	let currPage = $state(1);
+	let keyword = $state('');
+	function filterD(data: any) {
+		return data.filter(
+			(item) =>
+				item?.nama_pengunjung.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.tanggal.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.no_telepon.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.keterangan.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.status.toLowerCase().includes(keyword.toLowerCase())
+		);
+	}
+	let loading = $state(false);
+
+	$effect(() => {
+		if (keyword || entries) {
+			currPage = 1;
+		}
+	});
+	function pagination(data: any) {
+		let d = filterD(data);
+		let start = (currPage - 1) * entries;
+		let end = start + entries;
+		console.log(d);
+		return d.slice(start, end);
+	}
+	let dataambil = $derived(pagination(dummyBukuTamu));
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
 		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white" onclick={OpenModal}
 			>+Tambah Kunjungan</button
 		>
-		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
+		<div
+			class="mt-4 flex flex-col items-center justify-center gap-2 md:flex-row xl:mt-0 xl:justify-start"
+		>
 			<!-- select -->
 			<select
 				name="Organisasi"
@@ -61,6 +103,7 @@
 				<input
 					type="text"
 					placeholder="Cari.."
+					bind:value={keyword}
 					class=" w-full bg-transparent px-2 py-2 focus:outline-none"
 				/>
 
@@ -87,7 +130,7 @@
 				<input
 					type="number"
 					class="w-12 rounded-md border py-2 text-center focus:outline-none"
-					value="8"
+					bind:value={entries}
 					name=""
 					id=""
 				/>
@@ -97,7 +140,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="flex w-full">
+	<div class="flex w-full flex-col">
 		<Table
 			table_header={[
 				['id_kunjungan', 'Id Kunjungan'],
@@ -108,7 +151,7 @@
 				['children', 'Status'],
 				['children', 'Aksi']
 			]}
-			table_data={dummyBukuTamu}
+			table_data={dataambil}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
@@ -118,13 +161,14 @@
 						link="/abdi/dashboard/situs/bukutamu"
 						items={[['Detail', `/abdi/dashboard/situs/detail`]]}
 						id={`id-${index}`}
-						{data}
+						data={dataambil}
 					></DropDown>
 				{:else if header === 'Status'}
 					<Status status={data.status}></Status>
 				{/if}
 			{/snippet}
 		</Table>
+		<Pagination bind:currPage bind:entries totalItems={filterD(dummyBukuTamu).length}></Pagination>
 	</div>
 </div>
 
@@ -133,8 +177,10 @@
 		action="?/tambah"
 		method="post"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result }) => {
-				console.log("INI Result : " , result);
+				loading = false;
+				console.log('INI Result : ', result);
 				if (result.type === 'success') {
 					valo = true;
 					clearTimeout(timer);
@@ -144,7 +190,7 @@
 					showModal = false;
 				} else if (result.type === 'failure') {
 					error = result.data?.errors || '';
-					console.log("ini ERROR : " , error);
+					console.log('ini ERROR : ', error);
 				}
 			};
 		}}
@@ -160,15 +206,15 @@
 				</div>
 				<button
 					class="ml-auto mt-4 flex w-fit items-end justify-end rounded-lg bg-blue-600 p-2 px-3 text-white"
-					onclick={() => increment()} 
+					onclick={() => increment()}
 					type="button"
-					>
+				>
 					Tambah Kunjungan
 				</button>
 
 				{#each Array(count) as _, id}
 					<div class="relative flex h-full flex-col justify-between lg:h-fit">
-						<TambahKunjungan id={id + 1} errors = {error} {data2} ></TambahKunjungan>
+						<TambahKunjungan id={id + 1} errors={error} {data2}></TambahKunjungan>
 						<div class="mx-auto mb-5 flex h-full items-center">
 							<!-- svelte-ignore a11y_consider_explicit_label -->
 							<button onclick={hapus}>
@@ -196,7 +242,6 @@
 {#if valo}
 	<SuccessModal text="Anggota berhasil Ditambah!"></SuccessModal>
 {/if}
-
 
 <style>
 	.carbon--close-outline {

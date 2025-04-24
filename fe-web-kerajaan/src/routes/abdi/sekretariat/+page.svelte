@@ -3,9 +3,14 @@
 	import kom from '$lib/asset/icon/com.png';
 	import situs from '$lib/asset/icon/landmark.png';
 	import sekre from '$lib/asset/icon/gov.png';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 	let total = $state(16);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="mx-4 mb-2 mt-5 flex h-full w-full flex-col">
 	<div class="">
 		<p class="text-xl font-[600]">Menu Manajemen</p>

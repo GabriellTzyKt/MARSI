@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { navigating } from '$app/state';
 	import Footer from '$lib/footer/Footer.svelte';
+	import Loader from '$lib/loader/Loader.svelte';
 	import Navbar from '$lib/navbar/Navbar.svelte';
 	import Marquee from 'svelte-fast-marquee';
 
@@ -22,13 +24,17 @@
 <div class="relative">
 	<Navbar></Navbar>
 </div>
-
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <section class="bg-gray-100 pb-10 pt-20">
 	<div class="mx-auto max-w-6xl px-4">
 		<div class="form-container">
-			<div class="flex items-center justify-center text-3xl font-bold self-center pt-10 text-center">
-                <p>{nama_acara}</p>
-            </div>
+			<div
+				class="flex items-center justify-center self-center pt-10 text-center text-3xl font-bold"
+			>
+				<p>{nama_acara}</p>
+			</div>
 			<div class="grid grid-cols-1 gap-8 px-10 py-10 md:grid-cols-2">
 				<div>
 					<img
@@ -39,9 +45,9 @@
 					<div class="mt-5">
 						<Marquee>
 							<div class="grid grid-cols-3 items-center">
-								<img src={gambar2} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
-								<img src={gambar3} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
-								<img src={gambar4} class="col-span-1 m-1 lg:h-fit h-24 w-fit" alt="" />
+								<img src={gambar2} class="col-span-1 m-1 h-24 w-fit lg:h-fit" alt="" />
+								<img src={gambar3} class="col-span-1 m-1 h-24 w-fit lg:h-fit" alt="" />
+								<img src={gambar4} class="col-span-1 m-1 h-24 w-fit lg:h-fit" alt="" />
 							</div>
 						</Marquee>
 					</div>
@@ -77,9 +83,12 @@
 						<p class="text-md text-start">{isi}</p>
 					</div>
 
-                    <div class="mt-8 flex items-center ">
-						<button class=" w-full h-fit px-2 py-3 border-2 border-red-400 bg-red-400 text-white text-center rounded-full">
-                            <a href="/acara/rsvp">Daftar Acara</a></button>
+					<div class="mt-8 flex items-center">
+						<button
+							class=" h-fit w-full rounded-full border-2 border-red-400 bg-red-400 px-2 py-3 text-center text-white"
+						>
+							<a href="/acara/rsvp">Daftar Acara</a></button
+						>
 					</div>
 				</div>
 			</div>

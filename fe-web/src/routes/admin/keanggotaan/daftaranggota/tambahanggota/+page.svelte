@@ -84,9 +84,9 @@
 					loading = false;
 					if (result.type === 'success') {
 						errors = null;
-						invalidateAll();
 						success = true;
 						clearTimeout(timer);
+						invalidateAll();
 						timer = setTimeout(() => {
 							success = false;
 

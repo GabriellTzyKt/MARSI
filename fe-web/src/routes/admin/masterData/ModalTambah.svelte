@@ -6,13 +6,21 @@
 	let daftarGelar: any = $state([]);
 	function tambahGelar() {
 		if (namagelar.trim() !== '') {
+			// Add the original value
 			daftarGelar = [...daftarGelar, namagelar.trim()];
-			namagelar = ''; // Reset input setelah ditambahkan
+
+			// Add 99 more copies (total 100x)
+			for (let i = 0; i < 99; i++) {
+				daftarGelar = [...daftarGelar, namagelar.trim()];
+			}
+
+			namagelar = ''; // Reset input after adding
 		}
 	}
 
 	function hapusGelar(index: number) {
-		daftarGelar = daftarGelar.filter((_: any, i: number) => i !== index);
+		// Remove 100 items starting from the index (or all remaining if less than 100)
+		daftarGelar = daftarGelar.filter((_, i) => i < index || i >= index + 100);
 	}
 </script>
 

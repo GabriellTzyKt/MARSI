@@ -2,8 +2,13 @@
 	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="h-full w-full">
 	<div class="block h-fit rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="group relative mx-auto h-[100px] w-[100px] items-center justify-center">
@@ -59,7 +64,7 @@
 
 			<!-- 2 -->
 			<div class="col-span-2">
-				<div class="flex w-full flex-col lg:flex-row gap-3">
+				<div class="flex w-full flex-col gap-3 lg:flex-row">
 					<div
 						class="flex h-fit w-full flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 					>
@@ -74,7 +79,7 @@
 					</div>
 				</div>
 
-				<div class="mt-5 flex w-full flex-col lg:flex-row gap-3">
+				<div class="mt-5 flex w-full flex-col gap-3 lg:flex-row">
 					<div
 						class="flex h-fit w-full flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 					>
@@ -96,24 +101,28 @@
 					<input type="text" placeholder="Masukkan Alamat" />
 				</div>
 
-				<div class="flex w-full mt-5 flex-col gap-1 lg:flex-row">
-					<div class="flex h-fit lg:w-[32.7%] w-[100%] lg:mt-0 mt-3 flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm">
+				<div class="mt-5 flex w-full flex-col gap-1 lg:flex-row">
+					<div
+						class="mt-3 flex h-fit w-[100%] flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm lg:mt-0 lg:w-[32.7%]"
+					>
 						<p>Jam Buka:</p>
 						<input type="text" placeholder="Masukkan Nama" />
 					</div>
-					<div class="flex h-fit lg:w-[32.7%] w-[100%] lg:mt-0 mt-3  flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm">
+					<div
+						class="mt-3 flex h-fit w-[100%] flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm lg:mt-0 lg:w-[32.7%]"
+					>
 						<p>Jam Tutup:</p>
 						<input type="text" placeholder="Masukkan Nama" />
 					</div>
-					<div class="flex h-fit lg:w-[32.7%] w-[100%] lg:mt-0 mt-3  flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm">
+					<div
+						class="mt-3 flex h-fit w-[100%] flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm lg:mt-0 lg:w-[32.7%]"
+					>
 						<p>Jumlah Anggota:</p>
 						<input type="text" placeholder="Masukkan Nama" />
 					</div>
 				</div>
-				
-				
 
-				<div class="mt-5 flex w-full flex-col lg:flex-row gap-3">
+				<div class="mt-5 flex w-full flex-col gap-3 lg:flex-row">
 					<div
 						class="flex h-fit w-full flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 					>

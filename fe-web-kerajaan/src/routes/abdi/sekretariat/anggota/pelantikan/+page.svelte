@@ -3,6 +3,8 @@
 	import SekreAbdiInput from '$lib/input/SekreAbdiInput.svelte';
 	import { slide } from 'svelte/transition';
 	import DropPelantikan from './DropPelantikan.svelte';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 	let drop = $state(false);
 	const togle = () => {
 		if (!drop) {
@@ -11,6 +13,9 @@
 	};
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="mt-6 flex h-full w-full flex-col md:h-auto">
 	<!-- tanggal & btn lantik -->
 	<div class="mx-6 flex justify-between gap-2">

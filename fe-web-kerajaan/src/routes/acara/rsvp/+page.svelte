@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { navigating } from '$app/state';
 	import Footer from '$lib/footer/Footer.svelte';
+	import Loader from '$lib/loader/Loader.svelte';
 	import Navbar from '$lib/navbar/Navbar.svelte';
 	import Rsvp from '$lib/rsvp/Rsvp.svelte';
 
@@ -23,7 +25,9 @@
 <div class="relative">
 	<Navbar></Navbar>
 </div>
-
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <section class="min-h-screen w-full bg-gray-100 pb-10 pt-10">
 	<div class="relative flex items-center justify-between self-center pt-10 text-center">
 		<a href="/acara"><span class="solar--arrow-left-outline absolute ml-8"></span></a>
@@ -106,12 +110,9 @@
 				{/each}
 			{/if}
 
-			<div class="w-full flex justify-end mt-12">
-				<button class="rounded-lg bg-blue-600 px-4 py-2 text-white">
-					Simpan
-				</button>
+			<div class="mt-12 flex w-full justify-end">
+				<button class="rounded-lg bg-blue-600 px-4 py-2 text-white"> Simpan </button>
 			</div>
-
 		</div>
 	</div>
 </section>

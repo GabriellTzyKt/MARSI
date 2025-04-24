@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 
 	let open = $state(false);
@@ -15,10 +17,17 @@
 				goto('/abdi/sekretariat/organisasi/daftaranggota');
 			}, 3000);
 	}
+	let loading = $state(false);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
 <div class="min-h-full w-full">
-	<div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-4">
+	<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 		<!-- 1 -->
 		<div>
 			<div>
@@ -33,7 +42,7 @@
 				</div>
 			</div>
 
-			<div class="mt-5 flex lg:flex-row flex-col gap-4">
+			<div class="mt-5 flex flex-col gap-4 lg:flex-row">
 				<div class="w-full">
 					<p>Tempat Lahir :</p>
 					<input
@@ -65,7 +74,7 @@
 				</div>
 			</div>
 
-			<div class="mt-5 flex lg:flex-row flex-col gap-4">
+			<div class="mt-5 flex flex-col gap-4 lg:flex-row">
 				<div class="w-full">
 					<p>No telepon :</p>
 					<input
@@ -134,7 +143,8 @@
 								class="h-4 w-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
 								checked
 							/>
-							<label for="radio-ayah-tidak" class="mx-2 text-sm font-medium text-black">Tidak</label>
+							<label for="radio-ayah-tidak" class="mx-2 text-sm font-medium text-black">Tidak</label
+							>
 						</div>
 					</div>
 				</div>

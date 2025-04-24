@@ -7,3 +7,4 @@ export const load: PageServerLoad = async ({cookies}) => {
     console.log(hasil)
     return {hasil : hasil.nama}
 };
+

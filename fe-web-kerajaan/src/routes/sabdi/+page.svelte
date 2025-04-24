@@ -4,11 +4,16 @@
 	import { accounts, dummyOrganisasi } from '$lib/dummy';
 	import Footer from '$lib/footer/Footer.svelte';
 	import ListOrganisasi from '$lib/input/ListOrganisasi.svelte';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	let search = $state('');
 </script>
 
 <Navbar></Navbar>
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="mt-10 text-center">
 	<p class="text-2xl font-[500]">Cari Abdi</p>
 </div>

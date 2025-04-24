@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 
 	let namalengkap = $state('');
@@ -46,15 +48,24 @@
 	}
 
 	let open = $state(false);
+	let loading = $state(false);
 	let timer: number;
 </script>
 
+{#if loading}
+	<Loader></Loader>
+{/if}
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="min-h-full w-full">
 	<form
 		method="post"
 		action="?/edit"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result }) => {
+				loading = false;
 				console.log(result);
 				if (result.type === 'success') {
 					open = true;
@@ -162,7 +173,11 @@
 					</div>
 					<div class="w-full">
 						<p>Jenis Kelamin :</p>
-						<select class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2" name="jeniskelamin" bind:value={jeniskelamin}>
+						<select
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+							name="jeniskelamin"
+							bind:value={jeniskelamin}
+						>
 							<option value="laki-laki">Laki-laki</option>
 							<option value="perempuan">Perempuan</option>
 						</select>
@@ -384,7 +399,11 @@
 					<div class="mt-5 w-[100%] lg:w-[50%]">
 						<p>Agama(Opsional):</p>
 						<div class="relative">
-							<select class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2" name="jeniskelamin" bind:value={agama}>
+							<select
+								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+								name="jeniskelamin"
+								bind:value={agama}
+							>
 								<option value="kristen">Kristen</option>
 								<option value="katolik">Katolik</option>
 								<option value="islam">Islam</option>

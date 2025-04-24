@@ -1,10 +1,16 @@
 <script lang="ts">
 	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
+	import Navbar from '$lib/navbar/Navbar.svelte';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	let total = $state(8);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="min-h-full w-full">
 	<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="flex w-full justify-between">
@@ -257,14 +263,15 @@
 			</button>
 		</div>
 
-		<div class="mt-5 flex gap-4 mx-auto overflow-x-auto">
+		<div class="mx-auto mt-5 flex gap-4 overflow-x-auto">
 			{#each Array(4) as _, index}
 				<div class="relative flex-shrink-0">
 					<img src={gambartemp} class="rounded-lg" alt="Gambar {index}" />
 					<span
 						class="absolute bottom-0.5 right-3 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
 					>
-						<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"></i>
+						<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"
+						></i>
 					</span>
 				</div>
 			{/each}
@@ -279,20 +286,21 @@
 			</button>
 		</div>
 
-		<div class="mt-5 flex gap-4 mx-auto overflow-x-auto">
+		<div class="mx-auto mt-5 flex gap-4 overflow-x-auto">
 			{#each Array(4) as _, index}
 				<div class="relative flex-shrink-0">
 					<img src={gambartemp} class="rounded-lg" alt="Gambar {index}" />
 					<span
 						class="absolute bottom-0.5 right-3 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
 					>
-						<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"></i>
+						<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"
+						></i>
 					</span>
 				</div>
 			{/each}
 		</div>
 
-		<div class="w-full flex justify-end mt-3">
+		<div class="mt-3 flex w-full justify-end">
 			<button class="mt-8 w-fit rounded-lg bg-green-500 px-8 py-2 text-white">
 				Simpan Laporan
 			</button>

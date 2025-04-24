@@ -8,9 +8,16 @@
 	import { goto } from '$app/navigation';
 	import Footer from '$lib/footer/Footer.svelte';
 	import Bracode from '$lib/popup/Bracode.svelte';
+	import { enhance } from '$app/forms';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
+	// import { load } from './[id]/proxy+page.server';
 	let chose: number | null = $state(null);
 	let open = $state(false);
 	let timer: number;
+	let success = $state(false);
+	let loading = $state(false);
 	function setTimer() {
 		open = true;
 		if (timer) {
@@ -29,9 +36,29 @@
 </script>
 
 <Navbar></Navbar>
+{#if loading || navigating.to}
+	<Loader text="Loading..."></Loader>{/if}
 <div class="relative">
 	<div class="absolute">
-		<form action="">
+		<form
+			action="?/logout"
+			method="post"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					if (result.type === 'success') {
+						let timer;
+						success = true;
+						timer = setTimeout(() => {
+							(success = false), goto('/login');
+						}, 3000);
+					}
+					if (result.type === 'failure') {
+					}
+				};
+			}}
+		>
 			<button class="ms-6 mt-8 flex gap-2 rounded-xl bg-red-500 px-3 py-2 text-white shadow-2xl"
 				><svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -435,4 +462,7 @@
 <Footer></Footer>
 {#if open}
 	<Bracode bind:value={open}></Bracode>
+{/if}
+{#if success}
+	<SuccessModal text="Berhasil Logout!"></SuccessModal>
 {/if}

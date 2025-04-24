@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({params}) => {
                         ? formatDate(item.tanggal_berakhir)
                         : '-',
             }));
-
+            console.log("Detail_kerajaan: " + kerajaanFormatted)
             return { kerajaan: kerajaanFormatted };
         }
         return {errors:`Data cant be retrieved : Error code : ${response.status} Message : ${data.message}`}

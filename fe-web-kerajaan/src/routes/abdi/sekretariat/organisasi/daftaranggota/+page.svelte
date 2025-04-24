@@ -1,31 +1,70 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { navigating } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAnggota } from '$lib/dummy';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import TambahAnggota from '$lib/popup/TambahAnggota.svelte';
-	import Search from '$lib/table/Search.svelte';
+	import Pagination from '$lib/table/Pagination.svelte';
 	import Table from '$lib/table/Table.svelte';
+	import { Item } from '@radix-ui/react-dropdown-menu';
 	import { fade } from 'svelte/transition';
 	let { data } = $props();
-
+	let keyword = $state('');
+	let entries = $state(10);
 	let open = $state(false);
 	let valo = $state(false);
 	let error = $state();
 	let data2 = $state();
-	let timer : any;
-
+	let timer: any;
+	let currPage = $state(1);
+	let loading = $state(false);
+	function filterD(data: any[]) {
+		return data.filter(
+			(item) =>
+				item.nama_anggota.toLowerCase().includes(keyword.toLowerCase()) ||
+				item.tanggal_bergabung.toLowerCase().includes(keyword.toLowerCase()) ||
+				item.jabatan_organisasi.toLowerCase().includes(keyword.toLowerCase()) ||
+				item.nomor_telepon.toLowerCase().includes(keyword.toLowerCase()) ||
+				item.email.toLowerCase().includes(keyword.toLowerCase())
+		);
+	}
+	function pagination(data: any[]) {
+		let d = filterD(data);
+		let start = (currPage - 1) * entries;
+		let end = start + entries;
+		console.log(d);
+		return d.slice(start, end);
+	}
+	let resData = $derived(pagination(dummyAnggota));
+	$effect(() => {
+		if (keyword || entries) {
+			currPage = 1;
+		}
+		if (entries < 0) {
+			entries = 0;
+		}
+	});
 </script>
 
+{#if loading}
+	<Loader></Loader>
+{/if}
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="flex w-full flex-col">
-	<div class=" flex flex-col xl:flex-row xl:justify-between">
+	<div class=" flex flex-col lg:flex-row lg:justify-between">
 		<button
 			class="bg-badran-bt cursor-pointer rounded-lg px-3 py-2 text-white"
 			onclick={() => {
 				open = true;
 			}}>+Tambah Data</button
 		>
-		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
+		<div
+			class="mt-4 flex flex-col items-center justify-center gap-2 lg:mt-0 lg:flex-row lg:justify-start"
+		>
 			<!-- select -->
 			<select
 				name="Organisasi"
@@ -44,6 +83,7 @@
 				<input
 					type="text"
 					placeholder="Cari.."
+					bind:value={keyword}
 					class=" w-full bg-transparent px-2 py-2 focus:outline-none"
 				/>
 
@@ -70,7 +110,7 @@
 				<input
 					type="number"
 					class="w-12 rounded-md border py-2 text-center focus:outline-none"
-					value="8"
+					bind:value={entries}
 					name=""
 					id=""
 				/>
@@ -80,7 +120,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="flex w-full">
+	<div class="flex w-full flex-col">
 		<Table
 			table_header={[
 				['id_anggota', 'Id Anggota'],
@@ -91,7 +131,7 @@
 				['email', 'Email'],
 				['children', 'Aksi']
 			]}
-			table_data={dummyAnggota}
+			table_data={resData}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
@@ -109,6 +149,7 @@
 				{/if}
 			{/snippet}
 		</Table>
+		<Pagination bind:currPage bind:entries totalItems={filterD(dummyAnggota).length}></Pagination>
 	</div>
 </div>
 {#if open}
@@ -116,8 +157,10 @@
 		action="?/tambah"
 		method="post"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result }) => {
-				console.log(result)
+				loading = false;
+				console.log(result);
 				if (result.type === 'success') {
 					valo = true;
 					clearTimeout(timer);
@@ -132,7 +175,12 @@
 		}}
 	>
 		<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
-			<TambahAnggota bind:value={open} bind:open={valo} errors={error} {data2} dataambil={data.detil_anggota} 
+			<TambahAnggota
+				bind:value={open}
+				bind:open={valo}
+				errors={error}
+				{data2}
+				dataambil={data.detil_anggota}
 			></TambahAnggota>
 		</div>
 	</form>

@@ -1,18 +1,49 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummySekreAnggotaOrg, dummyHistoryGelar } from '$lib/dummy';
+	import Loader from '$lib/loader/Loader.svelte';
+	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
+	let keyword = $state('');
+	let entries = $state(10);
+	let currPage = $state(1);
+	function filterD(data: any[]) {
+		return data.filter(
+			(item) =>
+				item?.asma_timur?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.asma_dalem?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.tempat_lahir?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.tanggal_lahir?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.jabatan_organisasi?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.jaatan_komunitas?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.gelar?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.no_telepon?.toLowerCase().includes(keyword.toLowerCase())
+		);
+	}
+	function pagination(data: any[]) {
+		let dataa = filterD(data);
+		let start = (currPage - 1) * entries;
+		let end = start + entries;
+		return dataa.slice(start, end);
+	}
+	let resdata = $derived(pagination(dummySekreAnggotaOrg));
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="flex w-full flex-col">
-	<div class=" flex flex-col xl:flex-row xl:justify-between">
+	<div class=" flex flex-col lg:flex-row lg:justify-between">
 		<button
 			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
 			onclick={() => goto('daftaranggota/tambah')}>+Tambah Data</button
 		>
-		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
+		<div
+			class="mt-4 flex flex-col items-center justify-center gap-2 lg:mt-0 lg:flex-row lg:justify-start"
+		>
 			<!-- select -->
 			<select
 				name="Organisasi"
@@ -32,6 +63,7 @@
 					type="text"
 					placeholder="Cari.."
 					class=" w-full bg-transparent px-2 py-2 focus:outline-none"
+					bind:value={keyword}
 				/>
 
 				<!-- svelte-ignore a11y_consider_explicit_label -->
@@ -57,7 +89,7 @@
 				<input
 					type="number"
 					class="w-12 rounded-md border py-2 text-center focus:outline-none"
-					value="8"
+					bind:value={entries}
 					name=""
 					id=""
 				/>
@@ -67,7 +99,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="flex w-full">
+	<div class="flex w-full flex-col">
 		<Table
 			table_header={[
 				['id_anggota', 'Id Anggota'],
@@ -81,7 +113,7 @@
 				['no_telepon', 'Nomer Telepon'],
 				['children', 'Aksi']
 			]}
-			table_data={dummySekreAnggotaOrg}
+			table_data={resdata}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
@@ -96,8 +128,8 @@
 							['children', 'Non Aktifkan', '']
 						]}
 						id={`id-${index}`}
-						data={dummyHistoryGelar}
-						dataG={dummyHistoryGelar}
+						data={resdata}
+						dataG={resdata}
 						header={[
 							['nama_gelar', 'Nama Gelar'],
 							['nama_pelantik', 'Nama Pelantik'],
@@ -109,5 +141,7 @@
 				{/if}
 			{/snippet}
 		</Table>
+		<Pagination bind:currPage bind:entries totalItems={filterD(dummySekreAnggotaOrg).length}
+		></Pagination>
 	</div>
 </div>

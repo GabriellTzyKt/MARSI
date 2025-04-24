@@ -104,6 +104,8 @@
 				<DropDown
 					text="apakah yakin ingin mengarsip dokumen {data.nama_arsip} ini?"
 					successText={`Dokumen ${data.nama_arsip} berhasil diarsipkan!`}
+					text="apakah yakin ingin mengarsip dokumen {data.nama_arsip} ini?"
+					successText={`Dokumen ${data.nama_arsip} berhasil diarsipkan!`}
 					link="/admin/suratDokumen"
 					{index}
 					items={[

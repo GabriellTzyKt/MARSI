@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { navigating } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import TambahTugas from '$lib/popup/TambahTugas.svelte';
+	import Pagination from '$lib/table/Pagination.svelte';
 
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
@@ -16,15 +19,53 @@
 	let open = $state(false);
 	let success = $state(false);
 	let errors = $state();
+	let entries = $state(10);
+	let keyword = $state('');
+	let currPage = $state(1);
+	function filterD(data: any[]) {
+		return data.filter(
+			(item) =>
+				item?.nama_tugas?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.pemberi_tugas?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.anggota_yang_ditugaskan?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.tanggal_pemberian?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.deskripsi_tugas?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.status?.toLowerCase().includes(keyword.toLowerCase())
+		);
+	}
+	function pagination(data: any[]) {
+		let d = filterD(data);
+		let start = (currPage - 1) * entries;
+		let end = start + entries;
+		console.log(d);
+		return d.slice(start, end);
+	}
+	let resData = $derived(pagination(dummyTugas));
+	$effect(() => {
+		if (keyword || entries) {
+			currPage = 1;
+		}
+		if (entries < 0) {
+			entries = 0;
+		}
+	});
+
 	$effect(() => {
 		if (!open) {
 			errors = '';
 		}
 	});
+	let loading = $state(false);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
 <div class="flex w-full flex-col">
-	<div class="mx-4 flex flex-col justify-center gap-4 lg:mx-10 lg:flex-row lg:justify-between">
+	<div class="mx-4 flex flex-col justify-center gap-4 lg:flex-row lg:justify-between">
 		<button
 			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
 			onclick={() => {
@@ -50,6 +91,7 @@
 				<input
 					type="text"
 					placeholder="Cari.."
+					bind:value={keyword}
 					class=" w-full bg-transparent px-2 py-2 focus:outline-none"
 				/>
 
@@ -76,7 +118,7 @@
 				<input
 					type="number"
 					class="w-12 rounded-md border py-2 text-center focus:outline-none"
-					value="8"
+					bind:value={entries}
 					name=""
 					id=""
 				/>
@@ -86,7 +128,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="mx-4 flex lg:mx-10">
+	<div class="mx-4 flex flex-col">
 		<Table
 			table_header={[
 				['id_tugas', 'Id Tugas'],
@@ -122,6 +164,7 @@
 				{/if}
 			{/snippet}
 		</Table>
+		<Pagination bind:currPage bind:entries totalItems={filterD(dummyTugas).length}></Pagination>
 	</div>
 </div>
 
@@ -130,7 +173,9 @@
 		action="?/tambahTugas"
 		method="post"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result, update }) => {
+				loading = false;
 				if (result.type === 'success') {
 					let timer: number;
 					success = true;

@@ -86,7 +86,7 @@ export const actions: Actions = {
 
             // console.log("FormData:", formData); 
 
-            const send = await fetch(env.BASE_URL + "/arsip", {
+            const send = await fetch(env.PUB_PORT + "/arsip", {
                 method: "POST",
                 body: formData,
             });

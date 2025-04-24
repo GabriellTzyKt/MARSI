@@ -62,7 +62,7 @@ export const actions: Actions = {
             console.log(s)
             const data = jwtDecode(s.jwt_token)
             
-        cookies.set("userSession", JSON.stringify({ nama: s.username, data:data }), {
+        cookies.set("userSession", JSON.stringify({ nama: s.username, data:data, token:s.jwt_token }), {
             path: '/',
             maxAge: 60 * 60 * 60000,
             sameSite: 'strict'

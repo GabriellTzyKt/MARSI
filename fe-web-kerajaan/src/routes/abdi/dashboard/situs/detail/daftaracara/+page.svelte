@@ -3,9 +3,39 @@
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAcara, dummyAnggota } from '$lib/dummy';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
+	let { data } = $props();
+	let keyword = $state('');
+	let entries = $state(10);
+	let currPage = $state(1);
+	function filterD(data: any[]) {
+		return data.filter(
+			(item) =>
+				item?.nama_acara?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.tanggal?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.lokasi?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.penanggungjawab?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.jenis_acara?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.kapasitas?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.status?.toLowerCase().includes(keyword.toLowerCase())
+		);
+	}
+	function pagination(data: any[]) {
+		let d = filterD(data);
+		let start = (currPage - 1) * entries;
+		let end = start + entries;
+		console.log(d);
+		return d.slice(start, end);
+	}
+	let dataambil = $derived(pagination(dummyAcara));
+	$effect(() => {
+		if (keyword || entries) {
+			currPage = 1;
+		}
+	});
 </script>
 
 <div class="flex w-full flex-col">
@@ -16,7 +46,9 @@
 				goto('/abdi/dashboard/situs/detail/daftaracara/buat');
 			}}>+Tambah Data</button
 		>
-		<div class="mt-4 flex items-center justify-center gap-2 xl:mt-0 xl:justify-start">
+		<div
+			class="mt-4 flex flex-col items-center justify-center gap-2 md:flex-row xl:mt-0 xl:justify-start"
+		>
 			<!-- select -->
 			<select
 				name="Organisasi"
@@ -35,6 +67,7 @@
 				<input
 					type="text"
 					placeholder="Cari.."
+					bind:value={keyword}
 					class=" w-full bg-transparent px-2 py-2 focus:outline-none"
 				/>
 
@@ -61,7 +94,7 @@
 				<input
 					type="number"
 					class="w-12 rounded-md border py-2 text-center focus:outline-none"
-					value="8"
+					bind:value={entries}
 					name=""
 					id=""
 				/>
@@ -71,7 +104,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="flex w-full">
+	<div class="flex w-full flex-col">
 		<Table
 			table_header={[
 				['id_acara', 'Id Acara'],
@@ -84,7 +117,7 @@
 				['children', 'Status'],
 				['children', 'Aksi']
 			]}
-			table_data={dummyAcara}
+			table_data={dataambil}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
@@ -95,14 +128,15 @@
 						items={[
 							['Detail', `/abdi/dashboard/situs/detail/daftaracara/detail`],
 							['Laporan', `/abdi/dashboard/situs/detail/daftaracara/laporan`]
-							]}
+						]}
 						id={`id-${index}`}
-						{data}
+						data={dataambil}
 					></DropDown>
 				{:else if header === 'Status'}
 					<Status status={data.status}></Status>
 				{/if}
 			{/snippet}
 		</Table>
+		<Pagination bind:currPage bind:entries totalItems={filterD(dummyAcara).length}></Pagination>
 	</div>
 </div>

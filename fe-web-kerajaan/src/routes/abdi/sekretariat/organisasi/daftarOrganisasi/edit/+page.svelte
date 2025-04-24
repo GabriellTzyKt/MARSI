@@ -4,12 +4,21 @@
 	import { goto } from '$app/navigation';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import { enhance } from '$app/forms';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	let open = $state(false);
 	let timer: number;
 	let errors = $state();
+	let loading = $state(false);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
 <div class="h-full w-full">
 	<div class="relative mx-auto flex w-full items-center justify-center">
 		<div class="group relative h-[100px] w-[100px]">
@@ -26,7 +35,9 @@
 		action="?/tambahSitus"
 		method="post"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result, update }) => {
+				loading = false;
 				if (result.type === 'success') {
 					open = true;
 					clearTimeout(timer);

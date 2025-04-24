@@ -1,7 +1,13 @@
 <script lang="ts">
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
+
 	let total = $state(8);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="min-h-full w-full">
 	<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="flex w-full justify-between">
@@ -123,7 +129,6 @@
 			{/each}
 		</div>
 
-
 		<div class="mt-5 h-1 w-full bg-slate-300"></div>
 
 		<!-- bawah -->
@@ -136,7 +141,6 @@
 				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
 			{/each}
 		</div>
-
 	</div>
 </div>
 

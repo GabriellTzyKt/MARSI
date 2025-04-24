@@ -15,14 +15,23 @@
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
+	import Loader from '$lib/loader/Loader.svelte';
+	import { navigating } from '$app/state';
 	let open = $state(false);
 	let selected = $state('Gelar');
 	let button = ['Gelar', 'Bintang Jasa', 'Jenis Situs', 'Kategori Situs', 'Penghargaan'];
 	function select(item) {
 		selected = item;
 	}
+	let loading = $state(false);
 </script>
 
+{#if loading}
+	<Loader></Loader>
+{/if}
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="flex w-full flex-col">
 	<div class="mx-10 my-4 flex flex-col flex-wrap gap-1 md:flex-row">
 		<!-- svelte-ignore a11y_click_events_have_key_events -->

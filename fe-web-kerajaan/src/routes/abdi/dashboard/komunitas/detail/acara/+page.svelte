@@ -1,20 +1,53 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAcara, dummyAnggota } from '$lib/dummy';
-
+	import Loader from '$lib/loader/Loader.svelte';
+	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
+
+	let currPage = $state(1);
+	let entries = $state(10);
+	let keyword = $state('');
+	function filterD(data: any[]) {
+		return data.filter(
+			(item) =>
+				item?.nama_acara?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.tanggal?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.lokasi?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.penanggungjawab?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.jenis_acara?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.kapasitas?.toLowerCase().includes(keyword.toLowerCase())
+		);
+	}
+	function pagination(data: any[]) {
+		let d = filterD(data);
+		let start = (currPage - 1) * entries;
+		let end = start + entries;
+		console.log(d);
+		return d.slice(start, end);
+	}
+	let resdata = $derived(pagination(dummyAcara));
+	$effect(() => {
+		if (keyword || entries) {
+			currPage = 1;
+		}
+	});
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="flex w-full flex-col">
-	<div class="mx-10 flex justify-between">
+	<div class="flex flex-col justify-center gap-y-2 md:flex-row md:justify-between">
 		<button
 			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
 			onclick={() => goto('/abdi/dashboard/komunitas/detail/acara/buat')}>+Tambah Data</button
 		>
-		<div class="flex items-center gap-2">
+		<div class="flex flex-col items-center gap-2 md:flex-row">
 			<!-- select -->
 			<select
 				name="Organisasi"
@@ -33,6 +66,7 @@
 				<input
 					type="text"
 					placeholder="Cari.."
+					bind:value={keyword}
 					class=" w-full bg-transparent px-2 py-2 focus:outline-none"
 				/>
 
@@ -59,7 +93,7 @@
 				<input
 					type="number"
 					class="w-12 rounded-md border py-2 text-center focus:outline-none"
-					value="8"
+					bind:value={entries}
 					name=""
 					id=""
 				/>
@@ -69,7 +103,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="mx-10 flex">
+	<div class=" flex flex-col">
 		<Table
 			table_header={[
 				['id_acara', 'Id Acara'],
@@ -82,7 +116,7 @@
 				['children', 'Status'],
 				['children', 'Aksi']
 			]}
-			table_data={dummyAcara}
+			table_data={resdata}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
@@ -105,5 +139,8 @@
 				{/if}
 			{/snippet}
 		</Table>
+		<div>
+			<Pagination bind:currPage bind:entries totalItems={filterD(dummyAcara).length} />
+		</div>
 	</div>
 </div>

@@ -154,7 +154,7 @@
 							{#each searchRes as item}
 								<!-- svelte-ignore a11y_click_events_have_key_events -->
 								<li
-									class="cursor-pointer hover:bg-gray-300"
+									class="cursor-pointer p-2 hover:bg-gray-300"
 									onclick={() => selectKeterkaitan(item.nama_kerajaan)}
 								>
 									{item.nama_kerajaan}

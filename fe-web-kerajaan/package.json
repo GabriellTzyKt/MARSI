@@ -40,6 +40,7 @@
 	"dependencies": {
 		"@radix-ui/react-dropdown-menu": "^2.1.6",
 		"clsx": "^2.1.1",
+		"jwt-decode": "^4.0.0",
 		"jwt-decoder": "^0.0.0",
 		"svelte-fast-marquee": "^0.8.0",
 		"tailwind-merge": "^3.0.1",
