@@ -8,6 +8,7 @@
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
+	let { data } = $props();
 	let entries = $state(10);
 	let keyword = $state('');
 	let currPage = $state(1);
@@ -38,7 +39,7 @@
 			entries = 0;
 		}
 	});
-	let resData = $derived(pagination(dummyAcara));
+	let resData = $derived(pagination(data.data));
 </script>
 
 {#if navigating.to}
@@ -108,13 +109,12 @@
 	<div class="mx-4 flex flex-col">
 		<Table
 			table_header={[
-				['id_acara', 'Id Acara'],
 				['nama_acara', 'Nama Acara'],
-				['tanggal', 'Tanggal Acara'],
-				['lokasi', 'Lokasi'],
-				['penanggungjawab', 'Penanggung Jawab'],
+				['waktu_mulai', 'Tanggal Acara'],
+				['lokasi_acara', 'Lokasi'],
+				['penanggung_jawab', 'Penanggung Jawab'],
 				['jenis_acara', 'Jenis Acara'],
-				['kapasitas', 'Kapasitas'],
+				['kapasitas_acara', 'Kapasitas'],
 				['children', 'Status'],
 				['children', 'Aksi']
 			]}

@@ -3,7 +3,7 @@
 	import '../../app.css';
 	import image from '$lib/asset/kerajaan/sidebaricon.png';
 	import imageprofile from '$lib/asset/kerajaan/gambar_temp.jpg';
-	import { page } from '$app/state';
+	import { navigating, page } from '$app/state';
 	import Sidebar from '$lib/sidebar/Sidebar.svelte';
 	import SidebarMenu from '$lib/sidebar/SidebarMenu.svelte';
 
@@ -211,6 +211,9 @@
 	};
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <header class="w-full lg:flex lg:h-full lg:min-w-full">
 	<div
 		class="test2 width_head1 flex items-center justify-between bg-blue-400 p-2 lg:w-[16.7%] lg:justify-center"

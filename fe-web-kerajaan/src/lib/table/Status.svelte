@@ -9,8 +9,8 @@
 	class:bg-ditolak={status === 'Ditolak'}
 	class:bg-selesai={status === 'Selesai'}
 	class:bg-pending={status === 'Pending'}
-	class:bg-tugas-berlangsung={status === 'TB'}
-	class:bg-tugas-selesai={status === 'TS'}
+	class:bg-tugas-berlangsung={status === 'Ditugaskan'}
+	class:bg-tugas-selesai={status === 'Selesai'}
 >
 	<p class="text-xs">{status}</p>
 </div>
