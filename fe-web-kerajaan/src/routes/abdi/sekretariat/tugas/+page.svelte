@@ -11,10 +11,9 @@
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
 
-
-	let { data } = $props()
-	console.log("data : ", data)
-	const dataAmbil = data.data
+	let { data } = $props();
+	console.log('data : ', data);
+	const dataAmbil = data.data;
 
 	let open = $state(false);
 	let success = $state(false);

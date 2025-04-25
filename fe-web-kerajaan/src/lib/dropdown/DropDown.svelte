@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, type Snippet } from 'svelte';
 	import menu from '$lib/icons/threedot.png';
 	import { stopPropagation } from 'svelte/legacy';
 	import { get, writable } from 'svelte/store';
@@ -19,18 +19,31 @@
 	let pop = $state(false);
 
 	// Unique ID for this dropdown
-	const {
+	let {
 		id,
 		data,
 		items,
 		ubahm = null,
 		text,
 		link,
-		children = null,
+		deleteD = $bindable(),
+		children,
 		successText,
 		dataG = null,
 		header = null
-	} = $props();
+	} = $props<{
+		id?: string | null;
+		data?: any;
+		items?: any[] | null;
+		ubahm?: string | null;
+		text?: string;
+		link?: string;
+		deleteD?: boolean;
+		children?: Snippet<[any]>;
+		successText?: string;
+		dataG?: any;
+		header?: any;
+	}>();
 	let UT_errors = $state();
 	let isOpen = $state(false);
 	let temp = $state('');
@@ -117,6 +130,16 @@
 									openm = true;
 								}}>{i[1]}</a
 							>
+						{:else if i[1] === 'Non Aktifkan'}
+							<a
+								href={i[2]}
+								class="w-full px-4 py-1 {p === 0 ? 'rounded-t-lg' : ''}  {p === items.length - 1
+									? 'rounded-b-lg'
+									: ''} hover:cursor-pointer hover:bg-gray-400"
+								onclick={() => {
+									deleteD = true;
+								}}>{i[1]}</a
+							>
 						{:else if i[1] === 'Ubah Tugas'}
 							<a
 								href={i[3]}
@@ -159,7 +182,9 @@
 		</div>
 	{/if}
 </div>
-<Modal {pop} {successText} {data} {text} {link}></Modal>
+{@render children?.()}
+
+<!-- <Modal {pop} {successText} {data} {text} {link}></Modal> -->
 {#if openGelar}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
 		<HistoryPopUp title="History Gelar" bind:value={openGelar} data={dataG} {header}></HistoryPopUp>

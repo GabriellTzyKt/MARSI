@@ -27,9 +27,9 @@
 	}
 
 	// Memastikan datanya dalam bentuk array
-    const arsipArray = Array.isArray(data.dataArsip) ? data.dataArsip : [];
-    let resData = $derived(pagination(arsipArray));
-    let total_pages = $derived(Math.ceil(filterData(arsipArray).length / entries));
+	const arsipArray = Array.isArray(data.dataArsip) ? data.dataArsip : [];
+	let resData = $derived(pagination(arsipArray));
+	let total_pages = $derived(Math.ceil(filterData(arsipArray).length / entries));
 
 	$effect(() => {
 		if (keyword || entries) {
@@ -51,7 +51,7 @@
 					<input
 						type="text"
 						class="border-none focus:outline-none focus:ring-0"
-						placeholder='cari arsip' 
+						placeholder="cari arsip"
 						bind:value={keyword}
 						name=""
 						id=""
@@ -94,7 +94,7 @@
 			['jenis_arsip_detail', 'Jenis Dokumen'],
 			['kategori_arsip', 'Kategori'],
 			['sub_kategori_arsip', 'Sub Kategori'],
-			['files', 'Dokumentasi', 'custom'],  // ada gambar, jadi perlu khusus
+			['files', 'Dokumentasi', 'custom'], // ada gambar, jadi perlu khusus
 			['children', 'Aksi']
 		]}
 		table_data={resData}
@@ -117,15 +117,19 @@
 				></DropDown>
 			{/if}
 		{/snippet}
-		
-		{#snippet custom({ header, data})}
+
+		{#snippet custom({ header, data })}
 			{#if header === 'Dokumentasi'}
 				{#if data.files && Array.isArray(data.files) && data.files.length > 0}
 					<div class="flex flex-row gap-2">
 						{#each data.files as file}
 							{#if file && typeof file === 'object' && file.url}
 								<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
-									<img src={file.url} alt={file.name || 'Document'} class="h-10 w-10 object-cover rounded" />
+									<img
+										src={file.url}
+										alt={file.name || 'Document'}
+										class="h-10 w-10 rounded object-cover"
+									/>
 								</a>
 							{/if}
 						{/each}

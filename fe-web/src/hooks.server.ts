@@ -10,7 +10,9 @@ export const handle = async ({ event, resolve }) => {
             event.locals.token = auth.token
         }
     }
-    event.locals.token= "JHGVHJHJHKJHJBJKJHJKJLJK"
+    if (!auth) {
+        event.locals.token = ''
+    }
     if (auth) {
         if (event.url.pathname === '/login2') {
             redirect(308,'/admin/beranda')

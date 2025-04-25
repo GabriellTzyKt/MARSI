@@ -5,19 +5,23 @@
 	import { enhance } from '$app/forms';
 	import Loader from '$lib/loader/Loader.svelte';
 	import { navigating } from '$app/state';
+	import SucessModal from '$lib/popup/SucessModal.svelte';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import { goto } from '$app/navigation';
 	let temp: string[] = $state([]);
 	let username = $state('');
 	let pass = $state('');
 	let errors = $state();
 	let loading = $state(false);
+	let success = $state(false);
 	let cek = $derived(() => {
 		temp = [];
-		if (username.length < 8) {
-			temp.push('username harus minimal 8 kata');
-		}
-		if (pass.length < 8) {
-			temp.push('password harus minimal 8 kata');
-		}
+		// if (username.length < 8) {
+		// 	temp.push('username harus minimal 8 kata');
+		// }
+		// if (pass.length < 8) {
+		// 	temp.push('password harus minimal 8 kata');
+		// }
 	});
 </script>
 
@@ -38,7 +42,28 @@
 				<p class="text-3xl font-[500]">Masuk</p>
 			</div>
 			<div class="flex w-full flex-col">
-				<form action="" class="w-full" method="post" use:enhance={() => {}}>
+				<form
+					action="?/login"
+					class="w-full"
+					method="post"
+					use:enhance={() => {
+						loading = true;
+						return async ({ result }) => {
+							loading = false;
+							if (result.type === 'success') {
+								success = true;
+								let timer: number;
+								timer = setTimeout(() => {
+									success = false;
+									goto('/abdi/dashboard');
+								}, 3000);
+							}
+							if (result.type === 'failure') {
+								errors = result.data?.errors;
+							}
+						};
+					}}
+				>
 					<div class="mt-3 flex min-w-full flex-col justify-start">
 						<div class="flex text-start">
 							<p>Username</p>
@@ -46,6 +71,7 @@
 						<div class="flex w-full">
 							<input
 								type="text"
+								name="username"
 								class="w-full rounded-md border bg-white py-2 pe-2 ps-2"
 								required
 								bind:value={username}
@@ -59,12 +85,16 @@
 						<div class="flex w-full">
 							<input
 								type="password"
+								name="password"
 								class="w-full rounded-md border bg-white py-2 pe-2 ps-2"
 								required
 								bind:value={pass}
 							/>
 							<p></p>
 						</div>
+					</div>
+					<div class="mt-3 flex w-full items-center justify-center">
+						<button class="bg-badran-bt w-full rounded-full py-2 text-white">Masuk</button>
 					</div>
 				</form>
 			</div>
@@ -73,10 +103,7 @@
 					<p class="block text-left text-xl text-red-500">{t}</p>
 				{/each}
 			</div>
-			<div class="flex w-full items-center justify-center">
-				<button class="bg-badran-bt w-full rounded-full py-2 text-white" onclick={cek}>Masuk</button
-				>
-			</div>
+
 			<div class="flex items-center justify-center">
 				<p class="me-2">Belum punya akun?</p>
 				<a href="/signup" class=" text-badran-bt">Daftar</a>
@@ -85,6 +112,9 @@
 	</div>
 	<Footer></Footer>
 </div>
+{#if success}
+	<SuccessModal text="Berhasil Login"></SuccessModal>
+{/if}
 
 <style>
 	.bg {

@@ -8,8 +8,8 @@
 	class:bg-disetujui={status === 'Disetujui' || status === "Selesai"}
 	class:bg-ditolak={status === 'Ditolak'}
 	class:bg-pending={status === 'Pending'}
-	class:bg-tugas-berlangsung={status === 'TB'}
-	class:bg-tugas-selesai={status === 'TS'}
+	class:bg-tugas-berlangsung={status === 'Ditugaskan'}
+	class:bg-tugas-selesai={status === 'Selesai'}
 >
 	<p class="text-xs">{status}</p>
 </div>
