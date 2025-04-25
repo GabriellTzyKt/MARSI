@@ -1,6 +1,7 @@
 import { fail, type Actions } from "@sveltejs/kit";
 import { schema } from "./schema";
 import { env } from "$env/dynamic/private";
+import { jwtDecode } from "jwt-decode";
 
 export const actions: Actions = {
     login: async ({cookies, request}) => {
@@ -24,8 +25,20 @@ export const actions: Actions = {
             })
             if (res.ok) {
                 const data = await res.json()
-                console.log(data)
-                cookies.set("userSession", JSON.stringify({ username: data.username, user_data: data.data, token:data.jwt_token }), {
+                    let decode = jwtDecode(data.jwt_token)
+                 console.log("Login response data:", data)
+                console.log("Setting cookie with:", { 
+        
+                    username: data.username, 
+                    
+                    user_data: decode,
+        
+                    token: data.jwt_token 
+        
+                })
+                
+                
+                cookies.set("userSession", JSON.stringify({ username: data.username, user_data: decode, token:data.jwt_token }), {
                     path: "/",
                     maxAge: 60 * 60 * 24,
                     sameSite: "strict"

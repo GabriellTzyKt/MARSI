@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { navigating } from '$app/state';
+	import { navigating, page } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
-
+	let { data } = $props();
 	let total = $state(8);
+	console.log(data);
 </script>
 
 {#if navigating.to}
@@ -12,7 +13,7 @@
 	<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="flex w-full justify-between">
 			<p class="mt-2">Informasi Acara</p>
-			<a href="/abdi/sekretariat/acara/edit"
+			<a href="/abdi/sekretariat/acara/edit/{data.data.id_acara}"
 				><button class="w-40 rounded-lg border-2 bg-yellow-500 px-2 py-2">Ubah</button></a
 			>
 		</div>
@@ -23,31 +24,39 @@
 					<p>Nama Acara:</p>
 					<input
 						type="text"
+						value={data.data.nama_acara}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
+						disabled
 					/>
 				</div>
 				<div class="mt-2 w-full">
 					<p>Penanggung Jawab:</p>
 					<input
 						type="text"
+						value={data.data.nama_penanggung_jawab}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
+						disabled
 					/>
 				</div>
 				<div class="mt-2 w-full">
 					<p>Lokasi Acara:</p>
 					<input
 						type="text"
+						value={data.data.alamat_acara}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
+						disabled
 					/>
 				</div>
 				<div class="mt-2 w-full">
 					<p>Tujuan Acara:</p>
 					<input
 						type="text"
+						value={data.data.tujuan_acara}
 						placeholder="Masukkan Nama"
+						disabled
 						class="w-full rounded-lg border px-2 py-1"
 					/>
 				</div>
@@ -55,6 +64,8 @@
 					<p>Deskripsi Acara:</p>
 					<textarea
 						placeholder="Masukkan Deskripsi Acara"
+						disabled
+						value={data.data.deskripsi_acara}
 						class="h-32 w-full resize-none rounded-md border px-3 py-3 text-lg"
 					></textarea>
 				</div>
@@ -67,7 +78,9 @@
 						<input
 							type="text"
 							placeholder="Masukkan Nama"
+							value={data.data.jenis_acara}
 							class="w-full rounded-lg border px-2 py-1"
+							disabled
 						/>
 					</div>
 					<div class="mt-2 w-full">
@@ -75,7 +88,9 @@
 						<input
 							type="text"
 							placeholder="Masukkan Nama"
+							value={data.data.kapasitas_acara}
 							class="w-full rounded-lg border px-2 py-1"
+							disabled
 						/>
 					</div>
 				</div>
@@ -84,8 +99,10 @@
 					<p>Lokasi Acara:</p>
 					<input
 						type="text"
+						value={data.data.alamat_acara}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
+						disabled
 					/>
 				</div>
 
@@ -94,16 +111,20 @@
 						<p>Tanggal Mulai:</p>
 						<input
 							type="text"
+							value={data.data.tanggal_mulai}
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
+							disabled
 						/>
 					</div>
 					<div class="mt-2 w-full">
 						<p>Tanggal Selesai:</p>
 						<input
 							type="text"
+							value={data.data.tanggal_selesai}
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
+							disabled
 						/>
 					</div>
 				</div>
@@ -113,16 +134,20 @@
 						<p>Jam Mulai:</p>
 						<input
 							type="text"
+							value={data.data.waktu_mulai}
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
+							disabled
 						/>
 					</div>
 					<div class="mt-2 w-full">
 						<p>Jam Selesai:</p>
 						<input
 							type="text"
+							value={data.data.waktu_selesai}
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
+							disabled
 						/>
 					</div>
 				</div>
@@ -188,7 +213,7 @@
 			{#each Array(total) as _, i}
 				<div class="col-span-1 w-full">{i + 1}</div>
 				<div class="col-span-2 w-full rounded-lg border px-2 py-1">
-					<select name="panggilan" id="panggilan" class="w-full">
+					<select name="panggilan" id="panggilan" disabled class="w-full">
 						<option value="volvo">Tn</option>
 						<option value="saab">Ny</option>
 					</select>

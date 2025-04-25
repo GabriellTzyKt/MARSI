@@ -25,21 +25,22 @@
 	let namajabatan = $state([]);
 	let notelpbawah = $state([]);
 
-	let { form } = $props();
+	let { form, data } = $props();
+
 	console.log('hi : ', form);
 
-	if (form?.formData) {
-		namaacara = form.formData.namaacara;
-		lokasiacara = form.formData.lokasiacara;
-		tujuanacara = form.formData.tujuanacara;
-		deskripsiacara = form.formData.deskripsiacara;
-		penanggungjawab = form.formData.penanggungjawab;
-		jenis_acara = form.formData.jenis_acara;
-		kapasitasacara = form.formData.kapasitascara;
-		waktumulai = form.formData.waktumulai;
-		waktuselesai = form.formData.waktuselesai;
-		tanggalmulai = form.formData.tanggalmulai;
-		tanggalselesai = form.formData.tanggalselesai;
+	if (data) {
+		namaacara = data.data.nama_acara;
+		lokasiacara = data.data.alamat_acara;
+		tujuanacara = data.data.tujuan_acara;
+		deskripsiacara = data.data.deskripsi_acara;
+		penanggungjawab = data.data.nama_penanggung_jawab;
+		jenis_acara = data.data.jenis_acara;
+		kapasitasacara = data.data.kapasitas_acara;
+		waktumulai = data.data.waktu_mulai;
+		waktuselesai = data.data.waktu_selesai;
+		tanggalmulai = data.data.tanggal_mulai;
+		tanggalselesai = data.data.tanggal_selesai;
 	}
 
 	let invitations: { id: number; panggilan: string; nama: string; notelepon: string }[] = $state(

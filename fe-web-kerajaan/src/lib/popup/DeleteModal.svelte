@@ -4,7 +4,7 @@
 	import dangerbtn from '$lib/asset/icon/exclamationmark.png';
 	import SuccessModal from '../modal/SuccessModal.svelte';
 
-	let { value = $bindable(), text, successText, choose, name = '', data = null } = $props();
+	let { value = $bindable(), text, successText, choose } = $props();
 	let open = $state(false);
 	let timer: number;
 	function setTimer() {
@@ -72,7 +72,6 @@
 						>
 					{/if}
 				</div>
-				<input type="text" hidden {name} value={data} id="" />
 			</div>
 		</div>
 	</div>
