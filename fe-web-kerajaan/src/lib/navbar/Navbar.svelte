@@ -1,14 +1,18 @@
 <script lang="ts">
 	import gambar2 from '$lib/asset/kerajaan/temp_login.png';
 	import gambarprofile from '$lib/asset/kerajaan/gambar_temp.jpg';
-	import { page } from '$app/state';
+	import { navigating, page } from '$app/state';
 	import { slide } from 'svelte/transition';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	let id = Number();
 	let isOpen = $state(false);
 	$inspect(page);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <section class=" w-full bg-blue-900 p-4">
 	<div class="flex items-center justify-between">
 		<img src={gambar2} class=" ml-3 h-[60px] max-w-full p-2" alt="" />

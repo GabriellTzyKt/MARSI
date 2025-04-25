@@ -14,7 +14,7 @@
 	<div class="flex flex-col items-center gap-3 md:flex-row">
 		<div class="w-full">
 			<button
-				class="mx-2 w-full rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B] hover:text-white md:mx-0 md:w-auto"
+				class="mx-2 w-full rounded-lg bg-white px-3 py-2 hover:bg-[#f9d48b] hover:text-white md:mx-0 md:w-auto"
 				disabled={currPage === 1}
 				onclick={() => {
 					currPage--;
@@ -25,16 +25,16 @@
 			{#if total_pages <= 5}
 				{#each Array(total_pages) as _, i}
 					<button
-						class="rounded-lg p-3 hover:bg-[#F9D48B] hover:text-white"
-						class:bg-[#F9D48B]={currPage === i + 1}
+						class="rounded-lg p-3 hover:bg-[#f9d48b] hover:text-white"
+						class:bg-[#f9d48b]={currPage === i + 1}
 						class:text-white={currPage === i + 1}
 						onclick={() => (currPage = i + 1)}>{i + 1}</button
 					>
 				{/each}
 			{:else}
 				<button
-					class="rounded-lg p-3 hover:bg-[#F9D48B] hover:text-white"
-					class:bg-[#F9D48B]={currPage === 1}
+					class="rounded-lg p-3 hover:bg-[#f9d48b] hover:text-white"
+					class:bg-[#f9d48b]={currPage === 1}
 					class:text-white={currPage === 1}
 					onclick={() => (currPage = 1)}>1</button
 				>
@@ -48,30 +48,30 @@
 				{#each Array(Math.min(3, total_pages - 2)) as _, i}
 					{#if currPage > 2 && currPage < total_pages - 1}
 						<!-- Show pages around current page -->
-						
+						{#if currPage - 1 + i > 1 && currPage - 1 + i < total_pages}
+							<button
+								class="rounded-lg p-3 hover:bg-[#f9d48b] hover:text-white"
+								class:bg-[#f9d48b]={currPage === currPage - 1 + i}
+								class:text-white={currPage === currPage - 1 + i}
+								onclick={() => (currPage = currPage - 1 + i)}>{currPage - 1 + i}</button
+							>
+						{/if}
 					{:else if currPage <= 2}
 						<!-- Show first few pages -->
 						{#if i + 2 < total_pages}
 							<button
-								class="rounded-lg p-3 hover:bg-[#F9D48B] hover:text-white"
-								class:bg-[#F9D48B]={currPage === i + 2}
+								class="rounded-lg p-3 hover:bg-[#f9d48b] hover:text-white"
+								class:bg-[#f9d48b]={currPage === i + 2}
 								class:text-white={currPage === i + 2}
-								oncl{#if currPage - 1 + i > 1 && currPage - 1 + i < total_pages}
-							<button
-								class="rounded-lg p-3 hover:bg-[#F9D48B] hover:text-white"
-								class:bg-[#F9D48B]={currPage === currPage - 1 + i}
-								class:text-white={currPage === currPage - 1 + i}
-								onclick={() => (currPage = currPage - 1 + i)}>{currPage - 1 + i}</button
-							>
-						{/if}ick={() => (currPage = i + 2)}>{i + 2}</button
+								onclick={() => (currPage = i + 2)}>{i + 2}</button
 							>
 						{/if}
 					{:else}
 						<!-- Show last few pages -->
 						{#if total_pages - 3 + i > 1}
 							<button
-								class="rounded-lg p-3 hover:bg-[#F9D48B] hover:text-white"
-								class:bg-[#F9D48B]={currPage === total_pages - 3 + i}
+								class="rounded-lg p-3 hover:bg-[#f9d48b] hover:text-white"
+								class:bg-[#f9d48b]={currPage === total_pages - 3 + i}
 								class:text-white={currPage === total_pages - 3 + i}
 								onclick={() => (currPage = total_pages - 3 + i)}>{total_pages - 3 + i}</button
 							>
@@ -86,8 +86,8 @@
 
 				<!-- Last page -->
 				<button
-					class="rounded-lg p-3 hover:bg-[#F9D48B] hover:text-white"
-					class:bg-[#F9D48B]={currPage === total_pages}
+					class="rounded-lg p-3 hover:bg-[#f9d48b] hover:text-white"
+					class:bg-[#f9d48b]={currPage === total_pages}
 					class:text-white={currPage === total_pages}
 					onclick={() => (currPage = total_pages)}>{total_pages}</button
 				>
@@ -95,7 +95,7 @@
 		</div>
 		<div class="w-full">
 			<button
-				class="mx-2 w-full rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B] hover:text-white md:mx-0 md:w-auto"
+				class="mx-2 w-full rounded-lg bg-white px-3 py-2 hover:bg-[#f9d48b] hover:text-white md:mx-0 md:w-auto"
 				disabled={currPage === total_pages}
 				onclick={() => {
 					currPage++;
@@ -117,7 +117,7 @@
 	</div>
 	<div class="flex flex-row">
 		<button
-			class=" hover:bg-[#F9D48B] me-3 rounded-lg bg-white px-6 py-2 hover:text-white"
+			class=" hover:bg-[#f9d48b] me-3 rounded-lg bg-white px-6 py-2 hover:text-white"
 			disabled={currPage === 1}
 			onclick={() => {
 				currPage--;
@@ -125,15 +125,15 @@
 		>
 		{#each Array(total_pages) as _, i}
 			<button
-				class="hover:bg-[#F9D48B] mx-1 rounded-lg px-3 py-2 hover:text-white {i + 1 === currPage
-					? 'bg-[#F9D48B] text-white'
+				class="hover:bg-[#f9d48b] mx-1 rounded-lg px-3 py-2 hover:text-white {i + 1 === currPage
+					? 'bg-[#f9d48b] text-white'
 					: 'bg-white'}"
 				onclick={() => (currPage = i + 1)}>{i + 1}</button
 			>
 		{/each}
 
 		<button
-			class="hover:bg-[#F9D48B] ms-3 rounded-lg bg-white px-6 py-2 hover:text-white"
+			class="hover:bg-[#f9d48b] ms-3 rounded-lg bg-white px-6 py-2 hover:text-white"
 			disabled={currPage === total_pages}
 			onclick={() => {
 				currPage++;
