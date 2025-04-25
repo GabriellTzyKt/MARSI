@@ -21,8 +21,20 @@ export const load: PageServerLoad = async ({locals,cookies}) => {
         )
         const data = await res.json()
         if (res.ok) {
+            const formatDate = (isoString) => {
+                if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
+                const date = new Date(isoString);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${year}-${month}-${day}`;
+            };
+            const resData = {
+                ...data,
+                tanggal_lahir: formatDate(data.tanggal_lahir)
+            }
             console.log(data)
-            return {data}
+            return {data: resData}
         }
         console.log(data)
     }   
