@@ -25,10 +25,10 @@
 		items,
 		ubahm = null,
 		text,
-		link,
+
 		deleteD = $bindable(),
-		children,
-		successText,
+		popup,
+
 		dataG = null,
 		header = null
 	} = $props<{
@@ -37,10 +37,10 @@
 		items?: any[] | null;
 		ubahm?: string | null;
 		text?: string;
-		link?: string;
+
 		deleteD?: boolean;
-		children?: Snippet<[any]>;
-		successText?: string;
+		popup?: Snippet<[any]>;
+
 		dataG?: any;
 		header?: any;
 	}>();
@@ -182,7 +182,7 @@
 		</div>
 	{/if}
 </div>
-{@render children?.()}
+{@render popup?.()}
 
 <!-- <Modal {pop} {successText} {data} {text} {link}></Modal> -->
 {#if openGelar}
@@ -244,6 +244,6 @@
         open = true;
     }
 }} -->
-{#if success}
+<!-- {#if success}
 	<SuccessModal text="Berhasil Diubah"></SuccessModal>
-{/if}
+{/if} -->

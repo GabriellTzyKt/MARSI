@@ -13,6 +13,7 @@
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
 	// import { load } from './[id]/proxy+page.server';
+	let { data } = $props();
 	let chose: number | null = $state(null);
 	let open = $state(false);
 	let timer: number;
@@ -99,7 +100,7 @@
 				<p class="text-lg">Nama Lengkap</p>
 			</div>
 			<div class="mt-2 w-full">
-				<Input value={accounts[0].nama_lengkap} type="text"></Input>
+				<Input value={data.data.nama_lengkap ? data.data.nama_lengkap : '-'} type="text"></Input>
 			</div>
 		</div>
 
@@ -111,7 +112,7 @@
 					<p class="text-lg">Tempat lahir</p>
 				</div>
 				<div class="mt-2">
-					<Input value={accounts[0].tempat_lahir} type="text"></Input>
+					<Input value={data.data.tempat_lahir ? data.data.tempat_lahir : '-'} type="text"></Input>
 				</div>
 			</div>
 			<!-- tanggal Lahir -->
@@ -125,7 +126,7 @@
 						name=""
 						class="w-full rounded-lg border border-gray-500 bg-white py-2 ps-2 text-gray-500 focus:outline-none"
 						id=""
-						value={accounts[0].tanggal_lahir}
+						value={data.data.tanggal_lahir}
 						readonly
 					/>
 					<svg
@@ -151,7 +152,7 @@
 				<p class="text-lg">Alamat</p>
 			</div>
 			<div class="mt-2">
-				<Input value={accounts[0].alamat} type="text"></Input>
+				<Input value={data.data.alamat ? data.data.alamat : '-'} type="text"></Input>
 			</div>
 		</div>
 
@@ -163,7 +164,8 @@
 					<p class="text-lg">Jenis Kelamin</p>
 				</div>
 				<div class="mt-2">
-					<Input value={accounts[0].jenis_kelamin} type="text"></Input>
+					<Input value={data.data.jenis_kelamin ? data.data.jenis_kelamin : '-'} type="text"
+					></Input>
 				</div>
 			</div>
 			<!-- wongso -->
@@ -182,7 +184,7 @@
 				<p class="text-lg">Email</p>
 			</div>
 			<div class="mt-2">
-				<Input value={accounts[0].email} type="email"></Input>
+				<Input value={data.data.email} type="email"></Input>
 			</div>
 		</div>
 		<!-- no telpon $ hobi -->
@@ -193,7 +195,7 @@
 					<p class="text-lg">No Telpon</p>
 				</div>
 				<div class="mt-2">
-					<Input value={accounts[0].nomer_telpon} type="text"></Input>
+					<Input value={data.data.no_telp ? data.data.no_telp : '-'} type="text"></Input>
 				</div>
 			</div>
 			<!-- agama -->
@@ -202,7 +204,7 @@
 					<p class="text-lg">Hobi</p>
 				</div>
 				<div class=" mt-2">
-					<Input value={accounts[0].hobi} type="text"></Input>
+					<Input value={data.data.hobi ? data.data.hobi : '-'} type="text"></Input>
 				</div>
 			</div>
 		</div>
@@ -214,7 +216,7 @@
 					<p class="text-lg">Pekerjaan</p>
 				</div>
 				<div class="mt-2">
-					<Input value={accounts[0].pekerjaan} type="text"></Input>
+					<Input value={data.data.pekerjaan ? data.data.pekerjaan : '-'} type="text"></Input>
 				</div>
 			</div>
 			<!-- agama -->
@@ -223,7 +225,7 @@
 					<p class="text-lg">Agama</p>
 				</div>
 				<div class=" mt-2">
-					<Input value={accounts[0].agama} type="text"></Input>
+					<Input value={data.data.agama ? data.data.agama : '-'} type="text"></Input>
 				</div>
 			</div>
 		</div>
@@ -233,7 +235,7 @@
 				<p class="text-lg">Asma Dalem</p>
 			</div>
 			<div class="mt-2">
-				<Input value={accounts[0].asma_dalem} type="text"></Input>
+				<Input value={data.data.asma_dalem ? data.data.asma_dalem : '-'} type="text"></Input>
 			</div>
 		</div>
 		<!-- Ayah $ Ibu -->
@@ -244,7 +246,7 @@
 					<p class="text-lg">Ayah</p>
 				</div>
 				<div class="mt-2">
-					<Input value={accounts[0].ayah} type="text"></Input>
+					<Input value={data.data.nama_ayah ? data.data.nama_ayah : '-'} type="text"></Input>
 				</div>
 			</div>
 			<!-- ibu -->
@@ -253,7 +255,7 @@
 					<p class="text-lg">Ibu</p>
 				</div>
 				<div class=" mt-2">
-					<Input value={accounts[0].ibu} type="text"></Input>
+					<Input value={data.data.nama_ibu ? data.data.nama_ibu : '-'} type="text"></Input>
 				</div>
 			</div>
 		</div>
@@ -263,7 +265,7 @@
 				<p class="text-lg">Gelar</p>
 			</div>
 			<div class="mt-2">
-				<Input value={accounts[0].gelar} type="text"></Input>
+				<Input value={data.data.gelar ? data.data.gelar : '-'} type="text"></Input>
 			</div>
 		</div>
 		<div class="mt-4 flex flex-row justify-end">

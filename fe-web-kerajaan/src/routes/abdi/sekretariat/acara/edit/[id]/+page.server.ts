@@ -1,6 +1,49 @@
 import { fail } from "@sveltejs/kit";
 import { error, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
+import type { PageServerLoad } from "./$types";
+import { env } from "$env/dynamic/private";
+import { dummyAcara } from "$lib/dummy";
+
+export const load: PageServerLoad = async ({params}) => {
+    try {
+        const res = await fetch(`${env.URL_KERAJAAN}/acara/detail/${params.id}`);
+        if (!res.ok) {
+             return fail(404, { error: "Acara not found" })
+        }
+        const data = await res.json()
+        const formatDate = (isoString) => {
+                if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
+                const date = new Date(isoString);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${year}-${month}-${day}`;
+            };
+            const formatTime = (isoString) => {
+                if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
+                const date = new Date(isoString);
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${hours}:${minutes}`;
+        };
+        
+        const formattedData = {
+                    ...data,
+                    tanggal_mulai: formatDate(data.waktu_mulai),
+                    tanggal_selesai: formatDate(data.waktu_selesai),
+                    waktu_mulai: formatTime(data.waktu_mulai),
+                    waktu_selesai: formatTime(data.waktu_selesai),
+                    waktu_mulai_original: data.waktu_mulai,
+                    waktu_selesai_original: data.waktu_selesai
+        };
+        console.log(formattedData)
+        return { data: formattedData }
+    }
+    catch (error) {
+        console.log(error)
+    }
+};
 
 export const actions: Actions = {
     edit: async ({ request }) => {
@@ -8,7 +51,7 @@ export const actions: Actions = {
 
         const ids = data.getAll("id").map(String);
         const ids2 = data.getAll("id2").map(String);
-
+        console.log(data)
         let form : any = {
             namaacara: "",
             lokasiacara: "",

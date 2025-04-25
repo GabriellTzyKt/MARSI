@@ -6,6 +6,7 @@
 	import { navigating, page } from '$app/state';
 	import Sidebar from '$lib/sidebar/Sidebar.svelte';
 	import SidebarMenu from '$lib/sidebar/SidebarMenu.svelte';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	const isActive = (path: string) => page.route.id === path;
 
@@ -80,9 +81,9 @@
 			return 'Tambah Komunitas';
 		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/edit') {
 			return 'Edit Komunitas';
-		} else if (page.route.id === '/abdi/sekretariat/acara/detail') {
+		} else if (page.route.id === '/abdi/sekretariat/acara/detail/[id]') {
 			return 'Detail Acara';
-		} else if (page.route.id === '/abdi/sekretariat/acara/edit') {
+		} else if (page.route.id === '/abdi/sekretariat/acara/edit/[id]') {
 			return 'Edit Acara';
 		} else if (page.route.id === '/abdi/sekretariat/acara/buat') {
 			return 'Buat Acara';

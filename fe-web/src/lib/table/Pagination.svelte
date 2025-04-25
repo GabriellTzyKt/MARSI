@@ -48,14 +48,7 @@
 				{#each Array(Math.min(3, total_pages - 2)) as _, i}
 					{#if currPage > 2 && currPage < total_pages - 1}
 						<!-- Show pages around current page -->
-						{#if currPage - 1 + i > 1 && currPage - 1 + i < total_pages}
-							<button
-								class="rounded-lg p-3 hover:bg-[#F9D48B] hover:text-white"
-								class:bg-[#F9D48B]={currPage === currPage - 1 + i}
-								class:text-white={currPage === currPage - 1 + i}
-								onclick={() => (currPage = currPage - 1 + i)}>{currPage - 1 + i}</button
-							>
-						{/if}
+						
 					{:else if currPage <= 2}
 						<!-- Show first few pages -->
 						{#if i + 2 < total_pages}
@@ -63,7 +56,14 @@
 								class="rounded-lg p-3 hover:bg-[#F9D48B] hover:text-white"
 								class:bg-[#F9D48B]={currPage === i + 2}
 								class:text-white={currPage === i + 2}
-								onclick={() => (currPage = i + 2)}>{i + 2}</button
+								oncl{#if currPage - 1 + i > 1 && currPage - 1 + i < total_pages}
+							<button
+								class="rounded-lg p-3 hover:bg-[#F9D48B] hover:text-white"
+								class:bg-[#F9D48B]={currPage === currPage - 1 + i}
+								class:text-white={currPage === currPage - 1 + i}
+								onclick={() => (currPage = currPage - 1 + i)}>{currPage - 1 + i}</button
+							>
+						{/if}ick={() => (currPage = i + 2)}>{i + 2}</button
 							>
 						{/if}
 					{:else}
