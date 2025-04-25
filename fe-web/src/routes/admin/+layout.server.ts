@@ -1,4 +1,4 @@
-import type { PageServerLoad } from "./$types";
+import type { PageServerLoad } from "./managemen/$types";
 
 export const load: PageServerLoad = async ({cookies}) => {
     const nama = cookies.get('userSession')

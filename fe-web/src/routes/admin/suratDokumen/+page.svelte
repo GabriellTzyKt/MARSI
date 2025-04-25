@@ -3,20 +3,24 @@
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
+	import { enhance } from '$app/forms';
+	import { goto, invalidateAll } from '$app/navigation';
+	import { page } from '$app/state';
+	import SModal from '$lib/popup/SModal.svelte';
 
 	let currPage = $state(1);
 	let entries = $state(10);
 	let keyword = $state('');
+	let deleteD = $state(false);
+	let success = $state(false);
 
 	let { data } = $props();
 	const dataArsip = data.dataArsip;
 	console.log(dataArsip);
 
 	function filterData(data: any[]) {
-		return data.filter(
-			(item) =>
-				item?.nama_arsip?.toLowerCase().includes(keyword.toLowerCase()) 
-		);
+		return data.filter((item) => item?.nama_arsip?.toLowerCase().includes(keyword.toLowerCase()));
 	}
 
 	function pagination(data: any[]) {
@@ -27,15 +31,37 @@
 	}
 
 	// Memastikan datanya dalam bentuk array
-	const arsipArray = Array.isArray(data.dataArsip) ? data.dataArsip : [];
-	let resData = $derived(pagination(arsipArray));
-	let total_pages = $derived(Math.ceil(filterData(arsipArray).length / entries));
+	let arsipArray = $state(Array.isArray(data.dataArsip) ? data.dataArsip : []);
+	let resData = $derived(pagination(data.dataArsip));
+	let total_pages = $derived(Math.ceil(filterData(data.dataArsip).length / entries));
 
 	$effect(() => {
 		if (keyword || entries) {
 			currPage = 1;
 		}
 	});
+
+	// Check if we have an ID in the URL for deletion
+	$effect(() => {
+		const urlParams = new URLSearchParams(page.url.search);
+		const deleteId = urlParams.get('delete');
+		
+		if (deleteId) {
+			console.log("Found delete ID in URL:", deleteId);
+			deleteD = true;
+			// Store the ID for the delete operation
+			selectedItemId = deleteId;
+		}
+	});
+
+	let selectedItemId = $state<string | null>(null);
+
+	// Function to handle closing the delete modal
+	function handleCloseDeleteModal() {
+		deleteD = false;
+		goto('/admin/suratDokumen', { replaceState: true });
+
+	}
 </script>
 
 <div class="mt-5 flex w-full flex-col xl:mt-0">
@@ -108,13 +134,21 @@
 					{index}
 					items={[
 						['Ubah', `/admin/suratDokumen/ubah/${data.id_arsip}`],
-						['children', 'Arsipkan']
+						['Arsipkan', `/admin/suratDokumen?delete=${data.id_arsip}`],
+						// ['children', 'Arsipkan']
 					]}
 					tipe="acara"
+					bind:deleteD
 					id_arsip={data.id_arsip}
 					id={`id-acara-${index}`}
 					{data}
-				></DropDown>
+				>
+					<!-- {#snippet children()}
+						<a href={`/admin/suratDokumen?delete=${data.id_arsip}`} class="dropdown-item">
+							Hapus
+						</a>
+					{/snippet} -->
+				</DropDown>
 			{/if}
 		{/snippet}
 
@@ -145,8 +179,8 @@
 		<div>
 			<p>
 				Showing {(currPage - 1) * entries + 1}
-				to {Math.min(currPage * entries, filterData(arsipArray).length)}
-				of {filterData(arsipArray).length}
+				to {Math.min(currPage * entries, filterData(data.dataArsip).length)}
+				of {filterData(data.dataArsip).length}
 			</p>
 		</div>
 		<div class="flex flex-row gap-3">
@@ -175,6 +209,48 @@
 		</div>
 	</div>
 </div>
+
+{#if deleteD && selectedItemId}
+	<form
+		action="?/delete"
+		method="post"
+		use:enhance={() => {
+			const idToDelete = selectedItemId;
+			console.log("Form submitted with ID from URL:", idToDelete);
+			
+			return async ({ result }) => {
+				if (result.type === 'success') {
+					console.log("Success deleting ID:", idToDelete);
+					success = true;
+					deleteD = false;
+					// Remove the delete parameter from URL
+					goto('/admin/suratDokumen', { replaceState: true });
+					setTimeout(() => {
+						success = false;
+						invalidateAll();
+					}, 3000);
+				} else {
+					console.error("Failed to delete ID:", idToDelete, result);
+				}
+			};
+		}}
+	>
+		<input type="hidden" name="id_arsip" value={selectedItemId}>
+		
+		<DeleteModal
+			text="Apakah yakin ingin menghapus dokumen ini?"
+			successText="Dokumen berhasil dihapus!"
+			choose="delete"
+			bind:value={deleteD}
+			name="id_arsip"
+			data={selectedItemId}
+			on:close={handleCloseDeleteModal}
+		/>
+	</form>
+{/if}
+{#if success}
+	<SModal text="Berhasil"></SModal>
+{/if}
 
 <style>
 	.custom-button {

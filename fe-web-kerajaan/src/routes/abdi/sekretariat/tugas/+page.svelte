@@ -14,6 +14,7 @@
 	let { data } = $props();
 	console.log('data : ', data);
 	const dataAmbil = data.data;
+	let situsData = $state(data.situs);
 
 	let open = $state(false);
 	let success = $state(false);
@@ -32,6 +33,7 @@
 				item?.status?.toLowerCase().includes(keyword.toLowerCase())
 		);
 	}
+
 	function pagination(data: any[]) {
 		let d = filterD(data);
 		let start = (currPage - 1) * entries;
@@ -54,6 +56,7 @@
 		}
 	});
 	let loading = $state(false);
+
 </script>
 
 {#if navigating.to}
@@ -193,6 +196,7 @@
 		<TambahTugas
 			bind:value={open}
 			text="Tambah Tugas"
+			bind:data={situsData}
 			{errors}
 			successText="Tugas Berhasil Ditambah"
 		></TambahTugas>
