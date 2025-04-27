@@ -1,7 +1,36 @@
 import { error, fail, type Actions } from "@sveltejs/kit";
 import { any, z } from "zod";
+import type { PageServerLoad } from "../$types";
+import { env } from "$env/dynamic/private";
 
-
+export const load: PageServerLoad = async () => {
+    try {
+        const res = await fetch(`${env.URL_KERAJAAN}/situs`);
+        
+        if (!res) {
+            console.error("Failed to initialize fetch request");
+            return fail(500, { error: "Server error: Failed to initialize request" });
+        }
+        
+        if (res.ok) {
+            const data = await res.json();
+            console.log("Data: ",data);
+            return { data };
+        } else {
+            const errorData = await res.text().catch(() => "Unknown error");
+            console.error(`API error: ${res.status} - ${errorData}`);
+            return fail(res.status, { 
+                error: `Failed to retrieve data: ${res.status}`,
+                details: errorData
+            });
+        }
+    }
+    catch (err) {
+         const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+        console.error("Error in load function:", errorMessage);
+        return fail(500, { error: "Server error", details: errorMessage });
+    }
+};
 export const actions: Actions = {
     tambah: async ({ request }) => {
         const data = await request.formData();

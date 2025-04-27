@@ -3,24 +3,61 @@
 	import { goto } from '$app/navigation';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
-	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	// import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import { fade } from 'svelte/transition';
+	import { tuple } from 'zod';
+	let { data } = $props();
 	let total = $state(8);
 	let activeTab = $state('upcoming');
+	let showDropdown = $state(false);
+	let res = $state();
+	let isLocationSelected = $state(false);
 
 	function setActive(tab: string) {
 		activeTab = tab;
 	}
 	let errors = $state();
 	let success = $state(false);
-
+	let lokasi_acara = $state('');
+	let id_alamat = $state();
+	let lokasi = $state();
+	function filter(data: any[]) {
+		return data.filter((item) =>
+			item.nama_situs.toLowerCase().includes(lokasi_acara.toLowerCase())
+		);
+	}
+	function bindId(item: any) {
+		if (lokasi_acara) {
+			id_alamat = item.nama_situs;
+			lokasi = item.alamat;
+			isLocationSelected = true;
+		}
+	}
+	function handleLocationInput() {
+		showDropdown = true;
+		// If user manually types, allow alamat editing
+		if (isLocationSelected && !resData.includes((item) => item.nama_situs === lokasi_acara)) {
+			isLocationSelected = false;
+		}
+	}
+	function toggleDropdown() {
+		showDropdown = !showDropdown;
+	}
 	const toggle = () => {
 		if (!success) {
 			success = true;
 		} else success = false;
 	};
-
+	function select(item: any) {
+		lokasi_acara = item.nama_situs;
+		lokasi = item.alamat;
+		isLocationSelected = true;
+		showDropdown = false;
+	}
+	console.log(data.data);
+	// let resData = $derived(data?.data ? filter(data.data) : []);
+	let resData = $derived(data?.data ? filter(data.data) : []);
 	let open = $state(false);
 	let timer: number;
 	let loading = $state(false);
@@ -66,9 +103,14 @@
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
+					{#if errors}
+						{#each errors.nama_acara as e}
+							<p class="texxt-red-500">{e}</p>
+						{/each}
+					{/if}
 				</div>
 
-				<div class="mt-3 w-full">
+				<!-- <div class="mt-3 w-full">
 					<p>Penanggung Jawab Acara:</p>
 					<input
 						type="text"
@@ -76,8 +118,8 @@
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
-				</div>
-				<div class="mt-3 w-full">
+				</div> -->
+				<!-- <div class="mt-3 w-full">
 					<p>Penyelenggara Acara:</p>
 					<input
 						type="text"
@@ -85,24 +127,68 @@
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
-				</div>
-				<div class="mt-3 w-full">
+				</div> -->
+				<div class="relative mt-3 w-full">
 					<p>Lokasi Acara:</p>
 					<input
 						type="text"
+						autocomplete="off"
+						onfocus={toggleDropdown}
+						oninput={handleLocationInput}
 						name="lokasi_acara"
+						bind:value={lokasi_acara}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
+					<!-- Location dropdown -->
+					{#if showDropdown && data?.data}
+						<ul
+							class="dropdown absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border bg-white"
+						>
+							{#if resData.length > 0}
+								{#each resData as item}
+									<!-- svelte-ignore a11y_click_events_have_key_events -->
+									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+									<li
+										onclick={() => select(item)}
+										class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+									>
+										{item.nama_situs}
+									</li>
+								{/each}
+							{:else}
+								<li class="px-3 py-2 text-gray-500">No locations found</li>
+							{/if}
+						</ul>
+					{/if}
 				</div>
 				<div class="mt-3 w-full">
+					<p>Alamat Acara:</p>
+					<input
+						type="text"
+						name="alamat_acara"
+						bind:value={lokasi}
+						disabled={isLocationSelected}
+						placeholder="Masukkan Nama"
+						class=" w-full rounded-lg border px-2 py-1"
+					/>
+				</div>
+				<!-- <div class="mt-3 w-full">
 					<p>Tujuan Acara:</p>
 					<input
 						type="text"
-						name="tujuan_acara"
-						placeholder="Masukkan Nama"
+						name="alamat_acara"
+						placeholder="Masukkan Alamat Acara"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
+				</div> -->
+				<div class="mt-2 w-full">
+					<p>Deskripsi Acara:</p>
+					<textarea
+						placeholder="Masukkan Deskripsi Acara"
+						name="deskripsi_acara"
+						class="h-20 w-full resize-none rounded-md border px-3 py-1 text-lg"
+					></textarea>
 				</div>
 			</div>
 
@@ -151,6 +237,15 @@
 					</div>
 				</div>
 
+				<div class="mt-3 w-full">
+					<p>Tujuan Acara:</p>
+					<input
+						type="text"
+						name="alamat_acara"
+						placeholder="Masukkan Alamat Acara"
+						class="w-full rounded-lg border px-2 py-1"
+					/>
+				</div>
 				<div class="flexcoba mt-2 flex w-full">
 					<div class="mt-2 lg:flex-1">
 						<p>Tanggal Mulai:</p>
@@ -195,14 +290,14 @@
 						</div>
 					</div>
 				</div>
-				<div class="mt-2 w-full">
+				<!-- <div class="mt-2 w-full">
 					<p>Deskripsi Acara:</p>
 					<textarea
 						placeholder="Masukkan Deskripsi Acara"
 						name="deskripsi_acara"
 						class="h-20 w-full resize-none rounded-md border px-3 py-1 text-lg"
 					></textarea>
-				</div>
+				</div> -->
 			</div>
 		</div>
 
