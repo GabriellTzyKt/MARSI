@@ -7,33 +7,41 @@
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
+	import { string } from 'zod';
+	let { data } = $props();
+	let tableData = $derived(data?.data || []);
 	let entries = $state(10);
 	let keyword = $state('');
 	let currPage = $state(1);
 	function filterD(data: any[]) {
+		if (!data) return [];
 		return data.filter(
 			(item) =>
-				item?.nama_komunitas?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.tanggal_berdiri?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.lokasi_komunitas?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.penanggungjawab?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.pelindung?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.pembina?.toLowerCase().includes(keyword.toLowerCase())
+				(item?.nama_komunitas?.toLowerCase() || '').includes(keyword.toLowerCase()) ||
+				(item?.tanggal_berdiri?.toLowerCase() || '').includes(keyword.toLowerCase()) ||
+				(item?.alamat?.toLowerCase() || '').includes(keyword.toLowerCase()) ||
+				(item?.penanggung_jawab.toString().toLowerCase() || '').includes(keyword.toLowerCase()) ||
+				(item?.pelindung?.toLowerCase() || '').includes(keyword.toLowerCase()) ||
+				(item?.pembina?.toLowerCase() || '').includes(keyword.toLowerCase())
 		);
 	}
 	function pagination(data: any[]) {
+		if (!data) return [];
 		let d = filterD(data);
 		let start = (currPage - 1) * entries;
 		let end = start + entries;
-		console.log(d);
 		return d.slice(start, end);
 	}
 	$effect(() => {
 		if (keyword || entries) {
+			console.log(resData);
 			currPage = 1;
 		}
+		if (entries <= 1) {
+			entries = 1;
+		}
 	});
-	let resData = $derived(pagination(dummySekreKom));
+	let resData = $derived(pagination(tableData || []));
 </script>
 
 {#if navigating.to}
@@ -107,12 +115,11 @@
 	<div class="flex w-full flex-col">
 		<Table
 			table_header={[
-				['id_komunitas', 'Id Komunitas'],
 				['nama_komunitas', 'Nama Komunitas'],
 				['tanggal_berdiri', 'Tanggal Berdiri'],
-				['lokasi_komunitas', 'Lokasi Komunitas'],
+				['alamat', 'Lokasi Komunitas'],
 
-				['penanggungjawab', 'Penanggung Jawab'],
+				['penanggung_jawab', 'Penanggung Jawab'],
 
 				['pelindung', 'Pelindung'],
 				['pembina', 'Pembina'],
@@ -125,11 +132,13 @@
 				{#if header === 'Aksi'}
 					<DropDown
 						text={`Apakah yakin ingin mengarsipkan abdi?`}
-						successText={`Berhasil mengarsipkan abdi!`}
-						link="/abdi/sekretariat/komunitas/daftaranggota"
 						items={[
 							['Edit', '/abdi/sekretariat/komunitas/daftarkomunitas/edit'],
-							['children', 'Non Aktifkan', '']
+							[
+								'children',
+								'Non Aktifkan',
+								`/abdi/komunitas/daftarkomunitas/?delete=${data.id_komunitas}`
+							]
 						]}
 						id={`id-${index}`}
 						{data}
@@ -137,6 +146,6 @@
 				{/if}
 			{/snippet}
 		</Table>
-		<Pagination bind:currPage bind:entries totalItems={filterD(dummySekreKom).length}></Pagination>
+		<Pagination bind:currPage bind:entries totalItems={filterD(data.data).length}></Pagination>
 	</div>
 </div>

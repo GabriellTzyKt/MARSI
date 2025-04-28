@@ -5,9 +5,10 @@
 		table_data: Record<string, any>[];
 		table_header: (string | string[])[];
 		children?: Snippet<[any]>;
+		picture?: Snippet<[any]>;
 	}
 
-	let { table_data, table_header, children }: IProps = $props();
+	let { table_data, table_header, children, picture }: IProps = $props();
 </script>
 
 <div class="mt-4 flex w-full flex-col overflow-x-auto rounded-xl">
@@ -53,6 +54,14 @@
 								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								>{@render children?.({ data, header: header[1], index: i })}</td
+							>
+						{:else if header[0] === 'picture'}
+							<td
+								class=" whitespace-normal break-words py-3 text-left"
+								class:border-y={i !== table_data.length - 1}
+								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
+								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}
+								>{@render picture?.({ data, header: header[1], index: i })}</td
 							>
 						{:else}
 							<td
