@@ -194,6 +194,12 @@
 			return 'Laporan Acara';
 		} else if (page.route.id === '/abdi/sekretariat/anggota/pelantikan/tambahabdi') {
 			return 'Tambah Abdi';
+		} else if (page.route.id === '/abdi/sekretariat/aset') {
+			return 'Aset';
+		} else if (page.route.id === '/abdi/sekretariat/aset/buat') {
+			return 'Tambah Aset';
+		} else if (page.route.id === '/abdi/sekretariat/aset/ubah/[id]') {
+			return 'Ubah Aset';
 		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/edit') {
 			return 'Edit Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/manajemenadmin') {
@@ -425,6 +431,13 @@
 						active={page.route.id?.startsWith('/abdi/sekretariat/manajemenadmin')}
 						hasChildren={false}
 					></SidebarMenu>
+					<SidebarMenu
+						href="/abdi/sekretariat/aset"
+						icon="mdi:book"
+						anchor="Aset"
+						active={page.route.id?.startsWith('/abdi/sekretariat/aset')}
+						hasChildren={false}
+					></SidebarMenu>
 				</Sidebar>
 			{/if}
 		</div>
@@ -640,6 +653,13 @@
 					icon="mdi:book"
 					anchor="Landing Page"
 					active={page.route.id?.startsWith('/abdi/sekretariat/landingpage')}
+					hasChildren={false}
+				></SidebarMenu>
+				<SidebarMenu
+					href="/abdi/sekretariat/aset"
+					icon="mdi:book"
+					anchor="Aset"
+					active={page.route.id?.startsWith('/abdi/sekretariat/aset')}
 					hasChildren={false}
 				></SidebarMenu>
 				<SidebarMenu
