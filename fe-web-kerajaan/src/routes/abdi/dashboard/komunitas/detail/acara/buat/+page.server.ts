@@ -5,6 +5,7 @@ import { any, z } from "zod";
 export const actions: Actions = {
     tambah: async ({ request }) => {
         const data = await request.formData();
+        console.log("data dari depan ( buat sekre ) : ", data)
 
         const ids = data.getAll("id").map(String);
         const ids2 = data.getAll("id2").map(String);

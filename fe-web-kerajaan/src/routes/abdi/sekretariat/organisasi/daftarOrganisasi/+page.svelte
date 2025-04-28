@@ -42,7 +42,7 @@
 		<button
 			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
 			onclick={() => {
-				goto('/abdi/sekretariat/organisasi/daftarorganisasi/buat');
+				goto('/abdi/sekretariat/organisasi/daftarOrganisasi/buat');
 			}}>+Tambah Data</button
 		>
 		<div

@@ -6,22 +6,48 @@
 	// import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import { fade } from 'svelte/transition';
+	import type { AnymatchFn } from 'vite';
 	import { tuple } from 'zod';
+
 	let { data } = $props();
 	let total = $state(8);
 	let activeTab = $state('upcoming');
 	let showDropdown = $state(false);
+	let input_radio = $state('');
 	let res = $state();
 	let isLocationSelected = $state(false);
+
+	let namaacara = $state();
+	let alamatacara = $state();
+	let waktumulai = $state();
+	let waktuselesai = $state();
+	let tujuanacara = $state();
+	let tanggalmulai = $state();
+	let tanggalselesai = $state();
+
+
+	let panggilan = $state([]);
+	let namabawah = $state([]);
+	let namalengkapbawah = $state([]);
+	let namajabatan = $state([]);
+	let notelpbawah = $state([]);
+
+	let invitations: { id: number; panggilan: string; nama: string; notelepon: string }[] = $state(
+		[]
+	);
+	let invitationIds: number[] = $state([]); // Array that stores only the invitation ids
+
+	let invitations2: { id: number; namalengkap: string; namajabatan: string }[] = $state([]);
+	let invitationIds2: number[] = $state([]); // Array that stores only the invitation ids
 
 	function setActive(tab: string) {
 		activeTab = tab;
 	}
-	let errors = $state();
+	let errors: any = $state('');
 	let success = $state(false);
 	let lokasi_acara = $state('');
 	let id_alamat = $state();
-	let lokasi = $state();
+	let lokasi = $state("");
 	function filter(data: any[]) {
 		return data.filter((item) =>
 			item.nama_situs.toLowerCase().includes(lokasi_acara.toLowerCase())
@@ -37,10 +63,70 @@
 	function handleLocationInput() {
 		showDropdown = true;
 		// If user manually types, allow alamat editing
-		if (isLocationSelected && !resData.includes((item) => item.nama_situs === lokasi_acara)) {
+		if (isLocationSelected && !resData.includes((item: any) => item.nama_situs === lokasi_acara)) {
 			isLocationSelected = false;
 		}
 	}
+
+	function tambah() {
+		// id nya dipakei date.now itu supaya pasti beda
+		const newId = Date.now();
+
+		invitations = [
+			...invitations,
+			{
+				id: newId,
+				panggilan: 'Tn',
+				nama: '',
+				notelepon: ''
+			}
+		];
+		console.log('invitations: ', invitations);
+
+		invitationIds = [...invitationIds, newId];
+		console.log('invitations id: ', invitationIds);
+	}
+
+	function hapus(index: number) {
+		console.log('Sebelum hapus:', invitations);
+		console.log('Menghapus indeks:', index);
+
+		invitations = invitations.filter((_, i) => i !== index);
+		invitationIds = invitationIds.filter((_, i) => i !== index);
+
+		console.log('Sesudah hapus:', invitations);
+		console.log('Sesudah hapus:', invitationIds);
+	}
+
+	function tambah2() {
+		// id nya dipakei date.now itu supaya pasti beda
+		const newId = Date.now();
+
+		invitations2 = [
+			...invitations2,
+			{
+				id: newId,
+				namalengkap: '',
+				namajabatan: ''
+			}
+		];
+		console.log('invitations: ', invitations2);
+
+		invitationIds2 = [...invitationIds2, newId];
+		console.log('invitations id: ', invitationIds2);
+	}
+
+	function hapus2(index: number) {
+		console.log('Sebelum hapus:', invitations2);
+		console.log('Menghapus indeks:', index);
+
+		invitations2 = invitations2.filter((_, i) => i !== index);
+		invitationIds2 = invitationIds2.filter((_, i) => i !== index);
+
+		console.log('Sesudah hapus:', invitations);
+		console.log('Sesudah hapus:', invitationIds);
+	}
+
 	function toggleDropdown() {
 		showDropdown = !showDropdown;
 	}
@@ -101,11 +187,12 @@
 						type="text"
 						name="nama_acara"
 						placeholder="Masukkan Nama"
+						bind:value={namaacara}
 						class="w-full rounded-lg border px-2 py-1"
 					/>
-					{#if errors}
-						{#each errors.nama_acara as e}
-							<p class="texxt-red-500">{e}</p>
+					{#if errors && errors.namaacara}
+						{#each errors.namaacara as e}
+							<p class="text-red-500">{e}</p>
 						{/each}
 					{/if}
 				</div>
@@ -162,17 +249,27 @@
 						</ul>
 					{/if}
 				</div>
+				{#if errors && errors.lokasiacara}
+					{#each errors.lokasiacara as e}
+						<p class="text-red-500">{e}</p>
+					{/each}
+				{/if}
 				<div class="mt-3 w-full">
 					<p>Alamat Acara:</p>
 					<input
 						type="text"
 						name="alamat_acara"
 						bind:value={lokasi}
-						disabled={isLocationSelected}
-						placeholder="Masukkan Nama"
-						class=" w-full rounded-lg border px-2 py-1"
+						readonly={isLocationSelected}
+						placeholder="Masukkan Alamat"
+						class="w-full rounded-lg border px-2 py-1"
 					/>
 				</div>
+				{#if errors && errors.alamatacara}
+					{#each errors.alamatacara as e}
+						<p class="text-red-500">{e}</p>
+					{/each}
+				{/if}
 				<!-- <div class="mt-3 w-full">
 					<p>Tujuan Acara:</p>
 					<input
@@ -190,50 +287,50 @@
 						class="h-20 w-full resize-none rounded-md border px-3 py-1 text-lg"
 					></textarea>
 				</div>
+				{#if errors && errors.deskripsiacara}
+					{#each errors.deskripsiacara as e}
+						<p class="text-red-500">{e}</p>
+					{/each}
+				{/if}
 			</div>
 
 			<div class="col-span-2">
-				<div class="flexcoba mt-2 flex w-full">
-					<div class="flex-1">
-						<p>Kapasitas Acara:</p>
-						<input
-							type="text"
-							name="kapasitas_acara"
-							placeholder="Masukkan Nama"
-							class="w-full rounded-lg border px-2 py-1"
-						/>
-					</div>
-					<div class="ml-10 flex">
-						<div class="mr-10 w-full items-center text-center">
-							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara</p>
-							<div class="mt-2 flex justify-center">
-								<div class="mx-2 flex items-center justify-center">
-									<input
-										id="default-radio-1"
-										type="radio"
-										value=""
-										name="jenis_acara"
-										class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-									/>
-									<label for="jenis_acara-1" class="mx-5 ms-2 text-sm font-medium text-gray-900"
-										>Private</label
-									>
-								</div>
-								<div class="mx-2 flex items-center justify-center">
-									<input
-										checked
-										id="jenis_acara-2"
-										type="radio"
-										value=""
-										name="jenis_acara"
-										class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-									/>
-									<label for="default-radio-2" class="mx-5 ms-2 text-sm font-medium text-black"
-										>Public</label
-									>
-								</div>
+				<div class="ml-10 flex">
+					<div class="mr-10 w-full items-center text-center">
+						<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara</p>
+						<div class="mt-2 flex items-center justify-center self-center">
+							<div class="mx-2 flex items-center justify-center">
+								<input
+									id="default-radio-1"
+									type="radio"
+									value="private"
+									bind:group={input_radio}
+									name="default-radio"
+									class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+								/>
+								<label for="default-radio-1" class="mx-5 ms-2 text-sm font-medium text-gray-900"
+									>Private</label
+								>
+							</div>
+							<div class="mx-2 flex items-center justify-center">
+								<input
+									id="default-radio-2"
+									type="radio"
+									value="public"
+									bind:group={input_radio}
+									name="default-radio"
+									class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+								/>
+								<label for="default-radio-2" class="mx-5 ms-2 text-sm font-medium text-black"
+									>Public</label
+								>
 							</div>
 						</div>
+						{#if errors}
+							{#each errors.inputradio as a}
+								<p class="text-center text-red-500">{a}</p>
+							{/each}
+						{/if}
 					</div>
 				</div>
 
@@ -241,20 +338,32 @@
 					<p>Tujuan Acara:</p>
 					<input
 						type="text"
-						name="alamat_acara"
+						name="tujuan_acara"
+						bind:value={tujuanacara}
 						placeholder="Masukkan Alamat Acara"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
 				</div>
+				{#if errors && errors.tujuanacara}
+					{#each errors.tujuanacara as e}
+						<p class="text-red-500">{e}</p>
+					{/each}
+				{/if}
 				<div class="flexcoba mt-2 flex w-full">
 					<div class="mt-2 lg:flex-1">
 						<p>Tanggal Mulai:</p>
 						<input
 							type="date"
 							name="tanggal_mulai"
+							bind:value={tanggalmulai}
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
 						/>
+						{#if errors && errors.tanggalmulai}
+							{#each errors.tanggalmulai as e}
+								<p class="text-red-500">{e}</p>
+							{/each}
+						{/if}
 					</div>
 					<div class="flex-1 lg:ml-10">
 						<div class="mt-2 w-full">
@@ -262,9 +371,15 @@
 							<input
 								type="date"
 								name="tanggal_selesai"
+								bind:value={tanggalselesai}
 								placeholder="Masukkan Nama"
 								class="w-full rounded-lg border px-2 py-1"
 							/>
+							{#if errors && errors.tanggalselesai}
+								{#each errors.tanggalselesai as e}
+									<p class="text-red-500">{e}</p>
+								{/each}
+							{/if}
 						</div>
 					</div>
 				</div>
@@ -272,21 +387,31 @@
 					<div class="mt-2 lg:flex-1">
 						<p>Waktu Mulai:</p>
 						<input
-							type="text"
-							name="waktu_mulai"
-							placeholder="Masukkan Nama"
+							type="time"
+							name="waktumulai"
+							bind:value={waktumulai}
 							class="w-full rounded-lg border px-2 py-1"
 						/>
+						{#if errors}
+							{#each errors.waktumulai as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
 					</div>
 					<div class="flex-1 lg:ml-10">
 						<div class="mt-2 w-full">
 							<p>Waktu Selesai:</p>
 							<input
-								type="text"
-								name="waktu_selesai"
-								placeholder="Masukkan Nama"
+								type="time"
+								name="waktuselesai"
+								bind:value={waktuselesai}
 								class="w-full rounded-lg border px-2 py-1"
 							/>
+							{#if errors}
+								{#each errors.waktuselesai as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
 						</div>
 					</div>
 				</div>
@@ -302,29 +427,146 @@
 		</div>
 
 		<div class="mt-5 h-1 w-full bg-slate-300"></div>
-
 		<div class="mt-8 flex w-full">
-			<p class="my-auto ml-10 w-full text-center font-bold">Undangan</p>
-			<button class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white">
+			<p class="my-auto ml-10 w-full font-bold">Undangan</p>
+			<button
+				class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white"
+				onclick={() => {
+					console.log('hi');
+					tambah();
+				}}
+				type="button"
+			>
 				Tambah Undangan
 			</button>
 		</div>
 
-		<!-- bawah -->
-
-		<div class="mt-10 grid grid-cols-9 gap-2">
-			{#each Array(total) as _, i}
-				<div class="col-span-1 w-full">{i + 1}</div>
-				<div class="col-span-2 w-full rounded-lg border px-2 py-1">
-					<select name="panggilan" id="panggilan" class="mt-1 w-full">
-						<option value="volvo">Tn</option>
-						<option value="saab">Ny</option>
+		<div class="mt-10 grid grid-cols-8 gap-2">
+			{#each invitations as invitation, i (invitation.id)}
+				<div class="col-span-1">{i + 1}</div>
+				<input type="hidden" name="id" value={invitation.id} />
+				<div class="col-span-1 w-full rounded-lg border px-2 py-1">
+					<select
+						bind:value={panggilan[invitation.id]}
+						name={`panggilan_${invitation.id}`}
+						id={`panggilan_${invitation.id}`}
+						class="mt-1 w-full"
+					>
+						<option value="Tn">Tn</option>
+						<option value="Ny">Ny</option>
 					</select>
 				</div>
-				<input class="col-span-3 w-full rounded-lg border px-2 py-1" type="text" />
-				<input class="col-span-2 w-full rounded-lg border px-2 py-1" />
+
+				<div class="col-span-3 w-full rounded-lg border px-2 py-1">
+					<input
+						type="text"
+						bind:value={namabawah[invitation.id]}
+						placeholder="Nama"
+						name={`namabawah_${invitation.id}`}
+						id={`namabawah_${invitation.id}`}
+						class="w-full focus:outline-none"
+					/>
+					{#if errors}
+						{console.log(errors)}
+						{#if errors.namabawah && !namabawah[invitation.id]}
+							<p class="text-left text-red-500">{errors.namabawah[0]}</p>
+						{:else}
+							{console.log('No error for namabawah with id', invitation.id)}
+						{/if}
+					{/if}
+				</div>
+
+				<div class="col-span-2 w-full rounded-lg border px-2 py-1">
+					<input
+						type="text"
+						bind:value={notelpbawah[invitation.id]}
+						name={`notelpbawah_${invitation.id}`}
+						id={`notelpbawah_${invitation.id}`}
+						placeholder="081638149124"
+						class="w-full focus:outline-none"
+						pattern="\d+"
+						title="Hanya angka yang diizinkan"
+						minlength="10"
+					/>
+					{#if errors.notelpbawah && !notelpbawah[invitation.id]}
+						<p class="text-left text-red-500">{errors.notelpbawah[0]}</p>
+					{/if}
+				</div>
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<div class="col-span-1">
-					<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<span
+						class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-red-400 p-2"
+						onclick={() => hapus(i)}
+					>
+						<i class="gg--trash z-10 items-center text-2xl"></i>
+					</span>
+				</div>
+			{/each}
+		</div>
+
+		<!-- bawah -->
+
+		<div class="mt-8 flex w-full">
+			<p class="my-auto ml-10 w-full text-start font-bold">Panitia Acara</p>
+			<button
+				class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white"
+				onclick={() => {
+					console.log('hi2');
+					tambah2();
+				}}
+				type="button"
+			>
+				Tambah Undangan
+			</button>
+		</div>
+
+		<div class="mt-10 grid grid-cols-10 gap-2">
+			{#each invitations2 as invitation, i (invitation.id)}
+				<div class="col-span-1">{i + 1}</div>
+				<input type="hidden" name="id2" value={invitation.id} />
+
+				<div class="col-span-4 w-full rounded-lg border px-2 py-1">
+					<input
+						type="text"
+						bind:value={namalengkapbawah[invitation.id]}
+						placeholder="Nama"
+						name={`namalengkapbawah_${invitation.id}`}
+						id={`namalengkapbawah_${invitation.id}`}
+						class="w-full focus:outline-none"
+					/>
+					{#if errors}
+						{console.log(errors)}
+						{#if errors.namalengkapbawah && !namalengkapbawah[invitation.id]}
+							<p class="text-left text-red-500">{errors.namalengkapbawah[0]}</p>
+						{:else}
+							{console.log('No error for namabawah with id', invitation.id)}
+						{/if}
+					{/if}
+				</div>
+
+				<div class="col-span-4 w-full rounded-lg border px-2 py-1">
+					<select
+						bind:value={namajabatan[invitation.id]}
+						name={`namajabatan_${invitation.id}`}
+						id={`namajabatan_${invitation.id}`}
+						class="mt-1 w-full"
+					>
+						<option value="" disabled selected>Silahkan Pilih!</option>
+						<option value="ketua">Ketua</option>
+						<option value="sekretariat">Sekretariat</option>
+					</select>
+					{#if errors.namajabatan && !namajabatan[invitation.id]}
+						<p class="text-left text-red-500">{errors.namajabatan[0]}</p>
+					{/if}
+				</div>
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<div class="col-span-1">
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<span
+						class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-red-400 p-2"
+						onclick={() => hapus2(i)}
+					>
 						<i class="gg--trash z-10 items-center text-2xl"></i>
 					</span>
 				</div>
