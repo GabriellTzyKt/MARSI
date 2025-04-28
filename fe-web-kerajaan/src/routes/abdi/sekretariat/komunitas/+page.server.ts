@@ -1,5 +1,4 @@
 import { env } from "$env/dynamic/private";
-import { formatDate, formatDatetoUI } from "$lib";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async () => {
@@ -9,14 +8,9 @@ export const load: PageServerLoad = async () => {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }
         const data = await res.json();
-        const end = data.map(item => ({
-            ...item,
-            tanggal_berdiri: formatDatetoUI(item.tanggal_berdiri)
-        }))
-        console.log(end)
+        console.log(data)
 
-
-        return { data:end };
+        return { data };
     }
     catch (error) {
         

@@ -105,7 +105,7 @@
 					/>
 					{#if errors}
 						{#each errors.nama_acara as e}
-							<p class="texxt-red-500">{e}</p>
+							<p class="text-red-500">{e}</p>
 						{/each}
 					{/if}
 				</div>
