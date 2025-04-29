@@ -17,6 +17,7 @@
 	import Table from '$lib/table/Table.svelte';
 	import Loader from '$lib/loader/Loader.svelte';
 	import { navigating } from '$app/state';
+	import Pagination from '$lib/table/Pagination.svelte';
 	let open = $state(false);
 	let selected = $state('Gelar');
 	let button = ['Gelar', 'Bintang Jasa', 'Jenis Situs', 'Kategori Situs', 'Penghargaan'];
@@ -112,7 +113,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="mx-4 flex lg:mx-10">
+	<div class="mx-4 flex flex-col lg:mx-10">
 		{#if selected === 'Gelar'}
 			<Table
 				table_header={[
@@ -124,13 +125,10 @@
 				{#snippet children({ header, data, index })}
 					{#if header === 'Aksi'}
 						<DropDown
-							text=" apa yakin mau menghapus acara ini?"
-							successText="berhasil diarsip"
-							link="/abdi/sekretariat/masterdata"
-							ubahm="Gelar"
+							text={`Apakah yakin ingin mengarsipkan aset ini?`}
 							items={[
-								['children', 'Ubah'],
-								['children', 'Arsip', '']
+								['Ubah', `/abdi/sekretariat/aset/ubah/${data.id_aset}`],
+								['children', 'Arsipkan', `/abdi/sekretariat/aset/?delete=${data.id_aset}`]
 							]}
 							id={`id-${index}`}
 							{data}
@@ -138,6 +136,7 @@
 					{/if}
 				{/snippet}
 			</Table>
+			<!-- <Pagination></Pagination> -->
 		{:else if selected === 'Bintang Jasa'}
 			<Table
 				table_header={[
@@ -149,13 +148,10 @@
 				{#snippet children({ header, data, index })}
 					{#if header === 'Aksi'}
 						<DropDown
-							text=" apa yakin mau mengarsip Bintang Jasa ini?"
-							successText="berhasil diarsip"
-							ubahm="Bintang Jasa"
-							link="/abdi/sekretariat/masterdata"
+							text={`Apakah yakin ingin mengarsipkan aset ini?`}
 							items={[
-								['children', 'Ubah'],
-								['children', 'Arsip', '']
+								['Ubah', `/abdi/sekretariat/aset/ubah/${data.id_aset}`],
+								['children', 'Arsipkan', `/abdi/sekretariat/aset/?delete=${data.id_aset}`]
 							]}
 							id={`id-${index}`}
 							{data}
@@ -174,13 +170,10 @@
 				{#snippet children({ header, data, index })}
 					{#if header === 'Aksi'}
 						<DropDown
-							text=" apa yakin mau mengarsip Bintang Jasa ini?"
-							successText="berhasil diarsip"
-							ubahm="Jenis Situs"
-							link="/abdi/sekretariat/masterdata"
+							text={`Apakah yakin ingin mengarsipkan aset ini?`}
 							items={[
-								['children', 'Ubah'],
-								['children', 'Arsip', '']
+								['Ubah', `/abdi/sekretariat/aset/ubah/${data.id_aset}`],
+								['children', 'Arsipkan', `/abdi/sekretariat/aset/?delete=${data.id_aset}`]
 							]}
 							id={`id-${index}`}
 							{data}
@@ -199,13 +192,10 @@
 				{#snippet children({ header, data, index })}
 					{#if header === 'Aksi'}
 						<DropDown
-							text=" apa yakin mau mengarsip Bintang Jasa ini?"
-							successText="berhasil diarsip"
-							ubahm="Kategori Situs"
-							link="/abdi/sekretariat/masterdata"
+							text={`Apakah yakin ingin mengarsipkan aset ini?`}
 							items={[
-								['children', 'Ubah'],
-								['children', 'Arsip', '']
+								['Ubah', `/abdi/sekretariat/aset/ubah/${data.id_aset}`],
+								['children', 'Arsipkan', `/abdi/sekretariat/aset/?delete=${data.id_aset}`]
 							]}
 							id={`id-${index}`}
 							{data}
@@ -224,13 +214,10 @@
 				{#snippet children({ header, data, index })}
 					{#if header === 'Aksi'}
 						<DropDown
-							text=" apa yakin mau mengarsip Bintang Jasa ini?"
-							successText="berhasil diarsip"
-							link="/abdi/sekretariat/masterdata"
-							ubahm="Penghargaan"
+							text={`Apakah yakin ingin mengarsipkan aset ini?`}
 							items={[
-								['children', 'Ubah'],
-								['children', 'Arsip', '']
+								['Ubah', `/abdi/sekretariat/aset/ubah/${data.id_aset}`],
+								['children', 'Arsipkan', `/abdi/sekretariat/aset/?delete=${data.id_aset}`]
 							]}
 							id={`id-${index}`}
 							{data}
@@ -256,7 +243,7 @@
 				{#if header === 'Aksi'}
 					<DropDown
 						text=" apa yakin mau menghapus acara ini?"
-						successText="berhasil diarsip"
+						
 						link="/abdi/sekretariat/tugas"
 						items={[
 							['children', 'Bukti', 'Bukti Laporan'],

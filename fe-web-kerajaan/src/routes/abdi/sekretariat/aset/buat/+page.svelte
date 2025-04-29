@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	let { data } = $props();
 	// import { error } from '@sveltejs/kit';
 	let loading = $state(false);
@@ -12,6 +14,7 @@
 	let dropdown = $state(false);
 	let selectedItem = $state('');
 	console.log(data.data);
+	let success = $state(false);
 	function handleFileSelect(event: Event) {
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files?.length > 0) {
@@ -51,6 +54,9 @@
 {#if loading}
 	<Loader></Loader>
 {/if}
+{#if success}
+	<SuccessModal text="berhasil ditambahkan"></SuccessModal>
+{/if}
 <div class="flex w-full flex-col">
 	<form
 		action="?/buat"
@@ -61,10 +67,16 @@
 			return async ({ result }) => {
 				loading = false;
 				if (result.type === 'success') {
+					success = true;
 					preview = [];
 					fileinput = [];
 					keyword = '';
 					selectedItem = '';
+					errors = null;
+					setTimeout(() => {
+						success = false;
+						goto('/abdi/sekretariat/aset');
+					}, 3000);
 				}
 				if (result.type === 'failure') {
 					errors = result?.data?.errors;

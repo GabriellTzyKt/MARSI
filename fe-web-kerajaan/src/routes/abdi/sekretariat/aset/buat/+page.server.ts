@@ -64,21 +64,44 @@ export const actions: Actions = {
         })));
         console.log("Dokumentasi: ",dokumentasiFiles)
          const validation = schema.safeParse({
-      nama_aset,
-      jenis_aset,
-      deskripsi_aset,
-      dokumentasi: dokumentasiFiles
+        nama_aset,
+         jenis_aset,
+          deskripsi_aset,
+            dokumentasi: dokumentasiFiles
          });
-        const files = dokumentasiFiles.map((files)=> files.name)
+        // const files = dokumentasiFiles.map((files)=> files.name)
         
         if (!validation.success) {
+            console.log(validation.error.flatten().fieldErrors)
             return fail(406,{
                 errors: validation.error.flatten().fieldErrors,
                 success: false,
                 // formData: Object.fromEntries(data)
             });
         }
-        const formData = Object.fromEntries(data)
-        console.log(data)
+        const formData = new FormData()
+        const id_jenis_aset = jenisList.find(item => item.nama_jenis === jenis_aset)
+        console.log(id_jenis_aset)
+        formData.append("id_kerajaan", String("3"))
+        formData.append("id_jenis_aset", String(id_jenis_aset.id_jenis_aset))
+        for(const file of dokumentasiFiles){
+            formData.append("dokumentasi", file)
+        }
+        formData.append("nama_aset", String(nama_aset))
+        formData.append("deskripsi_aset", String(deskripsi_aset))
+        formData.append("kategori_aset", String(jenis_aset))
+        try {
+            const res = await fetch(`${env.URL_KERAJAAN}/aset`, { method: "POST", body: formData })
+            if(!res.ok){
+                throw new Error(`HTTP Error! Status: ${res.status}`)
+            }
+            console.log(res)
+            return {data: "berhasil", success: true}
+        }
+        catch (error) {
+            console.log(error)
+            return {data: "gagal", success: false}
+        }
+        
     }
 };
