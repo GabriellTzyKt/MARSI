@@ -8,7 +8,10 @@
 	import SidebarMenu from '$lib/sidebar/SidebarMenu.svelte';
 	import Loader from '$lib/loader/Loader.svelte';
 
-	const isActive = (path: string) => page.route.id === path;
+	const isActive = (path: string) => page.route.id == path;
+
+	console.log("page.route.id : ", page.route.id)
+
 
 	$inspect(page);
 	const pageTitle = $derived.by(() => {
@@ -194,20 +197,32 @@
 			return 'Laporan Acara';
 		} else if (page.route.id === '/abdi/sekretariat/anggota/pelantikan/tambahabdi') {
 			return 'Tambah Abdi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/edit') {
+		} else if (page.route.id?.startsWith('/abdi/sekretariat/organisasi/daftarorganisasi/edit')) {
 			return 'Edit Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/manajemenadmin') {
 			return 'Manajemen Role Administrasi';
-		} else if (page.route.id === '/abdi/dashboard/komunitas/detail/edit') {
-			return 'Ubah Komunitas';
 		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi') {
 			return 'Daftar Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit') {
 			return 'Ubah Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/buat') {
 			return 'Buat Organisasi';
+		} else if (page.route.id?.startsWith('/abdi/sekretariat/komunitas/daftarkomunitas/edit')) {
+			return 'Edit Komunitas';
 		}
-
+		// test
+		else if (page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/acara') {
+			return 'Daftar Acara';
+		}
+		else if (page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/daftaranggota') {
+			return 'Daftar Anggota';
+		}
+		else if (page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail') {
+			return 'Detail Komunitas';
+		}
+		else if (page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/edit') {
+			return 'Edit Komunitas';
+		}
 	});
 
 	let { children } = $props();
@@ -248,7 +263,7 @@
 						anchor="Dashboard"
 						active={isActive('/abdi/dashboard')}
 					/>
-					{#if page.route.id?.startsWith('/abdi/dashboard/komunitas/detail')}
+					{#if page.route.id?.startsWith('/abdi/dashboard/komunitas/beranda')}
 						<SidebarMenu href="#" icon="mdi:people" anchor="Komunitas" hasChildren={true}>
 							<SidebarMenu
 								href="/abdi/dashboard/komunitas/detail"
@@ -466,25 +481,26 @@
 					anchor="Dashboard"
 					active={isActive('/abdi/dashboard')}
 				/>
-				{#if page.route.id?.startsWith('/abdi/dashboard/komunitas/detail')}
+				{#if page.route.id?.startsWith('/abdi/dashboard/komunitas/beranda/')}
 					<SidebarMenu href="#" icon="mdi:people" anchor="Komunitas" hasChildren={true}>
 						<SidebarMenu
-							href="/abdi/dashboard/komunitas/detail"
+							href="/abdi/dashboard/komunitas/beranda/1/detail"
 							icon="mdi:book"
 							anchor="Detail komunitas"
-							active={page.route.id == '/abdi/dashboard/komunitas/detail'}
+							active={page.route.id == '/abdi/dashboard/komunitas/beranda/[id]/detail'}
 						/>
 						<SidebarMenu
-							href="/abdi/dashboard/komunitas/detail/daftaranggota"
+							href="/abdi/dashboard/komunitas/beranda/1/detail/daftaranggota"
 							icon="mdi:crown"
 							anchor="Daftar Anggota"
-							active={page.route.id?.startsWith('/abdi/dashboard/komunitas/detail/daftaranggota')}
+							active={page.route.id ==
+								'/abdi/dashboard/komunitas/beranda/[id]/detail/daftaranggota'}
 						/>
 						<SidebarMenu
-							href="/abdi/dashboard/komunitas/detail/acara"
+							href="/abdi/dashboard/komunitas/beranda/1/detail/acara"
 							icon="mdi:crown"
 							anchor="Acara"
-							active={page.route.id?.startsWith('/abdi/dashboard/komunitas/detail/acara')}
+							active={page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/acara'}
 						/>
 					</SidebarMenu>
 				{/if}

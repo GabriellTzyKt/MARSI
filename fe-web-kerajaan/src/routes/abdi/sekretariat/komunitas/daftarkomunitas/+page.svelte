@@ -133,7 +133,7 @@
 					<DropDown
 						text={`Apakah yakin ingin mengarsipkan abdi?`}
 						items={[
-							['Edit', '/abdi/sekretariat/komunitas/daftarkomunitas/edit'],
+							['Edit', `/abdi/sekretariat/komunitas/daftarkomunitas/edit/${data.id_komunitas}`],
 							[
 								'children',
 								'Non Aktifkan',

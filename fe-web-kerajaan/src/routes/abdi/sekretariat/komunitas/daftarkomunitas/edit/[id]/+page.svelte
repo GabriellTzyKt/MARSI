@@ -7,10 +7,32 @@
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
 
+	let { data } = $props();
+	console.log('data dari server.ts : ', data);
+	let dataisi = data.komunitas;
+	let datafile = data.fileDetails?.url ? data.fileDetails.url : 'gada';
+	let jumlahanggota = $state(data.jumlahAnggotaData.length)
+
 	let open = $state(false);
 	let timer: number;
 	let loading = $state(false);
 	let errors = $state();
+
+	// Tambahkan state untuk gambar
+	let selectedImage = $state(null);
+	let imagePreview = $state(gambardefault);
+	let namaimage = $state('');
+
+	// Fungsi untuk menangani upload gambar
+	function handleImageUpload(event: any) {
+		const file = event.target.files[0];
+		if (file) {
+			selectedImage = file;
+			// Buat URL untuk preview gambar
+			imagePreview = URL.createObjectURL(file);
+			namaimage = 'exist';
+		}
+	}
 </script>
 
 {#if navigating.to}
@@ -20,20 +42,10 @@
 	<Loader></Loader>
 {/if}
 <div class="h-full w-full">
-	<div class="relative mx-auto flex w-full items-center justify-center">
-		<div class="group relative h-[100px] w-[100px]">
-			<img src={gambardefault} class="h-full w-full rounded-full" alt="" />
-
-			<div
-				class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-			>
-				<p class="font-semibold text-white">Ganti Foto</p>
-			</div>
-		</div>
-	</div>
 	<form
 		action="?/tambahSitus"
 		method="post"
+		enctype="multipart/form-data"
 		use:enhance={() => {
 			loading = true;
 			return async ({ result, update }) => {
@@ -48,19 +60,63 @@
 				}
 				if (result.type === 'failure') {
 					errors = result.data?.errors;
+					console.log(errors);
 				}
 			};
 		}}
 	>
+		<div class="relative mx-auto flex w-full items-center justify-center">
+			<div class="group relative h-[100px] w-[100px]">
+				{#if datafile !== 'gada' && namaimage !== "exist"}
+					<img src={datafile} class="h-full w-full rounded-full object-cover" alt="Foto Profil" />
+				{:else}
+					<img
+						src={imagePreview}
+						class="h-full w-full rounded-full object-cover"
+						alt="Foto Profil"
+					/>
+				{/if}
+
+				<div
+					class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+				>
+					<label for="profileImage" class="cursor-pointer">
+						<p class="font-semibold text-white">Ganti Foto</p>
+					</label>
+					<input
+						type="file"
+						id="profileImage"
+						name="profile_image"
+						accept="image/*"
+						onchange={handleImageUpload}
+						class="hidden"
+					/>
+				</div>
+			</div>
+		</div>
+		<div class="w-full items-center text-center">
+			{#if errors}
+				{#each errors.image_name as e}
+					<p class="text-red-500">- {e}</p>
+				{/each}
+			{/if}
+		</div>
+		{#if namaimage === 'exist'}
+			<input type="hidden" name="image_name" value={namaimage} />
+		{:else}
+			<input type="hidden" name="image_name" value="" />
+		{/if}
+
 		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<!-- 1 -->
 			<div>
 				<div>
-					<p>Nama Situs:</p>
+					<p>Nama Komunitas:</p>
 					<div class="relative">
 						<input
 							type="text"
 							name="nama_situs"
+							bind:value={dataisi.nama_komunitas}
 							placeholder="Masukkan Nama Situs"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 pr-10"
 						/>
@@ -79,6 +135,7 @@
 						<input
 							type="text"
 							placeholder="Masukkan Alamat"
+							bind:value={dataisi.alamat}
 							name="alamat"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 pr-10"
 						/>
@@ -96,6 +153,7 @@
 					<div class="relative">
 						<input
 							type="text"
+							bind:value={dataisi.email}
 							placeholder="Masukkan Email"
 							name="email"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 pr-10"
@@ -110,11 +168,12 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Deskripsi Situs:</p>
+					<p class="mt-5">Deskripsi Komunitas:</p>
 					<div class="relative w-full">
 						<textarea
 							placeholder="Masukkan Deskripsi Situs"
 							name="deskripsi_situs"
+							bind:value={dataisi.deskripsi_komunitas}
 							class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 pr-10 text-lg"
 						></textarea>
 						<div class="h-full">
@@ -137,6 +196,7 @@
 						<input
 							type="text"
 							name="penanggungjawab"
+							bind:value={dataisi.penanggung_jawab}
 							placeholder="Masukkan Penanggung Jawab"
 							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 						/>
@@ -154,6 +214,7 @@
 						<div class="relative">
 							<input
 								type="text"
+								bind:value={dataisi.pembina}
 								name="pembina"
 								placeholder="Masukkan Pembina"
 								class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
@@ -177,6 +238,7 @@
 							<input
 								type="text"
 								name="pelindung"
+								bind:value={dataisi.pelindung}
 								placeholder="Masukkan Pelindung"
 								class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 							/>
@@ -192,23 +254,42 @@
 					{/each}
 				{/if}
 
-				<div class="mt-5 flex gap-12">
-					<div class="w-full lg:w-[50%]">
-						<p>No telepon :</p>
-						<input
-							type="text"
-							name="phone"
-							placeholder="Masukkan No Telp"
-							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-						/>
+				<div class="mt-5 flex flex-col gap-8 lg:flex-row">
+					<div class="flex-col lg:w-[50%]">
+						<div class="w-full">
+							<p>No telepon :</p>
+							<input
+								type="text"
+								name="phone"
+								placeholder="Masukkan No Telp"
+								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+							/>
+						</div>
+						{#if errors}
+							{#each errors.phone as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
 					</div>
-					<div class="hidden w-[50%]"></div>
+					<div class="flex-col lg:w-[50%]">
+						<div class="w-full">
+							<p>Jumlah Anggota :</p>
+							<input
+								type="text"
+								name="jumlah_anggota"
+								readonly
+								bind:value={jumlahanggota}
+								placeholder="Masukkan Jumlah Anggota"
+								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+							/>
+						</div>
+						{#if errors}
+							{#each errors.jumlah_anggota as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
 				</div>
-				{#if errors}
-					{#each errors.phone as e}
-						<p class="text-left text-red-500">- {e}</p>
-					{/each}
-				{/if}
 			</div>
 		</div>
 

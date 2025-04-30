@@ -4,13 +4,26 @@
 	import { dummySekreAnggotaKom } from '$lib/dummy';
 	import Loader from '$lib/loader/Loader.svelte';
 	import Pagination from '$lib/table/Pagination.svelte';
-	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
+	
 	let keyword = $state('');
 	let entries = $state(10);
+	let { data } = $props();
+	let dataListKomunitas = data.komunitasList;
+	let dataAnggota = data.allAnggota;
+	let selectedKomunitas = $state('');
 	let currPage = $state(1);
+	
 	function filterD(data: any[]) {
-		return data.filter(
+		// Filter berdasarkan komunitas yang dipilih terlebih dahulu
+		let filteredByKomunitas = data;
+		console.log("id komunitas : " , selectedKomunitas)
+		if (selectedKomunitas) {
+			filteredByKomunitas = data.filter(item => item.id_komunitas === selectedKomunitas);
+		}
+		
+		// Kemudian filter berdasarkan keyword
+		return filteredByKomunitas.filter(
 			(item) =>
 				item?.nama_anggota?.toLowerCase().includes(keyword.toLowerCase()) ||
 				item?.tanggal_bergabung?.toLowerCase().includes(keyword.toLowerCase()) ||
@@ -19,16 +32,20 @@
 				item?.email?.toLowerCase().includes(keyword.toLowerCase())
 		);
 	}
+	
 	function pagination(data: any[]) {
 		let d = filterD(data);
 		let start = (currPage - 1) * entries;
 		let end = start + entries;
-		console.log(d);
 		return d.slice(start, end);
 	}
-	let resData = $derived(pagination(dummySekreAnggotaKom));
+	
+	// Gunakan dataAnggota dari server, bukan dummy data
+	let resData = $derived(pagination(dataAnggota || []));
+	
 	$effect(() => {
-		if (keyword || entries) {
+		// Reset halaman saat filter berubah
+		if (keyword || entries || selectedKomunitas) {
 			currPage = 1;
 		}
 		if (entries < 0) {
@@ -49,22 +66,21 @@
 		>
 			<!-- select -->
 			<select
-				name="Organisasi"
-				id=""
-				value="Organisasi"
-				placeholder="cari organisasi"
+				name="Komunitas"
+				id="komunitas"
+				bind:value={selectedKomunitas}
 				class="rounded-md border px-3 py-2 focus:outline-none"
 			>
-				<option value="organisasi">Organisasi</option>
-				<option value="Komunitas">Komunitas</option>
-				<option value="Abdi">Abdi</option>
-				<option value="organisasi">Organisasi</option>
+				<option value="">Semua Komunitas</option>
+				{#each dataListKomunitas as komunitas}
+					<option value={komunitas.id_komunitas}>{komunitas.nama_komunitas}</option>
+				{/each}
 			</select>
 			<!-- cari -->
 			<div class="flex items-center rounded-lg border px-2">
 				<input
 					type="text"
-					placeholder="Cari.."
+					placeholder="Cari Anggota..."
 					bind:value={keyword}
 					class=" w-full bg-transparent px-2 py-2 focus:outline-none"
 				/>
@@ -105,13 +121,13 @@
 	<div class="flex w-full flex-col">
 		<Table
 			table_header={[
-				['id_anggota', 'Id Anggota'],
-				['nama_anggota', 'Nama Anggota'],
+				['id_user', 'Id Anggota'],
+				['nama_anggota', 'Nama Anggota'], // blom
 				['tanggal_bergabung', 'Tanggal Bergabung'],
 
-				['jabatan_komunitas', 'Jabatan Komunitas'],
-				['nomer_telepon', 'Nomer Telepon'],
-				['email', 'Email'],
+				['jabatan_anggota', 'Jabatan Anggota'],
+				['nomer_telepon', 'Nomer Telepon'], //blom
+				['email', 'Email'], //blom
 				['children', 'Aksi']
 			]}
 			table_data={resData}
@@ -133,7 +149,6 @@
 				{/if}
 			{/snippet}
 		</Table>
-		<Pagination bind:currPage bind:entries totalItems={filterD(dummySekreAnggotaKom).length}
-		></Pagination>
+		<Pagination bind:currPage bind:entries totalItems={filterD(dataAnggota || []).length}></Pagination>
 	</div>
 </div>

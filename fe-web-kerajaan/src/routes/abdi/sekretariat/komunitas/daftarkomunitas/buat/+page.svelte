@@ -1,5 +1,4 @@
 <script lang="ts">
-	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
 	import { goto } from '$app/navigation';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
@@ -11,6 +10,22 @@
 	let timer: number;
 	let errors = $state();
 	let loading = $state(false);
+
+	// Tambahkan state untuk gambar
+	let selectedImage = $state(null);
+	let imagePreview = $state(gambardefault);
+	let namaimage = $state('');
+
+	// Fungsi untuk menangani upload gambar
+	function handleImageUpload(event: any) {
+		const file = event.target.files[0];
+		if (file) {
+			selectedImage = file;
+			// Buat URL untuk preview gambar
+			imagePreview = URL.createObjectURL(file);
+			namaimage = 'exist';
+		}
+	}
 </script>
 
 {#if navigating.to}
@@ -20,20 +35,10 @@
 	<Loader></Loader>
 {/if}
 <div class="h-full w-full">
-	<div class="relative mx-auto flex w-full items-center justify-center">
-		<div class="group relative h-[100px] w-[100px]">
-			<img src={gambardefault} class="h-full w-full rounded-full" alt="" />
-
-			<div
-				class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-			>
-				<p class="font-semibold text-white">Ganti Foto</p>
-			</div>
-		</div>
-	</div>
 	<form
 		action="?/tambahSitus"
 		method="post"
+		enctype="multipart/form-data"
 		use:enhance={() => {
 			loading = true;
 			return async ({ result, update }) => {
@@ -43,15 +48,50 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						goto('/abdi/sekretariat/situs');
+						goto('/abdi/sekretariat/komunitas/daftarkomunitas');
 					}, 3000);
 				}
 				if (result.type === 'failure') {
 					errors = result.data?.errors;
+					{console.log(errors)}
 				}
 			};
 		}}
 	>
+		<div class="relative mx-auto flex w-full items-center justify-center">
+			<div class="group relative h-[100px] w-[100px]">
+				<img src={imagePreview} class="h-full w-full rounded-full object-cover" alt="Foto Profil" />
+
+				<div
+					class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+				>
+					<label for="profileImage" class="cursor-pointer">
+						<p class="font-semibold text-white">Ganti Foto</p>
+					</label>
+					<input
+						type="file"
+						id="profileImage"
+						name="profile_image"
+						accept="image/*"
+						onchange={handleImageUpload}
+						class="hidden"
+					/>
+				</div>
+			</div>
+		</div>
+		<div class="w-full items-center text-center">
+			{#if errors}
+				{#each errors.image_name as e}
+					<p class="text-red-500">- {e}</p>
+				{/each}
+			{/if}
+		</div>
+		{#if namaimage === 'exist'}
+			<input type="hidden" name="image_name" value={namaimage} />
+		{:else }
+			<input type="hidden" name="image_name" value="">	
+		{/if}
+
 		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<!-- 1 -->
 			<div>
@@ -192,23 +232,40 @@
 					{/each}
 				{/if}
 
-				<div class="mt-5 flex gap-12">
-					<div class="w-full lg:w-[50%]">
-						<p>No telepon :</p>
-						<input
-							type="text"
-							name="phone"
-							placeholder="Masukkan No Telp"
-							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-						/>
+				<div class="mt-5 gap-8 flex lg:flex-row flex-col">
+					<div class="flex-col lg:w-[50%]">
+						<div class="w-full">
+							<p>No telepon :</p>
+							<input
+								type="text"
+								name="phone"
+								placeholder="Masukkan No Telp"
+								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+							/>
+						</div>
+						{#if errors}
+							{#each errors.phone as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
 					</div>
-					<div class="hidden w-[50%]"></div>
+					<div class="flex-col lg:w-[50%]">
+						<div class="w-full">
+							<p>Jumlah Anggota :</p>
+							<input
+								type="text"
+								name="jumlah_anggota"
+								placeholder="Masukkan Jumlah Anggota"
+								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+							/>
+						</div>
+						{#if errors}
+							{#each errors.jumlahanggota as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
 				</div>
-				{#if errors}
-					{#each errors.phone as e}
-						<p class="text-left text-red-500">- {e}</p>
-					{/each}
-				{/if}
 			</div>
 		</div>
 
