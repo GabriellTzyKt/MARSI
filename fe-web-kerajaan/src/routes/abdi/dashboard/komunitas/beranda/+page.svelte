@@ -15,20 +15,20 @@
 >
     {#each dataambil as komunitas}
         <div class="relative min-h-full">
-            <div class="block h-[75%] w-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <div class="relative flex h-[250px] w-full flex-col rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
                 <div class="mx-auto flex w-full items-center justify-center">
-                    <img src={gambartemp} class="h-25 w-25 ml-5 mr-5 rounded-full" alt="" />
+                    <img src={komunitas.profileUrl || gambartemp} class="h-20 w-20 rounded-full" alt="" />
                 </div>
-                <h5 class="mb-2 mt-2 text-center text-md font-bold tracking-tight text-black">
+                <h5 class="mb-8 mt-4 text-center text-lg font-bold tracking-tight text-black">
                     {komunitas.nama_komunitas || 'Nama Komunitas'}
                 </h5>
-                <a href={`/abdi/dashboard/komunitas/beranda/${komunitas.id_komunitas}/detail`}>
-                    <button
-                        class="absolute right-0 mr-3 mt-8 w-20 rounded-lg bg-blue-500 px-2 py-1 text-white"
-                    >
-                        Detail
-                    </button>
-                </a>
+                <div class="mt-auto flex w-full justify-end">
+                    <a href={`/abdi/dashboard/komunitas/beranda/${komunitas.id_komunitas}/detail`}>
+                        <button class="w-20 rounded-lg bg-blue-500 px-2 py-1 text-white">
+                            Detail
+                        </button>
+                    </a>
+                </div>
             </div>
         </div>
     {/each}

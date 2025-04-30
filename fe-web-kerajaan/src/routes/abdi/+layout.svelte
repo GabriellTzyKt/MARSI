@@ -210,7 +210,7 @@
 		} else if (page.route.id?.startsWith('/abdi/sekretariat/komunitas/daftarkomunitas/edit')) {
 			return 'Edit Komunitas';
 		}
-		// test
+		// test baru dengan ada id
 		else if (page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/acara') {
 			return 'Daftar Acara';
 		}
@@ -223,6 +223,10 @@
 		else if (page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/edit') {
 			return 'Edit Komunitas';
 		}
+		else if (page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail') {
+			return 'Detail Situs';
+		}
+
 	});
 
 	let { children } = $props();
@@ -253,6 +257,7 @@
 			<img src={image} alt="Deskripsi Gambar" class="ml-2 h-20 w-20 lg:h-32 lg:w-32" />
 		</div>
 	</div>
+	<!-- mobile -->
 	{#if $sidebarActive}
 		<div class="mobile-sidebar-options flex w-full flex-col bg-blue-400 p-2 lg:hidden">
 			{#if page.route.id?.startsWith('/abdi/dashboard/komunitas')}
@@ -460,6 +465,8 @@
 	</div>
 </header>
 
+
+<!-- Website -->
 <div class="flex h-fit min-w-full">
 	<div class="test hidden min-h-screen w-fit bg-blue-400 lg:block lg:w-[16.7%]">
 		{#if page.route.id === '/abdi/dashboard'}
@@ -548,25 +555,25 @@
 					anchor="Dashboard"
 					active={isActive('/abdi/dashboard/')}
 				/>
-				{#if page.route.id?.startsWith('/abdi/dashboard/situs/detail')}
+				{#if page.route.id?.startsWith('/abdi/dashboard/situs/beranda/')}
 					<SidebarMenu href="#" icon="mdi:people" anchor="Situs" hasChildren={true}>
 						<SidebarMenu
-							href="/abdi/dashboard/situs/detail/daftaracara"
+							href="/abdi/dashboard/situs/beranda/[id]/detail/daftaracara"
 							icon="mdi:book"
 							anchor="Daftar Acara"
-							active={page.route.id?.startsWith('/abdi/dashboard/situs/detail/daftaracara')}
+							active={page.route.id?.startsWith('/abdi/dashboard/situs/beranda/[id]/detail/daftaracara')}
 						/>
 						<SidebarMenu
-							href="/abdi/dashboard/situs/detail/bukutamu"
+							href="/abdi/dashboard/situs/beranda/[id]/detail/bukutamu"
 							icon="mdi:book"
 							anchor="Buku Tamu"
-							active={page.route.id?.startsWith('/abdi/dashboard/situs/detail/bukutamu')}
+							active={page.route.id?.startsWith('/abdi/dashboard/situs/beranda/[id]/detail/bukutamu')}
 						/>
 						<SidebarMenu
-							href="/abdi/dashboard/situs/detail"
+							href="/abdi/dashboard/situs/beranda/[id]/detail"
 							icon="mdi:book"
 							anchor="Detail Situs"
-							active={page.route.id == '/abdi/dashboard/situs/detail'}
+							active={page.route.id == '/abdi/dashboard/situs/beranda/[id]/detail'}
 						/>
 					</SidebarMenu>
 				{/if}

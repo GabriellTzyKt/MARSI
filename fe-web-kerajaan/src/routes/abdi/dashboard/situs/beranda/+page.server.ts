@@ -4,26 +4,28 @@ import { env } from "$env/dynamic/private";
 
 export const load: PageServerLoad = async ({ }) => {
     try {
-        const komunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas?limit=200`);
-        if (!komunitasResponse.ok) {
-            throw error(komunitasResponse.status, `Failed to fetch komunitas: ${komunitasResponse.statusText}`);
+        const situsResponse = await fetch(`${env.URL_KERAJAAN}/situs?limit=200`);
+        if (!situsResponse.ok) {
+            throw error(situsResponse.status, `Failed to fetch situsResponse: ${situsResponse.statusText}`);
         }
         
-        const komunitasList = await komunitasResponse.json();
-        console.log("komunitas : ", komunitasList);
+        const situsList = await situsResponse.json();
+        console.log("situs : ", situsList);
 
-        const filteredList = komunitasList.filter((doc: any) => {
+        const filteredList = situsList.filter((doc: any) => {
             return doc.deleted_at == '0001-01-01T00:00:00Z' && doc.deleted_at !== null;
         });
 
-        // Fetch profile images for each komunitas
-        const komunitasWithProfiles = await Promise.all(
-            filteredList.map(async (komunitas: any) => {
+        // Fetch profile images for each situs
+        const situsWithProfiles = await Promise.all(
+            filteredList.map(async (situs: any) => {
                 let profileUrl = null;
                 
-                if (komunitas.profile) {
+                if (situs.foto_situs) {
                     try {
-                        const filePathResponse = await fetch(`${env.URL_KERAJAAN}/doc/${komunitas.profile}`);
+                        const firstPhotoId = situs.foto_situs.split(',')[0].trim();
+                        
+                        const filePathResponse = await fetch(`${env.URL_KERAJAAN}/doc/${firstPhotoId}`);
                         if (filePathResponse.ok) {
                             const filePathData = await filePathResponse.json();
                             const filePath = filePathData.file_dokumentasi;
@@ -33,21 +35,21 @@ export const load: PageServerLoad = async ({ }) => {
                             }
                         }
                     } catch (fileError) {
-                        console.error(`Error fetching profile for komunitas ${komunitas.id_komunitas}:`, fileError);
+                        console.error(`Error fetching profile for situs ${situs.id_situs}:`, fileError);
                     }
                 }
                 
                 return {
-                    ...komunitas,
+                    ...situs,
                     profileUrl
                 };
             })
         );
 
-        console.log("komunitas with profiles:", komunitasWithProfiles);
+        console.log("situs with profiles:", situsWithProfiles);
 
         return {
-            filteredList: komunitasWithProfiles
+            filteredList: situsWithProfiles
         };
     } catch (error) {
         console.error("Error in load function:", error);
