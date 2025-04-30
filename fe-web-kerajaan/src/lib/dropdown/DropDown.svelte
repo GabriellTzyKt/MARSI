@@ -171,7 +171,7 @@
 						{/if}
 					{:else}
 						<a
-							href={i[3]}
+							href={i[1]}
 							class="w-full px-4 py-1 {p === 0 ? 'rounded-t-lg' : ''} {p === items.length - 1
 								? 'rounded-b-lg'
 								: ''} hover:cursor-pointer hover:bg-gray-400">{i[0]}</a

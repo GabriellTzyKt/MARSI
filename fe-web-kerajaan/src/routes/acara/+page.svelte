@@ -5,6 +5,7 @@
 	import situs1 from '$lib/asset/kerajaan/situs1.png';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
+	let { data } = $props();
 
 	const events = [
 		{
@@ -107,8 +108,14 @@
 
 	<div class="mb-10 ml-5 mr-5 mt-10 flex h-full justify-center">
 		<div class="mx-auto grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-			{#each filteredData as event}
-				<Card2 situs={event.situs} header={event.header} isi={event.isi} icon="" id={event.id} />
+			{#each data.data as event}
+				<Card2
+					situs={event.foto_acara[0] || ''}
+					header={event.nama_acara}
+					isi={event.deskripsi_acara || 'No Description'}
+					icon=""
+					id={event.id_acara}
+				/>
 			{/each}
 		</div>
 	</div>
