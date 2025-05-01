@@ -114,6 +114,7 @@
 					header={event.nama_acara}
 					isi={event.deskripsi_acara || 'No Description'}
 					icon=""
+					href="/acara/{event.id_acara}"
 					id={event.id_acara}
 				/>
 			{/each}

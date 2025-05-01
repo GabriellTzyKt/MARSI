@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/state';
 
-	let { situs, header, isi, icon, id } = $props();
+	let { situs, header, isi, icon, id, href = '' } = $props();
 
 	$inspect('test');
 	$inspect(page);
 </script>
 
 <div class="h-full max-w-sm overflow-hidden rounded bg-white shadow-lg">
-	<div class="w-full">
+	<div class="w-full justify-center">
 		{#if situs == ''}
 			<div class="flex h-[150px] w-[300px] items-center justify-center">
 				<p class="text-gray-600">No Images</p>
@@ -42,7 +42,16 @@
 					</span>
 				{/if}
 
-				{#if id != 0}
+				<div class="flex items-end justify-end">
+					<a
+						{href}
+						class="my-2 ml-auto flex items-center gap-2 rounded-full border-2 px-2 py-1 text-blue-500"
+					>
+						Selanjutnya
+						<span class="fluent--arrow-right-12-filled"></span>
+					</a>
+				</div>
+				<!-- {#if id != 0}
 					{#if page.route.id == '/situs'}
 						<a
 							href="/situs/{id}"
@@ -76,7 +85,7 @@
 						Selanjutnya
 						<span class="fluent--arrow-right-12-filled"></span>
 					</a>
-				{/if}
+				{/if} -->
 			</div>
 		</div>
 	</div>

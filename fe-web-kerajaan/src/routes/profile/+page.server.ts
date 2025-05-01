@@ -3,43 +3,53 @@ import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
 import { date } from "zod";
 
-export const load: PageServerLoad = async ({locals,cookies}) => {
+export const load: PageServerLoad = async ({locals, cookies}) => {
     try {
-        const session = JSON.parse(cookies.get("userSession") as string);
-        console.log("Session contents:", session.user_data);
-        console.log("Session contents:", session.user_data.id_user);
-        console.log("Session contents:", session.token);
-        if (!session) {
-            redirect(302, '/login')
+        const sessionCookie = cookies.get("userSession");
+        console.log(sessionCookie)
+        if (!sessionCookie) {
+            return redirect(302, '/login');
         }
-        const res = await fetch(`${env.PUB_PORT}/user/detail`,
-            {
-                headers: {
-                    "Authorization": `Bearer ${session.token}`
-                }
+        
+        const session = JSON.parse(sessionCookie);
+        console.log(sessionCookie)
+        if (!session || !session.token) {
+            return redirect(302, '/login');
+        }
+        
+        console.log("Session contents:", session.user_data);
+        
+        const res = await fetch(`${env.PUB_PORT}/user/profile`, {
+            headers: {
+                "Authorization": `Bearer ${session.token}`
             }
-        )
-        const data = await res.json()
+        });
+        
+        const data = await res.json();
         if (res.ok) {
             const formatDate = (isoString) => {
                 if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
                 const date = new Date(isoString);
                 const day = String(date.getDate()).padStart(2, '0');
                 const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            return `${year}-${month}-${day}`;
+                const year = date.getFullYear();
+                return `${year}-${month}-${day}`;
             };
+            
             const resData = {
                 ...data,
                 tanggal_lahir: formatDate(data.tanggal_lahir)
-            }
-            console.log(data)
-            return {data: resData}
+            };
+            
+            console.log(data);
+            return {data: resData};
         }
-        console.log(data)
-    }   
-    catch (error) {
         
+        console.log(data);
+        return redirect(302, '/login');
+    } catch (error) {
+        console.error("Error in profile load function:", error);
+        return redirect(302, '/login');
     }
 };
 

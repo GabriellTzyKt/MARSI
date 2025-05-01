@@ -214,7 +214,7 @@
 		</div>
 		<div class="grid w-full grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-4">
 			{#each preview as url, index}
-				<div class="relative h-[150px] w-auto">
+				<div class="relative h-[200px] w-auto">
 					<img src={url} class="h-full w-full rounded-lg object-cover" alt="" />
 					<!-- svelte-ignore a11y_consider_explicit_label -->
 					<button

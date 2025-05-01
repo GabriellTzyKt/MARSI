@@ -13,6 +13,7 @@
 	const nama_acara = situs?.nama_acara || 'Nama Acara Tidak Tersedia';
 	const tanggal = situs?.tanggal_mulai || '-';
 	const jam = situs?.waktu_mulai || '-';
+	const jam_selesai = situs?.waktu_selesai || '-';
 	const id = situs?.id_acara || '';
 	const lokasi = situs?.alamat_acara || 'Lokasi tidak tersedia';
 	const isi = situs?.deskripsi_acara || 'Tidak ada deskripsi';
@@ -67,7 +68,7 @@
 
 					<div class="mt-5 flex items-center">
 						<span class="mdi--clock flex-shrink-0"></span>
-						<p class="text-md ml-4">Jam Acara : {jam}</p>
+						<p class="text-md ml-4">Jam Acara : {jam}-{jam_selesai}</p>
 					</div>
 
 					<div class="mt-5 flex items-center">

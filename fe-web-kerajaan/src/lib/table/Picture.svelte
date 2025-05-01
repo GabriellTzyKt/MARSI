@@ -120,7 +120,7 @@
 		{#each imageUrls as file, i}
 			<img
 				src={file}
-				class="h-auto w-full rounded-xl"
+				class=" h-auto w-full rounded-xl object-fill"
 				alt=""
 				onload={() => {
 					handleI(i);

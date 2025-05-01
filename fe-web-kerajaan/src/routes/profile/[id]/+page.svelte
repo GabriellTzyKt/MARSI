@@ -13,7 +13,7 @@
 	import Loader from '$lib/loader/Loader.svelte';
 	let { form, data } = $props();
 
-	console.log(form?.errors);
+	console.log(data);
 	onMount(() => {});
 	let open = $state(false);
 	let timer: number;
@@ -39,16 +39,29 @@
 			errMsgB = '';
 		}
 	}
-	function setTimer() {}
-
-	const ddrunes = new DropDownRunes();
 
 	let toggle = () => {
 		if (!open) {
 			open = true;
 		} else open = false;
 	};
-
+	let pictUrl = $state(jd);
+	let pictUrlFiles = $state();
+	function handleFiles(event) {
+		const input = event.target as HTMLInputElement;
+		if (input.files && input.files[0]) {
+			pictUrlFiles = input.files[0];
+			pictUrl = URL.createObjectURL(input.files[0]);
+		}
+	}
+	// Clean up object URLs when component is destroyed
+	onMount(() => {
+		return () => {
+			if (pictUrl && pictUrl !== jd) {
+				URL.revokeObjectURL(pictUrl);
+			}
+		};
+	});
 	const akun = data.akun;
 	let loading = $state(false);
 </script>
@@ -64,6 +77,7 @@
 	action="?/ubah"
 	onsubmit={(e) => cekRadio(e)}
 	method="post"
+	enctype="multipart/form-data"
 	use:enhance={() => {
 		loading = true;
 		return async ({ result }) => {
@@ -107,10 +121,15 @@
 
 		<!-- Foto Profil -->
 		<div class="relative">
-			<img src={jd} class="h-24 w-24 rounded-full sm:h-28 sm:w-28 md:h-36 md:w-36" alt="Profile" />
+			<img
+				src={pictUrl}
+				class="h-24 w-24 rounded-full sm:h-28 sm:w-28 md:h-36 md:w-36"
+				alt="Profile"
+			/>
 			<!-- Tombol Edit Foto -->
 			<!-- svelte-ignore a11y_consider_explicit_label -->
-			<button class="absolute bottom-0 right-0 rounded-xl bg-white p-2 shadow-md">
+			<!-- svelte-ignore a11y_label_has_associated_control -->
+			<label class="absolute bottom-0 right-0 rounded-xl bg-white p-2 shadow-md">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
@@ -125,7 +144,8 @@
 						d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
 					/>
 				</svg>
-			</button>
+				<input type="file" hidden name="profilepict" accept="image/*" onchange={handleFiles} />
+			</label>
 		</div>
 
 		<!-- Tombol Simpan Data -->
@@ -185,7 +205,7 @@
 				<p class="text-xl">Nama Lengkap</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="nama_lengkap" value={akun.nama_lengkap}></Input>
+				<Input type="text" name="nama_lengkap" value={data.data.nama_lengkap || '-'}></Input>
 				{#if form?.errors}
 					{#each form?.errors.nama_lengkap as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -199,7 +219,7 @@
 				<p class="text-xl">Tempat Lahir</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="tempat_lahir" value={akun.tempat_lahir}></Input>
+				<Input type="text" name="tempat_lahir" value={data.data.nama_lengkap || '-'}></Input>
 				{#if form?.errors}
 					{#each form?.errors.tempat_lahir as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -218,7 +238,7 @@
 					name="tanggal_lahir"
 					class="w-full rounded-lg border border-gray-500 bg-white py-2 ps-2 text-gray-500 focus:outline-none"
 					id="tanggal_lahir"
-					value={accounts[0].tanggal_lahir}
+					value={data.data.tanggal_lahir_UI || '-'}
 				/>
 				{#if form?.errors}
 					{#each form?.errors.tanggal_lahir as e}
@@ -236,11 +256,11 @@
 				<select
 					name="jenis_kelamin"
 					class="w-full rounded-lg border border-gray-500 py-2 pe-2 ps-2"
-					value={accounts[0].jenis_kelamin}
+					value={data.data.jenis_kelamin || '-'}
 					id=""
 				>
 					<option value="Perempuan">Perempuan</option>
-					<option value="Perempuan">Laki - Laki</option>
+					<option value="Laki_Laki">Laki - Laki</option>
 				</select>
 				{#if form?.errors}
 					{#each form?.errors.jenis_kelamin as e}
@@ -255,7 +275,7 @@
 				<p class="text-xl">Alamat</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="alamat" value={accounts[0].alamat}></Input>
+				<Input type="text" name="alamat" value={data.data.alamat || '-'}></Input>
 				{#if form?.errors}
 					{#each form?.errors.alamat as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -269,7 +289,7 @@
 				<p class="text-xl">No Telpon</p>
 			</div>
 			<div class="mt-2">
-				<Input type="phone" name="no_telp" value={accounts[0].nomer_telpon}></Input>
+				<Input type="phone" name="no_telp" value={data.data.no_telp || '-'}></Input>
 				{#if form?.errors}
 					{#each form?.errors.no_telp as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -284,7 +304,7 @@
 				<p class="text-xl">Pekerjaan</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="pekerjaan" value={accounts[0].pekerjaan}></Input>
+				<Input type="text" name="pekerjaan" value={data.data.pekerjaan || '-'}></Input>
 				{#if form?.errors}
 					{#each form?.errors.pekerjaan as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -298,7 +318,7 @@
 				<p class="text-xl">Wongso</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="wongso" value={accounts[0].wongso}></Input>
+				<Input type="text" name="wongso" value={data.data.wongso || '-'}></Input>
 				{#if form?.errors}
 					{#each form?.errors.wongso as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -313,7 +333,7 @@
 				<p class="text-xl">Email</p>
 			</div>
 			<div class="mt-2">
-				<Input type="email" name="email" value={accounts[0].email}></Input>
+				<Input type="email" name="email" value={data.data.email || '-'}></Input>
 				{#if form?.errors}
 					{#each form?.errors.email as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -327,7 +347,7 @@
 				<p class="text-xl">Hobi</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="hobi" value={accounts[0].hobi}></Input>
+				<Input type="text" name="hobi" value={data.data.hobi || '-'}></Input>
 				{#if form?.errors}
 					{#each form?.errors.hobi as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -342,7 +362,7 @@
 				<p class="text-xl">Agama</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="agama" value={accounts[0].agama}></Input>
+				<Input type="text" name="agama" value={data.data.agama || '-'}></Input>
 				{#if form?.errors}
 					{#each form?.errors.agama as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -358,7 +378,7 @@
 				<p class="text-xl">Asma Dalem</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="asma_dalem" value={accounts[0].asma_dalem}></Input>
+				<Input type="text" name="asma_dalem" value={data.data.panggilan || '-'}></Input>
 				{#if form?.errors}
 					{#each form?.errors.asma_dalem as e}
 						<p class="text-left text-red-500">- {e}</p>

@@ -10,11 +10,10 @@
 		dataambil
 	} = $props();
 
-	console.log("ini data2 : " , data2)
+	console.log('ini data2 : ', data2);
 
-	let keyword = $state(data2 ? data2.namaanggota : '');
+	let keyword = $state(data2 ? data2.nama_anggota : '');
 	let showDropdown = $state(false);
-
 
 	function updateFilteredData() {
 		if (!keyword.trim()) return [];
@@ -25,8 +24,6 @@
 		keyword = item;
 		showDropdown = false;
 	}
-
-
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
