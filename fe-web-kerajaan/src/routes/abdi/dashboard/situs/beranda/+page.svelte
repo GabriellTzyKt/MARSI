@@ -6,6 +6,11 @@
 	let { data }= $props();
 	let dataambil = data.filteredList
 	let total = $state(16);
+
+	// Function to handle navigation to detail page
+	function navigateToDetail(id : any) {
+		goto(`/abdi/dashboard/situs/beranda/${id}/detail`);
+	}
 </script>
 
 {#if navigating.to}
@@ -24,11 +29,12 @@
                     {situs.nama_situs || 'Nama Situs'}
                 </h5>
                 <div class="mt-auto flex w-full justify-end">
-                    <a href={`/abdi/dashboard/situs/beranda/${situs.id_situs}/detail`}>
-                        <button class="w-20 rounded-lg bg-blue-500 px-2 py-1 text-white">
-                            Detail
-                        </button>
-                    </a>
+                    <button 
+                        class="w-20 rounded-lg bg-blue-500 px-2 py-1 text-white"
+                        onclick={() => navigateToDetail(situs.id_situs)}
+                    >
+                        Detail
+                    </button>
                 </div>
             </div>
         </div>

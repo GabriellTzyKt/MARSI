@@ -136,9 +136,6 @@
 
 		<div class="mt-5 flex w-full">
 			<p class="ml-10 mt-2 w-full text-start font-bold lg:text-center">Dokumentasi</p>
-			<button class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white">
-				Tambah Gambar
-			</button>
 		</div>
 
 		<div class="mt-5 grid grid-cols-2 gap-2 lg:grid-cols-4">
@@ -166,23 +163,6 @@
 </div>
 
 <style>
-	.gg--trash {
-		display: inline-block;
-		width: 24px;
-		height: 24px;
-		background-repeat: no-repeat;
-		background-size: 100% 100%;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='%23fff6f6'%3E%3Cpath fill-rule='evenodd' d='M17 5V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1H4a1 1 0 0 0 0 2h1v11a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V7h1a1 1 0 1 0 0-2zm-2-1H9v1h6zm2 3H7v11a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1z' clip-rule='evenodd'/%3E%3Cpath d='M9 9h2v8H9zm4 0h2v8h-2z'/%3E%3C/g%3E%3C/svg%3E");
-	}
-
-	.mdi--edit {
-		display: inline-block;
-		width: 32px;
-		height: 32px;
-		background-repeat: no-repeat;
-		background-size: 100% 100%;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'/%3E%3C/svg%3E");
-	}
 
 	@media (max-width: 768px) {
 		.flexcoba {

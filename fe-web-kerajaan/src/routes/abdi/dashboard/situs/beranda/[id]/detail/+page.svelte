@@ -3,6 +3,19 @@
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
+	import { page } from '$app/stores';
+
+	let { data } = $props();
+	let dataambil = $state(data.situs) 
+	console.log("data ambil : ", dataambil)
+	let datasemuafoto = $state(data.fotoSitusDetails)
+	let datafotoprofil = $state(data.fileDetails)
+	
+	let situsId = $state($page.params.id);
+	
+	$effect(() => {
+		situsId = $page.params.id;
+	});
 </script>
 
 {#if navigating.to}
@@ -11,11 +24,10 @@
 <div class="h-full w-full">
 	<div class="block h-fit rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="relative mx-auto flex w-full items-center justify-center">
-			<img src={gambardefault} class="h-25 w-25 relative ml-5 mr-5 rounded-full" alt="" />
-			<span class="mdi--edit absolute"></span>
+			<img src={datafotoprofil?.url || gambardefault} class="h-25 w-25 relative ml-5 mr-5 rounded-full" alt="" />
 		</div>
 		<div class="mt-5 flex w-full justify-center lg:mt-0 lg:justify-end">
-			<a href="/abdi/dashboard/situs/detail/ubah"
+			<a href="/abdi/dashboard/situs/beranda/{situsId}/detail/ubah"
 				><button class="w-50 h-fit items-end rounded-lg bg-yellow-300 px-2 py-2 text-black">
 					Ubah
 				</button></a
@@ -28,31 +40,31 @@
 					class="flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Nama Situs:</p>
-					<input type="text" placeholder="Masukkan Nama" />
+					<input type="text" bind:value={dataambil.nama_situs} readonly placeholder="Masukkan Nama" />
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Alamat :</p>
-					<input type="text" placeholder="Masukkan Alamat" />
+					<input type="text" bind:value={dataambil.alamat} readonly placeholder="Masukkan Alamat" />
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Wisata :</p>
-					<input type="text" placeholder="Masukkan Email" />
+					<input type="text" bind:value={dataambil.wisata} readonly placeholder="Masih Kosong" />
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Email :</p>
-					<input type="text" placeholder="Masukkan Email" />
+					<input type="text" bind:value={dataambil.email} readonly  placeholder="Masukkan Email" />
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Deskripsi Situs :</p>
-					<textarea placeholder="Masukkan Email"></textarea>
+					<textarea bind:value={dataambil.deskripsi_situs} readonly placeholder="Masukkan Email"></textarea>
 				</div>
 			</div>
 
@@ -62,31 +74,31 @@
 					class="flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Dibangun Oleh:</p>
-					<input type="text" placeholder="Masukkan Nama" />
+					<input type="text" bind:value={dataambil.nama_pendiri} readonly placeholder="Masukkan Nama" />
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Pembina :</p>
-					<input type="text" placeholder="Masukkan Alamat" />
+					<input type="text" bind:value={dataambil.pembina} readonly placeholder="Masukkan Alamat" />
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Juru Kunci :</p>
-					<input type="text" placeholder="Masukkan Email" />
+					<input type="text" bind:value={dataambil.juru_kunci} readonly placeholder="Masukkan Email" />
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Jam Buka :</p>
-					<input type="text" placeholder="Masukkan Email" />
+					<input type="text" bind:value={dataambil.jam_buka} readonly placeholder="Masukkan Email" />
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>No Telpon :</p>
-					<input type="text" placeholder="Masukkan Email" />
+					<input type="text" bind:value={dataambil.no_telp} readonly placeholder="Masukkan Email" />
 				</div>
 			</div>
 
@@ -96,31 +108,31 @@
 					class="flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Tahun Berdiri:</p>
-					<input type="text" placeholder="Masukkan Nama" />
+					<input type="text" bind:value={dataambil.tahun_berdiri} readonly placeholder="Masukkan Nama" />
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Pelindung :</p>
-					<input type="text" placeholder="Masukkan Alamat" />
+					<input type="text" bind:value={dataambil.pelindung} readonly placeholder="Masukkan Alamat" />
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Jenis Situs :</p>
-					<input type="text" placeholder="Masukkan Email" />
+					<input type="text" bind:value={dataambil.id_jenis_situs} readonly placeholder="Masukkan Email" />
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Jam Tutup :</p>
-					<input type="text" placeholder="Masukkan Email" />
+					<input type="text" bind:value={dataambil.jam_tutup} readonly placeholder="Masukkan Email" />
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Kepemilikan :</p>
-					<input type="text" placeholder="Masukkan Email" />
+					<input type="text" bind:value={dataambil.kepemilikan} readonly placeholder="Masih Kosong" />
 				</div>
 			</div>
 		</div>
