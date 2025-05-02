@@ -117,13 +117,10 @@
 			table_header={[
 				['nama_komunitas', 'Nama Komunitas'],
 				['tanggal_berdiri', 'Tanggal Berdiri'],
-				['alamat', 'Lokasi Komunitas'],
-
-				['penanggung_jawab', 'Penanggung Jawab'],
-
-				['pelindung', 'Pelindung'],
-				['pembina', 'Pembina'],
-
+				['alamat', 'Alamat Komunitas'],
+				['penanggung_jawab_nama', 'Penanggung Jawab'],
+				['pembina_nama', 'Pembina'],
+				['pelindung_nama', 'Pelindung'],
 				['children', 'Aksi']
 			]}
 			table_data={resData}
@@ -133,7 +130,7 @@
 					<DropDown
 						text={`Apakah yakin ingin mengarsipkan abdi?`}
 						items={[
-							['Edit', '/abdi/sekretariat/komunitas/daftarkomunitas/edit'],
+							['Edit', `/abdi/sekretariat/komunitas/daftarkomunitas/edit/${data.id_komunitas}`],
 							[
 								'children',
 								'Non Aktifkan',

@@ -1,24 +1,30 @@
 import { env } from "$env/dynamic/private";
+import { fail } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
+import type { Actions } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async ({ fetch }) => {
     try {
         // ngambil data arsip
-        const arsipRequest = await fetch(env.PUB_PORT + "/arsip?limit=200", {
+        const arsipRequest = await fetch(env.PUB_PORT + "/arsip?limit=100", {
             method: "GET",
             headers: {
                 "Accept": "application/json"
             }
         });
-        
+
         if (!arsipRequest.ok) {
             console.error("Failed to fetch arsip data:", arsipRequest.status);
             return { dataArsip: "Failed" };
         }
-        
+
         const arsipData = await arsipRequest.json();
-        // console.log("Arsip data fetched:", arsipData);
-        
+        // Filter out deleted items
+        const filteredArsipData = arsipData.filter((doc: any) => {
+            return doc.deleted_at === '0001-01-01T00:00:00Z' && doc.deleted_at !== null;
+        });
+        console.log("Filtered arsip data:", filteredArsipData);
+
         // ngambil jenis arsip data
         const jenisArsipRequest = await fetch(env.PUB_PORT + "/jenis-arsip?limit=1000", {
             method: "GET",
@@ -26,12 +32,12 @@ export const load: PageServerLoad = async ({ fetch }) => {
                 "Accept": "application/json"
             }
         });
-        
+
         if (!jenisArsipRequest.ok) {
             console.error("Failed to fetch jenis arsip data:", jenisArsipRequest.status);
             return { dataArsip: "Failed", jenisArsip: "Failed" };
         }
-        
+
         const jenisArsipData = await jenisArsipRequest.json();
         // console.log("Jenis arsip data fetched:", jenisArsipData);
 
@@ -42,30 +48,30 @@ export const load: PageServerLoad = async ({ fetch }) => {
                 "Accept": "application/json"
             }
         });
-        
+
         if (!jenisKerajaan.ok) {
             console.error("Failed to fetch jenis arsip data:", jenisKerajaan.status);
             return { dataArsip: "Failed", jenisArsip: "Failed" };
         }
-        
+
         const jenisKerajaanData = await jenisKerajaan.json();
         // console.log("Kerajaan total :", jenisKerajaanData);
-        
+
         // proses data arsip + nambah jenis arsip
         const documentsWithFiles = await Promise.all(
-            arsipData.map(async (doc: any) => {
+            filteredArsipData.map(async (doc: any) => {
                 try {
                     // nyari id yang sama
-                    const matchingJenisArsip = jenisArsipData.find((jenis: any) => 
+                    const matchingJenisArsip = jenisArsipData.find((jenis: any) =>
                         jenis.id_jenis_arsip === doc.jenis_arsip
                     );
-                    
+
                     // tambah data nama_jenis ( id yg sama ) utk ditampilkan di halaman awal
                     const docWithJenisArsip = {
                         ...doc,
                         jenis_arsip_detail: matchingJenisArsip.nama_jenis || "tidak ada"
                     };
-                    
+
                     const docId = doc.dokumentasi;
                     const filePathsRequest = await fetch(`${env.PUB_PORT}/doc/${docId}`, {
                         method: "GET",
@@ -73,7 +79,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
                             "Accept": "application/json"
                         }
                     });
-                    
+
                     if (!filePathsRequest.ok) {
                         console.error(`Failed to fetch file paths for doc ${docId}:`, filePathsRequest.status);
                         return {
@@ -81,11 +87,11 @@ export const load: PageServerLoad = async ({ fetch }) => {
                             files: []
                         };
                     }
-                    
+
                     // dijadiin json, karena habis di fetch
                     const filePathsData = await filePathsRequest.json();
                     // console.log(`File paths data for doc ${docId}:`, filePathsData, typeof filePathsData);
-                    
+
                     // mastiin array soalnya bakal di proses kedalam function map()
                     let pathsArray = [];
                     if (Array.isArray(filePathsData)) {
@@ -166,8 +172,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
                 }
             })
         );
-        
-        return { 
+
+        return {
             dataArsip: documentsWithFiles,
             // jenisArsip: jenisArsipData 
         };
@@ -178,4 +184,25 @@ export const load: PageServerLoad = async ({ fetch }) => {
         }
         return { dataArsip: "Failed", error: "Unknown error" };
     }
+};
+
+export const actions: Actions = {
+    delete: async ({ request }) => {
+        const data = await request.formData()
+        console.log("data id : " , data)
+        try {
+            const del = await fetch(`${env.PUB_PORT}/arsip/${data.get("id_arsip")}`, {
+                method: "DELETE"
+            })
+            const m = await del.json()
+            if (!del.ok) {
+                return fail(406, { error: `Code ${del.status} Message: ${m.message}` })
+            }
+            console.log(m.message)
+            return { error: "no error" }
+        }
+        catch (error) {
+
+        }
+    },
 };

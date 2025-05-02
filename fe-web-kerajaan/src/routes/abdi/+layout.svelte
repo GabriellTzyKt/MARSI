@@ -8,7 +8,19 @@
 	import SidebarMenu from '$lib/sidebar/SidebarMenu.svelte';
 	import Loader from '$lib/loader/Loader.svelte';
 
-	const isActive = (path: string) => page.route.id === path;
+	const isActive = (path: string) => page.route.id == path;
+
+	console.log('page.route.id : ', page.route.id);
+
+	let idAktif = $state('');
+	let pageAktif = $state(page.route.id);
+
+	$effect(() => {
+		idAktif = page.params.id;
+		console.log('ID : ', idAktif);
+		pageAktif = page.route.id;
+		console.log('Path saat ini : ', pageAktif);
+	});
 
 	$inspect(page);
 	const pageTitle = $derived.by(() => {
@@ -204,8 +216,34 @@
 			return 'Edit Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/manajemenadmin') {
 			return 'Manajemen Role Administrasi';
-		} else if (page.route.id === '/abdi/dashboard/komunitas/detail/edit') {
-			return 'Ubah Komunitas';
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi') {
+			return 'Daftar Organisasi';
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit') {
+			return 'Ubah Organisasi';
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/buat') {
+			return 'Buat Organisasi';
+		} else if (page.route.id?.startsWith('/abdi/sekretariat/komunitas/daftarkomunitas/edit')) {
+			return 'Edit Komunitas';
+		}
+		// test baru dengan ada id
+		else if (page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/acara') {
+			return 'Daftar Acara';
+		} else if (page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/daftaranggota') {
+			return 'Daftar Anggota';
+		} else if (page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail') {
+			return 'Detail Komunitas';
+		} else if (page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/edit') {
+			return 'Edit Komunitas';
+		} else if (page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail') {
+			return 'Detail Situs';
+		} else if (page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail/ubah') {
+			return 'Edit Situs';
+		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail') {
+			return 'Detail Organisasi';
+		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/ubah') {
+			return 'Edit Organisasi';
+		} else if (page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail/ubah') {
+			return 'Edit Situs';
 		}
 	});
 
@@ -215,6 +253,16 @@
 
 	const toggleSidebar = () => {
 		sidebarActive.update((value) => !value);
+	};
+
+	// Add this function near your other utility functions
+	const isRouteActive = (pattern: any, id?: string) => {
+		if (!id) return page.route.id?.startsWith(pattern);
+
+		// Replace [id] with actual ID in the pattern
+		const actualPattern = pattern.replace('[id]', id);
+		console.log('link modif : ', actualPattern);
+		return actualPattern;
 	};
 </script>
 
@@ -237,6 +285,7 @@
 			<img src={image} alt="Deskripsi Gambar" class="ml-2 h-20 w-20 lg:h-32 lg:w-32" />
 		</div>
 	</div>
+	<!-- mobile -->
 	{#if $sidebarActive}
 		<div class="mobile-sidebar-options flex w-full flex-col bg-blue-400 p-2 lg:hidden">
 			{#if page.route.id?.startsWith('/abdi/dashboard/komunitas')}
@@ -247,7 +296,7 @@
 						anchor="Dashboard"
 						active={isActive('/abdi/dashboard')}
 					/>
-					{#if page.route.id?.startsWith('/abdi/dashboard/komunitas/detail')}
+					{#if page.route.id?.startsWith('/abdi/dashboard/komunitas/beranda')}
 						<SidebarMenu href="#" icon="mdi:people" anchor="Komunitas" hasChildren={true}>
 							<SidebarMenu
 								href="/abdi/dashboard/komunitas/detail"
@@ -451,6 +500,7 @@
 	</div>
 </header>
 
+<!-- Website -->
 <div class="flex h-fit min-w-full">
 	<div class="test hidden min-h-screen w-fit bg-blue-400 lg:block lg:w-[16.7%]">
 		{#if page.route.id === '/abdi/dashboard'}
@@ -472,25 +522,26 @@
 					anchor="Dashboard"
 					active={isActive('/abdi/dashboard')}
 				/>
-				{#if page.route.id?.startsWith('/abdi/dashboard/komunitas/detail')}
+				{#if page.route.id?.startsWith('/abdi/dashboard/komunitas/beranda/')}
 					<SidebarMenu href="#" icon="mdi:people" anchor="Komunitas" hasChildren={true}>
 						<SidebarMenu
-							href="/abdi/dashboard/komunitas/detail"
+							href="/abdi/dashboard/komunitas/beranda/{idAktif}/detail"
 							icon="mdi:book"
 							anchor="Detail komunitas"
-							active={page.route.id == '/abdi/dashboard/komunitas/detail'}
+							active={page.route.id == `/abdi/dashboard/komunitas/beranda/${idAktif}/detail`}
 						/>
 						<SidebarMenu
-							href="/abdi/dashboard/komunitas/detail/daftaranggota"
+							href="/abdi/dashboard/komunitas/beranda/1/detail/daftaranggota"
 							icon="mdi:crown"
 							anchor="Daftar Anggota"
-							active={page.route.id?.startsWith('/abdi/dashboard/komunitas/detail/daftaranggota')}
+							active={page.route.id ==
+								`/abdi/dashboard/komunitas/beranda/${idAktif}/detail/daftaranggota`}
 						/>
 						<SidebarMenu
-							href="/abdi/dashboard/komunitas/detail/acara"
+							href="/abdi/dashboard/komunitas/beranda/{idAktif}/detail/acara"
 							icon="mdi:crown"
 							anchor="Acara"
-							active={page.route.id?.startsWith('/abdi/dashboard/komunitas/detail/acara')}
+							active={page.route.id === `/abdi/dashboard/komunitas/beranda/${idAktif}/detail/acara`}
 						/>
 					</SidebarMenu>
 				{/if}
@@ -505,25 +556,28 @@
 					anchor="Dashboard"
 					active={isActive('/abdi/dashboard')}
 				/>
-				{#if page.route.id?.startsWith('/abdi/dashboard/organisasi/detail')}
+				{#if page.route.id?.startsWith('/abdi/dashboard/organisasi/beranda/')}
 					<SidebarMenu href="#" icon="mdi:people" anchor="Organisasi" hasChildren={true}>
 						<SidebarMenu
-							href="/abdi/dashboard/organisasi/detail"
+							href="/abdi/dashboard/organisasi/beranda/{idAktif}/detail"
 							icon="mdi:book"
 							anchor="Detail Organisasi"
-							active={page.route.id == '/abdi/dashboard/organisasi/detail'}
+							active={`/abdi/dashboard/organisasi/beranda/${idAktif}/detail` ==
+								isRouteActive(pageAktif, idAktif)}
 						/>
 						<SidebarMenu
-							href="/abdi/dashboard/organisasi/detail/daftaranggota"
+							href="/abdi/dashboard/organisasi/beranda/{idAktif}/detail/daftaranggota"
 							icon="mdi:crown"
 							anchor="Daftar Anggota"
-							active={page.route.id?.startsWith('/abdi/dashboard/organisasi/detail/daftaranggota')}
+							active={`/abdi/dashboard/organisasi/beranda/${idAktif}/detail/daftaranggota` ==
+								isRouteActive(pageAktif, idAktif)}
 						/>
 						<SidebarMenu
-							href="/abdi/dashboard/organisasi/detail/acara"
+							href="/abdi/dashboard/organisasi/beranda/{idAktif}/detail/acara"
 							icon="mdi:crown"
 							anchor="Acara"
-							active={page.route.id?.startsWith('/abdi/dashboard/organisasi/detail/acara')}
+							active={`/abdi/dashboard/organisasi/beranda/${idAktif}/detail/acara` ==
+								isRouteActive(pageAktif, idAktif)}
 						/>
 					</SidebarMenu>
 				{/if}
@@ -538,25 +592,28 @@
 					anchor="Dashboard"
 					active={isActive('/abdi/dashboard/')}
 				/>
-				{#if page.route.id?.startsWith('/abdi/dashboard/situs/detail')}
+				{#if page.route.id?.startsWith('/abdi/dashboard/situs/beranda/')}
 					<SidebarMenu href="#" icon="mdi:people" anchor="Situs" hasChildren={true}>
 						<SidebarMenu
-							href="/abdi/dashboard/situs/detail/daftaracara"
+							href="/abdi/dashboard/situs/beranda/{idAktif}/detail/daftaracara"
 							icon="mdi:book"
 							anchor="Daftar Acara"
-							active={page.route.id?.startsWith('/abdi/dashboard/situs/detail/daftaracara')}
+							active={`/abdi/dashboard/situs/beranda/${idAktif}/detail/daftaracara` ==
+								isRouteActive(pageAktif, idAktif)}
 						/>
 						<SidebarMenu
-							href="/abdi/dashboard/situs/detail/bukutamu"
+							href="/abdi/dashboard/situs/beranda/{idAktif}/detail/bukutamu"
 							icon="mdi:book"
 							anchor="Buku Tamu"
-							active={page.route.id?.startsWith('/abdi/dashboard/situs/detail/bukutamu')}
+							active={`/abdi/dashboard/situs/beranda/${idAktif}/detail/bukutamu` ==
+								isRouteActive(pageAktif, idAktif)}
 						/>
 						<SidebarMenu
-							href="/abdi/dashboard/situs/detail"
+							href="/abdi/dashboard/situs/beranda/{idAktif}/detail"
 							icon="mdi:book"
 							anchor="Detail Situs"
-							active={page.route.id == '/abdi/dashboard/situs/detail'}
+							active={`/abdi/dashboard/situs/beranda/${idAktif}/detail` ==
+								isRouteActive(pageAktif, idAktif)}
 						/>
 					</SidebarMenu>
 				{/if}
@@ -608,10 +665,10 @@
 				</SidebarMenu>
 				<SidebarMenu href="" icon="mdi:people" anchor="Organisasi" hasChildren={true}>
 					<SidebarMenu
-						href="/abdi/sekretariat/organisasi/daftarorganisasi"
+						href="/abdi/sekretariat/organisasi/daftarOrganisasi"
 						icon="mdi:book"
 						anchor="Daftar Organisasi"
-						active={page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi'}
+						active={page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi'}
 					/>
 					<SidebarMenu
 						href="/abdi/sekretariat/organisasi/daftaranggota"

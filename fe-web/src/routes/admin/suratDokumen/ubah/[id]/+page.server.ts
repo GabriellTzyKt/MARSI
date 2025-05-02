@@ -133,7 +133,7 @@ export const load = async ({ params, fetch }) => {
     
     try {
         // Fetch semua arsip
-        const response = await fetch(`${env.PUB_PORT}/arsip?limit=1000`);
+        const response = await fetch(`${env.PUB_PORT}/arsip?limit=100`);
         
         if (!response.ok) {
             throw error(response.status, `Failed to fetch documents`);
@@ -142,7 +142,7 @@ export const load = async ({ params, fetch }) => {
         const documents = await response.json();
         console.log("documents : ", documents);
 
-        const dataambil = await fetch(`${env.PUB_PORT}/kerajaan?limit=200`);
+        const dataambil = await fetch(`${env.PUB_PORT}/kerajaan?limit=100`);
 
         const data = await dataambil.json();
 

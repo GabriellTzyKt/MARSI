@@ -2,10 +2,14 @@
 	import { goto } from '$app/navigation';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import { fade } from 'svelte/transition';
-	let { value = $bindable(), text = '', successText = '', errors = $bindable() } = $props();
+	let { value = $bindable(), data = $bindable(), text = '', successText = '', errors = $bindable() } = $props();
 	let total = $state(8);
+	console.log("data: ", data)
 	let open = $state(false);
+	let namaSitus = $state('');
 	let timer: number;
+	let jenisTugas = $state('');
+	let showDropdown = $state(false);
 	let today = $state(String(new Date().toISOString().split('T')[0]));
 	function setTimer() {
 		open = true;
@@ -19,13 +23,26 @@
 				goto('/abdi/sekretariat/tugas');
 			}, 3000);
 	}
+
+	
+	function filter(data: any[]) {
+		return data.filter((item) =>
+			item?.nama_situs?.toLowerCase().includes(namaSitus.toLowerCase())
+		);
+	}
+	let searchRes = $derived(filter(data));
+
+	function selectKeterkaitan(value: string) {
+		namaSitus = value;
+		showDropdown = false;
+	}
 </script>
 
 <div
 	class="fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black/75"
 	transition:fade={{ duration: 100 }}
 >
-	<div class="relative flex w-full max-w-[600px] flex-col rounded-lg border bg-white p-6">
+	<div class="relative flex w-full max-w-[600px] max-h-[500px] flex-col rounded-lg border bg-white p-6 overflow-auto">
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
@@ -186,28 +203,166 @@
 				{/each}
 			{/if}
 		</div>
-		<div class="mt-2 flex w-full flex-col">
-			<div>
-				<p class="text-sm">Deskripsi Tugas</p>
-			</div>
-			<!-- nama Tugas -->
-			<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
-				<div class="grow">
-					<textarea
-						name="deskripsi_tugas"
-						class="w-full pe-2 ps-2 pt-2 focus:outline-none"
-						placeholder="Deskripsi"
-						id=""
-						rows="5"
-					></textarea>
-				</div>
-			</div>
-			{#if errors}
-				{#each errors.deskripsi_tugas as e}
-					<p class="text-left text-red-500">{e}</p>
-				{/each}
-			{/if}
+
+		<div class="flex-col">
+			<label for="tugas">Jenis Tugas</label>
+
+			<select
+				name="tugas"
+				id="tugas"
+				bind:value={jenisTugas}
+				class="w-full rounded-lg border-2 border-black px-2 py-2"
+			>
+				<option disabled value=""> Pilih Jenis! </option>
+				<option value="pribadi" selected>Tugas Pribadi</option>
+				<option value="acara">Tugas Acara</option>
+			</select>
 		</div>
+
+		{#if jenisTugas === 'pribadi'}
+			<div class="mt-2 flex w-full flex-col">
+				<div>
+					<p class="text-sm">Nama Situs :</p>
+				</div>
+				<!-- nama Tugas -->
+				<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
+					<div class="grow">
+						<input
+							type="text"
+							class="my-2 w-full pe-2 ps-2 focus:outline-none"
+							placeholder="Jane Doe"
+							name="nama_situs"
+							bind:value={namaSitus}
+							id=""
+							onfocus={() => (showDropdown = true)}
+						/>
+					</div>
+					<div class="me-2 ms-2 flex items-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="2"
+							stroke="gray"
+							class="size-6"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+							/>
+						</svg>
+					</div>
+				</div>
+				{#if showDropdown && searchRes.length > 0}
+						<ul class="border z-10 max-h-40 w-full overflow-y-auto rounded-lg bg-white shadow-lg">
+							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+							{#each searchRes as item}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<li
+									class="cursor-pointer p-2 hover:bg-gray-300"
+									onclick={() => selectKeterkaitan(item.nama_situs)}
+								>
+									{item.nama_situs}
+								</li>
+							{/each}
+						</ul>
+					{/if}
+				{#if errors}
+					{#each errors.nama_situs as e}
+						<p class="text-left text-red-500">{e}</p>
+					{/each}
+				{/if}
+			</div>
+
+			<div class="mt-2 flex w-full flex-col">
+				<div>
+					<p class="text-sm">Deskripsi Tugas</p>
+				</div>
+				<!-- nama Tugas -->
+				<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
+					<div class="grow">
+						<textarea
+							name="deskripsi_tugas"
+							class="w-full pe-2 ps-2 pt-2 focus:outline-none"
+							placeholder="Deskripsi"
+							id=""
+							rows="5"
+						></textarea>
+					</div>
+				</div>
+				{#if errors}
+					{#each errors.deskripsi_tugas as e}
+						<p class="text-left text-red-500">{e}</p>
+					{/each}
+				{/if}
+			</div>
+		{/if}
+
+		{#if jenisTugas === 'acara'}
+			<div class="mt-2 flex w-full flex-col">
+				<div>
+					<p class="text-sm">Nama Acara :</p>
+				</div>
+				<!-- nama Tugas -->
+				<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
+					<div class="grow">
+						<input
+							type="text"
+							class="my-2 w-full pe-2 ps-2 focus:outline-none"
+							placeholder="Jane Doe"
+							name="nama_acara"
+							id=""
+						/>
+					</div>
+					<div class="me-2 ms-2 flex items-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="2"
+							stroke="gray"
+							class="size-6"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+							/>
+						</svg>
+					</div>
+				</div>
+				{#if errors}
+					{#each errors.nama_acara as e}
+						<p class="text-left text-red-500">{e}</p>
+					{/each}
+				{/if}
+			</div>
+
+			<div class="mt-2 flex w-full flex-col">
+				<div>
+					<p class="text-sm">Deskripsi Tugas</p>
+				</div>
+				<!-- nama Tugas -->
+				<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
+					<div class="grow">
+						<textarea
+							name="deskripsi_tugas"
+							class="w-full pe-2 ps-2 pt-2 focus:outline-none"
+							placeholder="Deskripsi"
+							id=""
+							rows="5"
+						></textarea>
+					</div>
+				</div>
+				{#if errors}
+					{#each errors.deskripsi_tugas as e}
+						<p class="text-left text-red-500">{e}</p>
+					{/each}
+				{/if}
+			</div>
+		{/if}
+
 		<div class="mt-4 flex w-full lg:justify-end">
 			<button
 				class="w-full cursor-pointer rounded-lg bg-green-500 px-4 py-2 text-white lg:w-auto"

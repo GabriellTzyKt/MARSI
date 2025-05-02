@@ -8,8 +8,10 @@
 	import Table from '$lib/table/Table.svelte';
 	import { fade } from 'svelte/transition';
 	let { data } = $props();
-	let dataambil = data.detil_anggota;
-	console.log(dataambil);
+	let dataambil = data.komunitasList;
+	console.log("komunitas : ", dataambil);
+	let dataanggota = data.allAnggota;
+	console.log("anggota : ", dataanggota)
 
 	let open = $state(false);
 	let valo = $state(false);
@@ -90,15 +92,15 @@
 	<div class="flex w-full">
 		<Table
 			table_header={[
-				['id_anggota', 'Id Anggota'],
-				['nama_anggota', 'Nama Anggota'],
+				['id_user', 'Id Anggota'],
+				['nama_anggota', 'Nama Anggota'], // blom
 				['tanggal_bergabung', 'Tanggal Bergabung'],
-				['jabatan_organisasi', 'Jabatan Organisasi'],
-				['nomor_telepon', 'Nomer Telpon'],
-				['email', 'Email'],
+				['jabatan_anggota', 'Jabatan Organisasi'],
+				['nomor_telepon', 'Nomer Telpon'], // blom
+				['email', 'Email'], // blom
 				['children', 'Aksi']
 			]}
-			table_data={dummyAnggota}
+			table_data={dataanggota}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}

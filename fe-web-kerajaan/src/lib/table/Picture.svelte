@@ -49,7 +49,7 @@
 						// Step 2: Extract file_dokumentasi path
 						const docData = await response.json();
 						const filePaths = docData.file_dokumentasi || docData;
-
+						console.log(filePaths);
 						// Handle both array and string responses
 						const pathsArray = Array.isArray(filePaths) ? filePaths : [filePaths];
 

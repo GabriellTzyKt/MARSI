@@ -2,6 +2,26 @@ import { redirect, type Handle } from "@sveltejs/kit";
 // import { RunnableDevEnvironment } from "vite";
 
 export const handle = async ({ event, resolve }) => {
+    // Get the current path
+    const path = event.url.pathname;
+    
+    // List of paths that should be accessible without authentication
+    const publicPaths = [
+        '/login', 
+        '/signup', 
+        '/otpDesign',  // Add this to allow access to the OTP design page
+        '/login/forgetpassword',
+        '/login/forgetpassword/verifOTP'
+    ];
+    
+    // Check if the current path is in the public paths list
+    const isPublicPath = publicPaths.some(pp => path.startsWith(pp));
+    
+    // If it's a public path, allow access without checking authentication
+    if (isPublicPath) {
+        return await resolve(event);
+    }
+    
     const auth = event.cookies.get('userSession') ? JSON.parse(event.cookies.get('userSession') as string) : false
     console.log(auth)
     if (auth) {
@@ -13,20 +33,7 @@ export const handle = async ({ event, resolve }) => {
     if (!auth) {
         event.locals.token = ''
     }
-    if (auth) {
-        if (event.url.pathname === '/login2') {
-            redirect(308,'/admin/beranda')
-        }
-         if (event.url.pathname === "/admin") {
-            redirect(308, '/admin/beranda')
-        }
-    }
-    else {
-        if ( event.url.pathname !== "/login2") {
-            console.log("red")
-            redirect(308, '/login2')
-        }
-    }
+   
     console.log("Token" +event.locals.token)
     
     const response = await resolve(event)

@@ -7,7 +7,7 @@
 	import { dummydata } from '$lib/dummy';
 	import SucessModal from './SucessModal.svelte';
 
-	let { pop, data, text, link, successText, value = $bindable() } = $props();
+	let { id_arsip, pop, data, text, link, successText, value = $bindable() } = $props();
 	let success = $state(false);
 	const toggle = () => {
 		if (!success) {
@@ -42,6 +42,7 @@
 </script>
 
 {#if pop || value}
+	{console.log("id_arsip dari modal : " , id_arsip)}
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->

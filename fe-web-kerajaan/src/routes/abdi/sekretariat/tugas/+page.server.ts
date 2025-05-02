@@ -5,19 +5,30 @@ import { env } from "$env/dynamic/private";
 
 export const load: PageServerLoad = async () => {
     try {
-        const res = await fetch(`${env.BASE_URL_8008}/tugas`, {
+        // Fetch tugas data
+        const tugasRes = await fetch(`${env.URL_KERAJAAN}/tugas`, {
             method: 'GET',
             headers: {
                 Accept: 'application/json'
             }
         });
 
+        // Fetch situs data
+        const situsRes = await fetch(`${env.URL_KERAJAAN}/situs`, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json'
+            }
+        });
 
-
-        if (res.ok) {
-            const data = await res.json();
-            console.log(data);
-            const formattedData = data.map((item: any) => ({
+        if (situsRes.ok && tugasRes.ok) {
+            const situsData = await situsRes.json();
+            console.log("Situs Data:", situsData);
+            
+            const tugasData = await tugasRes.json();
+            console.log("Tugas Data:", tugasData);
+            
+            const formattedData = tugasData.map((item: any) => ({
                 ...item,
                 tanggal_mulai: item.tanggal_mulai ? item.tanggal_mulai.split('T')[0] : item.tanggal_mulai
             }));
@@ -34,11 +45,24 @@ export const load: PageServerLoad = async () => {
                 // kalo sama gaperlu berubah
                 return 0;
             });
-            
-            console.log(sortedData);
-            return { data: sortedData }
-       }
-    } catch (error) { }
+
+            return { 
+                data: sortedData, 
+                situs: situsData 
+            };
+        }
+        
+        return { 
+            data: [], 
+            situs: [] 
+        };
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return { 
+            data: [], 
+            situs: [] 
+        };
+    }
 };
 
 export const actions: Actions = {
@@ -68,6 +92,13 @@ export const actions: Actions = {
             deskripsi_tugas:
                 z.string({ message: "Field Pemberi Tugas harus diisi" })
                     .nonempty("Minimal 1 huruf / tidak boleh kosong"),
+            nama_situs:
+                z.string({ message: "Field harus diisi" })
+                    .nonempty("Minimal 1 huruf / tidak boleh kosong"),
+            nama_acara:
+                z.string({ message: "Field harus diisi" })
+                    .nonempty("Minimal 1 huruf / tidak boleh kosong"),
+
 
         })
         const formData = {
@@ -76,12 +107,51 @@ export const actions: Actions = {
             tanggal_penugasan: String(data.get("tanggal_penugasan")),
             anggota_yg_ditugaskan: String(data.get("anggota_yg_ditugaskan")),
             deskripsi_tugas: String(data.get("deskripsi_tugas")),
+            nama_situs: String(data.get("nama_situs")),
+            nama_acara: String(data.get("nama_acara")),
         }
         const verification = ver.safeParse({ ...formData })
         if (!verification.success) {
             return fail(418, { errors: verification.error.flatten().fieldErrors, s: false, formData })
         }
-        return { errors: "No Error", formData, s: true }
+        // return { errors: "No Error", formData, s: true }
+
+        try {
+            // Membuat objek JSON untuk dikirim ke API
+            const tugasData = {
+                pemberi_tugas: formData.pemberi_tugas,
+                nama_tugas: formData.nama_tugas,
+                tanggal_mulai: formData.tanggal_penugasan,
+                penerima_tugas: formData.anggota_yg_ditugaskan,
+                deskripsi_tugas: formData.deskripsi_tugas,
+                nama_situs: formData.nama_situs,
+                nama_acara: formData.nama_acara
+                // lokasi
+                // id_acara ?
+            };
+
+            const send = await fetch(`${env.BASE_URL_8008}/tugas`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(tugasData)
+            });
+
+            const r = await send.json();
+            console.log(r);
+
+            if (send.ok) {
+                return { errors: "no Error", success: true };
+            }
+            return fail(400, { request: `Error Code : ${send.status} ${r.message}` });
+        } catch (e) {
+            console.error("Fetch Error", e);
+            return fail(500, { request: "Terjadi kesalahan saat mengirim data" });
+        }
+
+
     },
     ubahTugas: async ({ request }) => {
         const data = await request.formData()
