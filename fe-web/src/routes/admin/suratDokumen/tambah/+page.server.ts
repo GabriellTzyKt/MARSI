@@ -92,10 +92,10 @@ export const actions: Actions = {
             });
 
             const r = await send.json();
-            // console.log(r);
+            console.log(r);
 
             if (send.ok) {
-                // console.log("Form Data:", res);
+                console.log("Form Data:", res);
                 return { errors: "no Error", success: true };
             }
             return fail(400, { request: `Error Code : ${send.status} ${r.message}` });

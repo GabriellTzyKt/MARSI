@@ -34,7 +34,16 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
     tambah: async ({ request }) => {
         const data = await request.formData();
-
+        
+        // Log semua data yang diterima
+        console.log("=== FORM DATA RECEIVED ===");
+        for (const [key, value] of data.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+        
+        // Cek khusus untuk alamat acara
+        console.log("alamat_acara value:", data.get("alamat_acara"));
+        
         const ids = data.getAll("id").map(String);
         const ids2 = data.getAll("id2").map(String);
 
@@ -46,6 +55,7 @@ export const actions: Actions = {
             lokasiacara: "",
             tujuanacara: "",
             deskripsiacara: "",
+            alamatacara: "",
             penanggungjawab: "",
             kapasitasacara: "",
             tanggalmulai: "",
@@ -65,7 +75,8 @@ export const actions: Actions = {
             buttonselect: z.string().trim().min(1, "Minimal 1!"),
             inputradio: z.string().trim().min(1, "Minimal 1!"),
             namaacara: z.string().trim().min(1, "Isi Nama acara"),
-            lokasiacara: z.string().trim().min(1, "Alamat harus diisi!"),
+            lokasiacara: z.string().trim().min(1, "Lokasi harus diisi!"),
+            alamatacara: z.string().trim().min(1, "Alamat harus diisi!"),
             tujuanacara: z.string().trim().min(1, "Tujuan harus diisi!"),
             deskripsiacara: z.string().trim().min(1, "Deskripsi harus terisi!"),
             penanggungjawab: z.string().trim().min(1, "Isi penanggungjawab!"),
@@ -96,9 +107,10 @@ export const actions: Actions = {
             buttonselect: data.get("buttonselect") ?? "",
             inputradio: data.get("default-radio") ?? "",
             namaacara: data.get("namaacara") ?? "",
-            lokasiacara: data.get("lokasiacara") ?? "",
-            tujuanacara: data.get("tujuanacara") ?? "",
-            deskripsiacara: data.get("deskripsiacara") ?? "",
+            lokasiacara: data.get("lokasi_acara") ?? "",
+            tujuanacara: data.get("tujuan_acara") ?? "",
+            alamatacara: data.get("alamat_acara") ?? "",
+            deskripsiacara: data.get("deskripsi_acara") ?? "",
             penanggungjawab: data.get("penanggungjawab") ?? "",
             kapasitasacara: data.get("kapasitasacara") ?? "",
             tanggalmulai: data.get("tanggalmulai") ?? "",

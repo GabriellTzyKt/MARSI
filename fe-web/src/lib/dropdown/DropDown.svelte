@@ -11,8 +11,9 @@
 	const dispatcher = createEventDispatcher();
 	let pop = $state(false);
 	// Unique ID for this dropdown
-	const {
+	let {
 		id = null,
+		id_arsip = null,
 		data = null,
 		index = '',
 		tipe = '',
@@ -24,6 +25,7 @@
 		successText = ''
 	} = $props<{
 		id?: string | null;
+		id_arsip?: Number | null;
 		data?: any;
 		index?: string;
 		tipe?: string;
@@ -36,7 +38,6 @@
 	}>();
 	let isOpen = $state(false);
 	let temp = $state('');
-
 	const toggleDropdown = () => {
 		// console.log(data);
 		openDropdown.update((current) => {
@@ -73,8 +74,9 @@
 	 			2. link kalau ada -->
 	{#if $openDropdown === id}
 		{console.log(data)}
+		<!-- {console.log(id_arsip)} -->
 		{console.log('Dropdown terbuka untuk: ' + id)}
-		<div class="absolute -bottom-24 right-12 z-50 flex flex-col rounded-xl bg-white">
+		<div class="absolute -bottom-10 right-12 z-50 flex flex-col rounded-xl bg-white">
 			{#each items as i, p}
 				<div class="flex">
 					{#if i[0] === 'children'}
@@ -83,7 +85,7 @@
 							class="w-full px-4 py-1 {p === 0 ? 'rounded-t-lg' : ''} {p === items.length - 1
 								? 'rounded-b-lg'
 								: ''} hover:cursor-pointer hover:bg-gray-400"
-							onclick={toglemodal}>{i[1]}</a
+							onclick={()=>{deleteD = true}}>{i[1]}</a
 						>
 					{:else}
 						<a
@@ -98,7 +100,8 @@
 		</div>
 	{/if}
 </div>
-<Modal {pop} {successText} {data} {text} {link}></Modal>
+{@render children?.()}
+<Modal {id_arsip} {pop} {successText} {data} {text} {link}></Modal>
 
 <!-- onclick={() => {
     if (open) {

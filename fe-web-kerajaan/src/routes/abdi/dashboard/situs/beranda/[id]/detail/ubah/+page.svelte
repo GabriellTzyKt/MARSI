@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { navigating } from '$app/state';
+	import { page } from '$app/stores';
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
 	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
@@ -42,6 +43,13 @@
 		jamtutup = form.formData.jamtutup;
 		wisata = form.formData.wisata;
 	}
+
+	let currentID = $state();
+
+	$effect(() => {
+		currentID = $page.params.id;
+		console.log("ID: ",currentID)
+	});
 
 	let open = $state(false);
 	let timer: any;

@@ -6,6 +6,26 @@
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
+
+	let { data } = $props();
+	
+	// Transformasi data untuk format yang dibutuhkan Table
+	let dataambil = $state(
+		data.allAcara.map((item : any) => {
+			// Jika data memiliki struktur nested dengan Acara
+			if (item.Acara) {
+				return {
+					...item.Acara,
+					alamats : item.alamat,
+					id_komunitas: item.id_komunitas
+				};
+			}
+			// Jika data sudah dalam format yang benar
+			return item;
+		})
+	);
+	
+	console.log("Data yang diproses:", dataambil);
 </script>
 
 <div class="flex w-full flex-col">
@@ -74,15 +94,15 @@
 			table_header={[
 				['id_acara', 'Id Acara'],
 				['nama_acara', 'Nama Acara'],
-				['tanggal', 'Tanggal Acara'],
-				['lokasi', 'Lokasi'],
-				['penanggungjawab', 'Penanggung Jawab'],
+				['waktu_mulai', 'Tanggal Acara'],
+				['alamats', 'Lokasi'],
+				['id_penanggung_jawab', 'Penanggung Jawab'],
 				['jenis_acara', 'Jenis Acara'],
-				['kapasitas', 'Kapasitas'],
+				['kapasitas_acara', 'Kapasitas'],
 				['children', 'Status'],
 				['children', 'Aksi']
 			]}
-			table_data={dummyAcara}
+			table_data={dataambil}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}

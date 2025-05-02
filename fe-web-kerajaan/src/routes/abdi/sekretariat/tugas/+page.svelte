@@ -2,7 +2,6 @@
 	import { enhance } from '$app/forms';
 	import { navigating } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
-	import { dummyTugas } from '$lib/dummy';
 	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import TambahTugas from '$lib/popup/TambahTugas.svelte';
@@ -15,6 +14,7 @@
 	let { data } = $props();
 	console.log('data : ', data);
 	const dataAmbil = data.data;
+	let situsData = $state(data.situs);
 
 	let open = $state(false);
 	let success = $state(false);
@@ -33,6 +33,7 @@
 				item?.status?.toLowerCase().includes(keyword.toLowerCase())
 		);
 	}
+
 	function pagination(data: any[]) {
 		let d = filterD(data);
 		let start = (currPage - 1) * entries;
@@ -40,7 +41,6 @@
 		console.log(d);
 		return d.slice(start, end);
 	}
-	let resData = $derived(pagination(dummyTugas));
 	$effect(() => {
 		if (keyword || entries) {
 			currPage = 1;
@@ -56,6 +56,7 @@
 		}
 	});
 	let loading = $state(false);
+
 </script>
 
 {#if navigating.to}
@@ -164,7 +165,7 @@
 				{/if}
 			{/snippet}
 		</Table>
-		<Pagination bind:currPage bind:entries totalItems={filterD(dummyTugas).length}></Pagination>
+		<Pagination bind:currPage bind:entries totalItems={filterD(dataAmbil).length}></Pagination>
 	</div>
 </div>
 
@@ -195,6 +196,7 @@
 		<TambahTugas
 			bind:value={open}
 			text="Tambah Tugas"
+			bind:data={situsData}
 			{errors}
 			successText="Tugas Berhasil Ditambah"
 		></TambahTugas>
