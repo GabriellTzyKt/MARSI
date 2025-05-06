@@ -1,12 +1,18 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { navigating } from '$app/state';
+	import { navigating, page } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import TambahArray from '$lib/tambah/TambahArray.svelte';
 	import { fade } from 'svelte/transition';
 	import { number } from 'zod';
+
+	let id_organisasi = $state('');
+	$effect(() => {
+		id_organisasi = page.params.id;
+		console.log("ID Organisasi : ", id_organisasi);
+	});	
 
 	let input_radio = $state('');
 	let namaacara = $state('');

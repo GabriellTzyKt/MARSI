@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAcara, dummyAnggota } from '$lib/dummy';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
@@ -8,6 +9,14 @@
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
 	let { data } = $props();
+
+	let idAktif = $state(page.params.id)
+	$effect(() => {
+		idAktif = page.params.id;
+		console.log("ID Aktif : ", idAktif)
+	});
+
+
 	let keyword = $state('');
 	let entries = $state(10);
 	let currPage = $state(1);
@@ -43,7 +52,7 @@
 		<button
 			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
 			onclick={() => {
-				goto('/abdi/dashboard/situs/detail/daftaracara/buat');
+				goto(`/abdi/dashboard/situs/beranda/${idAktif}/detail/daftaracara/buat`);
 			}}>+Tambah Data</button
 		>
 		<div

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
+	import { page } from '$app/state';
 
 	let { data } = $props();
 	console.log('detail : ', data.komunitas);
@@ -9,6 +10,11 @@
 	let datagambar = $state(data.fileDetails?.url);
 	let datafotokomunitas = $state(data.fotoKomunitasDetails?.map((detail: any) => detail.url));
 	console.log(datafotokomunitas);
+
+	let idAktif = $state(page.params.id)
+	$effect(() => {
+		idAktif = page.params.id;
+	});
 </script>
 
 <div class="h-full w-full">
@@ -21,7 +27,7 @@
 			{/if}
 		</div>
 		<div class="mt-5 flex w-full justify-center lg:mt-0 lg:justify-end">
-			<a href="/abdi/dashboard/komunitas/beranda/1/detail/edit"
+			<a href="/abdi/dashboard/komunitas/beranda/{idAktif}/detail/edit"
 				><button class="w-50 h-fit items-end rounded-lg bg-yellow-300 px-2 py-2 text-black">
 					Ubah
 				</button></a

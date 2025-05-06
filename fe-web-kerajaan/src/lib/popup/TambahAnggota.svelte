@@ -1,29 +1,41 @@
 <script lang="ts">
-	import { flip } from 'svelte/animate';
 	import xbutton from '../asset/icon/xbutton.png';
 
 	let {
 		value = $bindable(),
-
 		errors = null,
 		data2 = null,
-		dataambil
+		allanggota = [] // Provide default empty array
 	} = $props();
 
-	console.log("ini data2 : " , data2)
+	console.log("ini data2 : ", data2);
+	console.log("Data anggota : ", allanggota);
 
 	let keyword = $state(data2 ? data2.namaanggota : '');
 	let showDropdown = $state(false);
-
+	let selectedUserId = $state(''); // Store the selected user's ID
 
 	function updateFilteredData() {
-		if (!keyword.trim()) return [];
-		return dataambil.filter((v: any) => v.asma_timur.toLowerCase().includes(keyword.toLowerCase()));
+		// Check if allanggota exists and is an array
+		if (!allanggota || !Array.isArray(allanggota) || !keyword || !keyword.trim()) {
+			return [];
+		}
+		
+		return allanggota.filter((v: any) => {
+			// Check if nama_lengkap exists before calling toLowerCase()
+			if (v && v.nama_lengkap) {
+				return v.nama_lengkap.toLowerCase().includes(keyword.toLowerCase());
+			}
+			return false;
+		});
 	}
 
-	function selectItem(item: string) {
-		keyword = item;
-		showDropdown = false;
+	function selectItem(item: any) {
+		if (item && item.nama_lengkap) {
+			keyword = item.nama_lengkap;
+			selectedUserId = item.id_user || ''; // Store the selected user's ID, default to empty string
+			showDropdown = false;
+		}
 	}
 
 
@@ -73,6 +85,8 @@
 					class="w-full rounded-lg border-2 border-gray-400 px-2 py-2 pr-8"
 					onfocus={() => (showDropdown = true)}
 				/>
+				<!-- Hidden input to store the selected user ID -->
+				<input type="hidden" name="id_user" value={selectedUserId} />
 
 				{#if showDropdown && updateFilteredData().length > 0}
 					<ul
@@ -82,9 +96,9 @@
 							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 							<li
 								class="cursor-pointer px-4 py-2 hover:bg-gray-200"
-								onclick={() => selectItem(item.asma_timur)}
+								onclick={() => selectItem(item)}
 							>
-								{item.asma_timur}
+								{item.nama_lengkap}
 							</li>
 						{/each}
 					</ul>
@@ -100,7 +114,7 @@
 			<p class="ml-5 mt-5">Deskripsi Tugas</p>
 			<div class="relative ml-5 w-[90%]">
 				<textarea
-					placeholder="Nama Anggota"
+					placeholder="Deskripsi Tugas"
 					name="deskripsitugas"
 					class="w-full rounded-lg border-2 border-gray-400 px-2 py-2 pr-8"
 					value={data2 ? data2.deskripsi : ''}
@@ -122,8 +136,10 @@
 				>
 					<option selected disabled>Pilih Jabatan</option>
 					<option value="Ketua">Ketua</option>
-					<option value="FR">...</option>
-					<option value="DE">...</option>
+					<option value="Wakil Ketua">Wakil Ketua</option>
+					<option value="Sekretaris">Sekretaris</option>
+					<option value="Bendahara">Bendahara</option>
+					<option value="Anggota">Anggota</option>
 				</select>
 			</div>
 			{#if errors}

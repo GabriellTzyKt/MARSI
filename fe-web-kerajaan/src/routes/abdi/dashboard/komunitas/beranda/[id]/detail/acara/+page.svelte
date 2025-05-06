@@ -1,13 +1,17 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
-	import { dummyAcara, dummyAnggota } from '$lib/dummy';
 
-	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
 
 	let { data } = $props();
+
+	let idAktif = $state("")
+	$effect(() => {
+		idAktif = page.params.id;
+	});
 	
 	// Transformasi data untuk format yang dibutuhkan Table
 	let dataambil = $state(
