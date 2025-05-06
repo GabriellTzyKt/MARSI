@@ -130,7 +130,7 @@
 									openm = true;
 								}}>{i[1]}</a
 							>
-						{:else if i[1] === 'Non Aktifkan'}
+						{:else if i[1] === 'Arsipkan'}
 							<a
 								href={i[2]}
 								class="w-full px-4 py-1 {p === 0 ? 'rounded-t-lg' : ''}  {p === items.length - 1

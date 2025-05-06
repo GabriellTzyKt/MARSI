@@ -6,7 +6,7 @@ import { env } from "$env/dynamic/private";
 export const load: PageServerLoad = async () => {
     try {
         // Fetch tugas data
-        const tugasRes = await fetch(`${env.BASE_URL_8008}/tugas`, {
+        const tugasRes = await fetch(`${env.URL_KERAJAAN}/tugas`, {
             method: 'GET',
             headers: {
                 Accept: 'application/json'
@@ -14,7 +14,7 @@ export const load: PageServerLoad = async () => {
         });
 
         // Fetch situs data
-        const situsRes = await fetch(`${env.BASE_URL_8008}/situs`, {
+        const situsRes = await fetch(`${env.URL_KERAJAAN}/situs`, {
             method: 'GET',
             headers: {
                 Accept: 'application/json'

@@ -2,10 +2,61 @@ import { accounts } from "$lib/dummy";
 import { date, z } from "zod";
 import type { Actions, PageServerLoad } from "./$types";
 import { fail } from "@sveltejs/kit";
+import { env } from "$env/dynamic/private";
+import { formatDatetoUI } from "$lib";
 
 
-export const load: PageServerLoad = async ({params}) => {
-    return {akun: accounts[0]}
+export const load: PageServerLoad = async ({ params }) => {
+    try {
+        const res = await fetch(`${env.PUB_PORT}/user/${params.id}`)
+        let final = []
+        if(!res.ok){
+            throw new Error(`HTTP Error! Status: ${res.status}`);
+        }
+        const data = await res.json()
+        if (data.profile && data) {
+            try {
+                const resProfilepict = await fetch(`${env.URL_KERAJAAN}/doc/${data.profile.profile_pict}`)
+                if (!resProfilepict.ok) {
+                    console.error(`HTTP Error! Status: ${resProfilepict.status}`);
+                    final = [{
+                        ...data,
+                        tanggal_lahir_UI: formatDatetoUI(data.tanggal_lahir || ''),
+                        profilepict: null
+                    }];
+                    return { akun: final[0] };
+                }
+                const profilepict = await resProfilepict.json()
+                const pict = await fetch(`${env.URL_KERAJAAN}/file?file_path=${profilepict.file_dokumentasi}`)
+                final = [{
+                    ...data,
+                    tanggal_lahir_UI: formatDatetoUI(data.tanggal_lahir || ''),
+                    profilepict: resProfilepict.ok ? resProfilepict : null
+                }];
+                return { akun: final[0] }
+            }
+            catch (pictError) {
+                console.error("Error fetching profile picture:", pictError);
+                final = [{
+                    ...data,
+                    tanggal_lahir_UI: formatDatetoUI(data.tanggal_lahir || ''),
+                    profilepict: null
+                }];
+                return { akun: final[0] };
+            }
+        } else if (data) {
+            final = Array.isArray(data) ? data.map(item => ({
+                ...item,
+                tanggal_lahir_UI: formatDatetoUI(item.tanggal_lahir || '')
+            })) : [data];
+            return { data: final[0] };
+        }
+        return { data: null, error: "No data returned from API" };
+    }
+    catch (error) {
+        console.error("Error in profile load:", error);
+        return { data: null, error: error.message };
+    }
 };
 export const actions: Actions = {
     ubah: async({request}) => {

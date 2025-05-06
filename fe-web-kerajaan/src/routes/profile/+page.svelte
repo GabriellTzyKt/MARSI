@@ -281,7 +281,7 @@
 				<button
 					class="bg-badran-yellow rounded-lg border px-6 py-2 shadow-2xl"
 					onclick={() => {
-						goto(`/profile/${accounts[0].id}`);
+						goto(`/profile/${data.data.id_user}`);
 					}}>Ubah</button
 				>
 			</div>

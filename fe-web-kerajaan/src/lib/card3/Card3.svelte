@@ -1,27 +1,30 @@
 <script lang="ts">
-	let { gambar, header } = $props();
+	let { gambar, header, href = '' } = $props();
 </script>
 
-<div class="h-full max-full overflow-hidden rounded bg-white shadow-lg">
-	<div class="w-full">
-		<img
-			class=" mx-auto mt-3 h-full w-[300px] border-2 border-black p-1"
-			src={gambar}
-			alt="awawwa"
-		/>
+<div class="max-full h-full overflow-hidden rounded bg-white shadow-lg">
+	<div class="flex w-full justify-center">
+		{#if gambar == ''}
+			<div class="flex h-[150px] w-[300px] items-center justify-center">
+				<p class="text-gray-600">No Images</p>
+			</div>
+		{:else}
+			<img
+				class=" mx-auto mt-3 h-full w-[300px] border-2 border-black p-1"
+				src={gambar}
+				alt="awawwa"
+			/>
+		{/if}
 	</div>
 	<div class="px-6 py-4 text-center">
 		<h1 class="text-2xl">{header}</h1>
-		<div class="flex flex-col">
-			<div class="flex h-fit w-full justify-center lg:justify-end mt-5">
-				<a
-					href="/"
-					class="my-2 flex items-center gap-2 rounded-full border-2 px-2 py-1 text-blue-500"
-				>
-					Selanjutnya
-					<span class="fluent--arrow-right-12-filled"></span>
-				</a>
-			</div>
+	</div>
+	<div class="me-2 flex items-end justify-end">
+		<div class="flex justify-items-end self-end">
+			<a {href} class="my-2 flex items-center gap-2 rounded-full border-2 px-2 py-1 text-blue-500">
+				Selanjutnya
+				<span class="fluent--arrow-right-12-filled"></span>
+			</a>
 		</div>
 	</div>
 </div>

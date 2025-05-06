@@ -8,33 +8,34 @@
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Loader from '$lib/loader/Loader.svelte';
 	import { navigating } from '$app/state';
+	let { data } = $props();
 	let keyword = $state('');
 	let entries = $state(10);
 	let currPage = $state(1);
-	function filterD(data: any[]) {
+	function filterD(data: any) {
 		return data.filter(
 			(item) =>
 				item?.nama_situs?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.alamat_situs?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.dibangun_oleh?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.juru_kunci?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.wisata?.toLowerCase().includes(keyword.toLowerCase())
+				item?.alamat?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.nama_pendiri?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.juru_kunci?.toLowerCase().includes(keyword.toLowerCase())
+			// item?.wisata?.toLowerCase().includes(keyword.toLowerCase())
 		);
 	}
-	function pagination(data: any[]) {
+	function pagination(data: any) {
 		let d = filterD(data);
 		let start = (currPage - 1) * entries;
 		let end = start + entries;
 		console.log(d);
 		return d.slice(start, end);
 	}
-	let resData = $derived(pagination(dummySekreSitus));
+	let resData = $derived(pagination(data.data));
 	$effect(() => {
 		if (keyword || entries) {
 			currPage = 1;
 		}
-		if (entries < 0) {
-			entries = 0;
+		if (entries <= 1) {
+			entries = 1;
 		}
 	});
 </script>
@@ -106,14 +107,11 @@
 	<div class="mx-4 flex flex-col">
 		<Table
 			table_header={[
-				['id_situs', 'Id Situs'],
 				['nama_situs', 'Nama Situs'],
-				['alamat_situs', 'Alamat Situs'],
-				['dibangun_oleh', 'Dibangun Oleh'],
+				['alamat', 'Alamat Situs'],
+				['nama_pendiri', 'Dibangun Oleh'],
 				['juru_kunci', 'Juru Kunci'],
-				['wisata', 'Wisata'],
-
-				['children', 'Aksi']
+				['wisata', 'Wisata']
 			]}
 			table_data={resData}
 		>
@@ -121,8 +119,6 @@
 				{#if header === 'Aksi'}
 					<DropDown
 						text=" apa yakin mau menghapus acara ini?"
-						successText="berhasil diarsip"
-						link="/abdi/sekretariat/situs"
 						items={[
 							['Detail', '/abdi/sekretariat/situs/detail'],
 							['Ubah', '/abdi/sekretariat/situs/edit'],

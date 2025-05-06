@@ -14,6 +14,12 @@
 	import Card3 from '$lib/card3/Card3.svelte';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
+	let { data } = $props();
+	console.log(data);
+	let situs = $state(data.situs);
+	let acara = $state(data.acara);
+	let organisasi = $state(data.organisasi);
+	let komunitas = $state(data.komunitas);
 </script>
 
 <Navbar></Navbar>
@@ -87,7 +93,37 @@
 </section>
 
 <!-- 3 -->
+
 <section class="h-auto w-full bg-slate-200 py-5">
+	<div class="mb-3 flex w-full items-center justify-between px-5">
+		<p class=" w-full items-center self-center text-lg font-bold text-blue-500">Situs</p>
+		<div class="flex h-fit w-full justify-center md:justify-end">
+			<a
+				href="/situs"
+				class="my-2 flex items-center gap-2 rounded-full border-2 px-2 py-1 text-blue-500"
+			>
+				Lihat Semua
+				<span class="fluent--arrow-right-12-filled"></span>
+			</a>
+		</div>
+	</div>
+	<div class="ml-5 mr-5">
+		<div class="mx-auto grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+			{#each situs as s}
+				<Card3 gambar={s.imageUrls[0] || ''} header={s.nama_situs}></Card3>
+			{/each}
+
+			<!-- <Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
+
+			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
+
+			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
+
+			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3> -->
+		</div>
+	</div>
+</section>
+<!-- <section class="h-auto w-full bg-slate-200 py-5">
 	<div class="mb-3 flex w-full items-center justify-between px-5">
 		<p class="w-full items-center self-center text-lg font-bold text-blue-500">Situs Bersejarah</p>
 		<div class="flex h-fit w-full justify-center md:justify-end">
@@ -100,10 +136,13 @@
 			</a>
 		</div>
 	</div>
-	<!-- Situs -->
-	<div class="ml-5 mr-5 flex justify-center">
+	 Situs -->
+<!-- <div class="ml-5 mr-5 flex justify-center">
 		<div class="mx-auto grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-			<Card2
+			{#each situs as s}
+				<Card3 gambar={s.imageUrls[0] || ''} header={s.nama_situs}></Card3>
+			{/each}  -->
+<!-- <Card2
 				situs={situs1}
 				header="Keraton Surakarta Hadiningrat"
 				isi="Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
@@ -149,13 +188,49 @@
                     menyegarkan."
 				icon=""
 				id="0"
-			></Card2>
+			></Card2> -->
+<!-- </div>
+	</div>
+</section> -->
+
+<!-- 4 -->
+<!-- 5 -->
+<section class="h-auto w-full bg-slate-200 py-5">
+	<div class="mb-3 flex w-full items-center justify-between px-5">
+		<p class=" w-full items-center self-center text-lg font-bold text-blue-500">Acara</p>
+		<div class="flex h-fit w-full justify-center md:justify-end">
+			<a
+				href="/acara"
+				class="my-2 flex items-center gap-2 rounded-full border-2 px-2 py-1 text-blue-500"
+			>
+				Lihat Semua
+				<span class="fluent--arrow-right-12-filled"></span>
+			</a>
+		</div>
+	</div>
+	<div class="ml-5 mr-5">
+		<div class="mx-auto grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+			{#each acara as a}
+				<Card2
+					situs={a.imageUrls[0] || ''}
+					header={a.nama_acara}
+					isi={a.deskripsi_acara || 'No Description'}
+					icon=""
+					href={`/situs/${a.id_acara}`}
+					id={a.id_acara}
+				></Card2>
+			{/each}
+			<!-- <Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
+
+			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
+
+			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
+
+			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3> -->
 		</div>
 	</div>
 </section>
-
-<!-- 4 -->
-<section class="h-auto w-full bg-slate-200 py-5">
+<!-- <section class="h-auto w-full bg-slate-200 py-5">
 	<div class="mb-3 flex w-full items-center justify-between px-5">
 		<p class="w-full items-center self-center text-lg font-bold text-blue-500">Acara</p>
 		<div class="flex h-fit w-full justify-center md:justify-end">
@@ -168,10 +243,20 @@
 			</a>
 		</div>
 	</div>
-	<!-- Situs -->
-	<div class="ml-5 mr-5 flex justify-center">
+	 Situs -->
+<!-- <div class="ml-5 mr-5 flex justify-center">
 		<div class="mx-auto grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-			<Card2
+			{#each acara as a}
+				<Card2
+					situs={a.imageUrls[0] || ''}
+					header={a.nama_acara}
+					isi={a.deskripsi_acara || 'No Description'}
+					icon=""
+					href={`/situs/${a.id_acara}`}
+					id={a.id_acara}
+				></Card2>
+			{/each} -->
+<!-- <Card2
 				situs={situs1}
 				header="Keraton Surakarta Hadiningrat"
 				isi="Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
@@ -217,10 +302,10 @@
                     menyegarkan."
 				icon=""
 				id="0"
-			></Card2>
-		</div>
+			></Card2> -->
+<!-- </div>
 	</div>
-</section>
+</section> -->
 
 <!-- 5 -->
 <section class="h-auto w-full bg-slate-200 py-5">
@@ -238,13 +323,16 @@
 	</div>
 	<div class="ml-5 mr-5">
 		<div class="mx-auto grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
+			{#each organisasi as o}
+				<Card3 gambar={o.imageUrls || ''} header={o.nama_organisasi}></Card3>
+			{/each}
+			<!-- <Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
 
 			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
 
 			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
 
-			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
+			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3> -->
 		</div>
 	</div>
 </section>
@@ -265,13 +353,16 @@
 	</div>
 	<div class="ml-5 mr-5">
 		<div class="mx-auto grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
+			{#each komunitas as k}
+				<Card3 gambar={k.imageUrls || ''} header={k.nama_komunitas}></Card3>
+			{/each}
+			<!-- <Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
 
 			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
 
 			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
 
-			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
+			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3> -->
 		</div>
 	</div>
 </section>

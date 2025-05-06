@@ -1,17 +1,21 @@
 import { env } from "$env/dynamic/private";
 import { fail } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
+import {
+    formatDateTime, formatDate, formatTime
+    
+ } from "$lib";
 
 export const load: PageServerLoad = async () => {
     try {
-        const res = await fetch(`${env.BASE_URL_8008}/acara`);
+        const res = await fetch(`${env.URL_KERAJAAN}/acara`);
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }
         const data = await res.json();
         console.log(data)
 
-        const formatDateTime = (isoString : any) => {
+        const formatDateTime = (isoString) => {
     if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
     const date = new Date(isoString);
     
@@ -28,7 +32,7 @@ export const load: PageServerLoad = async () => {
     return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
 };
 
-         const formatDate = (isoString : any) => {
+         const formatDate = (isoString) => {
             if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
             const date = new Date(isoString);
             const day = String(date.getDate()).padStart(2, '0');
@@ -36,7 +40,7 @@ export const load: PageServerLoad = async () => {
             const year = date.getFullYear();
             return `${day}-${month}-${year}`;
         };
-        const mergedData = data.filter((event : any) => {
+        const mergedData = data.filter((event) => {
                 // Keep only items where deleted_at is the default value (not deleted)
                 return event.deleted_at === '0001-01-01T00:00:00Z' || !event.deleted_at;
             }).map(event => ({

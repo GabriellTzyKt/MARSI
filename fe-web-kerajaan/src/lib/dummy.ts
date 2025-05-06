@@ -3,6 +3,58 @@ import gambar2 from "$lib/asset/kerajaan/situs_2.png";
 import gambar3 from "$lib/asset/kerajaan/situs_3.png";
 import gambar4 from "$lib/asset/kerajaan/situs_4.png";
 
+export const dummyAsetKerajaan = [
+  {
+    "id": 1,
+    "nama_aset": "Laptop Dell XPS 13",
+    "jenis_aset": "Elektronik",
+    "deskripsi": "Laptop ultrabook ringan untuk kebutuhan mobile programming.",
+    "dokumentasi": [
+      "https://picsum.photos/200/300",
+      "https://picsum.photos/200/300"
+    ]
+  },
+  {
+    "id": 2,
+    "nama_aset": "Proyektor Epson EB-X41",
+    "jenis_aset": "Elektronik",
+    "deskripsi": "Proyektor meeting room dengan resolusi XGA dan 3600 lumens.",
+    "dokumentasi": [
+      "https://picsum.photos/200/300",
+      "https://picsum.photos/200/300",
+      "https://picsum.photos/200/300"
+    ]
+  },
+  {
+    "id": 3,
+    "nama_aset": "Meja Kantor Minimalis",
+    "jenis_aset": "Furniture",
+    "deskripsi": "Meja kerja kayu solid ukuran 120x60 cm untuk ruang kantor.",
+    "dokumentasi": [
+      "https://picsum.photos/200/300"
+    ]
+  },
+  {
+    "id": 4,
+    "nama_aset": "Kamera Canon EOS M50",
+    "jenis_aset": "Elektronik",
+    "deskripsi": "Kamera mirrorless untuk dokumentasi event dan media sosial.",
+    "dokumentasi": [
+      "https://picsum.photos/200/300",
+      "https://picsum.photos/200/300"
+    ]
+  },
+  {
+    "id": 5,
+    "nama_aset": "Printer Brother HL-L2350DW",
+    "jenis_aset": "Elektronik",
+    "deskripsi": "Printer laser monokrom dengan koneksi Wi-Fi untuk perkantoran.",
+    "dokumentasi": [
+      "https://picsum.photos/200/300",
+      "https://picsum.photos/200/300"
+    ]
+  }
+]
 
 export const detail_kelompok = [
   {

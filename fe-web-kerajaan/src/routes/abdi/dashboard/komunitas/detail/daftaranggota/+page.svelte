@@ -135,8 +135,6 @@
 				{#if header === 'Aksi'}
 					<DropDown
 						text="Apakah yakin ingin di arsip?"
-						successText=""
-						link="/abdi/dashboard/komunitas/detail/daftaranggota"
 						id={`id-${index}`}
 						{data}
 						items={[
@@ -148,7 +146,7 @@
 			{/snippet}
 		</Table>
 	</div>
-	<Pagination bind:currPage bind:entries totalItems={filterD(dummyAnggota).length} />
+	<Pagination bind:currPage bind:entries totalItems={filterD(resdata).length} />
 </div>
 {#if open}
 	<form

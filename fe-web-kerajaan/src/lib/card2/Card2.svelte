@@ -1,24 +1,30 @@
 <script lang="ts">
 	import { page } from '$app/state';
 
-	let { situs, header, isi, icon, id } = $props();
+	let { situs, header, isi, icon, id, href = '' } = $props();
 
 	$inspect('test');
 	$inspect(page);
 </script>
 
 <div class="h-full max-w-sm overflow-hidden rounded bg-white shadow-lg">
-	<div class="w-full">
-		<img
-			class=" mx-auto mt-3 h-full w-[300px] border-2 border-black p-1"
-			src={situs}
-			alt="awawwa"
-		/>
+	<div class="w-full justify-center">
+		{#if situs == ''}
+			<div class="flex h-[150px] w-[300px] items-center justify-center">
+				<p class="text-gray-600">No Images</p>
+			</div>
+		{:else}
+			<img
+				class=" mx-auto mt-3 h-full w-[300px] border-2 border-black p-1"
+				src={situs}
+				alt="awawwa"
+			/>
+		{/if}
 	</div>
-	<div class="relative px-6 py-4 min-w-40">
-		<h1 class=" text-2xl h-[65px] line-clamp-2 text-center">{header}</h1>
+	<div class="relative min-w-40 px-6 py-4">
+		<h1 class=" line-clamp-2 h-[65px] text-center text-2xl">{header}</h1>
 		<div class="flex flex-col">
-			<p class="multiline-ellipsis mb-5 mt-5 h-fulltext-sm text-gray-700">
+			<p class="multiline-ellipsis h-fulltext-sm mb-5 mt-5 text-gray-700">
 				{isi}
 			</p>
 			<div class="flex h-full w-full justify-center lg:justify-end">
@@ -36,7 +42,16 @@
 					</span>
 				{/if}
 
-				{#if id != 0}
+				<div class="flex items-end justify-end">
+					<a
+						{href}
+						class="my-2 ml-auto flex items-center gap-2 rounded-full border-2 px-2 py-1 text-blue-500"
+					>
+						Selanjutnya
+						<span class="fluent--arrow-right-12-filled"></span>
+					</a>
+				</div>
+				<!-- {#if id != 0}
 					{#if page.route.id == '/situs'}
 						<a
 							href="/situs/{id}"
@@ -54,15 +69,14 @@
 							<span class="fluent--arrow-right-12-filled"></span>
 						</a>
 					{:else if page.route.id == '/kelompok'}
-					<a
-						href="/kelompok/{id}"
-						class="my-2 ml-auto flex items-center gap-2 rounded-full border-2 px-2 py-1 text-blue-500"
-					>
-						Selanjutnya
-						<span class="fluent--arrow-right-12-filled"></span>
-					</a>
-				{/if}
-
+						<a
+							href="/kelompok/{id}"
+							class="my-2 ml-auto flex items-center gap-2 rounded-full border-2 px-2 py-1 text-blue-500"
+						>
+							Selanjutnya
+							<span class="fluent--arrow-right-12-filled"></span>
+						</a>
+					{/if}
 				{:else if id == 0}
 					<a
 						href="/"
@@ -71,7 +85,7 @@
 						Selanjutnya
 						<span class="fluent--arrow-right-12-filled"></span>
 					</a>
-				{/if}
+				{/if} -->
 			</div>
 		</div>
 	</div>
