@@ -2,62 +2,48 @@
 	import Card2 from '$lib/card2/Card2.svelte';
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '$lib/navbar/Navbar.svelte';
-	import situs1 from '$lib/asset/kerajaan/situs1.png';
+	import situs1 from '$lib/asset/kerajaan/situs1.png'; // Tetap sebagai fallback image
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
 
-	const events = [
-		{
-			id: 1,
-			header: 'Keraton Surakarta Hadiningrat',
-			isi: `Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
-				  Dikenal karena kejernihan airnya yang memukau, tempat ini menjadi salah satu tujuan
-				  wisata populer bagi penduduk lokal maupun wisatawan. Dengan suasana yang tenang dan
-				  pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
-				  menyegarkan. In the name of the wind`,
-			situs: situs1,
-			status: 'organisasi'
-		},
-		{
-			id: 2,
-			header: 'Candi Prambanan',
-			isi: `Candi Prambanan adalah kompleks candi Hindu terbesar di Indonesia dan diakui
-				  sebagai situs warisan dunia UNESCO. Tempat ini menawarkan sejarah dan keindahan
-				  arsitektur yang memukau.`,
-			situs: situs1,
-			status: 'komunitas'
-		},
-		{
-			id: 3,
-			header: 'Keraton Surakarta Hadiningrat',
-			isi: `Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
-				  Dikenal karena kejernihan airnya yang memukau, tempat ini menjadi salah satu tujuan
-				  wisata populer bagi penduduk lokal maupun wisatawan. Dengan suasana yang tenang dan
-				  pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
-				  menyegarkan.`,
-			situs: situs1,
-			status: 'organisasi'
-		},
-		{
-			id: 4,
-			header: 'Candi Borobudur',
-			isi: `Candi Borobudur merupakan candi Buddha terbesar di dunia dan menjadi ikon
-				  kebudayaan Indonesia. Tempat ini tidak hanya menawarkan nilai sejarah tetapi juga
-				  pemandangan alam yang luar biasa.`,
-			situs: situs1,
-			status: 'komunitas'
-		}
-	];
+	// Ambil data dari server
+	let { data } = $props();
+	console.log('Data dari server:', data);
 
+	// Gunakan state untuk tab aktif
 	let activeTab = $state('organisasi');
 
 	function setActive(tab: string) {
 		activeTab = tab;
 	}
 
-	let filteredData = $derived(events.filter((event) => event.status == activeTab));
+	// Filter data berdasarkan tab aktif dengan pengecekan data
+	let filteredData = $derived(() => {
+		// Pastikan data dan properti yang dibutuhkan tersedia
+		if (!data) return [];
 
-	$inspect(activeTab);
+		if (activeTab === 'organisasi') {
+			return data.organisasi
+				? data.organisasi.map((org) => ({
+						id: org.id_organisasi,
+						header: org.nama_organisasi || 'Organisasi',
+						isi: org.deskripsi || 'Tidak ada deskripsi',
+						situs: org.profileUrl || situs1,
+						status: 'organisasi'
+					}))
+				: [];
+		} else {
+			return data.komunitas
+				? data.komunitas.map((kom) => ({
+						id: kom.id_komunitas,
+						header: kom.nama_komunitas || 'Komunitas',
+						isi: kom.deskripsi || 'Tidak ada deskripsi',
+						situs: kom.profileUrl || situs1,
+						status: 'komunitas'
+					}))
+				: [];
+		}
+	});
 </script>
 
 <Navbar></Navbar>
@@ -85,7 +71,7 @@
 				</span>
 			</button>
 
-			<!-- Tombol 'Selesai' -->
+			<!-- Tombol 'Komunitas' -->
 			<button
 				onclick={() => setActive('komunitas')}
 				class="relative overflow-hidden rounded-full border-2 px-5 py-1 font-semibold"
@@ -106,11 +92,21 @@
 	</div>
 
 	<div class="mb-10 ml-5 mr-5 mt-10 flex justify-center">
-		<div class="mx-auto grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-			{#each filteredData as event}
-				<Card2 situs={event.situs} header={event.header} isi={event.isi} icon="" id={event.id} />
-			{/each}
-		</div>
+		{#if !data || (!data.organisasi && !data.komunitas)}
+			<div class="text-center">
+				<p>Memuat data...</p>
+			</div>
+		{:else if filteredData().length === 0}
+			<div class="text-center">
+				<p>Tidak ada data</p>
+			</div>
+		{:else}
+			<div class="mx-auto grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+				{#each filteredData() as item}
+					<Card2 situs={item.situs} header={item.header} isi={item.isi} icon="" id={item.id} />
+				{/each}
+			</div>
+		{/if}
 	</div>
 </section>
 

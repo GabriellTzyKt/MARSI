@@ -2,6 +2,8 @@ import { fail, redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
 import { date } from "zod";
+import { formatDate, formatDatetoUI } from "$lib";
+
 
 export const load: PageServerLoad = async ({locals, cookies}) => {
     try {
@@ -27,14 +29,7 @@ export const load: PageServerLoad = async ({locals, cookies}) => {
         
         const data = await res.json();
         if (res.ok) {
-            const formatDate = (isoString) => {
-                if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
-                const date = new Date(isoString);
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const year = date.getFullYear();
-                return `${year}-${month}-${day}`;
-            };
+           
             
             const resData = {
                 ...data,

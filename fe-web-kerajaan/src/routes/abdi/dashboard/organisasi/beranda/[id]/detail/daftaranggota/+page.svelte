@@ -51,6 +51,14 @@
 		} else open = false;
 		console.log(open);
 	};
+	$effect(() => {
+		if (keyword || entries) {
+			currPage = 1;
+		}
+		if (entries <= 1) {
+			entries = 1;
+		}
+	});
 </script>
 
 {#if navigating.to}
