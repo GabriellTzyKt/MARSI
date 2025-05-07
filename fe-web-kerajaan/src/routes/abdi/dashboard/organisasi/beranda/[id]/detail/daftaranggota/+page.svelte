@@ -158,8 +158,6 @@
 				{#if header === 'Aksi'}
 					<DropDown
 						text={`Apakah yakin ingin mengarsipkan ${data.nama_anggota}?`}
-						successText={`Berhasil mengarsipkan ${data.nama_anggota}!`}
-						link="/abdi/dashboard/organisasi/beranda/detail/daftaranggota"
 						items={[
 							['Edit', `/abdi/dashboard/organisasi/beranda/${idAktif}/detail/daftaranggota/edit`],
 							['children', 'Non Aktifkan', '']

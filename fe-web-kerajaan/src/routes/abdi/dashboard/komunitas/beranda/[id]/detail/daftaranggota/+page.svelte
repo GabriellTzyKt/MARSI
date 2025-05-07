@@ -5,18 +5,41 @@
 	import { dummyAnggota } from '$lib/dummy';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import TambahAnggota from '$lib/popup/TambahAnggota.svelte';
+	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
 	import { fade } from 'svelte/transition';
 	let { data } = $props();
-	let dataambil = data.komunitasList;
-	console.log("komunitas : ", dataambil);
-	let dataanggota = data.allAnggota;
-	console.log("anggota : ", dataanggota)
+	let dataambil = data.data;
+	let entries = $state(10);
+	let keyword = $state('');
+	let currPage = $state(1);
+	console.log(data.allAnggota);
+	console.log('komunitas : ', data.data);
+	// let dataanggota = data.allAnggota;
+	function filterD(data: any[]) {
+		return data.filter(
+			(item) =>
+				item?.nama_lengkap?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.email?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.notelp?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.jabatan_komunitas?.toLowerCase().includes(keyword.toLowerCase())
+		);
+	}
+	function pagination(data: any[]) {
+		let d = filterD(data);
+		let start = (currPage - 1) * entries;
+		let end = start + entries;
+		console.log(d);
+		return d.slice(start, end);
+	}
+	let resdata = $derived(pagination(data.data));
 
-
-	let idAktif = $state("")
+	let idAktif = $state('');
 	$effect(() => {
+		if (resdata) {
+			console.log(resdata);
+		}
 		idAktif = page.params.id;
 	});
 
@@ -25,7 +48,7 @@
 	let error = $state();
 	let data2 = $state();
 
-	let timer : any;
+	let timer: any;
 
 	let toggle = () => {
 		if (!open) {
@@ -60,6 +83,7 @@
 				<input
 					type="text"
 					placeholder="Cari.."
+					bind:value={keyword}
 					class=" w-full bg-transparent px-2 py-2 focus:outline-none"
 				/>
 
@@ -86,7 +110,7 @@
 				<input
 					type="number"
 					class="w-12 rounded-md border py-2 text-center focus:outline-none"
-					value="8"
+					bind:value={entries}
 					name=""
 					id=""
 				/>
@@ -96,25 +120,22 @@
 			</div>
 		</div>
 	</div>
-	<div class="flex w-full">
+	<div class="flex w-full flex-col">
 		<Table
 			table_header={[
-				['id_user', 'Id Anggota'],
-				['nama_anggota', 'Nama Anggota'], // blom
+				['nama_lengkap', 'Nama Anggota'], // blom
 				['tanggal_bergabung', 'Tanggal Bergabung'],
-				['jabatan_anggota', 'Jabatan Organisasi'],
-				['nomor_telepon', 'Nomer Telpon'], // blom
+				['jabatan_komunitas', 'Jabatan Organisasi'],
+				['no_telp', 'Nomer Telpon'], // blom
 				['email', 'Email'], // blom
 				['children', 'Aksi']
 			]}
-			table_data={dataanggota}
+			table_data={resdata}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
 					<DropDown
 						text="Apakah yakin ingin di arsip?"
-						successText=""
-						link="/abdi/dashboard/komunitas/detail/daftaranggota"
 						id={`id-${index}`}
 						{data}
 						items={[
@@ -125,6 +146,7 @@
 				{/if}
 			{/snippet}
 		</Table>
+		<Pagination bind:currPage bind:entries totalItems={filterD(data.data).length}></Pagination>
 	</div>
 </div>
 {#if open}
@@ -133,7 +155,7 @@
 		method="post"
 		use:enhance={() => {
 			return async ({ result }) => {
-				console.log(result)
+				console.log(result);
 				if (result.type === 'success') {
 					valo = true;
 					clearTimeout(timer);
