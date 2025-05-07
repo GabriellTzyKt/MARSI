@@ -60,7 +60,7 @@
 		console.log(d);
 		return d.slice(start, end);
 	}
-	let resdata = $derived(pagination(dataambil));
+	let resdata = $derived(pagination(dataanggota));
 
 	let timer: any;
 
@@ -152,7 +152,7 @@
 				['user_email', 'Email'],
 				['children', 'Aksi']
 			]}
-			table_data={dataanggota}
+			table_data={resdata}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
@@ -171,7 +171,7 @@
 			{/snippet}
 		</Table>
 	</div>
-	<Pagination bind:currPage bind:entries totalItems={filterD(dummyAnggota).length}></Pagination>
+	<Pagination bind:currPage bind:entries totalItems={filterD(dataanggota).length}></Pagination>
 </div>
 {#if open}
 	<form

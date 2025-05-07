@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { navigating } from '$app/state';
+	import { navigating, page } from '$app/state';
 	import Footer from '$lib/footer/Footer.svelte';
 	import Loader from '$lib/loader/Loader.svelte';
 	import Navbar from '$lib/navbar/Navbar.svelte';
@@ -7,6 +7,13 @@
 
 	const { data } = $props();
 	console.log('Data yang diterima:', data);
+
+	let idAktif = $state(" ")
+
+	$effect(() => {
+		idAktif = page.params.id;
+		console.log('ID : ', idAktif);
+	});
 
 	// Check if data exists and has the expected structure
 	const situs = data?.data || {}; // Access first item in array or use empty object as fallback
@@ -93,7 +100,7 @@
 						<button
 							class=" h-fit w-full rounded-full border-2 border-red-400 bg-red-400 px-2 py-3 text-center text-white"
 						>
-							<a href="/acara/rsvp">Daftar Acara</a></button
+							<a href="/acara/{idAktif}/rsvp">Daftar Acara</a></button
 						>
 					</div>
 				</div>

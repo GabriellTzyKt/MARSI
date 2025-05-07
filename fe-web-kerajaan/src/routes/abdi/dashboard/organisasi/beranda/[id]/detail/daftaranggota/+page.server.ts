@@ -8,7 +8,7 @@ import { page } from "$app/state";
 export const load: PageServerLoad = async ({fetch, params}) => {
     try {
         // Fetch all organizations
-        const organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi`);
+        const organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi?limit=200`);
         if (!organisasiResponse.ok) {
             throw error(organisasiResponse.status, `Failed to fetch organisasi: ${organisasiResponse.statusText}`);
         }
@@ -67,7 +67,7 @@ export const load: PageServerLoad = async ({fetch, params}) => {
         // Iterasi melalui setiap organisasi untuk mengambil anggotanya
         for (const organisasi of organisasiWithUsers) {
             try {
-                const anggotaResponse = await fetch(`${env.URL_KERAJAAN}/organisasi/anggota/${organisasi.id_organisasi}`);
+                const anggotaResponse = await fetch(`${env.URL_KERAJAAN}/organisasi/anggota/${organisasi.id_organisasi}?limit=200`);
                 if (anggotaResponse.ok) {
                     const anggotaList = await anggotaResponse.json();
                     console.log(`Anggota organisasi ${organisasi.id_organisasi}:`, anggotaList);
@@ -174,6 +174,8 @@ export const actions: Actions = {
                 type: "add"
             });
         }
+
+        console.log( "Deskripsi : " , form.deskripsi, "Jabatan : ", form.jabatan)
 
         try {
             const response = await fetch(`${env.URL_KERAJAAN}/organisasi/anggota`, {
