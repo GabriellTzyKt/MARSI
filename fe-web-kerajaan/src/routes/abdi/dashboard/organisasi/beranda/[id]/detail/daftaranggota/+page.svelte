@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { navigating } from '$app/state';
+	import { invalidateAll } from '$app/navigation';
+	import { navigating, page } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAnggota } from '$lib/dummy';
 	import Loader from '$lib/loader/Loader.svelte';
@@ -12,8 +13,12 @@
 	import { fade } from 'svelte/transition';
 
 	let { data } = $props();
-	let dataambil = data.detil_anggota;
-	console.log(dataambil);
+	let dataambil = data.organisasiList;
+	let dataanggota = data.allAnggota;
+	let allanggota = data.allUsers;
+	console.log('Data ambil : ', dataambil);
+	console.log('Data anggota : ', dataanggota);
+	let idAktif = $state(page.params.id);
 
 	let open = $state(false);
 	let valo = $state(false);
@@ -25,12 +30,26 @@
 
 	function filterD(data: any[]) {
 		return data.filter((item) => {
+			// Check if item exists
+			if (!item) return false;
+
+			// Safely access properties with optional chaining and default to empty string if undefined
+			const namaAnggota = item.nama_anggota?.toLowerCase() || '';
+			const tanggalBergabung = item.tanggal_bergabung?.toLowerCase() || '';
+			const jabatanOrganisasi = item.jabatan_organisasi?.toLowerCase() || '';
+			const nomorTelepon = item.nomor_telepon?.toLowerCase() || '';
+			const email = item.email?.toLowerCase() || '';
+
+			// Convert keyword to lowercase once
+			const keywordLower = keyword.toLowerCase();
+
+			// Check if any property includes the keyword
 			return (
-				item.nama_anggota.toLowerCase().includes(keyword.toLowerCase()) ||
-				item.tanggal_bergabung.toLowerCase().includes(keyword.toLowerCase()) ||
-				item.jabatan_organisasi.toLowerCase().includes(keyword.toLowerCase()) ||
-				item.nomor_telepon.toLowerCase().includes(keyword.toLowerCase()) ||
-				item.email.toLowerCase().includes(keyword.toLowerCase())
+				namaAnggota.includes(keywordLower) ||
+				tanggalBergabung.includes(keywordLower) ||
+				jabatanOrganisasi.includes(keywordLower) ||
+				nomorTelepon.includes(keywordLower) ||
+				email.includes(keywordLower)
 			);
 		});
 	}
@@ -41,24 +60,16 @@
 		console.log(d);
 		return d.slice(start, end);
 	}
-	let resdata = $derived(pagination(dummyAnggota));
+	let resdata = $derived(pagination(dataanggota));
 
 	let timer: any;
 
-	let toggle = () => {
-		if (!open) {
-			open = true;
-		} else open = false;
-		console.log(open);
-	};
-	$effect(() => {
-		if (keyword || entries) {
-			currPage = 1;
-		}
-		if (entries <= 1) {
-			entries = 1;
-		}
-	});
+	// let toggle = () => {
+	// 	if (!open) {
+	// 		open = true;
+	// 	} else open = false;
+	// 	console.log(open);
+	// };
 </script>
 
 {#if navigating.to}
@@ -133,12 +144,12 @@
 	<div class="flex w-full">
 		<Table
 			table_header={[
-				['id_anggota', 'Id Anggota'],
-				['nama_anggota', 'Nama Anggota'],
+				['id_user', 'Id Anggota'],
+				['user_name', 'Nama Anggota'],
 				['tanggal_bergabung', 'Tanggal Bergabung'],
-				['jabatan_organisasi', 'Jabatan Organisasi'],
-				['nomor_telepon', 'Nomer Telpon'],
-				['email', 'Email'],
+				['jabatan_anggota', 'Jabatan Anggota'],
+				['user_notelp', 'Nomer Telpon'],
+				['user_email', 'Email'],
 				['children', 'Aksi']
 			]}
 			table_data={resdata}
@@ -148,9 +159,9 @@
 					<DropDown
 						text={`Apakah yakin ingin mengarsipkan ${data.nama_anggota}?`}
 						successText={`Berhasil mengarsipkan ${data.nama_anggota}!`}
-						link="/abdi/dashboard/organisasi/detail/daftaranggota"
+						link="/abdi/dashboard/organisasi/beranda/detail/daftaranggota"
 						items={[
-							['Edit', '/abdi/dashboard/organisasi/detail/daftaranggota/edit'],
+							['Edit', `/abdi/dashboard/organisasi/beranda/${idAktif}/detail/daftaranggota/edit`],
 							['children', 'Non Aktifkan', '']
 						]}
 						id={`id-${index}`}
@@ -160,7 +171,7 @@
 			{/snippet}
 		</Table>
 	</div>
-	<Pagination bind:currPage bind:entries totalItems={filterD(dummyAnggota).length}></Pagination>
+	<Pagination bind:currPage bind:entries totalItems={filterD(dataanggota).length}></Pagination>
 </div>
 {#if open}
 	<form
@@ -174,6 +185,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						valo = false;
+						invalidateAll();
 					}, 3000);
 					open = false;
 				} else if (result.type === 'failure') {
@@ -183,7 +195,7 @@
 		}}
 	>
 		<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
-			<TambahAnggota bind:value={open} bind:open={valo} errors={error} {data2} {dataambil}
+			<TambahAnggota bind:value={open} bind:open={valo} errors={error} {data2} {allanggota}
 			></TambahAnggota>
 		</div>
 	</form>

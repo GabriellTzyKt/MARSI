@@ -244,7 +244,25 @@
 			return 'Edit Organisasi';
 		} else if (page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail/ubah') {
 			return 'Edit Situs';
+		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/daftaranggota') {
+			return 'Daftar Anggota';
+		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/acara') {
+			return 'Daftar Acara';
+		}  else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/daftaranggota/edit') {
+			return 'Edit Anggota';
+		}  else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/acara/tambah') {
+			return 'Tambah Acara';
+		} else if (page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail/bukutamu') {
+			return 'Buku Tamu';
+		} else if (page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail/daftaracara') {
+			return 'Daftar Acara';
+		} else if (page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail/daftaracara/buat') {
+			return 'Tambah Acara';
 		}
+	
+
+
+
 	});
 
 	let { children } = $props();
@@ -528,20 +546,19 @@
 							href="/abdi/dashboard/komunitas/beranda/{idAktif}/detail"
 							icon="mdi:book"
 							anchor="Detail komunitas"
-							active={page.route.id == `/abdi/dashboard/komunitas/beranda/${idAktif}/detail`}
+							active={`/abdi/dashboard/komunitas/beranda/${idAktif}/detail` == (isRouteActive(pageAktif, idAktif))}
 						/>
 						<SidebarMenu
-							href="/abdi/dashboard/komunitas/beranda/1/detail/daftaranggota"
+							href="/abdi/dashboard/komunitas/beranda/{idAktif}/detail/daftaranggota"
 							icon="mdi:crown"
 							anchor="Daftar Anggota"
-							active={page.route.id ==
-								`/abdi/dashboard/komunitas/beranda/${idAktif}/detail/daftaranggota`}
+							active={`/abdi/dashboard/komunitas/beranda/${idAktif}/detail/daftaranggota` == (isRouteActive(pageAktif, idAktif))}
 						/>
 						<SidebarMenu
 							href="/abdi/dashboard/komunitas/beranda/{idAktif}/detail/acara"
 							icon="mdi:crown"
 							anchor="Acara"
-							active={page.route.id === `/abdi/dashboard/komunitas/beranda/${idAktif}/detail/acara`}
+							active={`/abdi/dashboard/komunitas/beranda/${idAktif}/detail/acara` == (isRouteActive(pageAktif, idAktif))}
 						/>
 					</SidebarMenu>
 				{/if}

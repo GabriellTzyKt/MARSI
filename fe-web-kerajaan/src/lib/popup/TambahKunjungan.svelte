@@ -1,5 +1,7 @@
 <script lang="ts">
-	let { id = 0, errors = null, data2 } = $props();
+	import { page } from "$app/state";
+
+	let { id = 0, errors = null, data2} = $props();
 	let namapengunjung = $state(data2 ? data2.namapengunjung : '');
 	let radioinput = $state(data2 ? data2.radioinput : 'tidak');
 	let keterangankunjungan = $state(data2 ? data2.keterangankunjungan : '');
@@ -9,6 +11,11 @@
 	let tujuankunjungan = $state(data2 ? data2.tujuankunjungan : '');
 	console.log('ini data2 : ', data2);
 	console.log('ini error : ', errors);
+	let idAktif = $state(page.params.id)
+	$effect(() => {
+		idAktif = page.params.id;
+		console.log("ID kunjungan  : ", id)
+	});	
 </script>
 
 <div
@@ -16,6 +23,7 @@
 >
 	<div class="col-span-7 mt-5 lg:col-span-5 lg:mb-5">
 		<div class="flex flex-col">
+			<input type="hidden" bind:value={idAktif} name="ID" >
 			<div class="relative flex items-center">
 				<input
 					type="text"

@@ -1,10 +1,15 @@
 <script lang="ts">
-    import { navigating } from '$app/state';
+    import { navigating, page } from '$app/state';
     import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
     import Loader from '$lib/loader/Loader.svelte';
     let { data } = $props();
     let dataambil = data.filteredList
     console.log("data : " , dataambil)
+
+    let idAktif = $state("")
+	$effect(() => {
+		idAktif = page.params.id;
+	});
 </script>
 
 {#if navigating.to}

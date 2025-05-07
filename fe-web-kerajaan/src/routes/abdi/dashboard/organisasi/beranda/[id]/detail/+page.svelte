@@ -22,7 +22,6 @@
 	<div class="block h-fit rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="relative mx-auto flex w-full items-center justify-center">
 			<img src={datafotoprofile || gambardefault} class="h-25 w-25 relative ml-5 mr-5 rounded-full" alt="" />
-			<span class="mdi--edit absolute"></span>
 		</div>
 		<div class="mt-5 flex w-full justify-center lg:mt-0 lg:justify-end">
 			<a href="/abdi/dashboard/organisasi/beranda/{idAktif}/detail/edit"

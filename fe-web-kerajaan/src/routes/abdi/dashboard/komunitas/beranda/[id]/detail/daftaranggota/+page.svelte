@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { page } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAnggota } from '$lib/dummy';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
@@ -12,6 +13,12 @@
 	console.log("komunitas : ", dataambil);
 	let dataanggota = data.allAnggota;
 	console.log("anggota : ", dataanggota)
+
+
+	let idAktif = $state("")
+	$effect(() => {
+		idAktif = page.params.id;
+	});
 
 	let open = $state(false);
 	let valo = $state(false);
