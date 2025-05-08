@@ -19,7 +19,7 @@ export const load: PageServerLoad = async () => {
         }
         const dataOrg = await resOrg.json();
         const filterOrganisasi = dataOrg.filter((item: any) => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
-        console.log("komunitas", filterOrganisasi);
+        console.log("organisais", filterOrganisasi);
 
         async function fetchProfileImage(item: any, idField: string) {
             let profileUrl = null;
@@ -50,10 +50,13 @@ export const load: PageServerLoad = async () => {
         const finalKomunitas = await Promise.all(filterKomunitas.map(async (item: any) => {
             return await fetchProfileImage(item, 'id_komunitas');
         }));
+        const finalOrganisasi = await Promise.all(filterOrganisasi.map(async (item: any) => {
+            return await fetchProfileImage(item, 'id_organisasi');
+        }));
         console.log(finalKomunitas)
         return {
             komunitas: finalKomunitas,
-            // organisasi: organisasiWithProfiles
+            organisasi: finalOrganisasi
         };
         // return { data };
     }

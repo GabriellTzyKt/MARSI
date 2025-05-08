@@ -248,9 +248,11 @@
 			return 'Daftar Anggota';
 		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/acara') {
 			return 'Daftar Acara';
-		}  else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/daftaranggota/edit') {
+		} else if (
+			page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/daftaranggota/edit'
+		) {
 			return 'Edit Anggota';
-		}  else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/acara/tambah') {
+		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/acara/tambah') {
 			return 'Tambah Acara';
 		} else if (page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail/bukutamu') {
 			return 'Buku Tamu';
@@ -259,10 +261,6 @@
 		} else if (page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail/daftaracara/buat') {
 			return 'Tambah Acara';
 		}
-	
-
-
-
 	});
 
 	let { children } = $props();
@@ -284,9 +282,9 @@
 	};
 </script>
 
-{#if navigating.to}
+<!-- {#if navigating.to}
 	<Loader text="Navigating..."></Loader>
-{/if}
+{/if} -->
 <header class="w-full lg:flex lg:h-full lg:min-w-full">
 	<div
 		class="test2 width_head1 flex items-center justify-between bg-blue-400 p-2 lg:w-[16.7%] lg:justify-center"
@@ -546,19 +544,22 @@
 							href="/abdi/dashboard/komunitas/beranda/{idAktif}/detail"
 							icon="mdi:book"
 							anchor="Detail komunitas"
-							active={`/abdi/dashboard/komunitas/beranda/${idAktif}/detail` == (isRouteActive(pageAktif, idAktif))}
+							active={`/abdi/dashboard/komunitas/beranda/${idAktif}/detail` ==
+								isRouteActive(pageAktif, idAktif)}
 						/>
 						<SidebarMenu
 							href="/abdi/dashboard/komunitas/beranda/{idAktif}/detail/daftaranggota"
 							icon="mdi:crown"
 							anchor="Daftar Anggota"
-							active={`/abdi/dashboard/komunitas/beranda/${idAktif}/detail/daftaranggota` == (isRouteActive(pageAktif, idAktif))}
+							active={`/abdi/dashboard/komunitas/beranda/${idAktif}/detail/daftaranggota` ==
+								isRouteActive(pageAktif, idAktif)}
 						/>
 						<SidebarMenu
 							href="/abdi/dashboard/komunitas/beranda/{idAktif}/detail/acara"
 							icon="mdi:crown"
 							anchor="Acara"
-							active={`/abdi/dashboard/komunitas/beranda/${idAktif}/detail/acara` == (isRouteActive(pageAktif, idAktif))}
+							active={`/abdi/dashboard/komunitas/beranda/${idAktif}/detail/acara` ==
+								isRouteActive(pageAktif, idAktif)}
 						/>
 					</SidebarMenu>
 				{/if}
