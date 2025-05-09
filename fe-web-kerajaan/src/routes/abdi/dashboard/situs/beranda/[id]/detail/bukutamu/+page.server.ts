@@ -8,7 +8,7 @@ export const actions: Actions = {
 
         const formDataEntries = Array.from(data.entries()); // Konversi FormData ke array
 
-        console.log("data entries : " , formDataEntries)
+        console.log("data entries : ", formDataEntries)
 
         let form: any = {
             namapengunjung: "",
@@ -71,7 +71,7 @@ export const actions: Actions = {
                 form.tujuankunjungan[key] = String(value).trim();
             }
         }
-        
+
 
         console.log("Extracted Form:", form);
 
