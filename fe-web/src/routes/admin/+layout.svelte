@@ -63,6 +63,8 @@
 			return 'Pendaftaran Kerajaan';
 		} else if (page.route.id?.startsWith('/admin/suratDokumen/ubah')) {
 			return 'Ubah Dokumen';
+		} else if (page.route.id?.startsWith('/admin/aplikasiKerajaan')) {
+			return 'Aplikasi Kerajaan';
 		}
 	});
 
@@ -138,6 +140,12 @@
 					icon="mdi:home"
 					anchor="Surat Dokumen"
 					active={page.route.id?.startsWith('/admin/suratDokumen')}
+				/>
+				<SidebarMenu
+					href="/admin/aplikasiKerajaan"
+					icon="mdi:home"
+					anchor="Aplikasi Kerajaan"
+					active={page.route.id?.startsWith('/admin/aplikasiKerajaan')}
 				/>
 				<SidebarMenu
 					href="/admin/biodata"
@@ -243,6 +251,13 @@
 				icon="mdi:globe"
 				anchor="Master Data"
 				active={isActive('/admin/masterData')}
+			/>
+
+			<SidebarMenu
+				href="/admin/aplikasiKerajaan"
+				icon="mdi:home"
+				anchor="Aplikasi Kerajaan"
+				active={page.route.id?.startsWith('/admin/aplikasiKerajaan')}
 			/>
 			<!-- <SidebarMenu
 				href="/admin/biodata"

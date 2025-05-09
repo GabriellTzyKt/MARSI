@@ -3,6 +3,7 @@
 	import xbutton from '$lib/asset/icon/xbutton.png';
 	import dangerbtn from '$lib/asset/icon/exclamationmark.png';
 	import SuccessModal from '../modal/SuccessModal.svelte';
+	import { goto } from '$app/navigation';
 
 	let { value = $bindable(), text, successText, choose } = $props();
 	let open = $state(false);
@@ -60,13 +61,16 @@
 				<div class="flex">
 					{#if choose == 'arsip'}
 						<button
+							type="submit"
 							class="btn-setuju rounded-xl px-8 py-3 font-[500] text-white hover:cursor-pointer hover:ring hover:ring-gray-600"
 							onclick={() => {
 								setTimer();
+								goto('/abdi/dashboard/organisasi/beranda/2/detail/daftaranggota')
 							}}>Iya, arispkan</button
 						>
 					{:else if choose == 'delete'}
 						<button
+							type="submit"
 							class="btn-setuju rounded-xl px-8 py-3 font-[500] text-white hover:cursor-pointer hover:ring hover:ring-gray-600"
 							>Iya, hapus</button
 						>
