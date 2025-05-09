@@ -64,6 +64,17 @@
 	});
 	const akun = data.akun;
 	let loading = $state(false);
+
+	// Tambahkan state untuk kontrol popup
+	let showBarcode = $state(false);
+	let barcodeData = $state('');
+
+	// Fungsi untuk menampilkan barcode
+	function openBarcode() {
+		// Gunakan ID pengguna atau data lain yang relevan
+		barcodeData = data?.data?.id_user?.toString() || 'User ID';
+		showBarcode = true;
+	}
 </script>
 
 <Navbar></Navbar>
@@ -458,4 +469,14 @@
 <Footer></Footer>
 {#if open}
 	<SuccessModal text="Akun Sudah Aktif!"></SuccessModal>
+{/if}
+
+<!-- Tambahkan tombol untuk menampilkan barcode -->
+<button class="rounded-lg border border-gray-500 px-3 py-2 shadow-2xl" on:click={openBarcode}>
+	Tampilkan Barcode
+</button>
+
+<!-- Tambahkan komponen Bracode -->
+{#if showBarcode}
+	<Bracode bind:value={showBarcode} data={barcodeData} />
 {/if}

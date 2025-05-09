@@ -36,6 +36,7 @@
 			// Check if item exists
 			if (!item) return false;
 
+
 			// Safely access properties with optional chaining and default to empty string if undefined
 			const namaAnggota = item.nama_anggota?.toLowerCase() || '';
 			const tanggalBergabung = item.tanggal_bergabung?.toLowerCase() || '';
@@ -43,8 +44,10 @@
 			const nomorTelepon = item.nomor_telepon?.toLowerCase() || '';
 			const email = item.email?.toLowerCase() || '';
 
+
 			// Convert keyword to lowercase once
 			const keywordLower = keyword.toLowerCase();
+
 
 			// Check if any property includes the keyword
 			return (
@@ -178,8 +181,6 @@
 				{#if header === 'Aksi'}
 					<DropDown
 						text={`Apakah yakin ingin mengarsipkan ${data.nama_anggota}?`}
-						successText={`Berhasil mengarsipkan ${data.nama_anggota}!`}
-						link="/abdi/dashboard/organisasi/beranda/detail/daftaranggota"
 						items={[
 							['Edit', `/abdi/dashboard/organisasi/beranda/${idAktif}/detail/daftaranggota/edit`],
 							[

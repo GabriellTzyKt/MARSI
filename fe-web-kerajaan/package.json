@@ -43,7 +43,9 @@
 		"jwt-decode": "^4.0.0",
 		"jwt-decoder": "^0.0.0",
 		"p-limit": "^6.2.0",
+		"qrcode": "^1.5.4",
 		"svelte-fast-marquee": "^0.8.0",
+		"svelte-qr": "^1.0.0",
 		"tailwind-merge": "^3.0.1",
 		"uuid": "^11.1.0",
 		"zod": "^3.24.2"

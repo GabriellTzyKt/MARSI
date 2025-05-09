@@ -1,7 +1,15 @@
 import { fail } from "@sveltejs/kit";
 import { error, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
+import type { PageServerLoad } from "../$types";
 
+export const load: PageServerLoad = async ({params}) => {
+    try {
+        
+    } catch (error) {
+        
+    }
+};
 
 export const actions: Actions = {
     edit: async ({ request }) => {

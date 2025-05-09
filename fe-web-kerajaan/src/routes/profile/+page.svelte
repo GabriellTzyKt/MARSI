@@ -14,11 +14,13 @@
 	import Loader from '$lib/loader/Loader.svelte';
 	// import { load } from './[id]/proxy+page.server';
 	let { data } = $props();
+	// console.log(data.data.id_user);
 	let chose: number | null = $state(null);
 	let open = $state(false);
 	let timer: number;
 	let success = $state(false);
 	let loading = $state(false);
+	let barcodeData = data.data.id_user || '';
 	function setTimer() {
 		open = true;
 		if (timer) {
@@ -34,6 +36,10 @@
 	const toggle = (id: number) => {
 		chose = chose === id ? null : id;
 	};
+
+	function showBarcode() {
+		open = true;
+	}
 </script>
 
 <Navbar></Navbar>
@@ -273,7 +279,7 @@
 				<button
 					class="rounded-lg border border-gray-500 px-3 py-2 shadow-2xl"
 					onclick={() => {
-						open = true;
+						showBarcode();
 					}}>Barcode</button
 				>
 			</div>
@@ -463,7 +469,7 @@
 </div>
 <Footer></Footer>
 {#if open}
-	<Bracode bind:value={open}></Bracode>
+	<Bracode bind:value={open} data={barcodeData}></Bracode>
 {/if}
 {#if success}
 	<SuccessModal text="Berhasil Logout!"></SuccessModal>
