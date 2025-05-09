@@ -56,7 +56,6 @@
 		}
 	});
 	let loading = $state(false);
-
 </script>
 
 {#if navigating.to}
@@ -134,8 +133,8 @@
 			table_header={[
 				['id_tugas', 'Id Tugas'],
 				['nama_tugas', 'Nama Tugas'],
-				['id_pemberi_tugas', 'Pemberi Tugas'],
-				['id_penerima_tugas', 'Anggota yang Ditugaskan'],
+				['pemberi_tugas', 'Pemberi Tugas'],
+				['penerima_tugas', 'Anggota yang Ditugaskan'],
 				['tanggal_mulai', 'Tanggal Pemberian'],
 				['deskripsi_tugas', 'Deskripsi Tugas'],
 
@@ -148,8 +147,6 @@
 				{#if header === 'Aksi'}
 					<DropDown
 						text=" apa yakin mau menghapus acara ini?"
-						successText="berhasil diarsip"
-						link="/abdi/sekretariat/tugas"
 						items={[
 							['children', 'Bukti', 'Bukti Laporan'],
 							['children', 'Ubah Tugas', 'Ubah Tugas'],
