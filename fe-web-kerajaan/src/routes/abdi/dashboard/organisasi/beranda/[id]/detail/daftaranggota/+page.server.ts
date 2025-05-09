@@ -32,7 +32,6 @@ export const load: PageServerLoad = async ({fetch, params}) => {
             console.error(`Failed to fetch users: ${usersResponse.statusText}`);
         }
         
-        // Fetch user information for each organization
         const organisasiWithUsers = await Promise.all(
             filteredList.map(async (organisasi: any) => {
                 if (organisasi.id_user) {
@@ -219,6 +218,49 @@ export const actions: Actions = {
                 success: false,
                 formData: form,
                 type: "add"
+            });
+        }
+    },
+    
+    hapus: async ({request}) => {
+        const data = await request.formData();
+
+        console.log("Data organisasi : ", data)
+        
+        const organisasiId = data.get("id_organisasi");
+        const userId = data.get("id_user");
+        
+        console.log("Deleting member with organisasi ID:", organisasiId, "and user ID:", userId);
+        
+        try {
+            const response = await fetch(`${env.URL_KERAJAAN}/organisasi/anggota/${organisasiId}/${userId}`, {
+                method: 'DELETE'
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("API error:", errorText);
+                return fail(response.status, {
+                    errors: { api: ["Failed to delete member from organization"] },
+                    success: false,
+                    type: "delete"
+                });
+            }
+            
+            const result = await response.json();
+            console.log("API response:", result);
+            
+            return {
+                success: true,
+                type: "delete",
+                message: "Anggota berhasil dihapus"
+            };
+        } catch (error) {
+            console.error("Error deleting member:", error);
+            return fail(500, {
+                errors: { api: ["An unexpected error occurred"] },
+                success: false,
+                type: "delete"
             });
         }
     }

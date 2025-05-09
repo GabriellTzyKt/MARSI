@@ -8,10 +8,10 @@ export const load: PageServerLoad = async ({ params }) => {
         // Fetch acara details using the ID
         const id = params.id;
         const response = await fetch(`${env.URL_KERAJAAN}/acara/${id}`);
-        
+
         if (!response.ok) {
             console.error(`Failed to fetch acara with ID ${id}: ${response.status}`);
-            return { acara: null, error: `Failed to fetch acara details` };
+            // return { acara: null, error: `Failed to fetch acara details` };
         }
 
         const acara = await response.json();
@@ -38,11 +38,12 @@ export const actions: Actions = {
         const data = await request.formData();
         const id = params.id;
         console.log("Form data received:", data);
+        console.log("ID : ", id)
 
         // mendefinisikan data yg diterima utk tamu
         interface TamuItem {
-            id_user: any;
-            id_acara: any;
+            id_user: Number;
+            id_acara: Number;
             nama: string;
             no_telp: string;
             jenis_kelamin: string;
@@ -53,8 +54,6 @@ export const actions: Actions = {
 
         // Validasi schema untuk peserta
         const attendeeSchema = z.object({
-            nama: z.string().trim().min(1, "Nama lengkap harus diisi!"),
-            jenis_kelamin: z.string().trim().min(1, "Jenis kelamin harus diisi!"),
             no_telp: z.string().trim().min(1, "No telepon harus diisi!"),
         });
 
@@ -62,13 +61,12 @@ export const actions: Actions = {
         let allErrors: { [key: string]: string } = {};
 
         // Extract main attendee data
-        const mainName = String(data.get("namalengkap") || "").trim();
-        const mainGender = String(data.get("jeniskelamin") || "").trim();
-        const mainPhone = String(data.get("nomortelepon") || "").trim();
-        
+        const mainGender = String(data.get("jeniskelamin") || "null").trim();
+        const mainPhone = String(data.get("nomortelepon") || "null").trim();
+        const idUser = String(data.get("id_user") || "null").trim();
+
         // Validate main attendee data
-        const mainValidation = attendeeSchema.safeParse({ 
-            nama: mainName,
+        const mainValidation = attendeeSchema.safeParse({
             jenis_kelamin: mainGender,
             no_telp: mainPhone
         });
@@ -76,12 +74,12 @@ export const actions: Actions = {
         if (!mainValidation.success) {
             const mainErrors = mainValidation.error.flatten().fieldErrors;
             console.log("Main attendee validation failed:", mainErrors);
-            
+
             // Convert array errors to string errors
             for (const [field, messages] of Object.entries(mainErrors)) {
                 if (messages && messages.length > 0) {
                     // Map field names to match form field names
-                    const fieldMap: {[key: string]: string} = {
+                    const fieldMap: { [key: string]: string } = {
                         'nama': 'namalengkap',
                         'jenis_kelamin': 'jeniskelamin',
                         'no_telp': 'nomortelepon'
@@ -92,18 +90,18 @@ export const actions: Actions = {
         } else {
             // Add main attendee to the array
             allAttendees.push({
-                id_user: 5, // Assuming this is the logged-in user ID or a default value
-                id_acara: id,
-                nama: mainName,
+                id_user: Number(idUser),
+                id_acara: Number(id),
+                nama: "null",
                 no_telp: mainPhone,
-                jenis_kelamin: mainGender
+                jenis_kelamin: mainGender || "None"
             });
         }
-        
+
         // tambahan tamu
         const hasTamu = data.get("has_tamu") === "true";
         const tamuCount = hasTamu ? parseInt(String(data.get("tamu_count") || "0"), 10) : 0;
-        
+
         console.log("Has additional guests:", hasTamu);
         console.log("Number of additional guests:", tamuCount);
 
@@ -111,16 +109,17 @@ export const actions: Actions = {
         if (hasTamu && tamuCount > 0) {
             // Process each additional guest
             for (let i = 0; i < tamuCount; i++) {
-                const guestName = String(data.get(`tamu_nama_${i}`) || "").trim();
-                const guestGender = String(data.get(`tamu_jeniskelamin_${i}`) || "").trim();
-                const guestPhone = String(data.get(`tamu_telepon_${i}`) || "").trim();
-                
-                console.log(`Validating guest ${i}:`, { 
-                    name: guestName, 
-                    gender: guestGender, 
-                    phone: guestPhone 
+                const guestName = String(data.get(`tamu_nama_${i}`) || "null").trim();
+                const guestGender = String(data.get(`tamu_jeniskelamin_${i}`) || "null").trim();
+                const guestPhone = String(data.get(`tamu_telepon_${i}`) || "null").trim();
+                const getId = String(data.get(`tamu_id_${i}`) || "null").trim();
+
+                console.log(`TamuS ${i}:`, {
+                    name: guestName,
+                    gender: guestGender,
+                    phone: guestPhone
                 });
-                
+
                 // Validate each guest
                 if (!guestName) {
                     allErrors[`tamu_nama_${i}`] = "Nama tamu harus diisi!";
@@ -131,12 +130,12 @@ export const actions: Actions = {
                 if (!guestPhone) {
                     allErrors[`tamu_telepon_${i}`] = "No telepon harus diisi!";
                 }
-                
+
                 // Add valid guest to the array
                 if (guestName && guestGender && guestPhone) {
                     allAttendees.push({
-                        id_user: null,
-                        id_acara: id,
+                        id_user: Number(getId),
+                        id_acara: Number(id),
                         nama: guestName,
                         no_telp: guestPhone,
                         jenis_kelamin: guestGender
@@ -144,7 +143,7 @@ export const actions: Actions = {
                 }
             }
         }
-        
+
         // If there are any errors, return them
         if (Object.keys(allErrors).length > 0) {
             console.log("Validation errors:", allErrors);
@@ -153,7 +152,6 @@ export const actions: Actions = {
                 errors: allErrors,
                 success: false,
                 formData: {
-                    namalengkap: mainName,
                     jeniskelamin: mainGender,
                     nomortelepon: mainPhone,
                     id_acara: id
@@ -163,9 +161,8 @@ export const actions: Actions = {
         }
 
         console.log("Final data to submit:", allAttendees);
-        
+
         try {
-            // Kirim ke endpoint baru /acara/rsvp
             const response = await fetch(`${env.URL_KERAJAAN}/acara/rsvp`, {
                 method: "POST",
                 headers: {
@@ -173,13 +170,13 @@ export const actions: Actions = {
                 },
                 body: JSON.stringify(allAttendees)
             });
-            
+
             if (response.ok) {
                 const result = await response.json();
                 console.log("RSVP submission successful:", result);
-                return { 
-                    success: true, 
-                    message: "RSVP berhasil ditambahkan" 
+                return {
+                    success: true,
+                    message: "RSVP berhasil ditambahkan"
                 };
             } else {
                 const errorData = await response.json().catch(() => ({ message: "Unknown error" }));
@@ -188,7 +185,6 @@ export const actions: Actions = {
                     errors: { server: [`Error: ${errorData.message || response.statusText}`] },
                     success: false,
                     formData: {
-                        namalengkap: mainName,
                         jeniskelamin: mainGender,
                         nomortelepon: mainPhone,
                         id_acara: id
@@ -202,7 +198,6 @@ export const actions: Actions = {
                 errors: { server: ["Terjadi kesalahan saat menghubungi server"] },
                 success: false,
                 formData: {
-                    namalengkap: mainName,
                     jeniskelamin: mainGender,
                     nomortelepon: mainPhone,
                     id_acara: id

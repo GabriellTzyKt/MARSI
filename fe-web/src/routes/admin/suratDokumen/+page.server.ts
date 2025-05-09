@@ -6,7 +6,7 @@ import type { Actions } from "@sveltejs/kit";
 export const load: PageServerLoad = async ({ fetch }) => {
     try {
         // ngambil data arsip
-        const arsipRequest = await fetch(env.PUB_PORT + "/arsip?limit=100", {
+        const arsipRequest = await fetch(env.PUB_PORT + "/arsip?limit=1000", {
             method: "GET",
             headers: {
                 "Accept": "application/json"
@@ -19,12 +19,24 @@ export const load: PageServerLoad = async ({ fetch }) => {
         }
 
         const arsipData = await arsipRequest.json();
+        
+        // Log all document IDs
+        console.log("All document IDs:");
+        arsipData.forEach((doc: any) => {
+            console.log(`ID: ${doc.id_arsip}, Dokumentasi ID: ${doc.dokumentasi}, Name: ${doc.nama_arsip}`);
+        });
+        
         // Filter out deleted items
         const filteredArsipData = arsipData.filter((doc: any) => {
             return doc.deleted_at === '0001-01-01T00:00:00Z' && doc.deleted_at !== null;
         });
-        console.log("Filtered arsip data:", filteredArsipData);
-
+        
+        // Log filtered document IDs
+        // console.log("Filtered document IDs (non-deleted):");
+        filteredArsipData.forEach((doc: any) => {
+            console.log(`ID: ${doc.id_arsip}, Dokumentasi ID: ${doc.dokumentasi}, Name: ${doc.nama_arsip}`);
+        });
+        
         // ngambil jenis arsip data
         const jenisArsipRequest = await fetch(env.PUB_PORT + "/jenis-arsip?limit=1000", {
             method: "GET",
@@ -102,51 +114,76 @@ export const load: PageServerLoad = async ({ fetch }) => {
                     // console.log("Paths array:", pathsArray);
 
                     const filesWithData = await Promise.all(
-                        pathsArray.map(async (filePath: any) => {
-                            // console.log("Processing file path:", filePath);
+                        pathsArray.map(async (filePath: any, index: number) => {
+                            console.log(`[${index}] Processing file path:`, filePath);
                             try {
                                 let actualPath;
                                 if (typeof filePath === 'string') {
                                     actualPath = filePath;
+                                    console.log(`[${index}] Path is string:`, actualPath);
                                 } else if (filePath && filePath.file_dokumentasi) {
                                     actualPath = filePath.file_dokumentasi;
-                                    // ini dijadiin stringify supaya ada isi / hasilnya, bukan undefined / null
+                                    console.log(`[${index}] Path from file_dokumentasi:`, actualPath);
                                 } else {
                                     try {
                                         const parsedPath = typeof filePath === 'string' ? JSON.parse(filePath) : filePath;
                                         actualPath = parsedPath.file_dokumentasi || JSON.stringify(filePath);
+                                        console.log(`[${index}] Path from parsed object:`, actualPath);
                                     } catch (e) {
                                         actualPath = JSON.stringify(filePath);
+                                        console.log(`[${index}] Path from stringified object:`, actualPath);
                                     }
                                 }
 
-                                // console.log("Actual path to use:", actualPath);
+                                // Log all versions of the URL for testing
+                                const encodedPath = encodeURIComponent(actualPath);
+                                const rawUrl = `${env.PUB_PORT}/file?file_path=${actualPath}`;
+                                const encodedUrl = `${env.BASE_URL}/file?file_path=${encodedPath}`;
+                                
+                                console.log(`[${index}] Raw URL (for manual testing): ${rawUrl}`);
+                                console.log(`[${index}] Encoded URL (used in fetch): ${encodedUrl}`);
 
-                                // ini perlu di encode supaya tidak ada karakter khusus yang mengganggu karena perlu mengakses url langsung
-                                const fileDataRequest = await fetch(`${env.PUB_PORT}/file?file_path=${encodeURIComponent(actualPath)}`, {
+                                // First try with encoded URL
+                                let fileDataRequest = await fetch(encodedUrl, {
                                     method: "GET"
                                 });
 
+                                
+                                // If encoded URL fails, try with raw URL
                                 if (!fileDataRequest.ok) {
-                                    console.error(`Failed to fetch file data for path ${actualPath}:`, fileDataRequest.status);
+                                    console.log(`[${index}] Encoded URL failed, trying raw URL...`);
+                                    fileDataRequest = await fetch(rawUrl, {
+                                        method: "GET"
+                                    });
+                                    console.log(`[${index}] Raw URL response status: ${fileDataRequest.status} ${fileDataRequest.statusText}`);
+                                }
+                                
+                                if (!fileDataRequest.ok) {
+                                    console.error(`[${index}] Both URLs failed for path ${actualPath}:`, fileDataRequest.status);
                                     return {
                                         path: actualPath,
+                                        rawUrl: rawUrl,  // Include raw URL for testing
+                                        encodedUrl: encodedUrl,  // Include encoded URL for testing
                                         url: null,
                                         error: `Failed to load file: ${fileDataRequest.status}`
                                     };
                                 }
 
-                                // console.log(`Successfully fetched file for ${actualPath}`);
-
+                                // Use whichever URL worked
+                                const workingUrl = fileDataRequest.url || (fileDataRequest.ok ? (fileDataRequest === await fetch(encodedUrl) ? encodedUrl : rawUrl) : null);
+                                console.log(`[${index}] Successfully fetched file using URL: ${workingUrl}`);
+                                
                                 return {
                                     path: actualPath,
-                                    url: `${env.PUB_PORT}/file?file_path=${encodeURIComponent(actualPath)}`,
+                                    rawUrl: rawUrl,
+                                    encodedUrl: encodedUrl,
+                                    url: workingUrl,
                                     type: fileDataRequest.headers.get("content-type") || "unknown",
                                     name: actualPath.split('/').pop(),
                                     size: fileDataRequest.headers.get("content-length") || "unknown"
                                 };
                             } catch (error: unknown) {
-                                console.error(`Error processing file path:`, error);
+                                console.error(`[${index}] Error processing file path:`, error);
                                 return {
                                     path: typeof filePath === 'string' ? filePath : JSON.stringify(filePath),
                                     url: null,

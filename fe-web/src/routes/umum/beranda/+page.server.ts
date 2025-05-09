@@ -70,6 +70,7 @@ export const load: PageServerLoad = async () => {
                             const locData = await locResponse.json();
                             latitude = locData.latitude;
                             longitude = locData.longitude;
+                            console.log("Long : ", longitude, "Latitude : ", latitude)
                         }
                     } catch (locError) {
                         console.error(`Error fetching location for id ${item.id_lokasi}:`, locError);
