@@ -1,27 +1,34 @@
 <script lang="ts">
 	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
-	import { page } from '$app/state';
+	import { navigating, page } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
-	let { data } = $props()
-	let dataambil = $state(data.organisasi)
-	let datafotoprofile = $state(data.fileDetails?.url)
-	let datasemuafoto = $state(data.fotoOrganisasiDetails?.map((detail: any) => detail.url))
-	let dataanggota = $state(data.dataanggota.length)
+	let { data } = $props();
+	let dataambil = $state(data.organisasi);
+	let datafotoprofile = $state(data.fileDetails?.url);
+	let datasemuafoto = $state(data.fotoOrganisasiDetails?.map((detail: any) => detail.url));
+	let dataanggota = $state(data.dataanggota.length);
 
-	console.log("data ambil : ", dataambil)
-	console.log("data foto profil : ", datafotoprofile)
-	console.log("data all foto : ", datasemuafoto)
-
+	console.log('data ambil : ', dataambil);
+	console.log('data foto profil : ', datafotoprofile);
+	console.log('data all foto : ', datasemuafoto);
 
 	let idAktif = $state(page.params.id);
-	console.log("ID Aktif : ", idAktif)
+	console.log('ID Aktif : ', idAktif);
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="h-full w-full">
 	<div class="block h-fit rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="relative mx-auto flex w-full items-center justify-center">
-			<img src={datafotoprofile || gambardefault} class="h-25 w-25 relative ml-5 mr-5 rounded-full" alt="" />
+			<img
+				src={datafotoprofile || gambardefault}
+				class="h-25 w-25 relative ml-5 mr-5 rounded-full"
+				alt=""
+			/>
 		</div>
 		<div class="mt-5 flex w-full justify-center lg:mt-0 lg:justify-end">
 			<a href="/abdi/dashboard/organisasi/beranda/{idAktif}/detail/edit"
@@ -37,7 +44,12 @@
 					class="flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Nama Komunitas:</p>
-					<input type="text" bind:value={dataambil.nama_organisasi} readonly placeholder="Masukkan Nama" />
+					<input
+						type="text"
+						bind:value={dataambil.nama_organisasi}
+						readonly
+						placeholder="Masukkan Nama"
+					/>
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
@@ -57,7 +69,8 @@
 					<p>Deskripsi Organisasi :</p>
 					<textarea
 						placeholder="Masukkan nama"
-						bind:value={dataambil.deskripsi_organisasi} readonly
+						bind:value={dataambil.deskripsi_organisasi}
+						readonly
 						class="rounded-mdpx-3 h-32 w-full resize-none py-3 text-lg"
 					></textarea>
 				</div>
@@ -69,19 +82,34 @@
 					class="flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Penanggung Jawab :</p>
-					<input type="text" bind:value={dataambil.penanggung_jawab} readonly placeholder="Masukkan Penanggung Jawab" />
+					<input
+						type="text"
+						bind:value={dataambil.penanggung_jawab}
+						readonly
+						placeholder="Masukkan Penanggung Jawab"
+					/>
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Pembina :</p>
-					<input type="text" bind:value={dataambil.pembina} readonly placeholder="Masukkan Pembina" />
+					<input
+						type="text"
+						bind:value={dataambil.pembina}
+						readonly
+						placeholder="Masukkan Pembina"
+					/>
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Pelindung :</p>
-					<input type="text" bind:value={dataambil.pelindung} readonly placeholder="Masukkan Pelindung" />
+					<input
+						type="text"
+						bind:value={dataambil.pelindung}
+						readonly
+						placeholder="Masukkan Pelindung"
+					/>
 				</div>
 
 				<!-- No Telp + Anggota -->
@@ -90,13 +118,25 @@
 						class="mt-5 flex h-fit w-full flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 					>
 						<p>No telepon :</p>
-						<input type="text" bind:value={dataambil.no_telp} readonly placeholder="Masukkan nama" class="h-full" />
+						<input
+							type="text"
+							bind:value={dataambil.no_telp}
+							readonly
+							placeholder="Masukkan nama"
+							class="h-full"
+						/>
 					</div>
 					<div
 						class="mt-5 flex h-fit w-full flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 					>
 						<p>Jumlah Anggota :</p>
-						<input type="text" bind:value={dataanggota} readonly placeholder="Masukkan nama" class="h-full" />
+						<input
+							type="text"
+							bind:value={dataanggota}
+							readonly
+							placeholder="Masukkan nama"
+							class="h-full"
+						/>
 					</div>
 				</div>
 			</div>
@@ -112,19 +152,19 @@
 			{#if datasemuafoto && datasemuafoto.length > 0}
 				{#each datasemuafoto as imageUrl}
 					<div class="relative h-48 w-full">
-						<img 
-							src={imageUrl} 
-							class="h-full w-full rounded-lg object-cover" 
-							alt="Gambar Komunitas" 
+						<img
+							src={imageUrl}
+							class="h-full w-full rounded-lg object-cover"
+							alt="Gambar Komunitas"
 						/>
 					</div>
 				{/each}
 			{:else}
 				<div class="relative h-48 w-full">
-					<img 
-						src={gambartemp} 
-						class="h-full w-full rounded-lg object-cover" 
-						alt="Gambar Default" 
+					<img
+						src={gambartemp}
+						class="h-full w-full rounded-lg object-cover"
+						alt="Gambar Default"
 					/>
 				</div>
 			{/if}

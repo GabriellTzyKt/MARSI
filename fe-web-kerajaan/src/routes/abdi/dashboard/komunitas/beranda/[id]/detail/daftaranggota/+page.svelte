@@ -54,7 +54,7 @@
 			editModalId = editId;
 		}
 	});
-	console.log(data.allAnggota);
+	// console.log(data.allAnggota);
 	console.log('komunitas : ', data.komunitas_id);
 	// let dataanggota = data.allAnggota;
 	function filterD(data: any[]) {
@@ -292,11 +292,11 @@
 					goto(`/abdi/dashboard/komunitas/beranda/${datakomunitas}/detail/daftaranggota`, {
 						replaceState: true
 					});
-					invalidateAll();
+					editModal = false;
+					editModalId = null;
 					timer = setTimeout(() => {
 						valo = false;
-						editModal = false;
-						editModalId = null;
+						invalidateAll();
 					}, 3000);
 					editModal = false;
 				} else if (result.type === 'failure') {

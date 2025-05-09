@@ -3,7 +3,8 @@ import { z } from "zod";
 import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({cookies}) => {
+    const cookie = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
     try {
         // Fetch tugas data
         const tugasRes = await fetch(`${env.URL_KERAJAAN}/tugas`, {
@@ -33,7 +34,37 @@ export const load: PageServerLoad = async () => {
                 tanggal_mulai: item.tanggal_mulai ? item.tanggal_mulai.split('T')[0] : item.tanggal_mulai
             }));
 
-            const sortedData = formattedData.sort((a: any, b: any) => {
+            // const filteredData = formattedData.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
+            // console.log("Filtered Data:", filteredData);
+            const dataFinal = await Promise.all(formattedData.map(async (item: any) => {
+                const resPemberi = await fetch(`${env.PUB_PORT}/user/${item.id_pemberi_tugas}`, {
+                    headers: {
+                        "Authorization": `Bearer ${cookie.token}`
+                    }
+                })
+                const resPenerima = await fetch(`${env.PUB_PORT}/user/${item.id_penerima_tugas}`, {
+                      headers: {
+                        "Authorization": `Bearer ${cookie.token}`
+                    }
+                })
+                if (resPemberi.ok && resPenerima.ok) {
+                    let dataPemberi = await resPemberi.json()
+                    console.log("Data Pemberi:",dataPemberi)
+                    // if(dataPemberi.deleted_at !== '0001-01-01T00:00:00Z') return null;
+                    let dataPenerima = await resPenerima.json()
+                     console.log("Data Penerima:",dataPenerima)
+                    // if(dataPenerima.deleted_at !== '0001-01-01T00:00:00Z') return null;
+                    return {
+                        ...item, 
+                        pemberi_tugas: dataPemberi.nama_lengkap,
+                        penerima_tugas: dataPenerima.nama_lengkap,
+                    }
+                }
+                return null
+            } ) 
+            ).then(res => res.filter(Boolean));
+            console.log("Data Final:", dataFinal);
+            const sortedData = dataFinal.sort((a: any, b: any) => {
                 // Kalo ditugaskan ditampilin duluan
                 if (a.status_tugas === "Ditugaskan" && b.status_tugas !== "Ditugaskan") {
                     return -1;
@@ -45,7 +76,7 @@ export const load: PageServerLoad = async () => {
                 // kalo sama gaperlu berubah
                 return 0;
             });
-
+            console.log("Sorted Data:", sortedData);
             return { 
                 data: sortedData, 
                 situs: situsData 
