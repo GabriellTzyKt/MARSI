@@ -4,11 +4,11 @@ import { env } from "$env/dynamic/private";
 
 export const load: PageServerLoad = async ({ }) => {
     try {
-        const organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi?limit=200`);
+        const organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi`);
         if (!organisasiResponse.ok) {
             throw error(organisasiResponse.status, `Failed to fetch Organisasi: ${organisasiResponse.statusText}`);
         }
-        
+        console.log("Respon org",organisasiResponse)
         const organisasiList = await organisasiResponse.json();
         console.log("Organisasi : ", organisasiList);
 

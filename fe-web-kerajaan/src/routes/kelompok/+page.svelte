@@ -103,7 +103,14 @@
 		{:else}
 			<div class="mx-auto grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 				{#each filteredData() as item}
-					<Card2 situs={item.situs} header={item.header} isi={item.isi} icon="" id={item.id} />
+					<Card2
+						situs={item.situs}
+						header={item.header}
+						isi={item.isi}
+						icon=""
+						id={item.id}
+						href={`/kelompok/${item.id}`}
+					/>
 				{/each}
 			</div>
 		{/if}

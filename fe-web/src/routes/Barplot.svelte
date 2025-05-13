@@ -1,20 +1,24 @@
 <script>
 	import { onMount } from 'svelte';
 	import * as d3 from 'd3';
+	import { data_barplots } from '$lib/dummy';
 
+	// @ts-ignore
 	let chartContainer;
 
 	onMount(async () => {
 		// Set ukuran grafik
 		const margin = { top: 30, right: 30, bottom: 70, left: 60 },
-			width = 560 - margin.left - margin.right,
+			width = 500 - margin.left - margin.right,
 			height = 300 - margin.top - margin.bottom;
 
 		// Hapus elemen SVG lama jika ada
+		// @ts-ignore
 		d3.select(chartContainer).select('svg').remove();
 
 		// Tambahkan elemen SVG
 		const svg = d3
+			// @ts-ignore
 			.select(chartContainer)
 			.append('svg')
 			.attr('width', width + margin.left + margin.right)
@@ -23,15 +27,17 @@
 			.attr('transform', `translate(${margin.left},${margin.top})`);
 
 		// Ambil data dari CSV
-		const data = await d3.csv(
-			'https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/7_OneCatOneNum_header.csv'
-		);
+		const data = data_barplots.map((item) => ({
+			name: item.nama_lenkgap,
+			bulan: item.bulan,
+			total: item.total
+		}));
 
 		// Buat X axis
 		const x = d3
 			.scaleBand()
 			.range([0, width])
-			.domain(data.map((d) => d.Country))
+			.domain(data.map((d) => d.bulan))
 			.padding(0.2);
 		svg
 			.append('g')
@@ -42,7 +48,11 @@
 			.style('text-anchor', 'end');
 
 		// Buat Y axis
-		const y = d3.scaleLinear().domain([0, 13000]).range([height, 0]);
+		const maxValue = d3.max(data, (d) => d.total) || 0;
+		const y = d3
+			.scaleLinear()
+			.domain([0, maxValue * 1.1])
+			.range([height, 0]);
 		svg.append('g').call(d3.axisLeft(y));
 
 		// Tambahkan bar
@@ -51,10 +61,11 @@
 			.data(data)
 			.enter()
 			.append('rect')
-			.attr('x', (d) => x(d.Country))
-			.attr('y', (d) => y(d.Value))
+			// @ts-ignore
+			.attr('x', (d) => x(d.bulan))
+			.attr('y', (d) => y(d.total))
 			.attr('width', x.bandwidth())
-			.attr('height', (d) => height - y(d.Value))
+			.attr('height', (d) => height - y(d.total))
 			.attr('fill', '#69b3a2');
 	});
 </script>

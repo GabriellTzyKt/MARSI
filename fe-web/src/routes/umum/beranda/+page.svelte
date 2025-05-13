@@ -24,7 +24,7 @@
 	import Loader2 from '$lib/loader/Loader2.svelte';
 
 	let { data } = $props();
-	console.log("data dari belakang", data)
+	console.log("data dari belakang", data.dataKerajaan)
 	let resultBaru: any = $state([]);
 
 	const initialView: LatLngExpression = [-2.5489, 118.0149]; // Pusat Indonesia (biar tampilan awal pas)
