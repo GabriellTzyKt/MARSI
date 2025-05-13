@@ -1,5 +1,8 @@
 <script lang="ts">
 	import xbutton from '../asset/icon/xbutton.png';
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	let {
 		value = $bindable(),
@@ -16,6 +19,12 @@
 	let showDropdown = $state(false);
 	let selectedUserId = $state(''); // Store the selected user's ID
 	let isValidSelection = $state(false); // Track if the current selection is valid
+
+	function handleClose() {
+		console.log("TambahAnggota close button clicked");
+		value = false;
+		dispatch('close');
+	}
 
 	function updateFilteredData() {
 		// Check if allanggota exists and is an array
@@ -91,129 +100,111 @@
 	});
 </script>
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<div
-	class="fixed left-0 top-0 flex min-h-full min-w-full items-center justify-center bg-black/75"
-	onclick={() => {
-		value = false;
-	}}
->
-	<div
-		class="w-100 relative mt-3 min-h-fit rounded-lg border-2 border-gray-500 bg-white p-3 lg:ml-5"
-		onclick={(e) => e.stopPropagation()}
-	>
-		<div class="flex flex-col">
-			<div class="flex justify-between">
-				<p>Tambah Anggota</p>
-				<!-- svelte-ignore a11y_click_events_have_key_events -->
-				<!-- svelte-ignore a11y_no_static_element_interactions -->
-				<div
-					onclick={() => {
-						value = false;
-						data2 = null;
-						errors = null;
-					}}
+<div class="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+	<div class="bg-white p-6 rounded-lg max-w-3xl w-full">
+		<div class="flex justify-between items-center mb-4">
+			<h2 class="text-xl font-bold">Tambah Anggota</h2>
+			<button 
+				type="button"
+				class="text-gray-500 hover:text-gray-700"
+				onclick={handleClose}
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+				</svg>
+			</button>
+		</div>
+
+		<p class="ml-5 mt-5">Nama Anggota</p>
+		<div class="relative ml-5 w-[90%]">
+			<input
+				type="text"
+				bind:value={keyword}
+				placeholder="Nama Anggota"
+				name="namaanggota"
+				class="w-full rounded-lg border-2 {isValidSelection
+					? 'border-green-400'
+					: 'border-gray-400'} px-2 py-2 pr-8"
+				onfocus={() => (showDropdown = true)}
+				onblur={handleBlur}
+			/>
+			<!-- Hidden input to store the selected user ID -->
+			<input type="hidden" name="id_user" value={selectedUserId} />
+
+			{#if showDropdown && updateFilteredData().length > 0}
+				<ul
+					class="absolute z-10 max-h-40 w-full overflow-y-auto rounded-lg border border-gray-400 bg-white shadow-lg"
 				>
-					<img
-						src={xbutton}
-						alt="x-button"
-						class="h-8 w-auto rounded-full p-2 hover:cursor-pointer hover:bg-gray-400"
-					/>
-				</div>
-			</div>
-			<div class="h-1 rounded-lg bg-black"></div>
-
-			<p class="ml-5 mt-5">Nama Anggota</p>
-			<div class="relative ml-5 w-[90%]">
-				<input
-					type="text"
-					bind:value={keyword}
-					placeholder="Nama Anggota"
-					name="namaanggota"
-					class="w-full rounded-lg border-2 {isValidSelection
-						? 'border-green-400'
-						: 'border-gray-400'} px-2 py-2 pr-8"
-					onfocus={() => (showDropdown = true)}
-					onblur={handleBlur}
-				/>
-				<!-- Hidden input to store the selected user ID -->
-				<input type="hidden" name="id_user" value={selectedUserId} />
-
-				{#if showDropdown && updateFilteredData().length > 0}
-					<ul
-						class="absolute z-10 max-h-40 w-full overflow-y-auto rounded-lg border border-gray-400 bg-white shadow-lg"
-					>
-						{#each updateFilteredData() as item}
-							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-							<li
-								class="cursor-pointer px-4 py-2 hover:bg-gray-200"
-								onclick={() => selectItem(item)}
-							>
-								{item.nama_lengkap}
-							</li>
-						{/each}
-					</ul>
-				{/if}
-				<span class="icon-park-twotone--search absolute right-2 mt-2.5 opacity-55"> </span>
-			</div>
-			{#if !isValidSelection && keyword !== ''}
-				<p class="ml-5 text-left text-yellow-500">Pilih nama dari daftar yang tersedia</p>
+					{#each updateFilteredData() as item}
+						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+						<li
+							class="cursor-pointer px-4 py-2 hover:bg-gray-200"
+							onclick={() => selectItem(item)}
+						>
+							{item.nama_lengkap}
+						</li>
+					{/each}
+				</ul>
 			{/if}
-			{#if errors}
-				{#each errors.namaanggota || [] as a}
-					<p class="ml-5 text-left text-red-500">{a}</p>
-				{/each}
-			{/if}
+			<span class="icon-park-twotone--search absolute right-2 mt-2.5 opacity-55"> </span>
+		</div>
+		{#if !isValidSelection && keyword !== ''}
+			<p class="ml-5 text-left text-yellow-500">Pilih nama dari daftar yang tersedia</p>
+		{/if}
+		{#if errors}
+			{#each errors.namaanggota || [] as a}
+				<p class="ml-5 text-left text-red-500">{a}</p>
+			{/each}
+		{/if}
 
-			<p class="ml-5 mt-5">Deskripsi Tugas</p>
-			<div class="relative ml-5 w-[90%]">
-				<textarea
-					placeholder="Deskripsi Tugas"
-					name="deskripsitugas"
-					class="w-full rounded-lg border-2 border-gray-400 px-2 py-2 pr-8"
-					value={dataEdit ? dataEdit.deskripsi_tugas : ''}
-				></textarea>
-			</div>
-			{#if errors}
-				{#each errors.deskripsi || [] as a}
-					<p class="ml-5 text-left text-red-500">{a}</p>
-				{/each}
-			{/if}
+		<p class="ml-5 mt-5">Deskripsi Tugas</p>
+		<div class="relative ml-5 w-[90%]">
+			<textarea
+				placeholder="Deskripsi Tugas"
+				name="deskripsitugas"
+				class="w-full rounded-lg border-2 border-gray-400 px-2 py-2 pr-8"
+				value={dataEdit ? dataEdit.deskripsi_tugas : ''}
+			></textarea>
+		</div>
+		{#if errors}
+			{#each errors.deskripsi || [] as a}
+				<p class="ml-5 text-left text-red-500">{a}</p>
+			{/each}
+		{/if}
 
-			<p class="ml-5 mt-5">Pilih Jabatan</p>
-			<div class="relative ml-5 w-[90%]">
-				<select
-					id="jabatan"
-					name="jabatan"
-					value={dataEdit ? dataEdit.jabatan : ''}
-					class="block w-full rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 text-sm text-gray-900"
-				>
-					<option selected disabled>Pilih Jabatan</option>
-					<option value="Ketua">Ketua</option>
-					<option value="Wakil Ketua">Wakil Ketua</option>
-					<option value="Sekretaris">Sekretaris</option>
-					<option value="Bendahara">Bendahara</option>
-					<option value="Anggota">Anggota</option>
-				</select>
-			</div>
-			{#if errors}
-				{#each errors.jabatan || [] as a}
-					<p class="ml-5 text-left text-red-500">{a}</p>
-				{/each}
-			{/if}
+		<p class="ml-5 mt-5">Pilih Jabatan</p>
+		<div class="relative ml-5 w-[90%]">
+			<select
+				id="jabatan"
+				name="jabatan"
+				value={dataEdit ? dataEdit.jabatan_anggota : ''}
+				class="block w-full rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 text-sm text-gray-900"
+			>
+				<option selected disabled>Pilih Jabatan</option>
+				<option value="Ketua">Ketua</option>
+				<option value="Wakil Ketua">Wakil Ketua</option>
+				<option value="Sekretaris">Sekretaris</option>
+				<option value="Bendahara">Bendahara</option>
+				<option value="Anggota">Anggota</option>
+			</select>
+		</div>
+		{#if errors}
+			{#each errors.jabatan || [] as a}
+				<p class="ml-5 text-left text-red-500">{a}</p>
+			{/each}
+		{/if}
 
-			<div class="mt-2 flex w-full justify-end">
-				<button
-					class="mr-5 w-40 text-nowrap rounded-lg border-2 {isValidSelection
-						? 'bg-green-500'
-						: 'bg-gray-400'} py-1 text-white"
-					type="submit"
-					disabled={!isValidSelection && keyword !== ''}
-				>
-					Tambah Anggota
-				</button>
-			</div>
+		<div class="flex justify-end mt-4">
+			<button 
+				type="button" 
+				class="px-4 py-2 bg-gray-200 rounded-lg mr-2"
+				onclick={handleClose}
+			>
+				Batal
+			</button>
+			<button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg">
+				{dataEdit ? 'Simpan Perubahan' : 'Tambah Anggota'}
+			</button>
 		</div>
 	</div>
 </div>

@@ -1,48 +1,75 @@
 import { env } from "$env/dynamic/private";
 import type { Actions } from "@sveltejs/kit";
-
+import { z } from "zod";
+import { fail } from "@sveltejs/kit";
 
 export const actions: Actions = {
     tambahKerajaan: async ({ request, fetch }) => {
         const formData = await request.formData();
 
-        console.log(formData)
+        // Define schema for validation
+        const kerajaanSchema = z.object({
+            nama: z.string().nonempty("Nama Kerajaan tidak boleh kosong"),
+            alamat: z.string().nonempty("Alamat tidak boleh kosong"),
+            tanggalberdiri: z.string()
+                .nonempty("Tanggal berdiri tidak boleh kosong")
+                .regex(/^\d{4}-\d{2}-\d{2}$/, "Format tanggal tidak sesuai (YYYY-MM-DD)")
+                .refine((dateStr) => {
+                    const date = new Date(dateStr);
+                    return !isNaN(date.getTime()) && dateStr === date.toISOString().split("T")[0];
+                }, { message: "Tanggal tidak valid" }),
+            era: z.string().nonempty("Era kerajaan tidak boleh kosong"),
+            rumpun: z.string().nonempty("Rumpun kerajaan tidak boleh kosong"),
+            jenis: z.string().nonempty("Jenis kerajaan tidak boleh kosong"),
+            namaraja: z.string().nonempty("Nama raja tidak boleh kosong"),
+            deskripsi: z.string().nonempty("Deskripsi tidak boleh kosong"),
+        });
 
-        const namaKerajaan = formData.get('nama');
-        const alamat = formData.get('alamat')
-        const tanggalberdiri = formData.get('tanggalberdiri');
-        const era = formData.get('era')
-        const rumpun = formData.get('rumpun')
-        const jenis = formData.get('jenis')
-        const namaraja = formData.get('namaraja')
-        const deskripsi = formData.get('deskripsi')
+        // Extract form data
+        const formValues = {
+            nama: formData.get('nama'),
+            alamat: formData.get('alamat'),
+            tanggalberdiri: formData.get('tanggalberdiri'),
+            era: formData.get('era'),
+            rumpun: formData.get('rumpun'),
+            jenis: formData.get('jenis'),
+            namaraja: formData.get('namaraja'),
+            deskripsi: formData.get('deskripsi')
+        };
 
-        console.log("nama kerajaa : " , namaKerajaan)
-        console.log("alamat : " , alamat)
-        console.log("tanggal berdiri : " , tanggalberdiri)
-        console.log("era : " , era)
-        console.log("rumpun : " , rumpun)
-        console.log("jenis : " , jenis)
-        console.log("namaraja : " , namaraja)
-        console.log("deskripsi : " , deskripsi)
-    //     const password = formData.get('password');
+        // Validate form data
+        const result = kerajaanSchema.safeParse(formValues);
 
-    //     try {
-    //         const result = await fetch(env.BASE_URL + "/login", {
-    //             method: 'POST',
-    //             headers: { 'Content-Type': 'application/json' },
-    //             body: JSON.stringify({
-    //                 username: userName,
-    //                 password: password,
-    //                 expiresInMins: 30
-    //             }),
-    //         });
+        if (!result.success) {
+            console.log(result.error.flatten().fieldErrors);
+            return fail(400, {
+                errors: result.error.flatten().fieldErrors,
+                success: false,
+                data: formValues
+            });
+        }
 
-    //         const resultJSON = await result.json();
-    //     }
-    //     catch (error) {
-    //         if (error instanceof Error) console.error(error.message);
+        console.log("Data valid:", result.data);
+        
+        // Proceed with API call or database operation
+        // try {
+        //     const response = await fetch(env.BASE_URL + "/kerajaan/tambah", {
+        //         method: 'POST',
+        //         headers: { 'Content-Type': 'application/json' },
+        //         body: JSON.stringify(result.data),
+        //     });
+        //     
+        //     const responseData = await response.json();
+        //     return { success: true, data: responseData };
+        // } catch (error) {
+        //     console.error("Error adding kerajaan:", error);
+        //     return fail(500, { 
+        //         success: false, 
+        //         errors: { api: ["Terjadi kesalahan saat menambahkan kerajaan"] },
+        //         data: formValues
+        //     });
+        // }
 
-    //     }
+        return { success: true, data: result.data };
     }
 }

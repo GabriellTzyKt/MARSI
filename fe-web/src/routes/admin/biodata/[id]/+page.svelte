@@ -134,10 +134,10 @@
 
 	function handleFileChange(event: Event, type: string) {
 		const target = event.target as HTMLInputElement;
-		
+
 		if (target.files && target.files.length > 0) {
 			const newFiles = Array.from(target.files);
-			
+
 			if (type === 'bendera') {
 				benderaUrl = URL.createObjectURL(newFiles[0]);
 				console.log('Bendera yang di upload : ', newFiles[0].name);
@@ -336,8 +336,8 @@
 						<option value="kolonial">Kolonial </option>
 					</select>
 					{#if error.era}
-				<p class="text-left text-red-500">{error.era}</p>
-			{/if}
+						<p class="text-left text-red-500">{error.era}</p>
+					{/if}
 				</div>
 
 				<div class="w-full flex-col">
@@ -352,8 +352,8 @@
 						<option value="mataram">Mataram</option>
 					</select>
 					{#if error.rumpun}
-				<p class="text-left text-red-500">{error.rumpun}</p>
-			{/if}
+						<p class="text-left text-red-500">{error.rumpun}</p>
+					{/if}
 				</div>
 			</div>
 
@@ -473,9 +473,9 @@
 			</div>
 
 			<div class="w-full flex-col">
-				<p>Vidio Singkat Kerajaan</p>
+				<p class="mt-5">Vidio Kerajaan : </p>
 				<div
-					class="upload-container relative mt-4 h-[44px] w-full flex-shrink-0 rounded-lg border bg-gray-200"
+					class="upload-container relative mt-4 h-[44px] w-full flex-shrink-0 overflow-hidden rounded-lg border-2 border-black bg-gray-200"
 				>
 					<input
 						type="file"
@@ -490,16 +490,14 @@
 						class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
 					>
 					</label>
-					<div class="flex w-full items-center justify-between">
-						<p class="max-w-[40%] truncate px-2">{videoName}</p>
-						<button
-							class="bg-customGold h-fit w-fit rounded-lg px-2 py-2.5 font-semibold text-white"
-						>
+					<div class="flex h-full w-full items-center justify-between">
+						<p class="max-w-[60%] truncate px-2">{videoName}</p>
+						<button class="bg-customGold h-full px-4 font-semibold text-white">
 							Choose file
 						</button>
 					</div>
+					<p class="opacity-40 text-black"> Max size : 20 MB</p>
 				</div>
-				<p class="text-md mt-2 opacity-70">* Max Size Video : 20 MB</p>
 			</div>
 
 			<!-- Navigasi -->

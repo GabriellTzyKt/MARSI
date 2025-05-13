@@ -12,16 +12,16 @@
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
 	import { fade } from 'svelte/transition';
-	import { string } from 'zod';
 
 	let { data } = $props();
-	let dataambil = data.organisasiList;
-	let dataanggota = data.allAnggota;
-	let allanggota = data.allUsers;
-	console.log('Data ambil : ', dataambil);
-	console.log('Data anggota : ', dataanggota);
-	console.log('All anggota : ', allanggota);
-		
+	// let dataambil = $state(data.organisasiList);
+	let id_organisasi = $state(data.organisasi_id);
+	let dataanggota = $state(data.allAnggota);
+	let allanggota = $state(data.allUsers);
+	// console.log('Data ambil : ', dataambil);
+	// console.log('Data anggota : ', dataanggota);
+	// console.log('All anggota : ', allanggota);
+
 	let idAktif = $state(page.params.id);
 
 	let open = $state(false);
@@ -37,11 +37,9 @@
 	let success = $state(false);
 	let dataEdit = $state<any>();
 	function filterD(data: any[]) {
-		console.log(data);
 		return data.filter((item) => {
 			// Check if item exists
 			if (!item) return false;
-
 
 			// Safely access properties with optional chaining and default to empty string if undefined
 			const namaAnggota = item.nama_anggota?.toLowerCase() || '';
@@ -50,17 +48,16 @@
 			const nomorTelepon = item.nomor_telepon?.toLowerCase() || '';
 			const email = item.email?.toLowerCase() || '';
 
-
 			// Convert keyword to lowercase once
 			const keywordLower = keyword.toLowerCase();
 
-
 			// Check if any property includes the keyword
 			return (
-				item.nama_lengkap.toLowerCase().includes(keyword.toLowerCase()) ||
-				item.tanggal_bergabung.toLowerCase().includes(keyword.toLowerCase()) ||
-				item.no_telp.toLowerCase().includes(keyword.toLowerCase()) ||
-				item.email.toLowerCase().includes(keyword.toLowerCase())
+				namaAnggota.includes(keywordLower) ||
+				tanggalBergabung.includes(keywordLower) ||
+				jabatanOrganisasi.includes(keywordLower) ||
+				nomorTelepon.includes(keywordLower) ||
+				email.includes(keywordLower)
 			);
 		});
 	}
@@ -71,16 +68,79 @@
 		console.log(d);
 		return d.slice(start, end);
 	}
-	let resdata = $derived(pagination(data.detil_anggota));
+	let resdata = $derived(pagination(data.allAnggota));
 
 	let timer: any;
 
-	let toggle = () => {
-		if (!open) {
-			open = true;
-		} else open = false;
-		console.log(open);
-	};
+	let deleteD = $state(false);
+	let selectedItemId = $state<string | null>(null);
+	let selectedOrgId = $state<string | null>(null);
+
+	$effect(() => {
+		let deleteId = page.url.searchParams.get('delete');
+		let editId = page.url.searchParams.get('edit');
+		if (deleteId) {
+			deleteD = true;
+			selectedItemId = deleteId;
+			console.log('Selected Item:', selectedItemId);
+			// Find the corresponding organization ID for this user
+			const selectedAnggota = data.allAnggota.find((anggota: any) => anggota.id_user == deleteId);
+			console.log('Anggota with id Found:', selectedAnggota);
+			if (selectedAnggota) {
+				console.log('selectedAnggota Founded!: ', selectedAnggota);
+				console.log('Found organization ID for user:', selectedAnggota.id_organisasi);
+			}
+		}
+		if (editId&& !editUserId) {
+			editUserId = editId
+			if(!editD){
+				editId = null;
+				editD = true;
+				editUserId = null;
+			}
+			else{
+
+				editD = true;
+			}
+			// Find the corresponding organization ID for this user
+			const selectedAnggota = data.allAnggota.find((anggota: any) => anggota.id_user == editId);
+			const selectedOrg = data.organisasiList.find((anggota: any) => anggota.id_user == editId);
+			console.log('Anggota with id Found:', selectedAnggota);
+			if (selectedAnggota) {
+				editD = true;
+				console.log('selectedAnggota Founded!: ', selectedOrg);
+				selectedOrgId = selectedAnggota.id_organisasi;
+				dataEdit = {
+					id_user: selectedAnggota.id_user,
+					nama_anggota: selectedAnggota.user_name,
+					jabatan_anggota: selectedAnggota.jabatan_anggota,
+					deskripsi_tugas: selectedAnggota.deskripsi_tugas
+				};
+				editUserId = selectedAnggota.id_user;
+				selectedOrgId = selectedAnggota.id_organisasi;
+				console.log('Data Edit: ', dataEdit);
+			}
+		}
+	});
+
+	// let toggle = () => {
+	// 	if (!open) {
+	// 		open = true;
+	// 	} else open = false;
+	// 	console.log(open);
+	// };
+
+	// Add this function to handle edit modal closing
+	function handleEditModalClose() {
+		console.log("Edit modal close event received");
+		editD = false;
+		editUserId = null;
+		dataEdit = undefined;
+		
+		// Clear URL parameters
+		const baseUrl = page.url.pathname;
+		goto(baseUrl, { replaceState: true });
+	}
 </script>
 
 {#if navigating.to}
@@ -163,13 +223,6 @@
 				['jabatan_anggota', 'Jabatan Anggota'],
 				['user_notelp', 'Nomer Telpon'],
 				['user_email', 'Email'],
-=======
-				['nama_lengkap', 'Nama Anggota'],
-				['tanggal_bergabung', 'Tanggal Bergabung'],
-				['jabatan_organisasi', 'Jabatan Organisasi'],
-				['no_telp', 'Nomer Telpon'],
-				['email', 'Email'],
->>>>>>> Stashed changes
 				['children', 'Aksi']
 			]}
 			table_data={resdata}
@@ -190,7 +243,7 @@
 							]
 						]}
 						id={`id-${index}`}
-						data={resdata}
+						{data}
 					></DropDown>
 				{/if}
 			{/snippet}
@@ -248,7 +301,12 @@
 				try {
 					console.log('Delete result:', result);
 					if (result.type === 'success') {
-						// First clear the URL parameter
+						// First clear the URL parameter and reset state
+						deleteD = false;
+						selectedItemId = null;
+						selectedOrgId = null;
+						
+						// Then navigate to clean URL
 						await goto(`/abdi/dashboard/organisasi/beranda/${idAktif}/detail/daftaranggota`, {
 							replaceState: true
 						});
@@ -256,10 +314,7 @@
 						// Then invalidate all data
 						await invalidateAll();
 
-						// Then show success message and reset state
-						deleteD = false;
-						selectedItemId = null;
-						selectedOrgId = null;
+						// Then show success message
 						valo = true;
 
 						clearTimeout(timer);
@@ -268,9 +323,15 @@
 						}, 3000);
 					} else if (result.type === 'failure') {
 						error = result.data?.errors || '';
+						// Also reset modal state on error
+						deleteD = false;
+						selectedItemId = null;
 					}
 				} catch (err) {
 					console.error('Error during delete process:', err);
+					// Reset modal state on error
+					deleteD = false;
+					selectedItemId = null;
 				} finally {
 					// Always turn off loading state, even if there's an error
 					loading = false;
@@ -299,21 +360,26 @@
 				loading = false;
 				if (result.type === 'success') {
 					try {
-						goto(`/abdi/dashboard/organisasi/beranda/${id_organisasi}/detail/daftaranggota`, {
-							replaceState: true
-						});
+						// Reset state variables
 						editD = false;
 						editUserId = null;
-						success = true;
+						dataEdit = undefined;
+						
+						// Clear URL and refresh data
+						await goto(`/abdi/dashboard/organisasi/beranda/${id_organisasi}/detail/daftaranggota`, {
+							replaceState: true
+						});
 						await invalidateAll();
-
+						
+						// Show success message
+						success = true;
 						setTimeout(() => {
 							success = false;
 						}, 3000);
 					} catch (err) {
 						console.error('Error during edit process:', err);
 					} finally {
-						// Always turn off loading state, even if there's an error
+						// Always turn off loading state
 						loading = false;
 					}
 				} else if (result.type === 'failure') {
@@ -322,9 +388,15 @@
 			};
 		}}
 	>
-		<TambahAnggota bind:value={editD} errors={error} {data2} {dataEdit} {allanggota}
+		<TambahAnggota 
+			bind:value={editD} 
+			errors={error} 
+			{data2} 
+			{dataEdit} 
+			{allanggota}
+			on:close={handleEditModalClose}
 		></TambahAnggota>
-		<input type="hidden" name="id_user" value={selectedItemId} />
+		<input type="hidden" name="id_user" value={editUserId} />
 		<input type="hidden" name="id_organisasi" value={id_organisasi} />
 	</form>
 {/if}

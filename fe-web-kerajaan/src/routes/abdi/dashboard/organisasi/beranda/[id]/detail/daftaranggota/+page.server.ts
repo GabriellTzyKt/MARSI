@@ -422,12 +422,14 @@ export const actions: Actions = {
         }
 
         try {
-            const response = await fetch(`${env.URL_KERAJAAN}/organisasi/anggota/${organisasiId}/${userId}`, {
+            const response = await fetch(`${env.URL_KERAJAAN}/organisasi/anggota`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
+                    id_organisasi : Number(organisasiId),
+                    id_user : Number(userId),
                     deskripsi_tugas: String(form.deskripsi),
                     jabatan_anggota: String(form.jabatan),
                 })

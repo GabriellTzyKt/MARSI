@@ -59,14 +59,28 @@
 
 <div bind:this={popupElement} class="popup-container">
 	{#if open}
-		<div class="popup-content flex w-full flex-col">
+		<div class="popup-content flex w-full min-w-[200px] max-w-[300px] flex-col">
 			<!-- svelte-ignore a11y_img_redundant_alt -->
-			<div class="flex">
-				<img src={image} alt="Popup Image" class="h-12 w-12" />
-				<h3 class="ml-3 text-lg font-bold mt-3">{text}</h3>
+			<div class="flex w-full">
+				<img src={image} alt="Popup Image" class="h-12 w-12 flex-shrink-0 mt-3" />
+				<h3 class="ml-3 text-lg font-bold mt-3 mr-5 multiline-truncate">{text}</h3>
 			</div>
-			<p class="text-gray-700">📍 {location}</p>
+			<p class="text-gray-700 truncate">📍 {location}</p>
 			<a href={link} class="text-blue-500">Lihat Detail →</a>
 		</div>
 	{/if}
 </div>
+
+<style>
+	.popup-content {
+		overflow: hidden;
+	}
+	
+	.multiline-truncate {
+		display: -webkit-box;
+		-webkit-line-clamp: 2; /* Jumlah baris yang ditampilkan */
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+</style>
