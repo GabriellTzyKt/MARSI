@@ -22,28 +22,81 @@
 	import LoaderUmum from '$lib/loader/LoaderUmum.svelte';
 	import Loader1 from '$lib/loader/Loader1.svelte';
 	import Loader2 from '$lib/loader/Loader2.svelte';
+	import { tweened } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
+	import { onMount } from 'svelte';
+	import { fade, fly, scale } from 'svelte/transition';
 
 	let { data } = $props();
-	console.log("data dari belakang", data.dataKerajaan)
+	console.log('data dari belakang', data.dataKerajaan);
 	let resultBaru: any = $state([]);
+
+	let isMarker = $state(false);
+
+	let visibleMarkers = $state<number[]>([]);
+
+	function showMarkers() {
+		isMarker = true;
+		visibleMarkers = [];
+		markerLocations.forEach((_, index) => {
+			setTimeout(() => {
+				visibleMarkers = [...visibleMarkers, index];
+			}, index * 100);
+		});
+	}
+
+	function hideMarkers() {
+		const totalMarkers = visibleMarkers.length;
+		for (let i = 0; i < totalMarkers; i++) {
+			setTimeout(() => {
+				// Menghapus elemen terkahir dari marker yang di input
+				visibleMarkers = visibleMarkers.slice(0, -1);
+				if (visibleMarkers.length === 0) {
+					setTimeout(() => {
+						isMarker = false;
+					}, 100);
+				}
+			}, i * 100);
+		}
+	}
 
 	const initialView: LatLngExpression = [-2.5489, 118.0149]; // Pusat Indonesia (biar tampilan awal pas)
 
 	// Lokasi marker di beberapa wilayah Indonesia
-    const markerLocations: Array<{ latLng: LatLngExpression; text: string; location: string }> = [];
+	const markerLocations: Array<{ latLng: LatLngExpression; text: string; location: string }> = [];
 
 	if (data && data.dataKerajaan && Array.isArray(data.dataKerajaan)) {
-        data.dataKerajaan.forEach((kerajaan: any) => {
-            if (kerajaan.latitude && kerajaan.longitude) {
-                markerLocations.push({
-                    latLng: [parseFloat(kerajaan.latitude), parseFloat(kerajaan.longitude)],
-                    text: kerajaan.nama_kerajaan || 'Kerajaan',
-                    location: kerajaan.place_name || 'Indonesia'
-                });
-            }
-        });
-    }
+		data.dataKerajaan.forEach((kerajaan: any) => {
+			if (kerajaan.latitude && kerajaan.longitude) {
+				markerLocations.push({
+					latLng: [parseFloat(kerajaan.latitude), parseFloat(kerajaan.longitude)],
+					text: kerajaan.nama_kerajaan || 'Kerajaan',
+					location: kerajaan.place_name || 'Indonesia'
+				});
+			}
+		});
+	}
 
+	// Tambahkan marker random jika markerLocations kosong
+	if (markerLocations.length === 0) {
+		// Batas koordinat Indonesia (kurang lebih)
+		const minLat = -11.0; // Selatan
+		const maxLat = 6.0; // Utara
+		const minLng = 95.0; // Barat
+		const maxLng = 141.0; // Timur
+
+		// Tambahkan 5 marker random di wilayah Indonesia
+		for (let i = 0; i < 10; i++) {
+			const randomLat = minLat + Math.random() * (maxLat - minLat);
+			const randomLng = minLng + Math.random() * (maxLng - minLng);
+
+			markerLocations.push({
+				latLng: [randomLat, randomLng],
+				text: 'Kesultanan Ngayogyakarta Hadiningrat',
+				location: 'Indonesia'
+			});
+		}
+	}
 </script>
 
 {#if navigating.to}
@@ -57,20 +110,32 @@
 		<div class="text-center">
 			<p class="mt-20 text-5xl font-[600]">MAJELIS AGUNG RAJA SULTAN INDONESIA</p>
 		</div>
-		<div class=" z-0 h-screen w-[80%] py-6">
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div class="z-0 h-screen w-[80%] py-6" onmouseenter={showMarkers} onmouseleave={hideMarkers}>
 			<Leaflet view={initialView} zoom={4.5}>
-				{#each markerLocations as { latLng, text, location }}
-					<Marker {latLng} width={20} height={20}>
-						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-							><path
-								fill="#fa0404"
-								d="M12 2C7.589 2 4 5.589 4 9.995C3.971 16.44 11.696 21.784 12 22c0 0 8.029-5.56 8-12c0-4.411-3.589-8-8-8m0 12c-2.21 0-4-1.79-4-4s1.79-4 4-4s4 1.79 4 4s-1.79 4-4 4"
-							/></svg
-						>
+				{#if isMarker}
+					{#each markerLocations as { latLng, text, location }, i}
+						{#if visibleMarkers.includes(i)}
+							<div in:fly={{ y: -20, duration: 300 }} out:fade={{ duration: 200 }}>
+								<Marker {latLng} width={20} height={20}>
+									<svg
+										class="marker-icon"
+										xmlns="http://www.w3.org/2000/svg"
+										width="20"
+										height="20"
+										viewBox="0 0 24 24"
+										><path
+											fill="#fa0404"
+											d="M12 2C7.589 2 4 5.589 4 9.995C3.971 16.44 11.696 21.784 12 22c0 0 8.029-5.56 8-12c0-4.411-3.589-8-8-8m0 12c-2.21 0-4-1.79-4-4s1.79-4 4-4s4 1.79 4 4s-1.79 4-4 4"
+										/></svg
+									>
 
-						<Popup {text} {location} link="" image={gambar} />
-					</Marker>
-				{/each}
+									<Popup {text} {location} link="" image={gambar} />
+								</Marker>
+							</div>
+						{/if}
+					{/each}
+				{/if}
 			</Leaflet>
 		</div>
 		<div class="mb-5 flex w-[80%] justify-between gap-8">
@@ -454,5 +519,20 @@
 		mask-repeat: no-repeat;
 		-webkit-mask-size: 100% 100%;
 		mask-size: 100% 100%;
+	}
+
+	@keyframes pulse {
+		0% {
+			transform: scale(0.5);
+			opacity: 0;
+		}
+		100% {
+			transform: scale(1);
+			opacity: 1;
+		}
+	}
+
+	.marker-icon {
+		animation: pulse 0.5s ease-out;
 	}
 </style>

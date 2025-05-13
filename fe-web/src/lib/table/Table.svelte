@@ -6,7 +6,7 @@
 		table_header: (string | string[])[];
 		children?: Snippet<[any]>;
 		details?: Snippet<[any]>;
-		custom?: Snippet<[any]>;  //nambah
+		custom?: Snippet<[any]>; //nambah
 		isdrop?: Boolean;
 	}
 	function ifDrop(p: number) {
@@ -30,7 +30,7 @@
 						<th class={`py-3 pe-2 text-left ${header[2]}`}>{header}</th>
 					{:else}
 						<th
-							class={`py-3 pe-2 text-left ${header[2]}`}
+							class={`py-3 pe-2 ${header[1] === 'Aksi' ? 'text-center' : 'text-left'} ${header[2] || ''}`}
 							class:rounded-tr-xl={i === table_header.length - 1}>{header[1]}</th
 						>
 					{/if}
@@ -86,12 +86,15 @@
 							>
 						{:else if header[0] === 'children'}
 							<td
-								class=" py-3 text-left"
+								class="py-3"
+								class:text-center={header[1] === 'Aksi'}
+								class:text-left={header[1] !== 'Aksi'}
 								class:border-y={i !== table_data.length - 1}
 								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}
-								>{@render children?.({ data, header: header[1], index: i })}</td
 							>
+								{@render children?.({ data, header: header[1], index: i })}
+							</td>
 						{:else if header.length >= 3 && header[2] === 'custom' && custom}
 							<td
 								class=" py-3 text-left"
@@ -106,7 +109,23 @@
 								class:border-y={i !== table_data.length - 1}
 								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}
-								>{data[header[0]]}
+							>
+								{#if header[0] === 'status'}
+									<div
+										class="w-[120px] rounded-full px-2 py-1 text-center"
+										class:bg-disetujui={data[header[0]] === 'Disetujui' ||
+											data[header[0]] === 'Selesai'}
+										class:bg-berlangsung={data[header[0]] === 'Sedang Diproses' ||
+											data[header[0]] === 'Berlangsung'}
+										class:bg-ditolak={data[header[0]] === 'Ditolak'}
+										class:bg-pending={data[header[0]] === 'Pending' ||
+											data[header[0]] === 'Diajukan'}
+									>
+										<p class="text-xs">{data[header[0]]}</p>
+									</div>
+								{:else}
+									{data[header[0]]}
+								{/if}
 							</td>
 						{/if}
 					{/each}
@@ -130,5 +149,17 @@
 	}
 	.m:hover {
 		background-color: #f9d48b;
+	}
+	.bg-berlangsung {
+		background-color: #eaec6e;
+	}
+	.bg-disetujui {
+		background-color: #87ec80;
+	}
+	.bg-ditolak {
+		background-color: #e58d8d;
+	}
+	.bg-pending {
+		background-color: #9dd4fb;
 	}
 </style>

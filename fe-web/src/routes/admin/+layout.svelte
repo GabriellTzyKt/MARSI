@@ -64,7 +64,9 @@
 		} else if (page.route.id?.startsWith('/admin/suratDokumen/ubah')) {
 			return 'Ubah Dokumen';
 		} else if (page.route.id?.startsWith('/admin/aplikasiKerajaan')) {
-			return 'Aplikasi Kerajaan';
+			return 'Selamat Datang';
+		} else if (page.route.id?.startsWith('/admin/manajemenWebsite')) {
+			return 'Website Kerajaan';
 		}
 	});
 
@@ -254,6 +256,13 @@
 			/>
 
 			<SidebarMenu
+				href="/admin/manajemenWebsite"
+				icon="mdi:home"
+				anchor="Website Kerajaan"
+				active={page.route.id?.startsWith('/admin/manajemenWebsite')}
+			/>
+
+			<SidebarMenu
 				href="/admin/aplikasiKerajaan"
 				icon="mdi:home"
 				anchor="Aplikasi Kerajaan"
@@ -292,7 +301,7 @@
 		</Sidebar>
 	</div>
 
-	<main class="flex min-h-screen w-full flex-1 bg-gray-100 p-5">
+	<main class="flex min-h-screen w-full flex-1 bg-white p-5">
 		{@render children()}
 	</main>
 </div>

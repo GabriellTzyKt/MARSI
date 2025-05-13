@@ -14,13 +14,14 @@
 	import { fade } from 'svelte/transition';
 
 	let { data } = $props();
-	let dataambil = data.organisasiList;
-	let dataanggota = data.allAnggota;
-	let allanggota = data.allUsers;
-	console.log('Data ambil : ', dataambil);
-	console.log('Data anggota : ', dataanggota);
-	console.log('All anggota : ', allanggota);
-		
+	// let dataambil = $state(data.organisasiList);
+	let id_organisasi = $state(data.organisasi_id);
+	let dataanggota = $state(data.allAnggota);
+	let allanggota = $state(data.allUsers);
+	// console.log('Data ambil : ', dataambil);
+	// console.log('Data anggota : ', dataanggota);
+	// console.log('All anggota : ', allanggota);
+
 	let idAktif = $state(page.params.id);
 
 	let open = $state(false);
@@ -40,7 +41,6 @@
 			// Check if item exists
 			if (!item) return false;
 
-
 			// Safely access properties with optional chaining and default to empty string if undefined
 			const namaAnggota = item.nama_anggota?.toLowerCase() || '';
 			const tanggalBergabung = item.tanggal_bergabung?.toLowerCase() || '';
@@ -48,10 +48,8 @@
 			const nomorTelepon = item.nomor_telepon?.toLowerCase() || '';
 			const email = item.email?.toLowerCase() || '';
 
-
 			// Convert keyword to lowercase once
 			const keywordLower = keyword.toLowerCase();
-
 
 			// Check if any property includes the keyword
 			return (
@@ -93,14 +91,23 @@
 				console.log('Found organization ID for user:', selectedAnggota.id_organisasi);
 			}
 		}
-		if (editId && !editD) {
-			editD = true;
-			editUserId = editId;
+		if (editId&& !editUserId) {
+			editUserId = editId
+			if(!editD){
+				editId = null;
+				editD = true;
+				editUserId = null;
+			}
+			else{
+
+				editD = true;
+			}
 			// Find the corresponding organization ID for this user
 			const selectedAnggota = data.allAnggota.find((anggota: any) => anggota.id_user == editId);
 			const selectedOrg = data.organisasiList.find((anggota: any) => anggota.id_user == editId);
 			console.log('Anggota with id Found:', selectedAnggota);
 			if (selectedAnggota) {
+				editD = true;
 				console.log('selectedAnggota Founded!: ', selectedOrg);
 				selectedOrgId = selectedAnggota.id_organisasi;
 				dataEdit = {
@@ -122,6 +129,18 @@
 	// 	} else open = false;
 	// 	console.log(open);
 	// };
+
+	// Add this function to handle edit modal closing
+	function handleEditModalClose() {
+		console.log("Edit modal close event received");
+		editD = false;
+		editUserId = null;
+		dataEdit = undefined;
+		
+		// Clear URL parameters
+		const baseUrl = page.url.pathname;
+		goto(baseUrl, { replaceState: true });
+	}
 </script>
 
 {#if navigating.to}
@@ -282,7 +301,12 @@
 				try {
 					console.log('Delete result:', result);
 					if (result.type === 'success') {
-						// First clear the URL parameter
+						// First clear the URL parameter and reset state
+						deleteD = false;
+						selectedItemId = null;
+						selectedOrgId = null;
+						
+						// Then navigate to clean URL
 						await goto(`/abdi/dashboard/organisasi/beranda/${idAktif}/detail/daftaranggota`, {
 							replaceState: true
 						});
@@ -290,10 +314,7 @@
 						// Then invalidate all data
 						await invalidateAll();
 
-						// Then show success message and reset state
-						deleteD = false;
-						selectedItemId = null;
-						selectedOrgId = null;
+						// Then show success message
 						valo = true;
 
 						clearTimeout(timer);
@@ -302,9 +323,15 @@
 						}, 3000);
 					} else if (result.type === 'failure') {
 						error = result.data?.errors || '';
+						// Also reset modal state on error
+						deleteD = false;
+						selectedItemId = null;
 					}
 				} catch (err) {
 					console.error('Error during delete process:', err);
+					// Reset modal state on error
+					deleteD = false;
+					selectedItemId = null;
 				} finally {
 					// Always turn off loading state, even if there's an error
 					loading = false;
@@ -333,21 +360,26 @@
 				loading = false;
 				if (result.type === 'success') {
 					try {
-						goto(`/abdi/dashboard/organisasi/beranda/${id_organisasi}/detail/daftaranggota`, {
-							replaceState: true
-						});
+						// Reset state variables
 						editD = false;
 						editUserId = null;
-						success = true;
+						dataEdit = undefined;
+						
+						// Clear URL and refresh data
+						await goto(`/abdi/dashboard/organisasi/beranda/${id_organisasi}/detail/daftaranggota`, {
+							replaceState: true
+						});
 						await invalidateAll();
-
+						
+						// Show success message
+						success = true;
 						setTimeout(() => {
 							success = false;
 						}, 3000);
 					} catch (err) {
 						console.error('Error during edit process:', err);
 					} finally {
-						// Always turn off loading state, even if there's an error
+						// Always turn off loading state
 						loading = false;
 					}
 				} else if (result.type === 'failure') {
@@ -356,9 +388,15 @@
 			};
 		}}
 	>
-		<TambahAnggota bind:value={editD} errors={error} {data2} {dataEdit} {allanggota}
+		<TambahAnggota 
+			bind:value={editD} 
+			errors={error} 
+			{data2} 
+			{dataEdit} 
+			{allanggota}
+			on:close={handleEditModalClose}
 		></TambahAnggota>
-		<input type="hidden" name="id_user" value={selectedItemId} />
+		<input type="hidden" name="id_user" value={editUserId} />
 		<input type="hidden" name="id_organisasi" value={id_organisasi} />
 	</form>
 {/if}
