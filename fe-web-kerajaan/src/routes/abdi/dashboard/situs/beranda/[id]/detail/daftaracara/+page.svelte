@@ -9,6 +9,13 @@
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
 	let { data } = $props();
+	let dataevent = data.events
+	let dataID = data.locationIds
+	let datatotal = data.situsCount
+	console.log("Data event : ", dataevent)
+	console.log("Data ID : ", dataID)
+	console.log("Data Length : ", datatotal)
+
 
 	let idAktif = $state(page.params.id)
 	$effect(() => {
@@ -118,15 +125,15 @@
 			table_header={[
 				['id_acara', 'Id Acara'],
 				['nama_acara', 'Nama Acara'],
-				['tanggal', 'Tanggal'],
-				['lokasi', 'Lokasi'],
-				['penanggungjawab', 'Penanggung Jawab'],
+				['created_at', 'Tanggal'],
+				['situs_alamat', 'Lokasi'],
+				['penanggung_jawab_nama', 'Penanggung Jawab'],
 				['jenis_acara', 'Jenis Acara'],
-				['kapasitas', 'Kapasitas'],
+				['kapasitas_acara', 'Kapasitas'],
 				['children', 'Status'],
 				['children', 'Aksi']
 			]}
-			table_data={dataambil}
+			table_data={dataevent}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}

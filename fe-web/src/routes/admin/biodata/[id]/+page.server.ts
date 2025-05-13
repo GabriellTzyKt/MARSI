@@ -158,10 +158,76 @@ export const actions: Actions = {
 
     selesai: async ({ request }) => {
         const data = await request.formData();
-        const res = Object.fromEntries(data)
+        
+        // Define a proper type for the result object
+        const res: Record<string, any> = {};
+        
+        // Process each entry individually
+        for (const [key, value] of data.entries()) {
+            // For keys that might have multiple values (like 'dokumen')
+            if (key === 'dokumen') {
+                if (!res[key]) {
+                    res[key] = [];
+                }
+                res[key].push(value);
+            } else {
+                // For other keys, just store the value
+                res[key] = value;
+            }
+        }
+        
+        console.log("Processed form data:", res);
+        console.log("Number of dokumen files:", res.dokumen ? res.dokumen.length : 0);
+        
+        // When processing dokumen files:
+        const fotoUmumIds = [];
+        if (res.dokumen && res.dokumen.length > 0) {
+            for (const file of res.dokumen) {
+                if (file instanceof File && file.size > 0) {
+                    const fotoUmumFormData = new FormData();
+                    fotoUmumFormData.append("nama_kerajaan", res.nama);
+                    fotoUmumFormData.append("foto_umum", file);
+                    
+                    console.log("Uploading foto umum:", file.name);
+                    
+                    try {
+                        const fotoUmumResponse = await fetch(env.BASE_URL + "/file/umum", {
+                            method: 'POST',
+                            body: fotoUmumFormData,
+                        });
+                        
+                        if (fotoUmumResponse.ok) {
+                            const fotoUmumResult = await fotoUmumResponse.json();
+                            console.log("Foto umum result:", fotoUmumResult);
+                            
+                            // Check for id_path.data in the response
+                            if (fotoUmumResult.id_path && fotoUmumResult.id_path.data) {
+                                const newIds = fotoUmumResult.id_path.data.split(',').map((id : any) => id.trim());
+                                fotoUmumIds.push(...newIds);
+                                console.log("Foto umum uploaded, IDs:", newIds);
+                            } else if (fotoUmumResult.id_dokumentasi) {
+                                fotoUmumIds.push(fotoUmumResult.id_dokumentasi);
+                                console.log("Foto umum uploaded, ID:", fotoUmumResult.id_dokumentasi);
+                            } else {
+                                // console.error("Missing ID information in response:", fotoUmumResult);
+                            }
+                        } else {
+                            console.error("Failed to upload foto umum:", file.name);
+                            const errorText = await fotoUmumResponse.text();
+                            // console.error("Response status:", fotoUmumResponse.status);
+                            // console.error("Response text:", errorText);
+                        }
+                    } catch (error) {
+                        console.error("Exception during foto umum upload:", error);
+                    }
+                }
+            }
+        }
 
-        console.log("res", res)
-
+        // console.log("All foto umum IDs collected:", fotoUmumIds);
+        const fotoUmumIdsString = fotoUmumIds.join(',');
+        console.log("Final foto umum IDs string:", fotoUmumIdsString);
+        
         let form: any = {
             nama: "",
             lokasi: "",
@@ -170,10 +236,7 @@ export const actions: Actions = {
             era: "",
             rumpun: "",
             deskripsi: "",
-            dokumen: "",
-            inputbendera: "",
-            inputlambang: "",
-            inputvideo: "",
+            // File fields removed from validation
             linkkerajaan: "",
             promosi: "",
             linkacara1: "",
@@ -183,16 +246,13 @@ export const actions: Actions = {
 
         const ver = z.object({
             nama: z.string().trim().min(1, "Isi Nama!"),
-            lokasi: z.string().optional(),
-            jenis: z.string().optional(),
-            tanggal: z.string().optional(),
-            era: z.string().optional(),
-            rumpun: z.string().optional(),
-            deskripsi: z.string().optional(),
-            dokumen: z.string().optional(),
-            inputbendera: z.string().optional(),
-            inputlambang: z.string().optional(),
-            inputvideo: z.string().optional(),
+            lokasi: z.string().trim().min(1, "Isi!"),
+            jenis: z.string().trim().min(1, "Isi!"),
+            tanggal: z.string().trim().min(1, "Isi!"),
+            era: z.string().trim().min(1, "Isi!"),
+            rumpun: z.string().trim().min(1, "Isi!"),
+            deskripsi: z.string().trim().min(1, "Isi!"),
+            // File validations removed
             linkkerajaan: z.string().optional(),
             promosi: z.string().optional(),
             linkacara1: z.string().optional(),
@@ -201,20 +261,15 @@ export const actions: Actions = {
         });
 
         form = {
-            nama: data.get("nama"),
-            lokasi: data.get("lokasi"),
-            jenis: data.get("jenis"),
-            tanggal: data.get("tanggalberdiri"),
-            era: data.get("era"),
-            rumpun: data.get("rumpun"),
-            deskripsi: data.get("deskripsi"),
-            // dokumen: data.get("dokumen"),
-            // inputbendera: data.get("inputbendera"),
-            // inputlambang: data.get("inputlambang"),
-            // inputvideo: data.get("inputvideo"),
+            nama: data.get("nama") || " ",
+            lokasi: data.get("lokasi") || " ",
+            jenis: data.get("jenis") || " ",
+            tanggal: data.get("tanggalberdiri") || " ",
+            era: data.get("era") || " ",
+            rumpun: data.get("rumpun") || " ",
+            deskripsi: data.get("deskripsi") || " ",
             longitude: data.get("long") || " ",
             latitude: data.get("lat") || " ",
-
             linkkerajaan: data.get("linkkerajaan"),
             promosi: data.get("promosi"),
             linkacara1: data.get("linkacara1"),
@@ -222,15 +277,13 @@ export const actions: Actions = {
             linkacara3: data.get("linkacara3"),
         }; 
 
-        console.log("form : " , form)
+        console.log("form : ", form);
 
         const validation = ver.safeParse({ ...form });
 
         if (!validation.success) {
             const fieldErrors = validation.error.flatten().fieldErrors;
-
-            console.log("errors : ", fieldErrors)
-
+            console.log("errors : ", fieldErrors);
             return fail(406, {
                 errors: fieldErrors,
                 success: false,
@@ -240,42 +293,135 @@ export const actions: Actions = {
         }
 
         try {
-            const formData = new FormData()
-            formData.append("nama_kerajaan", res.nama)
-            formData.append("alamat_kerajaan", res.lokasi)
-            formData.append("longitude", res.long)
-            formData.append("latitude", res.lat)
-            formData.append("jenis_kerajaan", res.jenis)
-            formData.append("tahun_berdiri", res.tanggalberdiri)
-            formData.append("raja_sekarang", res.rajasekarang || " ")
-            formData.append("deskripsi_kerajaan", res.deskripsi)
-            formData.append("bendera_kerajaan", res.inputbendera || " ")
-            formData.append("lambang_kerajaan", res.inputlambang || " ")
-            formData.append("tahun_berakhir", res.tahunberakhir || " ")
-            formData.append("era" , res.era)
-            formData.append("rumpun", res.rumpun)
-            formData.append("email", res.email || " ")
-            formData.append("foto_umum", res.dokumen)
-            formData.append("video_kerajaan", res.inputvideo)
+            // Get files from form data - FIXED: use getAll instead of get
+            const bendera = data.get("inputbendera");
+            const lambang = data.get("inputlambang");
+            const fotoUmumFiles = data.getAll("dokumen"); // Changed from get to getAll
+            console.log("Foto umum : ", fotoUmumFiles)
+            const video = data.get("inputvideo");
+
+            console.log("Bendera : ", bendera)
+            console.log("Lambang : ", lambang)
+            
+            console.log("Number of dokumen files received:", fotoUmumFiles.length);
+            
+            let benderaId = "";
+            let lambangId = "";
+            let videoId = "";
+            
+            // Upload bendera if provided
+            if (bendera instanceof File && bendera.size > 0) {
+                const benderaFormData = new FormData();
+                benderaFormData.append("nama_kerajaan", res.nama);
+                benderaFormData.append("bendera_kerajaan", bendera);
+                
+                const benderaResponse = await fetch(env.BASE_URL + "/file/bendera", {
+                    method: 'POST',
+                    body: benderaFormData,
+                });
+                
+                if (benderaResponse.ok) {
+                    const benderaResult = await benderaResponse.json();
+                    benderaId = benderaResult.id_path || "";
+                    console.log("Bendera uploaded, ID:", benderaId);
+                } else {
+                    console.error("Failed to upload bendera");
+                }
+            }
+            
+            // Upload lambang if provided
+            if (lambang instanceof File && lambang.size > 0) {
+                const lambangFormData = new FormData();
+                lambangFormData.append("nama_kerajaan", res.nama);
+                lambangFormData.append("lambang_kerajaan", lambang);
+                
+                const lambangResponse = await fetch(env.BASE_URL + "/file/lambang", {
+                    method: 'POST',
+                    body: lambangFormData,
+                });
+                
+                if (lambangResponse.ok) {
+                    const lambangResult = await lambangResponse.json();
+                    lambangId = lambangResult.id_path || "";
+                    console.log("Lambang uploaded, ID:", lambangId);
+                } else {
+                    console.error("Failed to upload lambang");
+                }
+            }
+            
+            // We already processed the foto umum files above, so we don't need to do it again
+            // Just use the fotoUmumIds and fotoUmumIdsString we already have
+            
+            // Upload video if provided
+            if (video instanceof File && video.size > 0) {
+                const videoFormData = new FormData();
+                videoFormData.append("nama_kerajaan", res.nama);
+                videoFormData.append("video_kerajaan", video);
+                
+                const videoResponse = await fetch(env.BASE_URL + "/file/video", {
+                    method: 'POST',
+                    body: videoFormData,
+                });
+                
+                if (videoResponse.ok) {
+                    const videoResult = await videoResponse.json();
+                    videoId = videoResult.id_path || "";
+                    console.log("Video uploaded, ID:", videoId);
+                } else {
+                    console.error("Failed to upload video");
+                }
+            }
+            
+            // Now send the main kerajaan data with file IDs as JSON
+            const kerajaanData = {
+                id_kerajaan: 10,
+                longitude: Number(res.long),
+                latitude: Number(res.lat),
+                nama_kerajaan: res.nama,
+                raja_sekarang: res.rajasekarang || " ",
+                jenis_kerajaan: res.jenis,
+                deskripsi_kerajaan: res.deskripsi,
+                alamat_kerajaan: res.lokasi,
+                bendera_kerajaan: Number(benderaId),
+                lambang_kerajaan: Number(lambangId),
+                foto_umum: fotoUmumIdsString,
+                video_kerajaan: videoId,
+                tahun_berdiri: res.tahun_berdiri || 1900,
+                tahun_berakhir: res.tahunberakhir || 1980,
+                era: res.era,
+                rumpun: res.rumpun,
+                email: res.email || " ",
+                url_website: res.url_web || "",
+                url_acara1: res.url_acara1 || "",
+                url_acara2: res.url_acara2 || "",
+                url_acara3: res.url_acara3 || "",
+            };
+
+            console.log("Final kerajaan data:", kerajaanData);
 
             const result = await fetch(env.BASE_URL + "/kerajaan", {
-                method: 'POST',
-                body: formData,
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(kerajaanData),
             });
 
-            const r = await result.json()
+            console.log("Kerajaan update response status:", result.status);
 
-            if (result.ok) { 
-                console.log("yayayayayaya")
-                return { errors: " no ", success : true, form: res};
+            const r = await result.json();
+            console.log("Kerajaan update response:", r);
+
+            if (r.ok) { 
+                console.log("Update successful");
+                return { errors: "no", success: true, form: res };
             } else {
-                console.log('bruh')
-                return fail(400,{request:`Error Code : ${result.status} ${r.message}`})
+                console.log('Update failed');
+                return fail(400, { request: `Error Code: ${result.status} ${r.message}` });
             }
         } catch (error) {
             if (error instanceof Error) console.error(error.message);
-
+            return fail(500, { request: "An unexpected error occurred" });
         }
-        // return { errors: "Success", success: true, formData: form, type: "add" };
     }
 };

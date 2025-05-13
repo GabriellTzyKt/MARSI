@@ -7,33 +7,32 @@
 	import { writable } from 'svelte/store';
 	import { page } from '$app/state';
 
-
 	let success = $state(false);
-	let id = $state(page.params.id)
-	let nama = $state(' ');
-	let lokasi = $state(' ');
+	let id = $state(page.params.id);
+	let nama = $state('');
+	let lokasi = $state('');
 	let tanggal = $state('');
-	let jenis = $state(' ');
-	let linkkerajaan = $state(' ');
-	let promosi = $state(' ');
-	let linkacara1 = $state(' ');
-	let linkacara2 = $state(' ');
-	let linkacara3 = $state(' ');
-	let namaraja = $state(' ');
+	let jenis = $state('');
+	let linkkerajaan = $state('');
+	let promosi = $state('');
+	let linkacara1 = $state('');
+	let linkacara2 = $state('');
+	let linkacara3 = $state('');
+	let namaraja = $state('');
 	let tanggalmeninggal = $state('');
 	let gelarraja = $state('');
-	let tanggallahir = $state(' ');
-	let kotalahir = $state(' ');
-	let era = $state(' ');
-	let rumpun = $state(' ');
-	let agama = $state(' ');
-	let wangsa = $state(' ');
-	let namaayah = $state(' ');
-	let namaibu = $state(' ');
-	let tanggalawal = $state(' ');
-	let tanggalakhir = $state(' ');
+	let tanggallahir = $state('');
+	let kotalahir = $state('');
+	let era = $state('');
+	let rumpun = $state('');
+	let agama = $state('');
+	let wangsa = $state('');
+	let namaayah = $state('');
+	let namaibu = $state('');
+	let tanggalawal = $state('');
+	let tanggalakhir = $state('');
 	let showModal = $state(false);
-	let selectedLocation: any = $state(' ');
+	let selectedLocation: any = $state('');
 	let namafoto: any = $state('');
 	let namabendera: any = $state('');
 	let namafotoraja: any = $state('');
@@ -55,7 +54,7 @@
 
 	let results = writable<string[]>([]);
 	let showDropdown = writable(false);
-	let locationsData: any[] = []; 
+	let locationsData: any[] = [];
 
 	const API_KEY = 'pk.def50126ee21d7c7b667386e05fc8bcb';
 
@@ -135,10 +134,10 @@
 
 	function handleFileChange(event: Event, type: string) {
 		const target = event.target as HTMLInputElement;
-
+		
 		if (target.files && target.files.length > 0) {
 			const newFiles = Array.from(target.files);
-
+			
 			if (type === 'bendera') {
 				benderaUrl = URL.createObjectURL(newFiles[0]);
 				console.log('Bendera yang di upload : ', newFiles[0].name);
@@ -236,6 +235,9 @@
 				bind:value={nama}
 				placeholder="John Doe"
 			/>
+			{#if error.nama}
+				<p class="text-left text-red-500">{error.nama}</p>
+			{/if}
 
 			<div class="flex flex-grow flex-col gap-4 lg:flex-row">
 				<div class="relative w-full flex-col">
@@ -249,9 +251,12 @@
 						onkeydown={handleKeyDown}
 						placeholder="Cari lokasi..."
 					/>
-					<input type="hidden" name="long" bind:value={long}>
-					<input type="hidden" name="lat" bind:value={lat}>
+					{#if error.lokasi}
+						<p class="text-left text-red-500">{error.lokasi}</p>
+					{/if}
 
+					<input type="hidden" name="long" bind:value={long} />
+					<input type="hidden" name="lat" bind:value={lat} />
 
 					{#if $showDropdown && lokasi !== ''}
 						<ul class="dropdown">
@@ -275,6 +280,9 @@
 						<option value="" selected disabled>Pilih Jenis Kerajaan</option>
 						<option value="kasunanan">Kasunanan</option>
 					</select>
+					{#if error.jenis}
+						<p class="text-left text-red-500">{error.jenis}</p>
+					{/if}
 				</div>
 
 				<!-- <div class="w-full flex-col">
@@ -303,7 +311,7 @@
 						maxlength="4"
 						oninput={(e: any) => {
 							e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
-							const errorMsg : any = document.getElementById('error-msg');
+							const errorMsg: any = document.getElementById('error-msg');
 							if (e.target.value.length > 0 && e.target.value.length < 3) {
 								errorMsg.textContent = 'Minimal 3 digit!';
 							} else {
@@ -311,7 +319,9 @@
 							}
 						}}
 					/>
-					<p id="error-msg" class="text-red-500 text-sm"></p>
+					{#if error.tanggal}
+						<p class="text-left text-red-500">{error.tanggal}</p>
+					{/if}
 				</div>
 
 				<div class="w-full flex-col">
@@ -325,6 +335,9 @@
 						<option value="" selected disabled>Pilih Era</option>
 						<option value="kolonial">Kolonial </option>
 					</select>
+					{#if error.era}
+				<p class="text-left text-red-500">{error.era}</p>
+			{/if}
 				</div>
 
 				<div class="w-full flex-col">
@@ -338,6 +351,9 @@
 						<option value="" selected disabled>Pilih Rumpun</option>
 						<option value="mataram">Mataram</option>
 					</select>
+					{#if error.rumpun}
+				<p class="text-left text-red-500">{error.rumpun}</p>
+			{/if}
 				</div>
 			</div>
 
@@ -348,6 +364,9 @@
 				name="deskripsi"
 				placeholder="John Doe"
 			></textarea>
+			{#if error.deskripsi}
+				<p class="text-left text-red-500">{error.deskripsi}</p>
+			{/if}
 
 			<div class="mt-2 flex flex-grow flex-col gap-4 md:flex-row">
 				<!-- Dokumen -->
@@ -713,9 +732,9 @@
 
 				<div class="h-1 bg-gray-300"></div>
 
-				<input hidden name="id" bind:value={id}>
+				<input hidden name="id" bind:value={id} />
 
-				<div class="flex justify-center flex-col items-center">
+				<div class="flex flex-col items-center justify-center">
 					<p class="text-nowrap">Foto Raja</p>
 					<div
 						class="upload-container relative mt-4 h-[200px] w-[270px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-black"
@@ -733,7 +752,11 @@
 							class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
 						>
 							{#if namarajaUrl}
-								<img src={namarajaUrl} alt="Bendera" class="h-full w-full rounded-lg object-cover" />
+								<img
+									src={namarajaUrl}
+									alt="Bendera"
+									class="h-full w-full rounded-lg object-cover"
+								/>
 								<button class="remove-btn" onclick={() => ganti('raja')}>✎</button>
 							{:else}
 								<span class="pajamas--media"></span>

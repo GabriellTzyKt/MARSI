@@ -15,14 +15,13 @@
 	import { string } from 'zod';
 
 	let { data } = $props();
-	// let dataambil = $state(data.organisasiList);
-	let id_organisasi = $state(data.organisasi_id);
-	let dataanggota = $state(data.allAnggota);
-	let allanggota = $state(data.allUsers);
-	// console.log('Data ambil : ', dataambil);
-	// console.log('Data anggota : ', dataanggota);
-	// console.log('All anggota : ', allanggota);
-
+	let dataambil = data.organisasiList;
+	let dataanggota = data.allAnggota;
+	let allanggota = data.allUsers;
+	console.log('Data ambil : ', dataambil);
+	console.log('Data anggota : ', dataanggota);
+	console.log('All anggota : ', allanggota);
+		
 	let idAktif = $state(page.params.id);
 
 	let open = $state(false);
@@ -43,6 +42,7 @@
 			// Check if item exists
 			if (!item) return false;
 
+
 			// Safely access properties with optional chaining and default to empty string if undefined
 			const namaAnggota = item.nama_anggota?.toLowerCase() || '';
 			const tanggalBergabung = item.tanggal_bergabung?.toLowerCase() || '';
@@ -50,23 +50,17 @@
 			const nomorTelepon = item.nomor_telepon?.toLowerCase() || '';
 			const email = item.email?.toLowerCase() || '';
 
+
 			// Convert keyword to lowercase once
 			const keywordLower = keyword.toLowerCase();
 
+
 			// Check if any property includes the keyword
 			return (
-<<<<<<< Updated upstream
-				namaAnggota.includes(keywordLower) ||
-				tanggalBergabung.includes(keywordLower) ||
-				jabatanOrganisasi.includes(keywordLower) ||
-				nomorTelepon.includes(keywordLower) ||
-				email.includes(keywordLower)
-=======
 				item.nama_lengkap.toLowerCase().includes(keyword.toLowerCase()) ||
 				item.tanggal_bergabung.toLowerCase().includes(keyword.toLowerCase()) ||
 				item.no_telp.toLowerCase().includes(keyword.toLowerCase()) ||
 				item.email.toLowerCase().includes(keyword.toLowerCase())
->>>>>>> Stashed changes
 			);
 		});
 	}
@@ -77,60 +71,6 @@
 		console.log(d);
 		return d.slice(start, end);
 	}
-<<<<<<< Updated upstream
-	let resdata = $derived(pagination(dataanggota));
-
-	let timer: any;
-
-	let deleteD = $state(false);
-	let selectedItemId = $state<string | null>(null);
-	let selectedOrgId = $state<string | null>(null);
-
-	$effect(() => {
-		let deleteId = page.url.searchParams.get('delete');
-		let editId = page.url.searchParams.get('edit');
-		if (deleteId) {
-			deleteD = true;
-			selectedItemId = deleteId;
-			console.log('Selected Item:', selectedItemId);
-			// Find the corresponding organization ID for this user
-			const selectedAnggota = data.allAnggota.find((anggota: any) => anggota.id_user == deleteId);
-			console.log('Anggota with id Found:', selectedAnggota);
-			if (selectedAnggota) {
-				console.log('selectedAnggota Founded!: ', selectedAnggota);
-				console.log('Found organization ID for user:', selectedAnggota.id_organisasi);
-			}
-		}
-		if (editId && !editD) {
-			editD = true;
-			editUserId = editId;
-			// Find the corresponding organization ID for this user
-			const selectedAnggota = data.allAnggota.find((anggota: any) => anggota.id_user == editId);
-			const selectedOrg = data.organisasiList.find((anggota: any) => anggota.id_user == editId);
-			console.log('Anggota with id Found:', selectedAnggota);
-			if (selectedAnggota) {
-				console.log('selectedAnggota Founded!: ', selectedOrg);
-				selectedOrgId = selectedAnggota.id_organisasi;
-				dataEdit = {
-					id_user: selectedAnggota.id_user,
-					nama_anggota: selectedAnggota.user_name,
-					jabatan_anggota: selectedAnggota.jabatan_anggota,
-					deskripsi_tugas: selectedAnggota.deskripsi_tugas
-				};
-				editUserId = selectedAnggota.id_user;
-				selectedOrgId = selectedAnggota.id_organisasi;
-				console.log('Data Edit: ', dataEdit);
-			}
-		}
-	});
-
-	// let toggle = () => {
-	// 	if (!open) {
-	// 		open = true;
-	// 	} else open = false;
-	// 	console.log(open);
-	// };
-=======
 	let resdata = $derived(pagination(data.detil_anggota));
 
 	let timer: any;
@@ -141,7 +81,6 @@
 		} else open = false;
 		console.log(open);
 	};
->>>>>>> Stashed changes
 </script>
 
 {#if navigating.to}
