@@ -65,6 +65,8 @@
 			return 'Ubah Dokumen';
 		} else if (page.route.id?.startsWith('/admin/aplikasiKerajaan')) {
 			return 'Aplikasi Kerajaan';
+		} else if (page.route.id?.startsWith('/admin/websiteKerajaan')) {
+			return 'Website Kerajaan';
 		}
 	});
 
@@ -288,6 +290,12 @@
 				icon="mdi:home"
 				anchor="Pendaftaran Kerajaan"
 				active={page.route.id?.startsWith('/admin/pendaftaranKerajaan')}
+			/>
+			<SidebarMenu
+				href="/admin/websiteKerajaan"
+				icon="mdi:home"
+				anchor="Website Kerajaan"
+				active={page.route.id?.startsWith('/admin/websiteKerajaan')}
 			/>
 		</Sidebar>
 	</div>
