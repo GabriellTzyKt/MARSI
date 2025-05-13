@@ -11,6 +11,7 @@
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
 	import { fade } from 'svelte/transition';
+	import { string } from 'zod';
 
 	let { data } = $props();
 	let dataambil = data.organisasiList;
@@ -29,6 +30,7 @@
 	let entries = $state(10);
 
 	function filterD(data: any[]) {
+		console.log(data);
 		return data.filter((item) => {
 			// Check if item exists
 			if (!item) return false;
@@ -45,11 +47,18 @@
 
 			// Check if any property includes the keyword
 			return (
+<<<<<<< Updated upstream
 				namaAnggota.includes(keywordLower) ||
 				tanggalBergabung.includes(keywordLower) ||
 				jabatanOrganisasi.includes(keywordLower) ||
 				nomorTelepon.includes(keywordLower) ||
 				email.includes(keywordLower)
+=======
+				item.nama_lengkap.toLowerCase().includes(keyword.toLowerCase()) ||
+				item.tanggal_bergabung.toLowerCase().includes(keyword.toLowerCase()) ||
+				item.no_telp.toLowerCase().includes(keyword.toLowerCase()) ||
+				item.email.toLowerCase().includes(keyword.toLowerCase())
+>>>>>>> Stashed changes
 			);
 		});
 	}
@@ -60,6 +69,7 @@
 		console.log(d);
 		return d.slice(start, end);
 	}
+<<<<<<< Updated upstream
 	let resdata = $derived(pagination(dataanggota));
 
 	let timer: any;
@@ -70,6 +80,18 @@
 	// 	} else open = false;
 	// 	console.log(open);
 	// };
+=======
+	let resdata = $derived(pagination(data.detil_anggota));
+
+	let timer: any;
+
+	let toggle = () => {
+		if (!open) {
+			open = true;
+		} else open = false;
+		console.log(open);
+	};
+>>>>>>> Stashed changes
 </script>
 
 {#if navigating.to}
@@ -144,12 +166,20 @@
 	<div class="flex w-full">
 		<Table
 			table_header={[
+<<<<<<< Updated upstream
 				['id_user', 'Id Anggota'],
 				['user_name', 'Nama Anggota'],
 				['tanggal_bergabung', 'Tanggal Bergabung'],
 				['jabatan_anggota', 'Jabatan Anggota'],
 				['user_notelp', 'Nomer Telpon'],
 				['user_email', 'Email'],
+=======
+				['nama_lengkap', 'Nama Anggota'],
+				['tanggal_bergabung', 'Tanggal Bergabung'],
+				['jabatan_organisasi', 'Jabatan Organisasi'],
+				['no_telp', 'Nomer Telpon'],
+				['email', 'Email'],
+>>>>>>> Stashed changes
 				['children', 'Aksi']
 			]}
 			table_data={resdata}
@@ -163,13 +193,18 @@
 							['children', 'Non Aktifkan', '']
 						]}
 						id={`id-${index}`}
-						{data}
+						data={resdata}
 					></DropDown>
 				{/if}
 			{/snippet}
 		</Table>
 	</div>
+<<<<<<< Updated upstream
 	<Pagination bind:currPage bind:entries totalItems={filterD(dataanggota).length}></Pagination>
+=======
+	<Pagination bind:currPage bind:entries totalItems={filterD(data.detil_anggota).length}
+	></Pagination>
+>>>>>>> Stashed changes
 </div>
 {#if open}
 	<form
