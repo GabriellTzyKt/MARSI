@@ -162,7 +162,7 @@
 								><path fill="currentColor" d="m10 17l5-5l-5-5z" /></svg
 							>
 						</button>
-					{:else if data.status === 'Sedang Diproses'}
+					{:else if data.status === 'Ditinjau'}
 						<!-- svelte-ignore a11y_consider_explicit_label -->
 						<div class="flex flex-row gap-2">
 							<button
@@ -228,28 +228,6 @@
 						</button>
 					{/if}
 				</div>
-			{/if}
-		{/snippet}
-
-		{#snippet custom({ header, data })}
-			{#if header === 'Dokumentasi'}
-				{#if data.files && Array.isArray(data.files) && data.files.length > 0}
-					<div class="flex flex-row gap-2">
-						{#each data.files as file}
-							{#if file && typeof file === 'object' && file.url}
-								<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
-									<img
-										src={file.url}
-										alt={file.name || 'Document'}
-										class="h-10 w-10 rounded object-cover"
-									/>
-								</a>
-							{/if}
-						{/each}
-					</div>
-				{:else}
-					<span>No files</span>
-				{/if}
 			{/if}
 		{/snippet}
 	</Table>
@@ -326,17 +304,19 @@
 					/>
 				</div>
 
-				<div class="mb-4">
-					<p>Aplikasi Kerajaan</p>
-					<input
-						type="text"
-						class="mt-2 w-full rounded-lg border border-gray-400 py-2 pe-2 ps-2 focus:border-gray-400 focus:outline-none focus:ring-0"
-						name=""
-						placeholder="kerajaantest.apk"
-						id=""
-						readonly
-					/>
-				</div>
+				{#if selectedItem?.mobileFeatures !== null}
+					<div class="mb-4">
+						<p>Aplikasi Kerajaan</p>
+						<input
+							type="text"
+							class="mt-2 w-full rounded-lg border border-gray-400 py-2 pe-2 ps-2 focus:border-gray-400 focus:outline-none focus:ring-0"
+							name=""
+							placeholder="kerajaantest.apk"
+							id=""
+							readonly
+						/>
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>
@@ -375,8 +355,7 @@
 									<!-- svelte-ignore a11y_no_static_element_interactions -->
 									<div
 										class="col-span-2 cursor-pointer border-r border-gray-300 text-center font-medium"
-										class:active={showWebsiteFeatures}
-										onclick={() => (showWebsiteFeatures = true)}
+										class:active={selectedItem?.websiteFeatures !== null}
 									>
 										Ya
 									</div>
@@ -384,14 +363,13 @@
 									<!-- svelte-ignore a11y_no_static_element_interactions -->
 									<div
 										class="col-span-2 cursor-pointer text-center font-medium"
-										class:active={!showWebsiteFeatures}
-										onclick={() => (showWebsiteFeatures = false)}
+										class:active={selectedItem?.websiteFeatures === null}
 									>
 										Tidak
 									</div>
 								</div>
 
-								{#if showWebsiteFeatures}
+								{#if selectedItem?.websiteFeatures !== null}
 									<div class="border-t border-gray-200 pt-2">
 										<!-- Fitur Situs -->
 										<div class="grid grid-cols-12 py-2">
@@ -457,8 +435,7 @@
 									<!-- svelte-ignore a11y_no_static_element_interactions -->
 									<div
 										class="col-span-2 cursor-pointer border-r border-gray-300 text-center font-medium"
-										class:active={showMobileFeatures}
-										onclick={() => (showMobileFeatures = true)}
+										class:active={selectedItem?.mobileFeatures !== null}
 									>
 										Ya
 									</div>
@@ -466,66 +443,101 @@
 									<!-- svelte-ignore a11y_no_static_element_interactions -->
 									<div
 										class="col-span-2 cursor-pointer text-center font-medium"
-										class:active={!showMobileFeatures}
-										onclick={() => (showMobileFeatures = false)}
+										class:active={selectedItem?.mobileFeatures === null}
 									>
 										Tidak
 									</div>
 								</div>
 
-								{#if showMobileFeatures}
+								{#if selectedItem?.mobileFeatures !== null}
 									<div class="border-t border-gray-200 pt-2">
 										<!-- Fitur Penanggalan -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Penanggalan</div>
-											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_kalender === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2 border-l border-gray-300"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.mobileFeatures.fitur_kalender === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 
 										<!-- Fitur Tugas Pribadi -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Tugas Pribadi</div>
-											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_tugas_pribadi === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2 border-l border-gray-300"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.mobileFeatures.fitur_tugas_pribadi === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 
 										<!-- Fitur Tugas Acara -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Tugas Acara</div>
-											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_tugas_acara === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2 border-l border-gray-300"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.mobileFeatures.fitur_tugas_acara === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 
 										<!-- Fitur Situs Kerajaan -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Situs Kerajaan</div>
-											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_situs === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2 border-l border-gray-300"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.mobileFeatures.fitur_situs === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 
 										<!-- Fitur Check-In Situs -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Check-In Situs</div>
-											<div class="col-span-2 border-r border-gray-300"></div>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_check_in === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+												{#if selectedItem.mobileFeatures.fitur_check_in === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
 										</div>
 
 										<!-- Fitur Acara Kerajaan -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Acara Kerajaan</div>
-											<div class="col-span-2 border-r border-gray-300"></div>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_acara === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+												{#if selectedItem.mobileFeatures.fitur_acara === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
 										</div>
 
@@ -533,22 +545,49 @@
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Group Chat</div>
 											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												<span class="text-customOrange2 text-xl">✓</span>
+												{#if selectedItem.mobileFeatures.fitur_chat === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.mobileFeatures.fitur_chat === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 
 										<!-- Fitur Forum -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Forum</div>
-											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_forum === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2 border-l border-gray-300"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.mobileFeatures.fitur_forum === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
+										</div>
+
+										<!-- Fitur Permohonan -->
+										<div class="grid grid-cols-12 py-2">
+											<div class="col-span-8">Fitur Permohonan</div>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_permohonan === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.mobileFeatures.fitur_permohonan === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 									</div>
-									<div class="h-0.5 w-full bg-gray-400 opacity-40"></div>
 								{/if}
+								<div class="h-0.5 w-full bg-gray-400 opacity-40"></div>
 							</div>
 						</div>
 					</div>
@@ -583,36 +622,38 @@
 							id=""
 						/>
 					</div>
-					<div class="w-full flex-col">
-						<p class="mt-5">Upload Aplikasi Mobile Kerajaan</p>
-						<div
-							class="upload-container relative mt-4 h-[44px] w-full max-w-[90%] flex-shrink-0 overflow-hidden rounded-lg border-2 border-black bg-gray-200"
-						>
-							<input
-								type="file"
-								id="fileVideo"
-								class="hidden"
-								name="inputvideo"
-								accept="video/*"
-								onchange={(e) => handleFileChange(e, 'video')}
-							/>
-							<label
-								for="fileVideo"
-								class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
+					{#if selectedItem?.mobileFeatures !== null}
+						<div class="w-full flex-col">
+							<p class="mt-5">Upload Aplikasi Mobile Kerajaan</p>
+							<div
+								class="upload-container relative mt-4 h-[44px] w-full max-w-[90%] flex-shrink-0 overflow-hidden rounded-lg border-2 border-black bg-gray-200"
 							>
-							</label>
-							<div class="flex h-full w-full items-center justify-between">
-								<p class="max-w-[60%] truncate px-2">{videoName}</p>
-								<button class="bg-customOrange2 h-full px-4 font-semibold text-white">
-									Choose file
-								</button>
+								<input
+									type="file"
+									id="fileVideo"
+									class="hidden"
+									name="inputvideo"
+									accept="video/*"
+									onchange={(e) => handleFileChange(e, 'video')}
+								/>
+								<label
+									for="fileVideo"
+									class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
+								>
+								</label>
+								<div class="flex h-full w-full items-center justify-between">
+									<p class="max-w-[60%] truncate px-2">{videoName}</p>
+									<button class="bg-customOrange2 h-full px-4 font-semibold text-white">
+										Choose file
+									</button>
+								</div>
 							</div>
+							<p class="text-md text-red-600">
+								Pastikan Link atau FIle yang anda masukan sudah benar karena tidak akan bisa di edit
+								atau diubah!
+							</p>
 						</div>
-						<p class="text-md text-red-600">
-							Pastikan Link atau FIle yang anda masukan sudah benar karena tidak akan bisa di edit
-							atau diubah!
-						</p>
-					</div>
+					{/if}
 					<div class="mt-8 flex w-full justify-end">
 						<button
 							class="bg-customGold mr-5 w-auto rounded-lg px-12 py-1 text-center text-white"
@@ -660,8 +701,7 @@
 									<!-- svelte-ignore a11y_no_static_element_interactions -->
 									<div
 										class="col-span-2 cursor-pointer border-r border-gray-300 text-center font-medium"
-										class:active={showWebsiteFeatures}
-										onclick={() => (showWebsiteFeatures = true)}
+										class:active={selectedItem?.websiteFeatures !== null}
 									>
 										Ya
 									</div>
@@ -669,14 +709,13 @@
 									<!-- svelte-ignore a11y_no_static_element_interactions -->
 									<div
 										class="col-span-2 cursor-pointer text-center font-medium"
-										class:active={!showWebsiteFeatures}
-										onclick={() => (showWebsiteFeatures = false)}
+										class:active={selectedItem?.websiteFeatures === null}
 									>
 										Tidak
 									</div>
 								</div>
 
-								{#if showWebsiteFeatures}
+								{#if selectedItem?.websiteFeatures !== null}
 									<div class="border-t border-gray-200 pt-2">
 										<!-- Fitur Situs -->
 										<div class="grid grid-cols-12 py-2">
@@ -742,8 +781,7 @@
 									<!-- svelte-ignore a11y_no_static_element_interactions -->
 									<div
 										class="col-span-2 cursor-pointer border-r border-gray-300 text-center font-medium"
-										class:active={showMobileFeatures}
-										onclick={() => (showMobileFeatures = true)}
+										class:active={selectedItem?.mobileFeatures !== null}
 									>
 										Ya
 									</div>
@@ -751,66 +789,101 @@
 									<!-- svelte-ignore a11y_no_static_element_interactions -->
 									<div
 										class="col-span-2 cursor-pointer text-center font-medium"
-										class:active={!showMobileFeatures}
-										onclick={() => (showMobileFeatures = false)}
+										class:active={selectedItem?.mobileFeatures === null}
 									>
 										Tidak
 									</div>
 								</div>
 
-								{#if showMobileFeatures}
+								{#if selectedItem?.mobileFeatures !== null}
 									<div class="border-t border-gray-200 pt-2">
 										<!-- Fitur Penanggalan -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Penanggalan</div>
-											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_kalender === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2 border-l border-gray-300"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.mobileFeatures.fitur_kalender === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 
 										<!-- Fitur Tugas Pribadi -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Tugas Pribadi</div>
-											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_tugas_pribadi === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2 border-l border-gray-300"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.mobileFeatures.fitur_tugas_pribadi === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 
 										<!-- Fitur Tugas Acara -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Tugas Acara</div>
-											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_tugas_acara === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2 border-l border-gray-300"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.mobileFeatures.fitur_tugas_acara === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 
 										<!-- Fitur Situs Kerajaan -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Situs Kerajaan</div>
-											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_situs === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2 border-l border-gray-300"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.mobileFeatures.fitur_situs === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 
 										<!-- Fitur Check-In Situs -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Check-In Situs</div>
-											<div class="col-span-2 border-r border-gray-300"></div>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_check_in === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+												{#if selectedItem.mobileFeatures.fitur_check_in === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
 										</div>
 
 										<!-- Fitur Acara Kerajaan -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Acara Kerajaan</div>
-											<div class="col-span-2 border-r border-gray-300"></div>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_acara === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+												{#if selectedItem.mobileFeatures.fitur_acara === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
 										</div>
 
@@ -818,25 +891,52 @@
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Group Chat</div>
 											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												<span class="text-customOrange2 text-xl">✓</span>
+												{#if selectedItem.mobileFeatures.fitur_chat === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.mobileFeatures.fitur_chat === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 
 										<!-- Fitur Forum -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Forum</div>
-											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_forum === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2 border-l border-gray-300"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.mobileFeatures.fitur_forum === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
+										</div>
+
+										<!-- Fitur Permohonan -->
+										<div class="grid grid-cols-12 py-2">
+											<div class="col-span-8">Fitur Permohonan</div>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.mobileFeatures.fitur_permohonan === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.mobileFeatures.fitur_permohonan === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 									</div>
-									<div class="h-0.5 w-full bg-gray-400 opacity-40"></div>
 								{/if}
+								<div class="h-0.5 w-full bg-gray-400 opacity-40"></div>
 
-								<div class="w-full flex justify-end mt-3">
-									<button class=" rounded-lg px-5 py-2 text-white bg-customGold"> Proses </button>
+								<div class="mt-3 flex w-full justify-end">
+									<button class=" bg-customGold rounded-lg px-5 py-2 text-white"> Proses </button>
 								</div>
 							</div>
 						</div>
@@ -855,5 +955,11 @@
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-width='1.5' d='m8.464 15.535l7.072-7.07m-7.072 0l7.072 7.07'/%3E%3C/svg%3E");
+	}
+
+	.active {
+		background-color: var(--color-customOrange2, #ffa600);
+		color: white;
+		font-weight: bold;
 	}
 </style>
