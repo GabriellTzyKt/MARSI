@@ -38,32 +38,32 @@ export const actions: Actions = {
 
           
         }
-        try {
-            const content = {
-                content : email,
-                type: "email",
-                user_input : obj.password
-            }
-            const res = await fetch(`${env.PUB_PORT}/forgot-password`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "*/*"
-                },
-                body: JSON.stringify(content)
-            })
-            if (!res.ok) {
-                console.log(res)
-                return fail(418, { errors: "Terjadi kesalahan pada server"})
-            }
-            console.log("Success", res)
-            const returnData = await res.json()
-            console.log(returnData)
-            return {errors: "no error"}
-        }
-        catch (errors) {
-            return fail(418, { errors: "Terjadi kesalahan pada server"})
-        }
+        // try {
+        //     const content = {
+        //         content : email,
+        //         type: "email",
+        //         user_input : obj.password
+        //     }
+        //     const res = await fetch(`${env.PUB_PORT}/forgot-password`, {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //             "Accept": "*/*"
+        //         },
+        //         body: JSON.stringify(content)
+        //     })
+        //     if (!res.ok) {
+        //         console.log(res)
+        //         return fail(418, { errors: "Terjadi kesalahan pada server"})
+        //     }
+        //     console.log("Success", res)
+        //     const returnData = await res.json()
+        //     console.log(returnData)
+        //     return {errors: "no error"}
+        // }
+        // catch (errors) {
+        //     return fail(418, { errors: "Terjadi kesalahan pada server"})
+        // }
 
     }
 }

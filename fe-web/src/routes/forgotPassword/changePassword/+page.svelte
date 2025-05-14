@@ -198,6 +198,21 @@
 			<div class="mt-4 flex">
 				<button class="w-full bg-[#C1A411] py-2 text-center text-white">Change Password</button>
 			</div>
+			<div class="mb-6 mt-6 flex flex-auto items-center justify-center">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="#C1A411"
+					class="size-4"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+				</svg>
+
+				<p class="text-center text-[#C1A411]">Kembali ke</p>
+				<a href="/login2" class="ms-2 text-center text-blue-600 underline">sign in</a>
+			</div>
 		</form>
 	</div>
 </div>
