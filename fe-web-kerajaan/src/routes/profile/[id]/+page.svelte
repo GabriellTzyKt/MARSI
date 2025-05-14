@@ -472,7 +472,7 @@
 {/if}
 
 <!-- Tambahkan tombol untuk menampilkan barcode -->
-<button class="rounded-lg border border-gray-500 px-3 py-2 shadow-2xl" on:click={openBarcode}>
+<button class="rounded-lg border border-gray-500 px-3 py-2 shadow-2xl" onclick={openBarcode}>
 	Tampilkan Barcode
 </button>
 

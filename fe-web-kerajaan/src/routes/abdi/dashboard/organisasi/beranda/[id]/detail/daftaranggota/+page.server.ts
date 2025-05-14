@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 import { fail, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
 import type { PageServerLoad } from "./$types";
@@ -154,83 +153,6 @@ export const load: PageServerLoad = async ({ fetch, params, cookies }) => {
     } catch (error) {
         console.error("Error in load function:", error);
         throw error;
-=======
-import { error, fail, type Actions } from "@sveltejs/kit";
-import { dummySekreAnggotaOrg } from '$lib/dummy'
-import { string, z } from "zod";
-import type { PageServerLoad } from "./$types";
-import { env } from "$env/dynamic/private";
-import { formatDate } from "$lib";
-
-
-export const load: PageServerLoad = async ({ fetch, params }) => {
-    // ID organisasi dari parameter URL
-    const idOrganisasi = params.id;
-    console.log("ID Organisasi:", idOrganisasi);
-    
-    try {
-        // Fetch anggota organisasi
-        const res = await fetch(`${env.URL_KERAJAAN}/organisasi/anggota/${idOrganisasi}`);
-        
-        if (!res.ok) {
-            console.error(`Failed to fetch organisasi anggota: ${res.statusText}`);
-            // Gunakan data dummy jika API gagal
-            return {
-                detil_anggota: dummySekreAnggotaOrg,
-                idOrganisasi
-            };
-        }
-        
-        const detil_anggota = await res.json();
-        console.log("Anggota organisasi dari API:", detil_anggota);
-        
-        if (!detil_anggota || !Array.isArray(detil_anggota) || detil_anggota.length === 0) {
-            console.log("Tidak ada data anggota, menggunakan data dummy");
-            return {
-                detil_anggota: dummySekreAnggotaOrg,
-                idOrganisasi
-            };
-        }
-        
-        // Fetch data user untuk setiap anggota
-        const users = await Promise.all(detil_anggota.map(async (anggota: any) => {
-            try {
-                if (!anggota.id_user) {
-                    console.log("Anggota tidak memiliki id_user:", anggota);
-                    return anggota;
-                }
-                
-                const userRes = await fetch(`${env.PUB_PORT}/user/${anggota.id_user}`);
-                if (userRes.ok) {
-                    const userData = await userRes.json();
-                    return {
-                        ...userData,
-                        tanggal_bergabung: formatDate(anggota.tanggal_bergabung),
-                        jabatan_organisasi: anggota.jabatan_anggota
-                    };
-                }
-                return anggota;
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-                return anggota;
-            }
-        }));
-        
-        console.log("Users with data:", users);
-        
-        // Return data untuk halaman
-        return { 
-            detil_anggota: users,
-            idOrganisasi
-        };
-    }
-    catch (error) {
-        console.error("Error in load function:", error);
-        return {
-            detil_anggota: dummySekreAnggotaOrg,
-            idOrganisasi
-        };
->>>>>>> Stashed changes
     }
 };
 
