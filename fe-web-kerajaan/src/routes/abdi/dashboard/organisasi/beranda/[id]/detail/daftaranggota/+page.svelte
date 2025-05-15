@@ -3,25 +3,24 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { navigating, page } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
+	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
 	import { dummyAnggota } from '$lib/dummy';
 	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
-	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import TambahAnggota from '$lib/popup/TambahAnggota.svelte';
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
+	import { tick } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import { string } from 'zod';
 
 	let { data } = $props();
-	// let dataambil = $state(data.organisasiList);
-	let id_organisasi = $state(data.organisasi_id);
+	let dataambil = data.organisasiList;
 	let dataanggota = $state(data.allAnggota);
-	let allanggota = $state(data.allUsers);
-	// console.log('Data ambil : ', dataambil);
-	// console.log('Data anggota : ', dataanggota);
-	// console.log('All anggota : ', allanggota);
-
+	let allanggota = data.allUsers;
+	console.log('Data ambil : ', dataambil);
+	console.log('Data anggota : ', dataanggota);
 	let idAktif = $state(page.params.id);
 
 	let open = $state(false);
@@ -31,12 +30,14 @@
 	let keyword = $state('');
 	let currPage = $state(1);
 	let entries = $state(10);
+	let clickedId = $state('');
+	let editId = $state(false);
+	let dataEdit = $state();
 	let loading = $state(false);
-	let editD = $state(false);
-	let editUserId = $state<any>(null);
 	let success = $state(false);
-	let dataEdit = $state<any>();
+
 	function filterD(data: any[]) {
+		// console.log(data);
 		return data.filter((item) => {
 			// Check if item exists
 			if (!item) return false;
@@ -68,60 +69,42 @@
 		console.log(d);
 		return d.slice(start, end);
 	}
-	let resdata = $derived(pagination(data.allAnggota));
+	let resdata = $derived(pagination(dataanggota));
 
 	let timer: any;
+	function handleEdit(userId: string) {
+		console.log('USER EDIT : ', userId);
+		goto(`/abdi/dashboard/organisasi/beranda/${idAktif}/detail/daftaranggota?edit=${userId}`);
+		const userData = dataanggota.find((item) => item.id_user.toString() == userId);
+		// const datauser = data.allUsers.find((item) => item.id_user.toString() == userId);
 
-	let deleteD = $state(false);
-	let selectedItemId = $state<string | null>(null);
-	let selectedOrgId = $state<string | null>(null);
+		console.log('User data:', userData);
+		// console.log('User data:', datauser);
+		dataEdit = {
+			organisasi_id: idAktif,
+			id_user: userData.id_user,
+			nama_anggota: userData.user_name,
+			deskripsi_tugas: userData.deskripsi_tugas,
+			tanggal_bergabung: userData.tanggal_bergabung,
+			jabatan_anggota: userData.jabatan_anggota
+		};
+		console.log('Data Edit : ', dataEdit);
+		editId = true;
+	}
 
-	$effect(() => {
-		let deleteId = page.url.searchParams.get('delete');
-		let editId = page.url.searchParams.get('edit');
-		if (deleteId) {
-			deleteD = true;
-			selectedItemId = deleteId;
-			console.log('Selected Item:', selectedItemId);
-			// Find the corresponding organization ID for this user
-			const selectedAnggota = data.allAnggota.find((anggota: any) => anggota.id_user == deleteId);
-			console.log('Anggota with id Found:', selectedAnggota);
-			if (selectedAnggota) {
-				console.log('selectedAnggota Founded!: ', selectedAnggota);
-				console.log('Found organization ID for user:', selectedAnggota.id_organisasi);
-			}
+	async function handleDelete(userId: string) {
+		const confirmed = confirm('Yakin ingin menghapus anggota ini?');
+		if (!confirmed) return;
+
+		try {
+			await fetch(`/abdi/api/anggota/${userId}`, {
+				method: 'DELETE'
+			});
+			invalidateAll(); // Refresh data
+		} catch (err) {
+			console.error('Gagal menghapus:', err);
 		}
-		if (editId&& !editUserId) {
-			editUserId = editId
-			if(!editD){
-				editId = null;
-				editD = true;
-				editUserId = null;
-			}
-			else{
-
-				editD = true;
-			}
-			// Find the corresponding organization ID for this user
-			const selectedAnggota = data.allAnggota.find((anggota: any) => anggota.id_user == editId);
-			const selectedOrg = data.organisasiList.find((anggota: any) => anggota.id_user == editId);
-			console.log('Anggota with id Found:', selectedAnggota);
-			if (selectedAnggota) {
-				editD = true;
-				console.log('selectedAnggota Founded!: ', selectedOrg);
-				selectedOrgId = selectedAnggota.id_organisasi;
-				dataEdit = {
-					id_user: selectedAnggota.id_user,
-					nama_anggota: selectedAnggota.user_name,
-					jabatan_anggota: selectedAnggota.jabatan_anggota,
-					deskripsi_tugas: selectedAnggota.deskripsi_tugas
-				};
-				editUserId = selectedAnggota.id_user;
-				selectedOrgId = selectedAnggota.id_organisasi;
-				console.log('Data Edit: ', dataEdit);
-			}
-		}
-	});
+	}
 
 	// let toggle = () => {
 	// 	if (!open) {
@@ -129,22 +112,10 @@
 	// 	} else open = false;
 	// 	console.log(open);
 	// };
-
-	// Add this function to handle edit modal closing
-	function handleEditModalClose() {
-		console.log("Edit modal close event received");
-		editD = false;
-		editUserId = null;
-		dataEdit = undefined;
-		
-		// Clear URL parameters
-		const baseUrl = page.url.pathname;
-		goto(baseUrl, { replaceState: true });
-	}
 </script>
 
 {#if navigating.to}
-	<Loader></Loader>
+	<Loader text="Navigating..."></Loader>
 {/if}
 {#if loading}
 	<Loader></Loader>
@@ -229,50 +200,44 @@
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
-					<DropDown
+					<DropDownNew
 						text={`Apakah yakin ingin mengarsipkan ${data.nama_anggota}?`}
 						items={[
-							[
-								'Edit',
-								`/abdi/dashboard/organisasi/beranda/${id_organisasi}/detail/daftaranggota?edit=${data.id_user}`
-							],
-							[
-								'children',
-								'Arsipkan',
-								`/abdi/dashboard/organisasi/beranda/${id_organisasi}/detail/daftaranggota?delete=${data.id_user}`
-							]
+							{
+								label: 'Edit',
+								action: () => handleEdit(data.id_user)
+							},
+							{
+								label: 'Hapus',
+								action: () => handleDelete(data.id_user),
+								confirmText: `Yakin ingin menghapus ${data.nama_anggota}?`
+							}
 						]}
 						id={`id-${index}`}
-						{data}
-					></DropDown>
+						data={resdata}
+					></DropDownNew>
 				{/if}
 			{/snippet}
 		</Table>
 	</div>
-	<Pagination bind:currPage bind:entries totalItems={filterD(data.allAnggota).length}></Pagination>
+	<Pagination bind:currPage bind:entries totalItems={filterD(dataanggota).length}></Pagination>
 </div>
 {#if open}
 	<form
 		action="?/tambah"
 		method="post"
 		use:enhance={() => {
-			loading = true;
 			return async ({ result }) => {
-				loading = false;
 				console.log(result);
 				if (result.type === 'success') {
-					// Close the modal first
-					open = false;
-
-					// Then invalidate all data
-					await invalidateAll();
-
-					// Then show success message
 					valo = true;
-
+					success = true;
 					clearTimeout(timer);
 					timer = setTimeout(() => {
+						success = false;
+						open = false;
 						valo = false;
+						invalidateAll();
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result.data?.errors || '';
@@ -281,106 +246,39 @@
 		}}
 	>
 		<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
-			<TambahAnggota bind:value={open} errors={error} {data2} {allanggota}></TambahAnggota>
+			<TambahAnggota bind:value={open} bind:open={valo} errors={error} {data2} {allanggota}
+			></TambahAnggota>
 		</div>
 	</form>
 {/if}
-
-{#if valo}
-	<SuccessModal text="Anggota berhasil Ditambah!"></SuccessModal>
-{/if}
-
-{#if deleteD && selectedItemId}
+{#if editId}
 	<form
-		action="?/hapus"
+		action="?/ubah"
 		method="post"
 		use:enhance={() => {
 			loading = true;
 			return async ({ result }) => {
 				loading = false;
-				try {
-					console.log('Delete result:', result);
-					if (result.type === 'success') {
-						// First clear the URL parameter and reset state
-						deleteD = false;
-						selectedItemId = null;
-						selectedOrgId = null;
-						
-						// Then navigate to clean URL
-						await goto(`/abdi/dashboard/organisasi/beranda/${idAktif}/detail/daftaranggota`, {
-							replaceState: true
-						});
-
-						// Then invalidate all data
-						await invalidateAll();
-
-						// Then show success message
-						valo = true;
-
-						clearTimeout(timer);
-						timer = setTimeout(() => {
-							valo = false;
-						}, 3000);
-					} else if (result.type === 'failure') {
-						error = result.data?.errors || '';
-						// Also reset modal state on error
-						deleteD = false;
-						selectedItemId = null;
-					}
-				} catch (err) {
-					console.error('Error during delete process:', err);
-					// Reset modal state on error
-					deleteD = false;
-					selectedItemId = null;
-				} finally {
-					// Always turn off loading state, even if there's an error
-					loading = false;
-				}
-			};
-		}}
-	>
-		<input type="hidden" name="id_user" value={selectedItemId} />
-		<input type="hidden" name="id_organisasi" value={id_organisasi} />
-
-		<DeleteModal
-			bind:value={deleteD}
-			text="Apakah yakin ingin menghapus anggota ini?"
-			successText="Berhasil menghapus anggota!"
-			choose="arsip"
-		></DeleteModal>
-	</form>
-{/if}
-{#if editD && editUserId}
-	<form
-		action="?/ubah"
-		method="POST"
-		use:enhance={() => {
-			loading = true;
-			return async ({ result }) => {
-				loading = false;
+				console.log(result);
 				if (result.type === 'success') {
 					try {
-						// Reset state variables
-						editD = false;
-						editUserId = null;
-						dataEdit = undefined;
-						
-						// Clear URL and refresh data
-						await goto(`/abdi/dashboard/organisasi/beranda/${id_organisasi}/detail/daftaranggota`, {
-							replaceState: true
-						});
-						await invalidateAll();
-						
-						// Show success message
+						// First close the modal
 						success = true;
-						setTimeout(() => {
+
+						// Force a complete data reload
+						await invalidateAll();
+						await tick();
+						editId = true;
+						success = true;
+						clearTimeout(timer);
+						timer = setTimeout(() => {
 							success = false;
+							editId = false;
+							// Force another refresh to ensure data is updated
+							window.location.href = window.location.pathname;
 						}, 3000);
-					} catch (err) {
-						console.error('Error during edit process:', err);
-					} finally {
-						// Always turn off loading state
-						loading = false;
+					} catch (error) {
+						console.error('Error refreshing data:', error);
 					}
 				} else if (result.type === 'failure') {
 					error = result.data?.errors || '';
@@ -388,15 +286,22 @@
 			};
 		}}
 	>
-		<TambahAnggota 
-			bind:value={editD} 
-			errors={error} 
-			{data2} 
-			{dataEdit} 
-			{allanggota}
-			on:close={handleEditModalClose}
-		></TambahAnggota>
-		<input type="hidden" name="id_user" value={editUserId} />
-		<input type="hidden" name="id_organisasi" value={id_organisasi} />
+		<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
+			<TambahAnggota
+				bind:value={editId}
+				{dataEdit}
+				bind:open={editId}
+				errors={error}
+				{data2}
+				{allanggota}
+			></TambahAnggota>
+			<input type="text" hidden name="id_organisasi" value={idAktif} id="" />
+		</div>
 	</form>
+{/if}
+{#if valo}
+	<SuccessModal text="Anggota berhasil Ditambah!"></SuccessModal>
+{/if}
+{#if success}
+	<SuccessModal text="Aksi Berhasil Dilakukan!"></SuccessModal>
 {/if}

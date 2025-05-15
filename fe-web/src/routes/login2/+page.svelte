@@ -173,7 +173,7 @@
 								<label for="rm">Remember Me</label>
 							</div>
 							<div>
-								<a href="/login" class="txt-pass">Forgot Password?</a>
+								<a href="/forgotPassword" class="txt-pass">Forgot Password?</a>
 							</div>
 						</div>
 						{#if errB}

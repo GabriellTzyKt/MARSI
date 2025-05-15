@@ -16,7 +16,7 @@ export const load: PageServerLoad = async () => {
                 // Keep only items where deleted_at is the default value (not deleted)
                 return event.deleted_at === '0001-01-01T00:00:00Z' || !event.deleted_at;
         })
-       
+       console.log(formattedData)
         return { data: formattedData };
         
     }

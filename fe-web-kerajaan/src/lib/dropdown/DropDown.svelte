@@ -22,18 +22,18 @@
 	let {
 		id,
 		data,
+		clickedId = $bindable(),
 		items,
 		ubahm = null,
 		text,
-
 		deleteD = $bindable(),
 		popup,
-
 		dataG = null,
 		header = null
 	} = $props<{
 		id?: string | null;
 		data?: any;
+		clickedId?: string;
 		items?: any[] | null;
 		ubahm?: string | null;
 		text?: string;
@@ -122,7 +122,7 @@
 							>
 						{:else if i[1] === 'Ubah'}
 							<a
-								href={i[3]}
+								href={''}
 								class="w-full px-4 py-1 {p === 0 ? 'rounded-t-lg' : ''}  {p === items.length - 1
 									? 'rounded-b-lg'
 									: ''} hover:cursor-pointer hover:bg-gray-400"

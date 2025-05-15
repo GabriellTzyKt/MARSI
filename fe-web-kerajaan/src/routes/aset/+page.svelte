@@ -6,8 +6,8 @@
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
 	let { data } = $props();
-    let dataambil = data.data
-    console.log("Aset : ", dataambil)
+	let dataambil = data.data;
+	console.log('Aset : ', dataambil);
 
 	const events = [
 		{
@@ -19,7 +19,7 @@
 				  pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
 				  menyegarkan. In the name of the wind`,
 			situs: situs1,
-			status: 'upcoming'
+			status: 'benda'
 		},
 		{
 			id: 2,
@@ -28,7 +28,7 @@
 				  sebagai situs warisan dunia UNESCO. Tempat ini menawarkan sejarah dan keindahan
 				  arsitektur yang memukau.`,
 			situs: situs1,
-			status: 'upcoming'
+			status: 'benda'
 		},
 		{
 			id: 3,
@@ -39,7 +39,7 @@
 				  pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
 				  menyegarkan.`,
 			situs: situs1,
-			status: 'upcoming'
+			status: 'benda'
 		},
 		{
 			id: 4,
@@ -48,7 +48,7 @@
 				  kebudayaan Indonesia. Tempat ini tidak hanya menawarkan nilai sejarah tetapi juga
 				  pemandangan alam yang luar biasa.`,
 			situs: situs1,
-			status: 'completed'
+			status: 'takbenda'
 		}
 	];
 
@@ -110,14 +110,14 @@
 
 	<div class="mb-10 ml-5 mr-5 mt-10 flex h-full justify-center">
 		<div class="mx-auto grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-			{#each data.data as event}
+			{#each events as event}
 				<Card2
-					situs={event.foto_aset[0] || ''}
-					header={event.nama_aset}
-					isi={event.deskripsi_aset || 'No Description'}
+					situs={event.situs || ''}
+					header={event.header}
+					isi={event.isi || 'No Description'}
 					icon=""
-					href="/aset/{event.id_aset}"
-					id={event.id_aset}
+					href="/aset/{event.id}"
+					id={event.id}
 				/>
 			{/each}
 		</div>

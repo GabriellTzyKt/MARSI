@@ -41,6 +41,49 @@ import gambar3_flip from '../asset/umum/kerajaan_3.png';
 
 import jd from "../asset/profile/jdpp.jpg"
 
+
+ export const dummyWebsiteRequests = [
+  {
+      id: 1,
+      asal_kerajaan: "Keraton Kasunanan Surakarta",
+      link_website: "https://kasunanansurakarta.id",
+      tanggal_request: "15-03-2025",
+      tanggal_selesai: "20-03-2025",
+      status: "Selesai"
+  },
+  {
+      id: 2,
+      asal_kerajaan: "Kesultanan Yogyakarta",
+      link_website: "https://kesultananyogyakarta.id",
+      tanggal_request: "18-03-2025",
+      tanggal_selesai: "",
+      status: "Diajukan"
+  },
+  {
+      id: 3,
+      asal_kerajaan: "Kerajaan Bali",
+      link_website: "https://kerajaanbali.id",
+      tanggal_request: "10-03-2025",
+      tanggal_selesai: "",
+      status: "Sedang Diproses"
+  },
+  {
+      id: 4,
+      asal_kerajaan: "Kesultanan Ternate",
+      link_website: "https://kesultananternate.id",
+      tanggal_request: "05-03-2025",
+      tanggal_selesai: "12-03-2025",
+      status: "Selesai"
+  },
+  {
+      id: 5,
+      asal_kerajaan: "Kerajaan Kutai",
+      link_website: "https://kerajaankutai.id",
+      tanggal_request: "22-02-2025",
+      tanggal_selesai: "",
+      status: "Diajukan"
+  }
+];
 export const data_barplots = [
   {
     nama_lenkgap: "Test1",
