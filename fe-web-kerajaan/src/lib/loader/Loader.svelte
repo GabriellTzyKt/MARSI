@@ -3,7 +3,7 @@
 </script>
 
 <div
-	class="fixed left-0 top-0 z-50 flex h-full w-full flex-col items-center justify-center gap-2 bg-black/75"
+	class=" fixed left-0 top-0 z-[100] flex h-full w-full flex-col items-center justify-center gap-2 bg-black/75"
 >
 	<div class="loader"></div>
 	<div class="flex w-full justify-center">

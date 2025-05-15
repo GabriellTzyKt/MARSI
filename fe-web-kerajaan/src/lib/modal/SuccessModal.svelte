@@ -10,7 +10,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore event_directive_deprecated -->
 <div
-	class="fixed left-0 top-0 flex min-h-full min-w-full items-center justify-center bg-black/75"
+	class="fixed left-0 top-0 z-[70] flex min-h-full min-w-full items-center justify-center bg-black/75"
 	in:fade={{ duration: 100 }}
 	out:fade={{ duration: 100 }}
 	onclick={(e) => {
