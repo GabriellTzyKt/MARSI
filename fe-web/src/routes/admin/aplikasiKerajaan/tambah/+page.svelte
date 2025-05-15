@@ -60,7 +60,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						success = false;
-						goto('/admin/aplikasiKerajaan');
+						goto('/admin/aplikasiKerajaan/11');
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result.data?.errors;
@@ -68,8 +68,7 @@
 			};
 		}}
 	>
-		<!-- Hidden input for kerajaan ID if needed -->
-		<input type="hidden" name="id_kerajaan" value="12" />
+		<input type="hidden" name="id_kerajaan" value="27" />
 
 		<div class="mt-6 w-full rounded-lg border bg-white p-6 shadow-sm">
 			<!-- Success message -->

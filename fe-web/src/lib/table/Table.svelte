@@ -115,11 +115,11 @@
 										class="w-[120px] rounded-full px-2 py-1 text-center"
 										class:bg-disetujui={data[header[0]] === 'Disetujui' ||
 											data[header[0]] === 'Selesai'}
-										class:bg-berlangsung={data[header[0]] === 'Ditinjau' ||
+										class:bg-berlangsung={data[header[0]] === 'Diproses' ||
 											data[header[0]] === 'Berlangsung'}
 										class:bg-ditolak={data[header[0]] === 'Ditolak'}
 										class:bg-pending={data[header[0]] === 'Pending' ||
-											data[header[0]] === 'Diajukan'}
+											data[header[0]] === 'Ditinjau'}
 									>
 										<p class="text-xs">{data[header[0]]}</p>
 									</div>

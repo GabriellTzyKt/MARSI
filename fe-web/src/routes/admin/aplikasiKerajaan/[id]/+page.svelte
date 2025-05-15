@@ -9,8 +9,8 @@
 	console.log('Data mobile : ', data.mobileFeatures);
 
 	if (
-		data.mobileFeatures.status_permintaan == 'Ditinjau' ||
-		data.websiteFeatures.status_permintaan == 'Ditinjau'
+		data.mobileFeatures?.status_permintaan == 'Ditinjau' ||
+		data.websiteFeatures?.status_permintaan == 'Ditinjau'
 	) {
 		berhasil = 'ayaya2';
 	}
@@ -99,15 +99,15 @@
 			</div>
 		</div>
 
-		<!-- Tombol untuk mengubah langkah -->
-		<!-- <div class="mt-20 flex justify-center">
+		<!-- Tombol coba animasi -->
+		<div class="mt-20 flex justify-center">
 			<button
 				class="bg-customOrange2 rounded-md px-4 py-2 text-white transition-colors hover:bg-orange-600"
 				onclick={nextStep}
 			>
 				Langkah Berikutnya (Saat ini: {currentStep}/3)
 			</button>
-		</div> -->
+		</div>
 	{/if}
 
 	{#if currentStep === 3}
@@ -121,6 +121,7 @@
 		</div>
 	{/if}
 
+	{#if berhasil === "ayaya2"}
 	<div class="mt-24 w-full">
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -300,6 +301,7 @@
 			</div>
 		{/if}
 	</div>
+	{/if}
 </div>
 
 <style>

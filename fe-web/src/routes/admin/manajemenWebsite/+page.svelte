@@ -21,7 +21,7 @@
 
 	let { data } = $props();
 	const dataArsip = data.dataArsip || [];
-	console.log(dataArsip);
+	console.log("u : ", dataArsip);
 
 	function filterData(data: any[]) {
 		return data.filter((item) =>
@@ -67,9 +67,6 @@
 
 	let videoName: string | null = $state('Silahkan Upload!');
 
-	let berhasil = $state('ayaya2');
-	let showWebsiteFeatures = $state(true);
-	let showMobileFeatures = $state(true);
 
 	function handleFileChange(event: Event, type: string) {
 		const target = event.target as HTMLInputElement;
@@ -143,7 +140,7 @@
 		{#snippet children({ header, data })}
 			{#if header === 'Aksi'}
 				<div class="flex justify-center gap-2">
-					{#if data.status === 'Diajukan'}
+					{#if data.status === 'Ditinjau'}
 						<!-- svelte-ignore a11y_consider_explicit_label -->
 						<button
 							class="bg-customOrange2 rounded-lg p-1 text-white"
@@ -154,6 +151,9 @@
 								);
 								if (selectedData) {
 									selectedItem = selectedData;
+									{
+										console.log('Selected : ', selectedItem);
+									}
 								}
 								diajukanOpen = true;
 							}}
@@ -162,18 +162,25 @@
 								><path fill="currentColor" d="m10 17l5-5l-5-5z" /></svg
 							>
 						</button>
-					{:else if data.status === 'Ditinjau'}
+					{:else if data.status === 'Diproses'}
 						<!-- svelte-ignore a11y_consider_explicit_label -->
 						<div class="flex flex-row gap-2">
 							<button
 								class="rounded-full bg-yellow-400 p-1.5 text-white"
 								onclick={() => {
 									selectedItemId = data.id_permintaan;
+									{
+										console.log('Selected ID : ', selectedItemId);
+									}
+
 									const selectedData = arsipArray.find(
 										(item) => item.id_permintaan === Number(selectedItemId)
 									);
 									if (selectedData) {
 										selectedItem = selectedData;
+										{
+											console.log('Selected : ', selectedItem);
+										}
 									}
 									sedangDiprosesOpen = true;
 								}}
@@ -298,7 +305,7 @@
 						type="text"
 						class="mt-2 w-full rounded-lg border border-gray-400 py-2 pe-2 ps-2 focus:border-gray-400 focus:outline-none focus:ring-0"
 						name=""
-						placeholder="https://kerajaan.com"
+						value={selectedItem?.link_website || ''}
 						id=""
 						readonly
 					/>
