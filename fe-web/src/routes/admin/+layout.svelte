@@ -263,7 +263,7 @@
 			/>
 
 			<SidebarMenu
-				href="/admin/aplikasiKerajaan"
+				href="/admin/aplikasiKerajaan/15"
 				icon="mdi:home"
 				anchor="Aplikasi Kerajaan"
 				active={page.route.id?.startsWith('/admin/aplikasiKerajaan')}

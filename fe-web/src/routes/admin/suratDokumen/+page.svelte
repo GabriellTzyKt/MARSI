@@ -8,6 +8,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import SModal from '$lib/popup/SModal.svelte';
+	import { onMount } from 'svelte';
 
 	let currPage = $state(1);
 	let entries = $state(10);

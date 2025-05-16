@@ -3,55 +3,134 @@ import { fail } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import type { Actions } from "@sveltejs/kit";
 
-export const load: PageServerLoad = async ({ }) => {
+export const load: PageServerLoad = async ({ fetch }) => {
     try {
-        let dummyTest = [
-            {
-                id_permintaan: 1,
-                asal_kerajaan: "Surat Edaran",
-                link_website: "https://www.google.com",
-                tanggal_buat: "11-05-2025",
-                tanggal_selesai: "12-12-2025",
-                status: "Diajukan",
-            },
-            {
-                id_permintaan: 2,
-                asal_kerajaan: "Surat Edaran 2",
-                link_website: "https://www.google2.com",
-                tanggal_buat: "12-05-2025",
-                tanggal_selesai: "13-12-2025",
-                status: "Selesai",
-            },
-            {
-                id_permintaan: 3,
-                asal_kerajaan: "Surat Edaran 3",
-                link_website: "https://www.google3.com",
-                tanggal_buat: "13-05-2025",
-                tanggal_selesai: "14-12-2025",
-                status: "Sedang Diproses",
-            },
-        ]
+        // Fetch all data in parallel
+        const [websiteResponse, mobileResponse, kerajaanResponse] = await Promise.all([
+            fetch(`${env.BASE_URL}/fitur/website?limit=200`),
+            fetch(`${env.BASE_URL}/fitur/mobile?limit=200`),
+            fetch(`${env.BASE_URL}/kerajaan?limit=200`)
+        ]);
+
+        if (!websiteResponse.ok) {
+            throw new Error(`Failed to fetch website features: ${websiteResponse.status} ${websiteResponse.statusText}`);
+        }
+
+        if (!mobileResponse.ok) {
+            throw new Error(`Failed to fetch mobile features: ${mobileResponse.status} ${mobileResponse.statusText}`);
+        }
+
+        const websiteFeatures = await websiteResponse.json();
+        const mobileFeatures = await mobileResponse.json();
+        let kerajaanData = [];
+
+        if (kerajaanResponse.ok) {
+            kerajaanData = await kerajaanResponse.json();
+        } else {
+            console.error(`Failed to fetch kerajaan data: ${kerajaanResponse.status}`);
+        }
+
+        // Create a map of kerajaan IDs to names for quick lookup
+        const kerajaanMap = new Map();
+        if (Array.isArray(kerajaanData)) {
+            kerajaanData.forEach(kerajaan => {
+                kerajaanMap.set(kerajaan.id_kerajaan, kerajaan.nama_kerajaan);
+            });
+        }
+
+        // Create a map to store combined data by id_kerajaan
+        const combinedDataMap = new Map();
+
+        // Process website features
+        if (Array.isArray(websiteFeatures)) {
+            websiteFeatures.forEach(website => {
+                const id_kerajaan = website.id_kerajaan;
+                combinedDataMap.set(id_kerajaan, {
+                    id_permintaan: website.id_request || id_kerajaan,
+                    id_kerajaan: id_kerajaan,
+                    asal_kerajaan: kerajaanMap.get(id_kerajaan) || `Kerajaan ${id_kerajaan}`,
+                    link_website: websiteFeatures.find((website: any) => website.id_kerajaan === id_kerajaan)?.url_website || "...",
+                    tanggal_buat: website.tanggal_request || "01-01-2023",
+                    tanggal_selesai: website.tanggal_selesai || "31-12-2023",
+                    status: website.status_permintaan || "Diajukan",
+                    websiteFeatures: website,
+                    mobileFeatures: null
+                });
+            });
+        }
+
+        // Process mobile features and update or add to the combined data
+        if (Array.isArray(mobileFeatures)) {
+            mobileFeatures.forEach(mobile => {
+                const id_kerajaan = mobile.id_kerajaan;
+
+                // Check if all mobile features are 0
+                const allFeaturesZero =
+                    mobile.fitur_kalender === 0 &&
+                    mobile.fitur_tugas_pribadi === 0 &&
+                    mobile.fitur_tugas_acara === 0 &&
+                    mobile.fitur_situs === 0 &&
+                    mobile.fitur_check_in === 0 &&
+                    mobile.fitur_acara === 0 &&
+                    mobile.fitur_chat === 0 &&
+                    mobile.fitur_forum === 0 &&
+                    mobile.fitur_permohonan === 0;
+
+                // If all features are 0, treat as if mobile features don't exist
+                if (allFeaturesZero) {
+                    // Don't add mobile features if they're all 0
+                    return;
+                }
+
+                if (combinedDataMap.has(id_kerajaan)) {
+                    // Update existing entry with mobile features
+                    const existingData = combinedDataMap.get(id_kerajaan);
+                    existingData.mobileFeatures = mobile;
+
+                    // Don't update status from mobile features
+                    // Keep the website status as priority
+                } else {
+                    // Create new entry for this kerajaan
+                    combinedDataMap.set(id_kerajaan, {
+                        id_permintaan: mobile.id_request || id_kerajaan,
+                        id_kerajaan: id_kerajaan,
+                        asal_kerajaan: kerajaanMap.get(id_kerajaan) || `Kerajaan ${id_kerajaan}`,
+                        link_website: websiteFeatures.find((website: any) => website.id_kerajaan === id_kerajaan)?.url_website || "...",
+                        tanggal_buat: mobile.tanggal_request || "01-01-2023",
+                        tanggal_selesai: mobile.tanggal_selesai || "31-12-2023",
+                        status: mobile.status_permintaan || "Diajukan",
+                        websiteFeatures: null,
+                        mobileFeatures: mobile
+                    });
+                }
+            });
+        }
+
+        // Convert map to array
+        const formattedData = Array.from(combinedDataMap.values());
+
+        console.log("Formatted data:", formattedData);
 
         // Definisikan urutan status
         const statusOrder: Record<string, number> = {
-            'Diajukan': 1,
-            'Sedang Diproses': 2,
+            'Ditinjau': 1,
+            'Diproses': 2,
             'Selesai': 3
         };
-        
+
         // Urutkan data berdasarkan status
-        dummyTest.sort((a, b) => {
+        formattedData.sort((a, b) => {
             const orderA = statusOrder[a.status] || 999;
             const orderB = statusOrder[b.status] || 999;
             return orderA - orderB;
         });
 
         return {
-            dataArsip: dummyTest,
+            dataArsip: formattedData,
         };
     } catch (e) {
         if (e instanceof Error) {
-            // console.error("Error in load function:", e.message);
+            console.error("Error in load function:", e.message);
             return { dataArsip: "Failed", error: e.message };
         }
         return { dataArsip: "Failed", error: "Unknown error" };
@@ -74,7 +153,8 @@ export const actions: Actions = {
             return { error: "no error" }
         }
         catch (error) {
-
+            console.error("Error deleting record:", error);
+            return fail(500, { error: "Server error when deleting record" });
         }
     },
 };

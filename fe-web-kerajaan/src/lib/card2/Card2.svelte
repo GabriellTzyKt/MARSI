@@ -3,8 +3,6 @@
 
 	let { situs, header, isi, icon, id, href = '' } = $props();
 
-	$inspect('test');
-	$inspect(page);
 </script>
 
 <div class="max-w-sm overflow-hidden rounded bg-white shadow-lg">
@@ -15,7 +13,7 @@
 			</div>
 		{:else}
 			<img
-				class=" mx-auto mt-3 h-full w-[300px] border-2 border-black p-1"
+				class=" mx-auto mt-3 h-[200px] w-[300px] border-2 border-black p-1"
 				src={situs}
 				alt="awawwa"
 			/>
@@ -27,7 +25,7 @@
 			<p class="multiline-ellipsis h-fulltext-sm mb-5 mt-5 text-gray-700">
 				{isi}
 			</p>
-			<div class="flex h-full w-full justify-center lg:justify-end">
+			<div class="flex h-full w-full justify-between">
 				{#if icon == 'tempatIstirahat'}
 					<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
 						<i class="material-symbols--bed-outline-rounded text-lg text-white"></i>

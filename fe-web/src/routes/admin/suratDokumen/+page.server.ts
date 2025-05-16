@@ -143,17 +143,25 @@ export const load: PageServerLoad = async ({ fetch }) => {
                                 console.log(`[${index}] Raw URL (for manual testing): ${rawUrl}`);
                                 console.log(`[${index}] Encoded URL (used in fetch): ${encodedUrl}`);
 
-                                // First try with encoded URL
+                                // Buat FormData untuk request
+                                const formData = new FormData();
+                                formData.append("file_path", actualPath);
+                                
+                                // First try with encoded URL and FormData
                                 let fileDataRequest = await fetch(encodedUrl, {
-                                    method: "GET"
+                                    method: "POST",
+                                    body: formData
                                 });
-
                                 
                                 // If encoded URL fails, try with raw URL
                                 if (!fileDataRequest.ok) {
                                     console.log(`[${index}] Encoded URL failed, trying raw URL...`);
+                                    const rawFormData = new FormData();
+                                    rawFormData.append("file_path", actualPath);
+                                    
                                     fileDataRequest = await fetch(rawUrl, {
-                                        method: "GET"
+                                        method: "POST",
+                                        body: rawFormData
                                     });
                                     console.log(`[${index}] Raw URL response status: ${fileDataRequest.status} ${fileDataRequest.statusText}`);
                                 }
@@ -175,8 +183,6 @@ export const load: PageServerLoad = async ({ fetch }) => {
                                 
                                 return {
                                     path: actualPath,
-                                    rawUrl: rawUrl,
-                                    encodedUrl: encodedUrl,
                                     url: workingUrl,
                                     type: fileDataRequest.headers.get("content-type") || "unknown",
                                     name: actualPath.split('/').pop(),
