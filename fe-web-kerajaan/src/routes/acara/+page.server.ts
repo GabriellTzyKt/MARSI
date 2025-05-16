@@ -62,7 +62,7 @@ export const load: PageServerLoad = async () => {
         }));
 
        
-        let imageurl = []
+      
         
 
         console.log(final)

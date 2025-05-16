@@ -7,7 +7,7 @@
 	$inspect(page);
 </script>
 
-<div class="h-full max-w-sm overflow-hidden rounded bg-white shadow-lg">
+<div class="max-w-sm overflow-hidden rounded bg-white shadow-lg">
 	<div class="w-full justify-center">
 		{#if situs == ''}
 			<div class="flex h-[150px] w-[300px] items-center justify-center">

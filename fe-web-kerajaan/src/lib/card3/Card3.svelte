@@ -2,8 +2,8 @@
 	let { gambar, header, href = '' } = $props();
 </script>
 
-<div class="max-full h-full overflow-hidden rounded bg-white shadow-lg">
-	<div class="flex w-full justify-center">
+<div class=" max-w-sm overflow-hidden rounded bg-white shadow-lg">
+	<div class="w-full justify-center">
 		{#if gambar == ''}
 			<div class="flex h-[150px] w-[300px] items-center justify-center">
 				<p class="text-gray-600">No Images</p>

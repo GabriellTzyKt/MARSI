@@ -91,7 +91,7 @@
 		</div>
 	</div>
 
-	<div class="mb-10 ml-5 mr-5 mt-10 flex justify-center">
+	<div class="mb-10 ml-5 mr-5 mt-10 flex h-full justify-center">
 		{#if !data || (!data.organisasi && !data.komunitas)}
 			<div class="text-center">
 				<p>Memuat data...</p>
@@ -101,16 +101,20 @@
 				<p>Tidak ada data</p>
 			</div>
 		{:else}
-			<div class="mx-auto grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+			<div
+				class="mx-auto grid grid-flow-row auto-rows-auto gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+			>
 				{#each filteredData() as item}
-					<Card2
-						situs={item.situs}
-						header={item.header}
-						isi={item.isi}
-						icon=""
-						id={item.id}
-						href={`/kelompok/${item.id}`}
-					/>
+					<div class="h-auto">
+						<Card2
+							situs={item.situs}
+							header={item.header}
+							isi={item.isi}
+							icon=""
+							id={item.id}
+							href={`/kelompok/${item.id}`}
+						/>
+					</div>
 				{/each}
 			</div>
 		{/if}
