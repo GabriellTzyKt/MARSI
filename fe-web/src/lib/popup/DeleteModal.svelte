@@ -6,6 +6,8 @@
 	
 	let { text, successText, choose, value = $bindable(), name, data } = $props();
 
+	console.log("name : ", name)
+
 	let success = $state(false)
 	
 	const itemData = data;

@@ -149,8 +149,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
                                 
                                 // First try with encoded URL and FormData
                                 let fileDataRequest = await fetch(encodedUrl, {
-                                    method: "POST",
-                                    body: formData
+                                    method: "GET"
                                 });
                                 
                                 // If encoded URL fails, try with raw URL

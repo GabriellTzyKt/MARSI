@@ -1,13 +1,46 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 
-	let { input = $bindable(), error = null, value = $bindable(), name = 'gelar' } = $props();
+	let {
+		input = $bindable(),
+		error = null,
+		value = $bindable(),
+		name = 'gelar',
+		header = '',
+		tipe = ''
+	} = $props();
+
+	console.log('Value : ', value);
+	console.log('Header : ', header);
+	
+	// Fungsi untuk menghasilkan singkatan dari nama gelar
+	function generateSingkatan(nama: string): string {
+		if (!nama) return '';
+		
+		// Split nama berdasarkan spasi
+		const words = nama.trim().split(/\s+/);
+		
+		// Ambil huruf pertama dari setiap kata dan gabungkan
+		return words.map(word => word.charAt(0).toUpperCase()).join('');
+	}
+	
+	// Variabel untuk menyimpan singkatan yang dihasilkan
+	let generatedSingkatan = $state('');
+	
+	// Update singkatan saat nama gelar berubah
+	$effect(() => {
+		if (tipe === 'gelar' && value?.nama_gelar) {
+			generatedSingkatan = generateSingkatan(value.nama_gelar);
+			// Update juga value.singkatan_gelar agar dikirim saat form di-submit
+			value.singkatan_gelar = generatedSingkatan;
+		}
+	});
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class=" fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black/70"
+	class=" fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black/90"
 	onclick={(e) => {
 		input = false;
 		e.stopPropagation();
@@ -20,7 +53,7 @@
 	>
 		<div class="mx-4 mt-4 flex items-center justify-between">
 			<div>
-				<p class="text-2xl">Edit Jenis Arsip</p>
+				<p class="text-2xl font-bold">Edit Data</p>
 			</div>
 			<div
 				class="rounded-full p-2 hover:bg-gray-500"
@@ -42,16 +75,61 @@
 		</div>
 		<div class="my-4 h-[1px] w-full bg-gray-500"></div>
 		<div class="mx-4 flex flex-col">
-			<p>Jenis Arsip</p>
-			<input
-				type="text"
-				{name}
-				class="mt-1 rounded-lg px-2 focus:outline-none"
-				bind:value={value.nama_jenis}
-				placeholder="jenis..."
-				id=""
-			/>
-			<input type="text" name="id_jenis_arsip" hidden value={value.id_jenis_arsip} />
+			<p class="text-start">{header} :</p>
+			{#if tipe === 'arsip'}
+				<input
+					type="text"
+					{name}
+					class="mt-1 rounded-lg px-2 focus:outline-none"
+					bind:value={value.nama_jenis}
+					placeholder="Silahkan diinput!"
+					id=""
+				/>
+
+				<input type="text" name="id_jenis_arsip" hidden value={value.id_jenis_arsip} />
+			{/if}
+			{#if tipe === 'jenis_kerajaan'}
+				<input
+					type="text"
+					{name}
+					class="mt-1 rounded-lg px-2 focus:outline-none"
+					bind:value={value.nama_jenis_kerajaan}
+					placeholder="Silahkan diinput!"
+					id=""
+				/>
+
+				<input type="text" name="id_jenis_kerajaan" hidden value={value.id_jenis_kerajaan} />
+			{/if}
+			{#if tipe === 'gelar'}
+				<input
+					type="text"
+					{name}
+					class="mt-1 rounded-lg px-2 focus:outline-none"
+					bind:value={value.nama_gelar}
+					oninput={() => {
+						if (value?.nama_gelar) {
+							generatedSingkatan = generateSingkatan(value.nama_gelar);
+							value.singkatan_gelar = generatedSingkatan;
+						}
+					}}
+					placeholder="Silahkan diinput!"
+					id=""
+				/>
+				
+				<!-- Tambahkan input untuk singkatan yang readonly -->
+				<p class="mt-3 text-start">Singkatan :</p>
+				<input
+					type="text"
+					name="singkatan_gelar"
+					class="mt-1 rounded-lg bg-gray-100 px-2 focus:outline-none"
+					bind:value={generatedSingkatan}
+					placeholder="Singkatan akan otomatis dihasilkan"
+					readonly
+					id=""
+				/>
+
+				<input type="text" name="id_gelar" hidden value={value.id_gelar} />
+			{/if}
 			{#if error}
 				<p class="text-red-500">{error}</p>
 			{/if}

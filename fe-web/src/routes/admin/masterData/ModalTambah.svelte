@@ -1,33 +1,57 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	let { value = $bindable(), name = '', errors = null } = $props();
+	let { value = $bindable(), name = '', errors = null, header = "" } = $props();
 	let namagelar = $state('');
-	let namagelartemp: any = $state('');
+	let singkatan = $state('');
 	let daftarGelar: any = $state([]);
+
+	console.log("Modal name prop:", name);
+	
+	function generateSingkatan(nama: string): string {
+		if (!nama) return '';
+		
+		// Split kalo ada spasi
+		const words = nama.trim().split(/\s+/);
+		
+		// Ambil huruf pertama terus digabung
+		return words.map(word => word.charAt(0).toUpperCase()).join('');
+	}
+	
+	// $effect(() => {
+	// 	if (name === 'nama_gelar') {
+	// 		singkatan = generateSingkatan(namagelar);
+	// 	}
+	// });
+	
 	function tambahGelar() {
 		if (namagelar.trim() !== '') {
-			// Add the original value
-			daftarGelar = [...daftarGelar, namagelar.trim()];
-
-			// Add 99 more copies (total 100x)
-			for (let i = 0; i < 99; i++) {
+			if (name === 'nama_gelar') {
+				// Pastikan singkatan diupdate terlebih dahulu
+				const updatedSingkatan = generateSingkatan(namagelar.trim());
+				singkatan = updatedSingkatan;
+				console.log("Singkatan : ", updatedSingkatan);
+				
+				daftarGelar = [...daftarGelar, {
+					nama: namagelar.trim(),
+					singkatan: updatedSingkatan // Gunakan singkatan yang baru diupdate
+				}];
+			} else {
 				daftarGelar = [...daftarGelar, namagelar.trim()];
 			}
-
-			namagelar = ''; // Reset input after adding
+			namagelar = ''; 
+			singkatan = ''; // Reset supaya balik kosong
 		}
 	}
 
 	function hapusGelar(index: number) {
-		// Remove 100 items starting from the index (or all remaining if less than 100)
-		daftarGelar = daftarGelar.filter((_, i) => i < index || i >= index + 100);
+		daftarGelar = daftarGelar.filter((_, i) => i !== index);
 	}
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
-	class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+	class="fixed inset-0 flex items-center justify-center bg-black/90"
 	onclick={() => {
 		value = false;
 	}}
@@ -39,20 +63,19 @@
 		<div class="flex justify-between">
 			<h2 class="font-bold lg:text-xl">Tambah Data</h2>
 			<!-- svelte-ignore a11y_consider_explicit_label -->
-			<button>
+			<button onclick={() => (value = false)}>
 				<span class="carbon--close-outline items-center"></span>
 			</button>
 		</div>
 		<div class="h-1 bg-gray-300"></div>
 		<div class="mt-5 flex flex-col">
-			<label for="gelar">Nama Gelar:</label>
+			<label for="gelar">{header}:</label>
 			<div class="relative w-full">
 				<input
 					id="gelar"
-					{name}
 					bind:value={namagelar}
 					class="w-full rounded-lg border px-3 py-2 pr-12"
-					placeholder="Masukkan Gelar"
+					placeholder={`Masukkan ${header}`}
 				/>
 				<button
 					class="absolute bottom-0 right-0 top-0 h-full rounded-r-lg bg-yellow-500 px-8 text-white"
@@ -62,16 +85,35 @@
 					Add
 				</button>
 			</div>
+			
+			{#if name === 'nama_gelar'}
+				<div class="mt-2">
+					<label for="singkatan">Singkatan:</label>
+					<input
+						id="singkatan"
+						bind:value={singkatan}
+						class="w-full rounded-lg border px-3 py-2"
+						placeholder="Field ini otomatis terisi, silahkan input nama gelar"
+					/>
+				</div>
+			{/if}
 
 			{#if daftarGelar.length > 0}
 				<div class="w-full overflow-x-auto">
 					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 						{#each daftarGelar as gelar, index}
 							<div class="mt-3 flex items-center justify-between rounded-lg border p-3">
-								<p class="w-full max-w-[200px] truncate break-words">
-									{gelar}
-								</p>
-								<input type="text" hidden {name} value={gelar} id="" />
+								<div class="w-full max-w-[200px] truncate break-words">
+									{#if typeof gelar === 'string'}
+										<p>{gelar}</p>
+										<input type="hidden" name={name} value={gelar} />
+									{:else if name === 'nama_gelar'}
+										<p>{gelar.nama}</p>
+										<p class="text-sm text-gray-500">Singkatan: {gelar.singkatan}</p>
+										<input type="hidden" name="nama_gelar" value={gelar.nama} />
+										<input type="hidden" name="singkatan_gelar" value={gelar.singkatan} />
+									{/if}
+								</div>
 								<!-- svelte-ignore a11y_consider_explicit_label -->
 								<button class="text-red-500" onclick={() => hapusGelar(index)}>
 									<span class="carbon--close-outline2 ml-2 items-center"></span>

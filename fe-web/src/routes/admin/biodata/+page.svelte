@@ -1,6 +1,10 @@
 <script lang="ts">
 	import BiodataKerajaan from '$lib/item/BiodataKerajaan.svelte';
 	import jd from '../../../asset/profile/jdpp.jpg';
+
+	let { data } = $props()
+	let dataKerajaan : any = data.dataKerajaan
+	console.log("Data kerajaan : ", dataKerajaan)
 </script>
 
 <div class="flex w-full flex-col gap-4 px-6 py-4">
@@ -30,12 +34,11 @@
 		</div>
 	</div>
 	<div class="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-		<BiodataKerajaan href="biodata/{10}"></BiodataKerajaan>
-		<BiodataKerajaan href="biodata/{11}"></BiodataKerajaan>
-		<BiodataKerajaan href="biodata"></BiodataKerajaan>
-		<BiodataKerajaan href="biodata"></BiodataKerajaan>
-		<BiodataKerajaan href="biodata"></BiodataKerajaan>
-		<BiodataKerajaan href="biodata"></BiodataKerajaan>
-		<BiodataKerajaan href="biodata"></BiodataKerajaan>
+		{#each dataKerajaan as kerajaan, i}
+			<BiodataKerajaan 
+				href="biodata/{kerajaan.id_kerajaan}" 
+				data={kerajaan}
+			></BiodataKerajaan>
+		{/each}
 	</div>
 </div>

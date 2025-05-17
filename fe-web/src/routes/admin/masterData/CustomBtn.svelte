@@ -12,7 +12,8 @@
 	let success = $state(false);
 	let timer: number;
 	let error = $state();
-	let { data = null, name = '' } = $props();
+	let { data = null, name = '', tipe = '' } = $props();
+	console.log('Tipe : ', tipe);
 	let edit = $state(false);
 	let del = $state(false);
 </script>
@@ -66,68 +67,226 @@
 	>
 </div>
 {#if del}
-	<form
-		action="?/tambah"
-		method="post"
-		use:enhance={() => {
-			loading = true;
-			return async ({ result }) => {
-				loading = false;
-				if (result.type === 'success') {
-					success = true;
-					invalidateAll();
-					clearTimeout(timer);
-					timer = setTimeout(() => {
-						success = false;
+	{#if tipe === 'arsip'}
+		<form
+			action="?/hapus"
+			method="post"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					if (result.type === 'success') {
 						del = false;
-					}, 3000);
-				}
-				if (result.type === 'failure') {
-					console.log(result.data?.error);
-				}
-			};
-		}}
-	>
-		<DeleteModal
-			bind:value={del}
-			choose="delete"
-			text="APakah Yakin ingin di delete?"
-			successText="Berhasil Delete"
-			{name}
-			data={data.id_jenis_arsip}
-		></DeleteModal>
-	</form>
+						success = true;
+						invalidateAll();
+						clearTimeout(timer);
+						timer = setTimeout(() => {
+							success = false;
+							del = false;
+							invalidateAll();
+						}, 3000);
+					}
+					if (result.type === 'failure') {
+						console.log(result.data?.error);
+					}
+				};
+			}}
+		>
+			<DeleteModal
+				bind:value={del}
+				choose="delete"
+				text="Apakah Yakin ingin di delete?"
+				successText="Berhasil Delete"
+				{name}
+				data={data.id_jenis_arsip}
+			></DeleteModal>
+		</form>
+	{/if}
+
+	{#if tipe === 'jenis_kerajaan'}
+		<form
+			action="?/hapusKerajaan"
+			method="post"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					if (result.type === 'success') {
+						del = false;
+						success = true;
+						invalidateAll();
+						clearTimeout(timer);
+						timer = setTimeout(() => {
+							success = false;
+							del = false;
+							invalidateAll();
+						}, 3000);
+					}
+					if (result.type === 'failure') {
+						console.log(result.data?.error);
+					}
+				};
+			}}
+		>
+			<DeleteModal
+				bind:value={del}
+				choose="delete"
+				text="Apakah Yakin ingin di delete?"
+				successText="Berhasil Delete"
+				{name}
+				data={data.id_jenis_kerajaan}
+			></DeleteModal>
+		</form>
+	{/if}
+
+	{#if tipe === 'gelar'}
+		<form
+			action="?/hapusGelar"
+			method="post"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					if (result.type === 'success') {
+						del = false;
+						success = true;
+						invalidateAll();
+						clearTimeout(timer);
+						timer = setTimeout(() => {
+							success = false;
+							del = false;
+							invalidateAll();
+						}, 3000);
+					}
+					if (result.type === 'failure') {
+						console.log(result.data?.error);
+					}
+				};
+			}}
+		>
+			<DeleteModal
+				bind:value={del}
+				choose="delete"
+				text="Apakah Yakin ingin di delete?"
+				successText="Berhasil Delete"
+				{name}
+				data={data.id_gelar}
+			></DeleteModal>
+		</form>
+	{/if}
 {/if}
 
 {#if loading}
 	<Loader></Loader>
 {/if}
 {#if edit}
-	<form
-		action="?/ubah"
-		method="post"
-		use:enhance={() => {
-			loading = true;
-			return async ({ result }) => {
-				loading = false;
-				if (result.type === 'success') {
-					success = true;
-					invalidateAll();
-					clearTimeout(timer);
-					timer = setTimeout(() => {
-						success = false;
-						edit = false;
-					}, 3000);
-				}
-				if (result.type === 'failure') {
-					error = result.data?.error;
-					console.log(error);
-				}
-			};
-		}}
-	>
-		<Input bind:value={data} name="nama_jenis" {error} bind:input={edit}></Input>
-	</form>
+	{#if tipe === 'arsip'}
+		<form
+			action="?/ubah"
+			method="post"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					if (result.type === 'success') {
+						success = true;
+						invalidateAll();
+						clearTimeout(timer);
+						timer = setTimeout(() => {
+							success = false;
+							edit = false;
+							invalidateAll();
+						}, 3000);
+					}
+					if (result.type === 'failure') {
+						error = result.data?.error;
+						console.log(error);
+					}
+				};
+			}}
+		>
+			<Input
+				bind:value={data}
+				name="nama_jenis"
+				{error}
+				bind:input={edit}
+				header="Nama Gelar"
+				tipe="arsip"
+			></Input>
+		</form>
+	{/if}
+
+	{#if tipe === 'jenis_kerajaan'}
+		<form
+			action="?/ubahKerajaan"
+			method="post"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					if (result.type === 'success') {
+						success = true;
+						invalidateAll();
+						clearTimeout(timer);
+						timer = setTimeout(() => {
+							success = false;
+							edit = false;
+							invalidateAll();
+						}, 3000);
+					}
+					if (result.type === 'failure') {
+						error = result.data?.error;
+						console.log(error);
+					}
+				};
+			}}
+		>
+			<Input
+				bind:value={data}
+				name="nama_jenis_kerajaan"
+				{error}
+				bind:input={edit}
+				header="Jenis Kerajaan"
+				tipe="jenis_kerajaan"
+			></Input>
+		</form>
+	{/if}
+
+	{#if tipe === 'gelar'}
+		<form
+			action="?/ubahGelar"
+			method="post"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					if (result.type === 'success') {
+						success = true;
+						invalidateAll();
+						clearTimeout(timer);
+						timer = setTimeout(() => {
+							success = false;
+							edit = false;
+							invalidateAll();
+						}, 3000);
+					}
+					if (result.type === 'failure') {
+						error = result.data?.error;
+						console.log(error);
+					}
+				};
+			}}
+		>
+			<Input
+				bind:value={data}
+				name="nama_gelar"
+				{error}
+				bind:input={edit}
+				header="Jenis Kerajaan"
+				tipe="gelar"
+			></Input>
+		</form>
+	{/if}
 {/if}
 {#if success}
 	<SModal text="sukses!"></SModal>

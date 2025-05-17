@@ -31,7 +31,7 @@ export const actions: Actions = {
             return fail(418, { errors: verif.error.flatten().fieldErrors, success: false, form: res })
         }
         try {
-            const send = await fetch(env.PUB_PORT + "/kerajaan?limit=200", {
+            const send = await fetch(env.PUB_PORT + "/kerajaan", {
                 method: "POST",
                 headers : {"Content-Type" : "application/json"},
                 body: JSON.stringify({
@@ -39,10 +39,10 @@ export const actions: Actions = {
                     latitude : Number(lat),
                     nama_kerajaan : nama_kerajaan,
                     raja_sekarang : raja_sekarang,
-                    jenis_kerajaan : jenis_kerajaan,
+                    jenis_kerajaan : Number(jenis_kerajaan),
                     deskripsi_kerajaan : deskripsi_kerajaan,
                     alamat_kerajaan : alamat_kerajaan,
-                    tanggal_berdiri : tanggal_berdiri,
+                    tahun_berdiri : tanggal_berdiri,
                     era : era_kerajaan,
                     rumpun : rumpun_kerajaan,  
                 })

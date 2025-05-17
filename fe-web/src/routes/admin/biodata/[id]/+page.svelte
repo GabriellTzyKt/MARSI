@@ -1,16 +1,27 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import SModal from '$lib/popup/SModal.svelte';
 	import gambartemp from '../../../../asset/gambarsementara.jpg';
 	import { writable } from 'svelte/store';
 	import { page } from '$app/state';
+	import { onMount } from 'svelte';
+
+	const { data } = $props();
+	const dataGet = data.detil_kerajaan;
+	const datajenis = data.jenisKerajaan;
+	const datahistory = data.historyRaja;
+	let dataubah = $state(dataGet);
+	let dataJenisAmbil = $state(datajenis);
+	let dataHistoryAmbil: any = $state(datahistory);
+	console.log('Data history : ', dataHistoryAmbil);
 
 	let success = $state(false);
+	let success2 = $state(false);
 	let id = $state(page.params.id);
 	let nama = $state('');
-	let lokasi = $state('');
+	let lokasi = $state(dataubah.alamat_kerajaan || '');
 	let tanggal = $state('');
 	let jenis = $state('');
 	let linkkerajaan = $state('');
@@ -32,6 +43,7 @@
 	let tanggalawal = $state('');
 	let tanggalakhir = $state('');
 	let showModal = $state(false);
+	let showModal2 = $state(false);
 	let selectedLocation: any = $state('');
 	let namafoto: any = $state('');
 	let namabendera: any = $state('');
@@ -44,13 +56,15 @@
 
 	let uploadedFiles: File[] = [];
 	let uploadedFileUrls: string[] = $state([]);
-	let sortOrder: string = $state('');
-	let arrowDirection: string = $state('mingcute--arrow-down-fill');
+	let sortOrder: string = $state('asc');
+	let arrowDirection: string = $state('mingcute--arrow-up-fill');
 
 	let benderaUrl: string | null = $state(null);
 	let lambangUrl: string | null = $state(null);
 	let namarajaUrl: string | null = $state(null);
-	let videoName: string | null = $state(' No Video Selected ');
+	let videoName = $state('Silahkan Upload!');
+	let videoExists = $state(false);
+	let existingVideoId = $state(''); // Store the existing video ID
 
 	let results = writable<string[]>([]);
 	let showDropdown = writable(false);
@@ -89,6 +103,7 @@
 		lokasi = name;
 		results.set([]);
 		showDropdown.set(false);
+		console.log('oi:', selectedLocation);
 
 		// Cari latitude dan longitude berdasarkan nama lokasi yang dipilih
 		selectedLocation = locationsData.find((item) => item.display_name === name);
@@ -120,10 +135,6 @@
 
 	let isExpand: boolean[] = $state([]);
 
-	const { data } = $props();
-	const dataGet = data.detil_kerajaan;
-	let dataubah = $state(dataGet);
-
 	function OpenModal() {
 		showModal = true;
 	}
@@ -132,67 +143,154 @@
 		showModal = false;
 	}
 
+	// Fungsi untuk menangani perubahan file dengan preview langsung
 	function handleFileChange(event: Event, type: string) {
+		const target = event.target as HTMLInputElement;
+
+		if (target.files && target.files.length > 0) {
+			const file = target.files[0];
+			const imageUrl = URL.createObjectURL(file);
+
+			if (type === 'video') {
+				videoName = file.name;
+				videoExists = false;
+			} else if (type === 'bendera') {
+				namabendera = file.name;
+				benderaUrl = imageUrl;
+			} else if (type === 'lambang') {
+				namalambang = file.name;
+				lambangUrl = imageUrl;
+			} else if (type === 'raja') {
+				namafotoraja = file.name;
+				namarajaUrl = imageUrl;
+			}
+		}
+	}
+
+	function handleDokumenFileChange(event: Event) {
 		const target = event.target as HTMLInputElement;
 
 		if (target.files && target.files.length > 0) {
 			const newFiles = Array.from(target.files);
 
-			if (type === 'bendera') {
-				benderaUrl = URL.createObjectURL(newFiles[0]);
-				console.log('Bendera yang di upload : ', newFiles[0].name);
-				namabendera = newFiles[0].name;
-			} else if (type === 'lambang') {
-				lambangUrl = URL.createObjectURL(newFiles[0]);
-				console.log('Lambang yang di upload : ', newFiles[0].name);
-				namalambang = newFiles[0].name;
-			} else if (type === 'raja') {
-				namarajaUrl = URL.createObjectURL(newFiles[0]);
-				console.log('Foto Raja yang di upload : ', newFiles[0].name);
-				namafotoraja = newFiles[0].name;
-			} else if (type === 'video') {
-				videoName = newFiles[0].name;
-			} else {
-				uploadedFiles = [...uploadedFiles, ...newFiles];
-				uploadedFileUrls = [
-					...uploadedFileUrls,
-					...newFiles.map((file) => URL.createObjectURL(file))
-				];
-				namafoto = uploadedFiles.map((file) => file.name);
-				console.log('Nama file yang diupload:', namafoto);
-			}
+			// Tambahkan file baru ke array uploadedFiles
+			uploadedFiles = [...uploadedFiles, ...newFiles];
+
+			// Buat URL objek untuk preview gambar
+			const newUrls = newFiles.map((file) => URL.createObjectURL(file));
+			uploadedFileUrls = [...uploadedFileUrls, ...newUrls];
+
+			// Update namafoto untuk form submission
+			namafoto = uploadedFiles.map((file) => file.name).join(',');
 		}
 	}
 
+	// Fungsi untuk menghapus gambar
+	function removeImage(index: number) {
+		// Bersihkan URL objek jika itu adalah blob URL -> supaya gak makan memori yg bisa ngehambat
+		if (uploadedFileUrls[index] && uploadedFileUrls[index].startsWith('blob:')) {
+			URL.revokeObjectURL(uploadedFileUrls[index]);
+		}
+
+		// Hapus URL dari array
+		uploadedFileUrls = uploadedFileUrls.slice(0, index).concat(uploadedFileUrls.slice(index + 1));
+
+		// Hapus file dari array jika ada
+		if (index < uploadedFiles.length) {
+			uploadedFiles = uploadedFiles.slice(0, index).concat(uploadedFiles.slice(index + 1));
+		}
+
+		// Update namafoto untuk form submission
+		namafoto = uploadedFiles.map((file) => file.name).join(',');
+	}
+
+	// Fungsi untuk mengganti gambar
 	function ganti(type: string) {
 		if (type === 'bendera') {
+			if (benderaUrl && benderaUrl.startsWith('blob:')) {
+				URL.revokeObjectURL(benderaUrl);
+			}
 			benderaUrl = null;
+			namabendera = '';
 		} else if (type === 'lambang') {
+			if (lambangUrl && lambangUrl.startsWith('blob:')) {
+				URL.revokeObjectURL(lambangUrl);
+			}
 			lambangUrl = null;
+			namalambang = '';
 		} else if (type === 'raja') {
+			if (namarajaUrl && namarajaUrl.startsWith('blob:')) {
+				URL.revokeObjectURL(namarajaUrl);
+			}
 			namarajaUrl = null;
+			namafotoraja = '';
 		} else if (type === 'video') {
 			videoName = 'No Video Selected';
 		}
 	}
 
-	function removeImage(index: number) {
-		uploadedFiles = uploadedFiles.slice(0, index).concat(uploadedFiles.slice(index + 1));
-		uploadedFileUrls = uploadedFileUrls.slice(0, index).concat(uploadedFileUrls.slice(index + 1));
-	}
-
 	function updateFilteredData() {
 		if (sortOrder === 'asc') {
-			dataGet.sort((a, b) => Number(a.tahun_awal_jabatan) - Number(b.tahun_awal_jabatan));
+			dataHistoryAmbil.sort((a: any, b: any) => {
+				const tahunAwalA = parseInt(a.periodeMenjabat?.split(' - ')[0]) || 0;
+				const tahunAwalB = parseInt(b.periodeMenjabat?.split(' - ')[0]) || 0;
+
+				if (tahunAwalA === tahunAwalB) {
+					const akhirA = a.periodeMenjabat?.split(' - ')[1] || '';
+					const akhirB = b.periodeMenjabat?.split(' - ')[1] || '';
+
+					// Jika salah satu "Sekarang", prioritaskan yang masih menjabat
+					if (akhirA === 'Sekarang' && akhirB !== 'Sekarang') {
+						return 1;
+						// (1 itu artinya A setelah B)
+					} else if (akhirA !== 'Sekarang' && akhirB === 'Sekarang') {
+						return -1; // B masih menjabat, A sudah tidak
+						// (-1 itu artinya A sebelum B)
+					} else if (akhirA !== 'Sekarang' && akhirB !== 'Sekarang') {
+						// Keduanya memiliki tahun akhir, bandingkan secara numerik
+						return parseInt(akhirA) - parseInt(akhirB);
+					}
+					// Jika keduanya "Sekarang", biarkan urutan tetap
+					return 0;
+					// (0 itu artinya A dan B dianggap setara)
+				}
+
+				return tahunAwalA - tahunAwalB;
+			});
 		} else if (sortOrder === 'desc') {
-			dataGet.sort((a, b) => Number(b.tahun_awal_jabatan) - Number(a.tahun_awal_jabatan));
+			// Urutkan berdasarkan tahun awal jabatan (descending)
+			dataHistoryAmbil.sort((a: any, b: any) => {
+				// Ekstrak tahun dari periodeMenjabat (format: "YYYY - Sekarang" atau "YYYY - YYYY")
+				const tahunAwalA = parseInt(a.periodeMenjabat?.split(' - ')[0]) || 0;
+				const tahunAwalB = parseInt(b.periodeMenjabat?.split(' - ')[0]) || 0;
+
+				// Jika tahun awal sama, periksa tahun akhir
+				if (tahunAwalA === tahunAwalB) {
+					const akhirA = a.periodeMenjabat?.split(' - ')[1] || '';
+					const akhirB = b.periodeMenjabat?.split(' - ')[1] || '';
+
+					// Jika salah satu "Sekarang", prioritaskan yang masih menjabat
+					if (akhirA === 'Sekarang' && akhirB !== 'Sekarang') {
+						return -1; // A masih menjabat, B sudah tidak
+					} else if (akhirA !== 'Sekarang' && akhirB === 'Sekarang') {
+						return 1; // B masih menjabat, A sudah tidak
+					} else if (akhirA !== 'Sekarang' && akhirB !== 'Sekarang') {
+						// Keduanya memiliki tahun akhir, bandingkan secara numerik (terbalik untuk desc)
+						return parseInt(akhirB) - parseInt(akhirA);
+					}
+					// Jika keduanya "Sekarang", biarkan urutan tetap
+					return 0;
+				}
+
+				return tahunAwalB - tahunAwalA;
+			});
 		}
-		dataubah = [...dataGet];
+		dataHistoryAmbil = [...dataHistoryAmbil];
 	}
 
 	function toggleSort() {
 		sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
-		arrowDirection = sortOrder === 'asc' ? 'mingcute--arrow-down-fill' : 'mingcute--arrow-up-fill';
+		arrowDirection = sortOrder === 'asc' ? 'mingcute--arrow-up-fill' : 'mingcute--arrow-down-fill';
 		updateFilteredData();
 	}
 
@@ -200,6 +298,284 @@
 		isExpand[index] = !isExpand[index];
 		isExpand = [...isExpand];
 	}
+
+	// Function to convert URL to File object with better filename handling
+	async function urlToFile(url: string, filename: string): Promise<File | null> {
+		try {
+			console.log(`Fetching image from URL: ${url}`);
+			const response = await fetch(url);
+
+			if (!response.ok) {
+				console.error(`Failed to fetch image: ${response.status} ${response.statusText}`);
+				return null;
+			}
+
+			const blob = await response.blob();
+			console.log(`Successfully got blob: ${blob.size} bytes, type: ${blob.type}`);
+
+			// ambil hanya file name nya
+			let cleanFilename = filename;
+
+			// kalo file name ada query parameter
+			if (cleanFilename.includes('?')) {
+				const urlParts = url.split('/');
+				const lastPart = urlParts[urlParts.length - 1];
+
+				if (lastPart && !lastPart.includes('?')) {
+					cleanFilename = lastPart;
+				} else {
+					// kalo gakbisa di ekstrak file name yg murni, buat berdasarkan waktu
+					cleanFilename = `image_${Date.now()}.${blob.type.split('/')[1] || 'jpg'}`;
+				}
+			}
+
+			// buat file objek baru
+			const file = new File([blob], cleanFilename, { type: blob.type || 'image/jpeg' });
+			console.log(`Created File object: ${file.name}, size: ${file.size}`);
+			return file;
+		} catch (error) {
+			console.error('Error converting URL to File:', error);
+			return null;
+		}
+	}
+
+	// nampung file hasil konversi
+	let benderaFile: File | null = $state(null);
+	let lambangFile: File | null = $state(null);
+	let videoFile: File | null = $state(null);
+
+	// Tambahkan state untuk mengelola modal konfirmasi hapus
+	let showDeleteConfirmation = $state(false);
+	let historyRajaIdToDelete = $state('');
+	let historyRajaIdToEdit = $state('');
+
+	// Fungsi untuk membuka modal konfirmasi hapus
+	function openDeleteConfirmation(id_history_raja: string) {
+		historyRajaIdToDelete = id_history_raja;
+		showDeleteConfirmation = true;
+	}
+
+	function openEditConfirmation(id_history_raja: string) {
+		historyRajaIdToEdit = id_history_raja;
+		showModal2 = true;
+	}
+
+	onMount(async () => {
+		console.log('onMount executing');
+		console.log('dataubah:', dataubah);
+
+		// isi lokasi dengan alamat kerajaan saat ini (dari api)
+		lokasi = dataubah.alamat_kerajaan || '';
+		console.log('Set lokasi to:', lokasi);
+
+		// cari long lat kalo ada
+		if (dataubah.longitude && dataubah.latitude) {
+			long = dataubah.longitude;
+			lat = dataubah.latitude;
+			console.log('Set coordinates to:', lat, long);
+		}
+
+		// cek kalo imgUrls itu gak kosong
+		console.log('imageUrls:', dataubah.imageUrls);
+
+		// ngubah imageUrls ke File
+		if (dataubah.imageUrls && dataubah.imageUrls.length > 0) {
+			console.log('Found imageUrls with length:', dataubah.imageUrls.length);
+
+			// Initialize arrays
+			uploadedFileUrls = dataubah.imageUrls;
+			console.log('Set uploadedFileUrls:', uploadedFileUrls);
+
+			try {
+				// Convert URLs to File objects
+				const filePromises = dataubah.imageUrls.map(async (url: any, index: any) => {
+					console.log(`Processing URL ${index}:`, url);
+					// Extract filename from URL or use a default name
+					const filename = url.split('/').pop() || `existing-image-${index}.jpg`;
+					console.log(`Filename for URL ${index}:`, filename);
+					return await urlToFile(url, filename);
+				});
+
+				// Wait for all conversions to complete
+				const files = await Promise.all(filePromises);
+				console.log('Conversion results:', files);
+
+				// Filter out any null results
+				uploadedFiles = files.filter((file) => file !== null);
+				console.log('Converted existing images to Files:', uploadedFiles);
+			} catch (error) {
+				console.error('Error converting URLs to Files:', error);
+			}
+		} else {
+			console.log('No imageUrls found or array is empty');
+		}
+
+		// Handle bendera (flag) image
+		if (dataubah.benderaUrl) {
+			console.log('Found bendera URL:', dataubah.benderaUrl);
+			benderaUrl = dataubah.benderaUrl;
+
+			try {
+				const filename = dataubah.benderaUrl.split('/').pop() || 'bendera.jpg';
+				console.log('Attempting to convert bendera URL to File with filename:', filename);
+				const convertedFile = await urlToFile(dataubah.benderaUrl, filename);
+
+				if (convertedFile) {
+					console.log('Successfully converted bendera to File:', convertedFile);
+					console.log('Bendera File details - name:', convertedFile.name);
+					console.log('Bendera File details - size:', convertedFile.size);
+					console.log('Bendera File details - type:', convertedFile.type);
+
+					namabendera = convertedFile.name;
+					benderaFile = convertedFile;
+
+					// hidden input buat backup
+					const hiddenInput = document.createElement('input');
+					hiddenInput.type = 'file';
+					hiddenInput.id = 'hiddenBenderaInput';
+					hiddenInput.style.display = 'none'; // sembunyiin dari tampilan
+					document.body.appendChild(hiddenInput);
+
+					// ini pake bantuan api resmi dataTransfer, yang membuat jadi tipe datanya FileList
+					// karena sblm ini kita buat element input yg dimana kalo mau diganti tipe nya harus FileList
+					// mengikuti aturan browser (chrome dan fox)
+					const dataTransfer = new DataTransfer();
+					dataTransfer.items.add(convertedFile);
+
+					// trus ini baru bisa di update utk files nya pas dari dataTransfer
+					hiddenInput.files = dataTransfer.files;
+
+					console.log('Hidden bendera input created with file:', hiddenInput.files[0].name);
+					console.log('Hidden bendera input file size:', hiddenInput.files[0].size);
+				} else {
+					console.error('Failed to convert bendera URL to File - result was null');
+				}
+			} catch (error) {
+				console.error('Error converting bendera URL to File:', error);
+			}
+		} else {
+			console.log('No bendera URL found');
+		}
+
+		// Handle lambang (emblem) image
+		if (dataubah.lambangUrl) {
+			console.log('Found lambang URL:', dataubah.lambangUrl);
+			lambangUrl = dataubah.lambangUrl;
+
+			try {
+				const filename = dataubah.lambangUrl.split('/').pop() || 'lambang.jpg';
+				console.log('Attempting to convert lambang URL to File with filename:', filename);
+				const convertedFile = await urlToFile(dataubah.lambangUrl, filename);
+
+				if (convertedFile) {
+					console.log('Successfully converted lambang to File:', convertedFile);
+					console.log('Lambang File details - name:', convertedFile.name);
+					console.log('Lambang File details - size:', convertedFile.size);
+					console.log('Lambang File details - type:', convertedFile.type);
+
+					namalambang = convertedFile.name;
+					lambangFile = convertedFile;
+
+					// buat beckup
+					const hiddenInput = document.createElement('input');
+					hiddenInput.type = 'file';
+					hiddenInput.id = 'hiddenLambangInput';
+					hiddenInput.style.display = 'none';
+					document.body.appendChild(hiddenInput);
+
+					const dataTransfer = new DataTransfer();
+					dataTransfer.items.add(convertedFile);
+
+					hiddenInput.files = dataTransfer.files;
+
+					console.log('Hidden lambang input created with file:', hiddenInput.files[0].name);
+					console.log('Hidden lambang input file size:', hiddenInput.files[0].size);
+				} else {
+					console.error('Failed to convert lambang URL to File - result was null');
+				}
+			} catch (error) {
+				console.error('Error converting lambang URL to File:', error);
+			}
+		} else {
+			console.log('No lambang URL found');
+		}
+
+		// Handle video - improved handling with detailed logging
+		if (dataubah.videoUrl) {
+			console.log('VIDEO DEBUG: Found video URL:', dataubah.videoUrl);
+			videoExists = true;
+			videoName = 'Video sudah ada';
+
+			// Store the existing video ID
+			if (dataubah.video_kerajaan) {
+				existingVideoId = dataubah.video_kerajaan;
+				console.log('VIDEO DEBUG: Stored existing video ID:', existingVideoId);
+			}
+
+			// Try to convert video URL to File
+			try {
+				const filename = dataubah.videoUrl.split('/').pop() || 'video.mp4';
+				console.log(
+					'VIDEO DEBUG: Attempting to convert video URL to File with filename:',
+					filename
+				);
+				const convertedFile = await urlToFile(dataubah.videoUrl, filename);
+
+				if (convertedFile) {
+					console.log('VIDEO DEBUG: Successfully converted video to File:', convertedFile);
+					console.log('VIDEO DEBUG: Video File details - name:', convertedFile.name);
+					console.log('VIDEO DEBUG: Video File details - size:', convertedFile.size);
+					console.log('VIDEO DEBUG: Video File details - type:', convertedFile.type);
+
+					videoFile = convertedFile;
+
+					const hiddenInput = document.createElement('input');
+					hiddenInput.type = 'file';
+					hiddenInput.id = 'hiddenVideoInput';
+					hiddenInput.style.display = 'none';
+					document.body.appendChild(hiddenInput);
+
+					const dataTransfer = new DataTransfer();
+					dataTransfer.items.add(convertedFile);
+
+					hiddenInput.files = dataTransfer.files;
+
+					console.log(
+						'VIDEO DEBUG: Hidden video input created with file:',
+						hiddenInput.files[0].name
+					);
+					console.log('VIDEO DEBUG: Hidden video input file size:', hiddenInput.files[0].size);
+				} else {
+					console.error('VIDEO DEBUG: Failed to convert video URL to File - result was null');
+				}
+			} catch (error) {
+				console.error('VIDEO DEBUG: Error converting video URL to File:', error);
+			}
+		}
+	});
+
+	// bersihkan url yang ada blob karena itu url temp (sementara) -> pas user ninggalin halaman supaya mencegah memori leak
+	onMount(() => {
+		return () => {
+			uploadedFileUrls.forEach((url) => {
+				if (url && url.startsWith('blob:')) {
+					URL.revokeObjectURL(url);
+				}
+			});
+
+			if (benderaUrl && benderaUrl.startsWith('blob:')) {
+				URL.revokeObjectURL(benderaUrl);
+			}
+
+			if (lambangUrl && lambangUrl.startsWith('blob:')) {
+				URL.revokeObjectURL(lambangUrl);
+			}
+
+			if (namarajaUrl && namarajaUrl.startsWith('blob:')) {
+				URL.revokeObjectURL(namarajaUrl);
+			}
+		};
+	});
 </script>
 
 <div class="ml-2 flex h-fit w-full flex-col md:ml-6">
@@ -207,9 +583,206 @@
 		method="post"
 		action="?/selesai"
 		enctype="multipart/form-data"
-		use:enhance={() => {
+		use:enhance={({ formData }) => {
+			if (uploadedFiles && uploadedFiles.length > 0) {
+				// ngapus dokumen kalo sblmnya ada
+				formData.delete('dokumen');
+
+				// nambah data baru ( file valid )
+				uploadedFiles.forEach((file, index) => {
+					if (file instanceof File && file.size > 0) {
+						formData.append('dokumen', file);
+					}
+				});
+			}
+
+			// Process bendera (single file)
+			const benderaInput = document.getElementById('fileBendera') as HTMLInputElement;
+			if (benderaInput && benderaInput.files && benderaInput.files.length > 0) {
+				// pilih file baru
+				const benderaFile = benderaInput.files[0];
+				console.log(
+					'Found new bendera file in input:',
+					benderaFile.name,
+					'size:',
+					benderaFile.size
+				);
+
+				// Ngebuat file baru dengan nama yang lebih simpel
+				let fileToUpload = benderaFile;
+				if (benderaFile.name.includes('?')) {
+					const simpleExt = benderaFile.type.split('/')[1] || 'jpg';
+					const simpleName = `bendera_${Date.now()}.${simpleExt}`;
+					fileToUpload = new File([benderaFile], simpleName, { type: benderaFile.type });
+					console.log('Created simplified bendera filename:', simpleName);
+				}
+
+				console.log(`Adding bendera file to form: ${fileToUpload.name}`);
+				formData.set('inputbendera', fileToUpload);
+			} else if (benderaFile) {
+				// pake data yg udah di konversi dari onMount()
+				console.log('Using stored bendera file:', benderaFile.name, 'size:', benderaFile.size);
+
+				// buat file baru dengan nama yg lebih simpel
+				let fileToUpload = benderaFile;
+				if (benderaFile.name.includes('?')) {
+					const simpleExt = benderaFile.type.split('/')[1] || 'jpg';
+					const simpleName = `bendera_${Date.now()}.${simpleExt}`;
+					fileToUpload = new File([benderaFile], simpleName, { type: benderaFile.type });
+					console.log('Created simplified bendera filename:', simpleName);
+				}
+
+				console.log(`Adding existing bendera file to form: ${fileToUpload.name}`);
+				formData.set('inputbendera', fileToUpload);
+			} else if (benderaUrl) {
+				// ini makek yg hiddenInput tadi
+				console.log('No stored bendera file, checking hidden input');
+				const hiddenInput = document.getElementById('hiddenBenderaInput') as HTMLInputElement;
+				if (hiddenInput && hiddenInput.files && hiddenInput.files.length > 0) {
+					const hiddenFile = hiddenInput.files[0];
+					console.log(
+						'Found bendera file in hidden input:',
+						hiddenFile.name,
+						'size:',
+						hiddenFile.size
+					);
+
+					// ini sama, buat file baru dengna nama yg lebi simpel
+					let fileToUpload = hiddenFile;
+					if (hiddenFile.name.includes('?')) {
+						const simpleExt = hiddenFile.type.split('/')[1] || 'jpg';
+						const simpleName = `bendera_${Date.now()}.${simpleExt}`;
+						fileToUpload = new File([hiddenFile], simpleName, { type: hiddenFile.type });
+						console.log('Created simplified bendera filename:', simpleName);
+					}
+
+					console.log(`Adding hidden bendera file to form: ${fileToUpload.name}`);
+					formData.set('inputbendera', fileToUpload);
+				} else {
+					console.log('No bendera file found in hidden input, will use existing ID');
+				}
+			}
+
+			// Process lambang (single file)
+			const lambangInput = document.getElementById('fileLambang') as HTMLInputElement;
+			if (lambangInput && lambangInput.files && lambangInput.files.length > 0) {
+				// User selected a new file
+				const lambangFile = lambangInput.files[0];
+				console.log(
+					'Found new lambang file in input:',
+					lambangFile.name,
+					'size:',
+					lambangFile.size
+				);
+
+				// Create a new File with a simpler name if needed
+				let fileToUpload = lambangFile;
+				if (lambangFile.name.includes('?')) {
+					const simpleExt = lambangFile.type.split('/')[1] || 'jpg';
+					const simpleName = `lambang_${Date.now()}.${simpleExt}`;
+					fileToUpload = new File([lambangFile], simpleName, { type: lambangFile.type });
+					console.log('Created simplified lambang filename:', simpleName);
+				}
+
+				console.log(`Adding lambang file to form: ${fileToUpload.name}`);
+				formData.set('inputlambang', fileToUpload);
+			} else if (lambangFile) {
+				// Use the stored file from onMount
+				console.log('Using stored lambang file:', lambangFile.name, 'size:', lambangFile.size);
+
+				let fileToUpload = lambangFile;
+				if (lambangFile.name.includes('?')) {
+					const simpleExt = lambangFile.type.split('/')[1] || 'jpg';
+					const simpleName = `lambang_${Date.now()}.${simpleExt}`;
+					fileToUpload = new File([lambangFile], simpleName, { type: lambangFile.type });
+					console.log('Created simplified lambang filename:', simpleName);
+				}
+
+				console.log(`Adding existing lambang file to form: ${fileToUpload.name}`);
+				formData.set('inputlambang', fileToUpload);
+			} else if (lambangUrl) {
+				// Try to get the file from the hidden input as a last resort
+				console.log('No stored lambang file, checking hidden input');
+				const hiddenInput = document.getElementById('hiddenLambangInput') as HTMLInputElement;
+				if (hiddenInput && hiddenInput.files && hiddenInput.files.length > 0) {
+					const hiddenFile = hiddenInput.files[0];
+					console.log(
+						'Found lambang file in hidden input:',
+						hiddenFile.name,
+						'size:',
+						hiddenFile.size
+					);
+
+					let fileToUpload = hiddenFile;
+					if (hiddenFile.name.includes('?')) {
+						const simpleExt = hiddenFile.type.split('/')[1] || 'jpg';
+						const simpleName = `lambang_${Date.now()}.${simpleExt}`;
+						fileToUpload = new File([hiddenFile], simpleName, { type: hiddenFile.type });
+						console.log('Created simplified lambang filename:', simpleName);
+					}
+
+					console.log(`Adding hidden lambang file to form: ${fileToUpload.name}`);
+					formData.set('inputlambang', fileToUpload);
+				} else {
+					console.log('No lambang file found in hidden input, will use existing ID');
+				}
+			}
+
+			// Process video
+			const videoInput = document.getElementById('fileVideo') as HTMLInputElement;
+
+			if (videoInput && videoInput.files && videoInput.files.length > 0) {
+				//kalo vidio baru
+				const videoFile = videoInput.files[0];
+				console.log('VIDEO DEBUG: New video file selected:', videoFile.name);
+				formData.set('inputvideo', videoFile);
+			} else if (videoFile) {
+				// pake vidio dari onmount
+				console.log(
+					'VIDEO DEBUG: Using stored video file:',
+					videoFile.name,
+					'size:',
+					videoFile.size
+				);
+
+				// ganti nama dan buat file baru ( nama lebi simpel )
+				let fileToUpload = videoFile;
+				if (videoFile.name.includes('?')) {
+					const simpleExt = videoFile.type.split('/')[1] || 'mp4';
+					const simpleName = `video_${Date.now()}.${simpleExt}`;
+					fileToUpload = new File([videoFile], simpleName, { type: videoFile.type });
+					console.log('VIDEO DEBUG: Created simplified video filename:', simpleName);
+				}
+
+				console.log('VIDEO DEBUG: Adding stored video file to form:', fileToUpload.name);
+				formData.set('inputvideo', fileToUpload);
+			} else if (videoExists && existingVideoId) {
+				// No new video, but we have an existing one with ID
+				console.log(
+					'VIDEO DEBUG: No new video file, preserving existing video ID:',
+					existingVideoId
+				);
+
+				// Set multiple fields to maximize chances of the ID being preserved
+				formData.set('keepExistingVideo', 'true');
+				formData.set('existingVideoId', existingVideoId);
+				formData.set('video_kerajaan', existingVideoId);
+			}
+
+			// Log all form data for debugging
+			// console.log('VIDEO DEBUG: Form data entries:');
+			// for (const [key, value] of formData.entries()) {
+			// 	if (value instanceof File) {
+			// 		console.log(
+			// 			`VIDEO DEBUG: ${key}: File(${value.name}, ${value.size} bytes, ${value.type})`
+			// 		);
+			// 	} else {
+			// 		console.log(`VIDEO DEBUG: ${key}: ${value}`);
+			// 	}
+			// }
+
 			return async ({ result }) => {
-				console.log(result);
+				console.log('Form submission result:', result);
 				if (result.type === 'success') {
 					open = true;
 					clearTimeout(timer);
@@ -219,11 +792,12 @@
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
+					console.error('Form submission error:', error);
 				}
 			};
 		}}
 	>
-		<p class="text-2xl font-semibold">Biodata Kerajaan A</p>
+		<p class="text-2xl font-semibold">Biodata {dataubah.nama_kerajaan}</p>
 
 		<div class="flex flex-col gap-1">
 			<label class="text-md mt-5 self-start text-left" for="nama">Nama Kerajaan</label>
@@ -232,8 +806,9 @@
 				type="text"
 				id="nama"
 				name="nama"
-				bind:value={nama}
+				bind:value={dataubah.nama_kerajaan}
 				placeholder="John Doe"
+				maxlength="100"
 			/>
 			{#if error.nama}
 				<p class="text-left text-red-500">{error.nama}</p>
@@ -248,6 +823,9 @@
 						id="lokasi"
 						name="lokasi"
 						bind:value={lokasi}
+						oninput={() => {
+							if (lokasi.length > 2) fetchLocations();
+						}}
 						onkeydown={handleKeyDown}
 						placeholder="Cari lokasi..."
 					/>
@@ -258,7 +836,7 @@
 					<input type="hidden" name="long" bind:value={long} />
 					<input type="hidden" name="lat" bind:value={lat} />
 
-					{#if $showDropdown && lokasi !== ''}
+					{#if $showDropdown}
 						<ul class="dropdown">
 							{#each $results as name}
 								<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -272,13 +850,15 @@
 				<div class="w-full flex-col lg:w-1/4">
 					<label class="text-md self-start text-left" for="rumpun">Jenis Kerajaan</label>
 					<select
-						bind:value={jenis}
+						bind:value={dataubah.jenis_kerajaan}
 						id="jenis"
 						name="jenis"
 						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 					>
 						<option value="" selected disabled>Pilih Jenis Kerajaan</option>
-						<option value="kasunanan">Kasunanan</option>
+						{#each dataJenisAmbil as jenis}
+							<option value={jenis.id_jenis_kerajaan}>{jenis.nama_jenis_kerajaan}</option>
+						{/each}
 					</select>
 					{#if error.jenis}
 						<p class="text-left text-red-500">{error.jenis}</p>
@@ -306,7 +886,7 @@
 						class="input-field w-full rounded-lg border border-black p-2"
 						name="tanggalberdiri"
 						id="tanggalberdiri"
-						bind:value={tanggal}
+						value={dataubah.tanggal_berdiri ? dataubah.tanggal_berdiri.split('-')[0] : ''}
 						placeholder="Masukkan Tahun (Contoh: 2021)"
 						maxlength="4"
 						oninput={(e: any) => {
@@ -327,7 +907,7 @@
 				<div class="w-full flex-col">
 					<label class="text-md self-start text-left" for="era">Era Kerajaan</label>
 					<select
-						bind:value={era}
+						bind:value={dataubah.era}
 						id="era"
 						name="era"
 						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -343,7 +923,7 @@
 				<div class="w-full flex-col">
 					<label class="text-md self-start text-left" for="rumpun">Rumpun Kerajaan</label>
 					<select
-						bind:value={rumpun}
+						bind:value={dataubah.rumpun}
 						id="rumpun"
 						name="rumpun"
 						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -362,6 +942,7 @@
 				class="input-field h-[100px] rounded-lg border p-2 pr-8"
 				id="deskripsi"
 				name="deskripsi"
+				value={dataubah.deskripsi_kerajaan}
 				placeholder="John Doe"
 			></textarea>
 			{#if error.deskripsi}
@@ -381,9 +962,8 @@
 									type="file"
 									id="fileInput"
 									name="dokumen"
-									bind:value={namafoto}
 									class="hidden"
-									onchange={(e) => handleFileChange(e, 'dokumen')}
+									onchange={(e) => handleDokumenFileChange(e)}
 									multiple
 									accept="image/*"
 								/>
@@ -403,7 +983,9 @@
 										alt="Uploaded file"
 										class="h-[200px] w-[300px] rounded-lg border object-cover"
 									/>
-									<button class="remove-btn" onclick={() => removeImage(index)}>✕</button>
+									<button type="button" class="remove-btn" onclick={() => removeImage(index)}>
+										✕
+									</button>
 								</div>
 							{/each}
 						</div>
@@ -433,7 +1015,7 @@
 						>
 							{#if benderaUrl}
 								<img src={benderaUrl} alt="Bendera" class="h-full w-full rounded-lg object-cover" />
-								<button class="remove-btn" onclick={() => ganti('bendera')}>✎</button>
+								<button type="button" class="remove-btn" onclick={() => ganti('bendera')}>✎</button>
 							{:else}
 								<span class="pajamas--media"></span>
 								<p class="mt-3 text-center">Upload Bendera</p>
@@ -462,7 +1044,7 @@
 						>
 							{#if lambangUrl}
 								<img src={lambangUrl} alt="Lambang" class="h-full w-full rounded-lg object-cover" />
-								<button class="remove-btn" onclick={() => ganti('lambang')}>✎</button>
+								<button type="button" class="remove-btn" onclick={() => ganti('lambang')}>✎</button>
 							{:else}
 								<span class="pajamas--media"></span>
 								<p class="mt-3 text-center">Upload Lambang</p>
@@ -473,7 +1055,7 @@
 			</div>
 
 			<div class="w-full flex-col">
-				<p class="mt-5">Vidio Kerajaan : </p>
+				<p class="mt-5">Vidio Kerajaan :</p>
 				<div
 					class="upload-container relative mt-4 h-[44px] w-full flex-shrink-0 overflow-hidden rounded-lg border-2 border-black bg-gray-200"
 				>
@@ -491,13 +1073,25 @@
 					>
 					</label>
 					<div class="flex h-full w-full items-center justify-between">
-						<p class="max-w-[60%] truncate px-2">{videoName}</p>
-						<button class="bg-customGold h-full px-4 font-semibold text-white">
+						<p class="max-w-[60%] truncate px-2">
+							{videoExists ? 'Video sudah ada' : videoName}
+						</p>
+						<button type="button" class="bg-customGold h-full px-4 font-semibold text-white">
 							Choose file
 						</button>
 					</div>
-					<p class="opacity-40 text-black"> Max size : 20 MB</p>
+					<p class="text-black opacity-40">Max size : 20 MB</p>
 				</div>
+				{#if videoExists}
+					<p class="text-sm text-blue-600">Video sudah ada. Upload baru untuk mengganti.</p>
+					<!-- ni id video yg nanti bakal di pake di server.ts -->
+					<input type="hidden" id="hiddenVideoId" name="existingVideoId" value={existingVideoId} />
+					<input type="hidden" name="keepExistingVideo" value="true" />
+					<input type="hidden" name="video_kerajaan" value={existingVideoId} />
+
+					<input type="hidden" name="video_kerajaan_backup" value={existingVideoId} />
+				{/if}
+				<!-- <p class="text-xs text-gray-500">Video ID: {existingVideoId || 'None'}</p> -->
 			</div>
 
 			<!-- Navigasi -->
@@ -510,7 +1104,7 @@
 					type="text"
 					id="linkkerajaan"
 					name="linkkerajaan"
-					bind:value={linkkerajaan}
+					bind:value={dataubah.url_website}
 					placeholder="John Doe"
 				/>
 
@@ -542,7 +1136,7 @@
 					type="text"
 					id="linkacara1"
 					name="linkacara1"
-					bind:value={linkacara1}
+					bind:value={dataubah.url_acara_1}
 					placeholder="John Doe"
 				/>
 
@@ -554,7 +1148,7 @@
 					type="text"
 					id="linkacara2"
 					name="linkacara2"
-					bind:value={linkacara2}
+					bind:value={dataubah.url_acara_2}
 					placeholder="John Doe"
 				/>
 
@@ -566,7 +1160,7 @@
 					type="text"
 					id="linkacara3"
 					name="linkacara3"
-					bind:value={linkacara3}
+					bind:value={dataubah.url_acara_3}
 					placeholder="John Doe"
 				/>
 			</div>
@@ -590,7 +1184,7 @@
 					</button>
 				</div>
 				<div class="mt-8 w-full">
-					{#each dataubah as raja, index}
+					{#each dataHistoryAmbil as raja, index}
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<div
@@ -599,7 +1193,7 @@
 						>
 							<div class="mr-5 flex h-[50px] w-full items-center justify-between gap-2 px-3">
 								<p class="text-xs lg:text-lg">
-									{raja.nama_lenkgap} ({raja.tahun_awal_jabatan} - {raja.tahun_akhir_jabatan})
+									{raja.nama_raja} ({raja.periodeMenjabat})
 								</p>
 								<div
 									class="flex h-[24px] w-[24px] items-center justify-center rounded-full border bg-red-500"
@@ -614,24 +1208,24 @@
 								<div class="border-t-2 border-black bg-white p-4">
 									<div class="flex w-full flex-col gap-8 lg:flex-row">
 										<img
-											src={gambartemp}
+											src={raja.imageUrl}
 											class="h-[70%] w-[70%] self-center lg:h-[25%] lg:w-[25%]"
 											alt=""
 										/>
 										<div class="w-full flex-col">
 											<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
 												<p class="text-md px-2 py-2">
-													Nama Lengkap Raja : <span class="font-bold">{raja.nama_lenkgap}</span>
+													Nama Lengkap Raja : <span class="font-bold">{raja.nama_raja}</span>
 												</p>
 											</div>
 											<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
 												<p class="text-md px-2 py-2">
-													Tanggal Lahir : <span class="font-bold">{raja.tanggal}</span>
+													Tanggal Lahir : <span class="font-bold">{raja.tanggal_lahir}</span>
 												</p>
 											</div>
 											<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
 												<p class="text-md px-2 py-2">
-													Kota Kelahiran : <span class="font-bold">{raja.kota_kelahiran}</span>
+													Kota Kelahiran : <span class="font-bold">{raja.tempat_lahir}</span>
 												</p>
 											</div>
 											<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
@@ -657,12 +1251,13 @@
 											<div class="mt-5 flex justify-end gap-4">
 												<button
 													class="flex items-center gap-2 rounded-lg bg-red-500 px-5 py-2 text-white"
-													onclick={() => (value = true)}
+													onclick={() => openDeleteConfirmation(raja.id_raja)}
 												>
 													<span class="tabler--trash"></span> Hapus Data
 												</button>
 												<button
 													class="flex items-center gap-2 rounded-lg bg-yellow-500 px-5 py-2 text-white"
+													onclick={() => openEditConfirmation(raja)}
 												>
 													<span class="solar--pen-outline"></span> Edit Data
 												</button>
@@ -688,15 +1283,6 @@
 	</form>
 </div>
 
-{#if value}
-	<DeleteModal
-		bind:value
-		choose="delete"
-		text="Apakah Anda Ingin Menghapus Biodata Raja?"
-		successText="Biodata Raja Berhasil Dihapus"
-	></DeleteModal>
-{/if}
-
 {#if showModal}
 	<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
 		<div class="max-h-[90vh] w-[70%] overflow-y-auto rounded-lg bg-white p-5 shadow-lg">
@@ -706,15 +1292,48 @@
 				enctype="multipart/form-data"
 				use:enhance={() => {
 					return async ({ result }) => {
-						console.log(result);
+						console.log('Form submission result:', result);
+
 						if (result.type === 'success') {
+							// Reset semua field ke kosong
+							namaraja = '';
+							gelarraja = '';
+							tanggallahir = '';
+							tanggalmeninggal = '';
+							kotalahir = '';
+							agama = '';
+							wangsa = '';
+							namaayah = '';
+							namaibu = '';
+							tanggalawal = '';
+							tanggalakhir = '';
+							isChecked = false;
+
+							// Reset file uploads dengan pembersihan yang lebih menyeluruh
+							if (namarajaUrl && namarajaUrl.startsWith('blob:')) {
+								URL.revokeObjectURL(namarajaUrl);
+							}
+							namarajaUrl = null;
+							namafotoraja = '';
+
+							// Reset input file element
+							const fileInput = document.getElementById('fileRaja') as HTMLInputElement;
+							if (fileInput) fileInput.value = '';
+
+							// Invalidate data untuk memastikan data terbaru dimuat
+							invalidateAll();
+
+							// Set success state dan timer
 							success = true;
 							clearTimeout(timer);
 							timer = setTimeout(() => {
 								success = false;
 								showModal = false;
+								// Invalidate data lagi setelah modal ditutup
+								invalidateAll();
 							}, 3000);
 						} else if (result.type === 'failure') {
+							console.error('Form submission failed:', result?.data?.errors);
 							error = result?.data?.errors;
 						}
 					};
@@ -947,6 +1566,7 @@
 								name="tanggalakhir"
 								bind:value={tanggalakhir}
 								placeholder="John Doe"
+								disabled={isChecked}
 							/>
 							{#if error}
 								{#each error.tanggalakhir as a}
@@ -963,6 +1583,304 @@
 							value="masih"
 							name="inputcheckbox"
 							bind:checked={isChecked}
+							onchange={() => {
+								if (isChecked) {
+									tanggalakhir = ''; // Reset tanggal akhir jika checkbox dicentang
+								}
+							}}
+						/>
+						<label class="ml-2" for="textsamping">Masih Berkuasa Sampai Sekarang?</label>
+					</div>
+
+					<button
+						class="bg-customGold w-fit self-end rounded-lg px-3 py-2 text-white"
+						type="submit"
+						formaction="?/tambah"
+					>
+						Tambah Data
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+{/if}
+
+{#if showModal2}
+	<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+		<div class="max-h-[90vh] w-[70%] overflow-y-auto rounded-lg bg-white p-5 shadow-lg">
+			<form
+				method="post"
+				action="?/editHistory"
+				enctype="multipart/form-data"
+				use:enhance={() => {
+					return async ({ result }) => {
+						console.log('Form submission result:', result);
+						if (result.type === 'success') {
+							// Set success state dan timer
+							success = true;
+							clearTimeout(timer);
+							timer = setTimeout(() => {
+								success = false;
+								showModal = false;
+								// Invalidate data lagi setelah modal ditutup
+								invalidateAll();
+							}, 3000);
+						} else if (result.type === 'failure') {
+							console.error('Form submission failed:', result?.data?.errors);
+							error = result?.data?.errors;
+						}
+					};
+				}}
+			>
+				<div class="flex justify-between">
+					<h2 class="font-bold lg:text-xl">Biodata Kerajaan</h2>
+					<!-- svelte-ignore a11y_consider_explicit_label -->
+					<button onclick={closeModal}>
+						<span class="carbon--close-outline items-center"></span>
+					</button>
+				</div>
+
+				<div class="h-1 bg-gray-300"></div>
+
+				<input hidden name="id" bind:value={id} />
+
+				<div class="flex flex-col items-center justify-center">
+					<p class="text-nowrap">Foto Raja</p>
+					<div
+						class="upload-container relative mt-4 h-[200px] w-[270px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-black"
+					>
+						<input
+							type="file"
+							id="fileRaja"
+							class="hidden"
+							name="inputfotoraja"
+							accept="image/*"
+							onchange={(e) => handleFileChange(e, 'raja')}
+						/>
+						<label
+							for="fileRaja"
+							class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
+						>
+							{#if namarajaUrl}
+								<img
+									src={namarajaUrl}
+									alt="Bendera"
+									class="h-full w-full rounded-lg object-cover"
+								/>
+								<button class="remove-btn" onclick={() => ganti('raja')}>✎</button>
+							{:else}
+								<span class="pajamas--media"></span>
+								<p class="mt-3 text-center">Upload Foto Raja</p>
+							{/if}
+						</label>
+					</div>
+				</div>
+
+				<div class="flex flex-col gap-1">
+					<label class="text-md mt-2 self-start text-left" for="nama">Nama Lengkap Raja</label>
+					<input
+						class="input-field rounded-lg border p-2 pr-8"
+						type="text"
+						id="nama"
+						bind:value={namaraja}
+						name="namaraja"
+						placeholder="John Doe"
+					/>
+					{#if error}
+						{#each error.namaraja as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
+
+					<label class="text-md mt-2 self-start text-left" for="nama">Gelar Raja</label>
+					<input
+						class="input-field rounded-lg border p-2 pr-8"
+						type="text"
+						id="nama"
+						name="gelarraja"
+						bind:value={gelarraja}
+						placeholder="John Doe"
+					/>
+					{#if error}
+						{#each error.gelarraja as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
+
+					<div class="flex flex-grow gap-4">
+						<div class="flex w-2/4 flex-col">
+							<label class="text-md mt-2 w-full self-start text-left" for="tanggalLahir">
+								Tanggal Lahir:
+							</label>
+							<input
+								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
+								type="date"
+								id="tanggalLahir"
+								name="tanggallahir"
+								bind:value={tanggallahir}
+							/>
+							{#if error}
+								{#each error.tanggallahir as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
+
+						<div class="flex w-2/4 flex-col">
+							<label class="text-md mt-2 w-full self-start text-left" for="tanggalLahir">
+								Tanggal Meninggal:
+							</label>
+							<input
+								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
+								type="date"
+								id="tanggalmeninggal"
+								name="tanggalmeninggal"
+								bind:value={tanggalmeninggal}
+							/>
+							{#if error}
+								{#each error.tanggalmeninggal as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
+					</div>
+
+					<div class="flex w-full flex-col">
+						<label class="text-md mt-2 self-start text-left" for="kotaLahir">
+							Kota Kelahiran:
+						</label>
+						<input
+							class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
+							type="text"
+							id="kotaLahir"
+							name="kotalahir"
+							bind:value={kotalahir}
+							placeholder="John Doe"
+						/>
+						{#if error}
+							{#each error.kotalahir as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+
+					<div class="flex flex-grow gap-4">
+						<div class="w-full flex-col">
+							<label class="text-md mt-2 w-full self-start text-left" for="nama"> Agama : </label>
+							<input
+								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
+								type="text"
+								id="nama"
+								name="agama"
+								bind:value={agama}
+							/>
+							{#if error}
+								{#each error.agama as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
+
+						<div class="w-full flex-col">
+							<label class="text-md mt-2 self-start text-left" for="nama"> Wangsa : </label>
+							<input
+								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
+								type="text"
+								id="nama"
+								name="wangsa"
+								bind:value={wangsa}
+								placeholder="John Doe"
+							/>
+							{#if error}
+								{#each error.wangsa as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
+					</div>
+
+					<label class="text-md mt-2 self-start text-left" for="nama">Nama Ayah</label>
+					<input
+						class="input-field mt-2 rounded-lg border p-2 pr-8"
+						type="text"
+						id="nama"
+						name="namaayah"
+						bind:value={namaayah}
+						placeholder="John Doe"
+					/>
+					{#if error}
+						{#each error.namaayah as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
+
+					<label class="text-md mt-2 self-start text-left" for="nama">Nama Ibu</label>
+					<input
+						class="input-field mt-2 rounded-lg border p-2 pr-8"
+						type="text"
+						id="nama"
+						name="namaibu"
+						bind:value={namaibu}
+						placeholder="John Doe"
+					/>
+					{#if error}
+						{#each error.namaibu as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
+
+					<div class="flex flex-grow gap-4">
+						<div class="mt-2 w-full flex-col">
+							<label class="text-md mt-4 w-full self-start text-left" for="nama">
+								Tanggal Awal Berkuasa :
+							</label>
+							<input
+								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
+								type="date"
+								id="nama"
+								name="tanggalawal"
+								bind:value={tanggalawal}
+							/>
+							{#if error}
+								{#each error.tanggalawal as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
+
+						<div class="mt-2 w-full flex-col">
+							<label class="text-md mt-4 self-start text-left" for="nama">
+								Tanggal Akhir Berkuasa :
+							</label>
+							<input
+								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
+								type="date"
+								id="nama"
+								name="tanggalakhir"
+								bind:value={tanggalakhir}
+								placeholder="John Doe"
+								disabled={isChecked}
+							/>
+							{#if error}
+								{#each error.tanggalakhir as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
+					</div>
+
+					<div class="mt-2 flex items-center">
+						<input
+							type="checkbox"
+							id="textsamping"
+							value="masih"
+							name="inputcheckbox"
+							bind:checked={isChecked}
+							onchange={() => {
+								if (isChecked) {
+									tanggalakhir = ''; // Reset tanggal akhir jika checkbox dicentang
+								}
+							}}
 						/>
 						<label class="ml-2" for="textsamping">Masih Berkuasa Sampai Sekarang?</label>
 					</div>
@@ -986,6 +1904,49 @@
 
 {#if success}
 	<SModal text="History Raja berhasil ditambah!"></SModal>
+{/if}
+
+{#if success2}
+	<SModal text="History Raja berhasil dihapus"></SModal>
+{/if}
+
+{#if showDeleteConfirmation}
+	<form
+		method="post"
+		action="?/hapusHistoryRaja"
+		use:enhance={() => {
+			return async ({ result }) => {
+				console.log('Delete history raja result:', result);
+
+				if (result.type === 'success') {
+					// Tutup modal konfirmasi
+					showDeleteConfirmation = false;
+
+					// Tampilkan pesan sukses
+					success2 = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						success2 = false;
+						// Refresh data
+						invalidateAll();
+					}, 3000);
+				} else if (result.type === 'failure') {
+					console.error('Failed to delete history raja:', result?.data?.errors);
+					error = result?.data?.errors;
+				}
+			};
+		}}
+	>
+		<input type="hidden" name="id_history_raja" value={historyRajaIdToDelete} />
+		<input type="hidden" name="id_kerajaan" value={id} />
+
+		<DeleteModal
+			bind:value={showDeleteConfirmation}
+			choose="delete"
+			text="Apakah Anda yakin ingin menghapus data history raja ini?"
+			successText="Data history raja berhasil dihapus"
+		></DeleteModal>
+	</form>
 {/if}
 
 <style>

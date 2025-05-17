@@ -21,7 +21,7 @@
 
 	let { data } = $props();
 	const dataArsip = data.dataArsip || [];
-	console.log("u : ", dataArsip);
+	console.log('u : ', dataArsip);
 
 	function filterData(data: any[]) {
 		return data.filter((item) =>
@@ -66,7 +66,6 @@
 	let selectedItem = $state<any>(null);
 
 	let videoName: string | null = $state('Silahkan Upload!');
-
 
 	function handleFileChange(event: Event, type: string) {
 		const target = event.target as HTMLInputElement;
@@ -728,53 +727,89 @@
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Situs</div>
 											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												<span class="text-customOrange2 text-xl">✓</span>
+												{#if selectedItem.websiteFeatures.fitur_situs === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.websiteFeatures.fitur_situs === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 
 										<!-- Fitur Acara -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Acara</div>
 											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												<span class="text-customOrange2 text-xl">✓</span>
+												{#if selectedItem.websiteFeatures.fitur_acara === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.websiteFeatures.fitur_acara === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 
 										<!-- Fitur Aset -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Aset</div>
-											<div class="col-span-2 border-r border-gray-300"></div>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.websiteFeatures.fitur_aset === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+												{#if selectedItem.websiteFeatures.fitur_aset === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
 										</div>
 
 										<!-- Fitur Komunitas -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Komunitas</div>
-											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.websiteFeatures.fitur_komunitas === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2 border-l border-gray-300"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.websiteFeatures.fitur_komunitas === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 
 										<!-- Fitur Organisasi -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Organisasi</div>
 											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												<span class="text-customOrange2 text-xl">✓</span>
+												{#if selectedItem.websiteFeatures.fitur_organisasi === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
-											<div class="col-span-2"></div>
+											<div class="col-span-2 flex justify-center">
+												{#if selectedItem.websiteFeatures.fitur_organisasi === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 										</div>
 
 										<!-- Fitur Tugas -->
 										<div class="grid grid-cols-12 py-2">
 											<div class="col-span-8">Fitur Tugas</div>
-											<div class="col-span-2 border-r border-gray-300"></div>
+											<div class="col-span-2 flex justify-center border-r border-gray-300">
+												{#if selectedItem.websiteFeatures.fitur_tugas === 1}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
+											</div>
 											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
+												{#if selectedItem.websiteFeatures.fitur_tugas === 0}
+													<span class="text-customOrange2 text-xl">✓</span>
+												{/if}
 											</div>
 										</div>
 									</div>

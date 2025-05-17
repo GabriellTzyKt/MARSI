@@ -1,6 +1,8 @@
 <script lang="ts">
-	import jd from '../../asset/profile/jdpp.jpg';
-	let { href } = $props();
+	import temp from '../../asset/gambarTemp.jpg';
+
+	let { href, data } = $props();
+	console.log('Data : ', data);
 </script>
 
 <a {href}>
@@ -8,11 +10,15 @@
 		class="flex w-full items-center justify-between gap-2 rounded-md border border-[#76768033] bg-white p-4 shadow-xl"
 	>
 		<div class="flex items-center justify-center">
-			<img src={jd} class="h-auto w-28 rounded-full" alt="" />
+			{#if data.imageUrl != ''}
+				<img src={data.imageUrl} class="h-[60px] w-[60px] rounded-full" alt="" />
+			{:else}
+				<img src={temp} class="h-[60px] w-[60px] rounded-full" alt="" />
+			{/if}
 		</div>
 		<div class="flex grow flex-col justify-start gap-2">
 			<div class="flex">
-				<p class="text-lg">Keraton Kasunanan Surakarta</p>
+				<p class="text-lg">{data.nama_kerajaan}</p>
 			</div>
 			<div class="flex items-center justify-start gap-1">
 				<div>
@@ -24,7 +30,7 @@
 					>
 				</div>
 				<div class="flex">
-					<p>Surakarta, Jawa Tengah</p>
+					<p>{data.place_name}</p>
 				</div>
 			</div>
 		</div>
