@@ -7,10 +7,12 @@
 	import { dummyAnggota } from '$lib/dummy';
 	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import TambahAnggota from '$lib/popup/TambahAnggota.svelte';
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
+	import { use } from 'react';
 	import { tick } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { string } from 'zod';
@@ -33,9 +35,35 @@
 	let clickedId = $state('');
 	let editId = $state(false);
 	let dataEdit = $state();
+	let modaldelete = $state(false);
+	let deleteId = $state();
 	let loading = $state(false);
 	let success = $state(false);
+	async function refreshData() {
+		try {
+			// Force a complete data reload
+			await invalidateAll();
 
+			// Add a small delay to ensure the invalidation has completed
+			await new Promise((resolve) => setTimeout(resolve, 100));
+
+			// Force browser to refetch from server, not cache
+			const response = await fetch(window.location.pathname, {
+				method: 'GET',
+				headers: {
+					'Cache-Control': 'no-cache',
+					Pragma: 'no-cache'
+				}
+			});
+
+			if (response.ok) {
+				// Reload the page to ensure fresh data
+				window.location.href = window.location.pathname + '?t=' + Date.now();
+			}
+		} catch (error) {
+			console.error('Error refreshing data:', error);
+		}
+	}
 	function filterD(data: any[]) {
 		// console.log(data);
 		return data.filter((item) => {
@@ -74,7 +102,6 @@
 	let timer: any;
 	function handleEdit(userId: string) {
 		console.log('USER EDIT : ', userId);
-		goto(`/abdi/dashboard/organisasi/beranda/${idAktif}/detail/daftaranggota?edit=${userId}`);
 		const userData = dataanggota.find((item) => item.id_user.toString() == userId);
 		// const datauser = data.allUsers.find((item) => item.id_user.toString() == userId);
 
@@ -93,17 +120,18 @@
 	}
 
 	async function handleDelete(userId: string) {
-		const confirmed = confirm('Yakin ingin menghapus anggota ini?');
-		if (!confirmed) return;
+		console.log('Anda Menghapus user : ', userId);
+		deleteId = userId;
+		modaldelete = true;
 
-		try {
-			await fetch(`/abdi/api/anggota/${userId}`, {
-				method: 'DELETE'
-			});
-			invalidateAll(); // Refresh data
-		} catch (err) {
-			console.error('Gagal menghapus:', err);
-		}
+		// try {
+		// 	await fetch(`/abdi/api/anggota/${userId}`, {
+		// 		method: 'DELETE'
+		// 	});
+		// 	invalidateAll(); // Refresh data
+		// } catch (err) {
+		// 	console.error('Gagal menghapus:', err);
+		// }
 	}
 
 	// let toggle = () => {
@@ -209,8 +237,7 @@
 							},
 							{
 								label: 'Hapus',
-								action: () => handleDelete(data.id_user),
-								confirmText: `Yakin ingin menghapus ${data.nama_anggota}?`
+								action: () => handleDelete(data.id_user)
 							}
 						]}
 						id={`id-${index}`}
@@ -227,18 +254,20 @@
 		action="?/tambah"
 		method="post"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result }) => {
+				loading = false;
 				console.log(result);
 				if (result.type === 'success') {
-					valo = true;
-					success = true;
-					clearTimeout(timer);
-					timer = setTimeout(() => {
-						success = false;
-						open = false;
-						valo = false;
-						invalidateAll();
-					}, 3000);
+					try {
+						success = true;
+						clearTimeout(timer);
+						await refreshData();
+						timer = setTimeout(() => {
+							success = false;
+							open = false;
+						}, 3000);
+					} catch (error) {}
 				} else if (result.type === 'failure') {
 					error = result.data?.errors || '';
 				}
@@ -265,17 +294,13 @@
 						// First close the modal
 						success = true;
 
-						// Force a complete data reload
-						await invalidateAll();
-						await tick();
-						editId = true;
-						success = true;
+						// Force a complete data reload with the new approach
+						await refreshData();
+
 						clearTimeout(timer);
 						timer = setTimeout(() => {
 							success = false;
 							editId = false;
-							// Force another refresh to ensure data is updated
-							window.location.href = window.location.pathname;
 						}, 3000);
 					} catch (error) {
 						console.error('Error refreshing data:', error);
@@ -297,6 +322,42 @@
 			></TambahAnggota>
 			<input type="text" hidden name="id_organisasi" value={idAktif} id="" />
 		</div>
+	</form>
+{/if}
+{#if modaldelete}
+	<form
+		action="?/hapus"
+		method="post"
+		use:enhance={() => {
+			loading = true;
+			return async ({ result }) => {
+				loading = false;
+				if (result.type === 'success') {
+					try {
+						success = true;
+						clearTimeout(timer);
+						await refreshData();
+						timer = setTimeout(() => {
+							success = false;
+							modaldelete = false;
+						}, 3000);
+					} catch (error) {
+						console.error('Error refreshing data:', error);
+					}
+				} else if (result.type === 'failure') {
+					error = result.data?.errors || '';
+				}
+			};
+		}}
+	>
+		<DeleteModal
+			bind:value={modaldelete}
+			text="Apakah yakin ingin menghapus anggota ini?"
+			successText="Anggota berhasil dihapus!"
+			choose="delete"
+		></DeleteModal>
+		<input type="text" hidden name="id_organisasi" value={idAktif} id="" />
+		<input type="text" hidden name="id_user" value={deleteId} id="" />
 	</form>
 {/if}
 {#if valo}

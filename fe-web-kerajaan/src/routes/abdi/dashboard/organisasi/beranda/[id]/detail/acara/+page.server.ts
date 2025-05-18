@@ -4,78 +4,64 @@ import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
 import { error } from "@sveltejs/kit";
 
-export const load: PageServerLoad = async ({fetch, params}) => {
+export const load: PageServerLoad = async ({fetch, params, depends}) => {
+    // Add a dependency that can be invalidated
+    depends('organisasi:acara');
+    
     try {
         // Get the current organization ID from params
         const currentOrgId = params.id;
         console.log("Current organization ID:", currentOrgId);
         
-        // Fetch all organizations
-        const organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi`);
+        // Fetch current organization details
+        const organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi/${currentOrgId}`, {
+            cache: 'no-store'
+        });
+        
         if (!organisasiResponse.ok) {
             throw error(organisasiResponse.status, `Failed to fetch organisasi: ${organisasiResponse.statusText}`);
         }
         
-        const organisasiList = await organisasiResponse.json();
-        console.log("All organizations:", organisasiList);
+        const currentOrganisasi = await organisasiResponse.json();
+        console.log("Current organization:", currentOrganisasi);
         
-        // Extract all organization IDs - no filtering, just get all IDs
-        const orgIds = organisasiList.map((org: any) => org.id_organisasi).filter(Boolean);
-        console.log("All organization IDs:", orgIds);
+        // Directly fetch events for the current organization using the correct API endpoint
+        const acaraResponse = await fetch(`${env.URL_KERAJAAN}/acara/organisasi/${currentOrgId}`, {
+            cache: 'no-store'
+        });
         
-        // Array to store all events from all organizations
-        let allEvents: any[] = [];
-        
-        // Fetch events for each organization ID
-        for (const orgId of orgIds) {
-            try {
-                const acaraResponse = await fetch(`${env.BASE_URL_8008}/acara/organisasi/${orgId}`);
-                if (acaraResponse.ok) {
-                    const acaraData = await acaraResponse.json();
-                    console.log(`Events for organization ${orgId}:`, acaraData);
-                    
-                    // Add organization info to each event
-                    const orgInfo = organisasiList.find((org: any) => org.id_organisasi === orgId);
-                    const eventsWithOrgInfo = acaraData.map((event: any) => ({
-                        ...event,
-                        organisasi_id: orgId,
-                        organisasi_nama: orgInfo?.nama_organisasi || 'Unknown Organization'
-                    }));
-                    
-                    // Add events to the array
-                    allEvents = [...allEvents, ...eventsWithOrgInfo];
-                }
-            } catch (acaraError) {
-                console.error(`Error fetching events for organization ${orgId}:`, acaraError);
-            }
+        if (!acaraResponse.ok) {
+            console.error(`Failed to fetch acara for organization ${currentOrgId}: ${acaraResponse.statusText}`);
+            throw error(acaraResponse.status, `Failed to fetch acara: ${acaraResponse.statusText}`);
         }
         
-        console.log("All events from all organizations:", allEvents);
+        const acaraData = await acaraResponse.json();
+        console.log(`Events for organization ${currentOrgId}:`, acaraData);
         
-        // Find the current organization
-        const currentOrganisasi = organisasiList.find(
-            (org: any) => org.id_organisasi === Number(currentOrgId) || org.id_organisasi === currentOrgId
-        );
-        
-        if (!currentOrganisasi) {
-            throw error(404, `Organization with ID ${currentOrgId} not found`);
-        }
-        
-        // Filter events for the current organization
-        const currentOrgEvents = allEvents.filter(
-            (event: any) => event.organisasi_id === Number(currentOrgId) || event.organisasi_id === currentOrgId
-        );
-        
-        console.log("Events for current organization:", currentOrgEvents);
+        // Add organization info to each acara without processing photos
+        const processedAcara = acaraData.map(acara => ({
+            ...acara,
+            organisasi_id: currentOrgId,
+            organisasi_nama: currentOrganisasi.nama_organisasi || 'Unknown Organization'
+        }));
 
+        // Fetch all organizations for reference (if needed)
+        const allOrganisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi`, {
+            cache: 'no-store'
+        });
+        
+        let organisasiList = [];
+        if (allOrganisasiResponse.ok) {
+            organisasiList = await allOrganisasiResponse.json();
+        }
+        
         return {
             organisasi: currentOrganisasi,
-            acaraList: currentOrgEvents,
-            allEvents: allEvents,
+            acaraList: processedAcara,
             organisasiList: organisasiList
         };
-    } catch (error) {
-        console.error("Error in load function:", error);
-        throw error;
+    } catch (err) {
+        console.error("Error in load function:", err);
+        throw err;
     }
 };

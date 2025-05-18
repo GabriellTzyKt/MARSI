@@ -33,26 +33,26 @@ export const load: PageServerLoad = async () => {
             if (item.foto_acara && item.foto_acara.trim() !== '') {
                 try {
                     const docIds = item.foto_acara.split(',').map(id => id.trim());
-                    for (const id of docIds) {
+                    const imageUrls = await Promise.all(docIds.map(async (id) => {
                         const docRes = await fetch(`${env.URL_KERAJAAN}/doc/${id}`);
                         if (docRes.ok) {
                             const docData = await docRes.json();
                             const filePath = docData.file_dokumentasi || docData;
                             if (typeof filePath === 'string') {
-                                formattedItem.imageUrls.push(
-                                    `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`
-                                );
+                                return `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`;
                             } else if (Array.isArray(filePath)) {
-                                filePath.forEach(path => {
+                                return filePath.map(path => {
                                     if (typeof path === 'string') {
-                                        formattedItem.imageUrls.push(
-                                            `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(path)}`
-                                        );
+                                        return `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(path)}`;
                                     }
+                                    return '';
                                 });
                             }
                         }
-                    }
+                        return '';
+                    }));
+                    formattedItem.imageUrls = imageUrls.flat();
+
                 } catch (error) {
                     console.error(`Error processing images for event ${item.id_acara}:`, error);
                 }

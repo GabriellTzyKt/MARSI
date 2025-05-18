@@ -4,9 +4,10 @@
 
 <div
 	class="rounded-full px-2 py-1 text-center"
-	class:bg-berlangsung={status === 'Berlangsung' || status === "Ditugaskan"}
-	class:bg-disetujui={status === 'Disetujui' || status === "Selesai"}
+	class:bg-berlangsung={status === 'Berlangsung' || status === 'Ditugaskan'}
+	class:bg-disetujui={status === 'Disetujui' || status === 'Selesai'}
 	class:bg-ditolak={status === 'Ditolak'}
+	class:bg-diajukan={status === 'Diajukan'}
 	class:bg-pending={status === 'Pending'}
 	class:bg-tugas-berlangsung={status === 'Ditugaskan'}
 	class:bg-tugas-selesai={status === 'Selesai'}
@@ -17,6 +18,9 @@
 <style>
 	.bg-berlangsung {
 		background-color: #9dd4fb;
+	}
+	.bg-diajukan {
+		background-color: #8cff08;
 	}
 	.bg-disetujui {
 		background-color: #87ec80;

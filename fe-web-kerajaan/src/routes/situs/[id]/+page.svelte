@@ -6,21 +6,8 @@
 	import Marquee from 'svelte-fast-marquee';
 
 	const { data } = $props();
+	const detil = data.detil_kelompok;
 	console.log('Data yang diterima:', data);
-	const kelompok = data.detil_kelompok;
-	const pendiri = kelompok.pendiri;
-	const tahun = kelompok.tahun_berdiri;
-	const pemilik = kelompok.pemilik;
-	const penanggung_jawab = kelompok.penanggungjawab;
-	const nama_tempat = kelompok.nama_tempat;
-	const jenis_situs = kelompok.jenis_situs;
-	const jam_buka = kelompok.jam_buka;
-	const lokasi = kelompok.lokasi;
-	const isi = kelompok.isi;
-	const gambarHeader = kelompok.gambarHeader;
-	const gambar2 = kelompok.gambar2;
-	const gambar3 = kelompok.gambar3;
-	const gambar4 = kelompok.gambar4;
 </script>
 
 <div class="relative">
@@ -39,30 +26,32 @@
 				</a>
 			</div>
 			<div class="relative flex w-full items-center justify-between pt-10 text-center">
-				<p class="invisible">{pemilik}</p>
-				<p class="text-xl font-semibold">{nama_tempat}</p>
+				<p class="invisible"></p>
+				<p class="text-xl font-semibold">{detil.nama_situs}</p>
 				<div class="mr-2 w-fit rounded-lg bg-red-300 px-2 py-2">
-					<p class="text-center">Milik : {pemilik}</p>
+					<p class="text-center">Milik : {detil.pemilik_situs}</p>
 				</div>
 			</div>
 			<div class="grid grid-cols-1 gap-8 px-10 py-10 md:grid-cols-2">
 				<div>
 					<img
-						src={gambarHeader}
+						src={data?.detil_kelompok?.imageUrls[0] || 'https://picsum.photos/200/300'}
 						class="mt-12 h-[50%] w-[500px] self-center rounded-lg object-cover"
 						alt="foto 1"
 					/>
 					<div class="mt-5">
 						<Marquee>
-							<div class="grid grid-cols-3 items-center">
-								<img src={gambar2} class="col-span-1 m-1 h-[150px] w-[200px] " alt="" />
-								<img src={gambar3} class="col-span-1 m-1 h-[150px] w-[200px] " alt="" />
-								<img src={gambar4} class="col-span-1 m-1 h-[150px] w-[200px] " alt="" />
+							<div class="flex items-center">
+								{#if data?.detil_kelompok?.imageUrls.length > 0}
+									{#each data.detil_kelompok.imageUrls as imageUrl (imageUrl)}
+										<img src={imageUrl} class="col-span-1 m-1 h-auto w-[200px]" alt="foto" />
+									{/each}
+								{/if}
 							</div>
 						</Marquee>
 					</div>
 					<!-- svelte-ignore a11y_invalid_attribute -->
-					<a href="#">
+					<a href="/situs/riwayat/{detil.id_situs}">
 						<button class="mt-10 w-fit rounded-lg border bg-blue-500 px-5 py-2 text-white">
 							Riwayat Acara
 						</button>
@@ -74,37 +63,44 @@
 						<span class="ion--person-sharp flex-shrink-0"></span>
 						<!-- </span> -->
 						<div class="flex flex-col">
-							<p class="text-md ml-4">Dibangun oleh : {pendiri}</p>
-							<p class="text-md ml-4 text-start">Tahun berdiri : {tahun}</p>
+							<p class="text-md ml-4">Dibangun oleh : {detil.nama_pendiri || '-'}</p>
+							<p class="text-md ml-4 text-start">Tahun berdiri : {detil.tahun_berdiri || '-'}</p>
 						</div>
 					</div>
 
 					<div class="mt-5 flex items-center">
 						<span class="mdi--clock flex-shrink-0"></span>
-						<p class="text-md ml-6">Waktu Mulai : {jam_buka}</p>
+						<p class="text-md ml-6">
+							Waktu Mulai : {detil.jam_buka || '-'} - {detil.jam_tutup || '-'}
+						</p>
 					</div>
 
 					<div class="mt-5 flex items-center">
 						<span class="clarity--key-line flex-shrink-0"></span>
-						<p class="text-md ml-6">{penanggung_jawab}</p>
+						<p class="text-md ml-6">{detil.juru_kunci || '-'}</p>
 					</div>
 
 					<div class="ml-1 mt-5 flex items-center">
-						{#if jenis_situs == 'tempatIstirahat'}
+						{#if detil.jenis_situs == 'tempatIstirahat'}
 							<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
 								<i class="material-symbols--bed-outline-rounded text-lg text-white"></i>
 							</span>
 							<p class="text-md ml-6">Tempat Istirahat</p>
-						{:else if jenis_situs == 'air'}
+						{:else if detil.jenis_situs == 'air'}
 							<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
 								<i class="mingcute--wave-fill text-lg text-white"></i>
 							</span>
 							<p class="text-md ml-6">Tempat Berwisata</p>
-						{:else if jenis_situs == 'tempatBersejarah'}
+						{:else if detil.jenis_situs == 'tempatBersejarah'}
 							<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
 								<i class="material-symbols--castle text-lg text-white"></i>
 							</span>
 							<p class="text-md ml-6">Tempat Bersejarah</p>
+						{:else}
+							<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
+								<i class="material-symbols--question-mark bg-white text-lg text-white"></i>
+							</span>
+							<p class="text-md ml-6">{detil.jenis_situs || '-'}</p>
 						{/if}
 					</div>
 
@@ -112,10 +108,10 @@
 						<span class="flex h-10 w-16 items-center justify-center rounded-full bg-red-400 p-2">
 							<span class="bx--map flex-shrink-0"></span>
 						</span>
-						<p class="text-md ml-4">Lokasi : {lokasi}</p>
+						<p class="text-md ml-4">Lokasi : {detil.alamat || '-'}</p>
 					</div>
 
-					{#if jenis_situs === 'air'}
+					<!-- {#if jenis_situs === 'air'}
 						<div class="mt-5 flex gap-4">
 							<span
 								class="mt-5 flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2"
@@ -128,10 +124,10 @@
 								<i class="bx--swim text-lg text-white"></i>
 							</span>
 						</div>
-					{/if}
+					{/if} -->
 
 					<div class="mt-5 flex items-center">
-						<p class="text-md text-start">{isi}</p>
+						<p class="text-md text-justify">{detil.deskripsi_situs || '-'}</p>
 					</div>
 				</div>
 			</div>

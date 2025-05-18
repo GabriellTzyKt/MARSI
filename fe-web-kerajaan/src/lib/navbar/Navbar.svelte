@@ -19,7 +19,7 @@
 		<nav class="hidden space-x-20 text-white md:flex">
 			<a href="/beranda" class:underline={page.route.id === '/beranda'}>Beranda</a>
 			<a href="/situs" class:underline={page.route.id?.startsWith('/situs')}>Situs</a>
-			<a href="/aset" class:underline={page.route.id === '/aset'}>Aset</a>
+			<a href="/aset" class:underline={page.route.id?.startsWith('/aset')}>Aset</a>
 			<a href="/acara" class:underline={page.route.id?.startsWith('/acara')}>Acara</a>
 			<a href="/kelompok" class:underline={page.route.id?.startsWith('/kelompok')}>Kelompok</a>
 			<a href="/sabdi" class:underline={page.route.id === '/sabdi'}>Abdi</a>

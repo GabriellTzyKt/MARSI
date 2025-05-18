@@ -1,56 +1,81 @@
-import { error } from "@sveltejs/kit";
+import { fail, type Actions } from "@sveltejs/kit";
+import { z } from "zod";
 import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
+import { error } from "@sveltejs/kit";
 
-export const load: PageServerLoad = async ({ }) => {
+export const load: PageServerLoad = async ({fetch, params, depends}) => {
+    // Add a dependency that can be invalidated
+    depends('komunitas:acara');
+    
     try {
-        const komunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas`);
+        // Get the current komunitas ID from params
+        const currentKomId = params.id;
+        console.log("Current komunitas ID:", currentKomId);
+        
+        // Fetch current komunitas details
+        const komunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas/${currentKomId}`, {
+            cache: 'no-store'
+        });
+        
         if (!komunitasResponse.ok) {
             throw error(komunitasResponse.status, `Failed to fetch komunitas: ${komunitasResponse.statusText}`);
         }
         
-        const komunitasList = await komunitasResponse.json();
-        console.log("komunitas : ", komunitasList);
-
-        const filteredList = komunitasList.filter((doc: any) => {
-            return doc.deleted_at === '0001-01-01T00:00:00Z' && doc.deleted_at !== null;
+        const currentKomunitas = await komunitasResponse.json();
+        console.log("Current komunitas:", currentKomunitas);
+        
+        // Directly fetch events for the current komunitas using the correct API endpoint
+        const acaraResponse = await fetch(`${env.URL_KERAJAAN}/acara/komunitas/${currentKomId}`, {
+            cache: 'no-store'
         });
         
-        // Array untuk menyimpan semua data acara dari semua komunitas
-        let allAcara : any= [];
-        
-        // Iterasi melalui setiap komunitas untuk mengambil acaranya
-        for (const komunitas of filteredList) {
-            try {
-                const acaraResponse = await fetch(`${env.URL_KERAJAAN}/acara/komunitas/${komunitas.id_komunitas}`);
-                if (acaraResponse.ok) {
-                    const acaraList = await acaraResponse.json();
-                    console.log(`Acara komunitas ${komunitas.id_komunitas}:`, acaraList);
-                    
-                    // Tambahkan informasi komunitas ke setiap acara
-                    const acaraWithKomunitas = acaraList.map((acara : any) => ({
-                        ...acara,
-                        nama_komunitas: komunitas.nama_komunitas,
-                        alamat : komunitas.alamat,
-                        id_komunitas: komunitas.id_komunitas
-                    }));
-                    
-                    // Gabungkan dengan array utama
-                    allAcara = [...allAcara, ...acaraWithKomunitas];
-                }
-            } catch (acaraError) {
-                console.error(`Error fetching acara for komunitas ${komunitas.id_komunitas}:`, acaraError);
-                // Lanjutkan ke komunitas berikutnya meskipun ada error
-            }
+        if (!acaraResponse.ok) {
+            console.error(`Failed to fetch acara for komunitas ${currentKomId}: ${acaraResponse.statusText}`);
+            throw error(acaraResponse.status, `Failed to fetch acara: ${acaraResponse.statusText}`);
         }
-        console.log("all acara : " , allAcara)
+        
+        const acaraNestedData = await acaraResponse.json();
+        console.log(`Raw events for komunitas ${currentKomId}:`, acaraNestedData);
+        
+        // Extract and process the acara data from the nested structure
+        const processedAcara = acaraNestedData.map(item => {
+            // Check if the item has an Acara property (nested structure)
+            if (item.Acara) {
+                return {
+                    ...item.Acara,
+                    // id_komunitas: item.id_komunitas,
+                    // komunitas_nama: currentKomunitas.nama_komunitas || 'Unknown Komunitas'
+                };
+            } else {
+                // Fallback for items that might not have the nested structure
+                return {
+                    ...item,
+                    // id_komunitas: currentKomId,
+                    // komunitas_nama: currentKomunitas.nama_komunitas || 'Unknown Komunitas'
+                };
+            }
+        });
+        
+        console.log("Processed acara data:", processedAcara);
+
+        // Fetch all komunitas for reference (if needed)
+        const allKomunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas`, {
+            cache: 'no-store'
+        });
+        
+        let komunitasList = [];
+        if (allKomunitasResponse.ok) {
+            komunitasList = await allKomunitasResponse.json();
+        }
 
         return {
-            komunitasList,
-            allAcara
+            komunitas: currentKomunitas,
+            allAcara: processedAcara,
+            komunitasList: komunitasList
         };
-    } catch (error) {
-        console.error("Error in load function:", error);
-        throw error;
+    } catch (err) {
+        console.error("Error in load function:", err);
+        throw err;
     }
 };
