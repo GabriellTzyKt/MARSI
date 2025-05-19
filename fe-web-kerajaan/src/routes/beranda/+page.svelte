@@ -110,7 +110,16 @@
 	<div class="ml-5 mr-5">
 		<div class="mx-auto grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 			{#each situs as s}
-				<Card3 gambar={s.imageUrls[0] || ''} header={s.nama_situs}></Card3>
+				<div class="h-auto">
+					<Card2
+						situs={s.imageUrls[0] || ''}
+						header={s.nama_situs}
+						isi={s.deskripsi_situs || 'No Description'}
+						icon=""
+						href={`/situs/${s.id_situs}`}
+						id={s.id_situs}
+					></Card2>
+				</div>
 			{/each}
 
 			<!-- <Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
@@ -211,14 +220,16 @@
 	<div class="ml-5 mr-5">
 		<div class="mx-auto grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 			{#each acara as a}
-				<Card2
-					situs={a.imageUrls[0] || ''}
-					header={a.nama_acara}
-					isi={a.deskripsi_acara || 'No Description'}
-					icon=""
-					href={`/situs/${a.id_acara}`}
-					id={a.id_acara}
-				></Card2>
+				<div class="h-auto">
+					<Card2
+						situs={a.imageUrls[0] || ''}
+						header={a.nama_acara}
+						isi={a.deskripsi_acara || 'No Description'}
+						icon=""
+						href={`/acara/${a.id_acara}`}
+						id={a.id_acara}
+					></Card2>
+				</div>
 			{/each}
 			<!-- <Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
 
@@ -323,9 +334,21 @@
 	</div>
 	<div class="ml-5 mr-5">
 		<div class="mx-auto grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-			{#each organisasi as o}
-				<Card3 gambar={o.imageUrls || ''} header={o.nama_organisasi}></Card3>
-			{/each}
+			{#if organisasi}
+				{#each organisasi as o}
+					<div class="h-auto">
+						<Card2
+							situs={o.imageUrls[0] || ''}
+							header={o.nama_organisasi}
+							isi={o.deskripsi_organisasi || 'No Description'}
+							icon=""
+							href={`/kelompok/organisasi/${o.id_organisasi}`}
+							id={o.id_organisasi}
+						></Card2>
+					</div>
+				{/each}
+			{/if}
+
 			<!-- <Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
 
 			<Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
@@ -354,7 +377,16 @@
 	<div class="ml-5 mr-5">
 		<div class="mx-auto grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 			{#each komunitas as k}
-				<Card3 gambar={k.imageUrls || ''} header={k.nama_komunitas}></Card3>
+				<div class="h-auto">
+					<Card2
+						situs={k.imageUrls[0] || ''}
+						header={k.nama_komunitas}
+						isi={k.deskripsi_komunitas || 'No Description'}
+						icon=""
+						href={`/kelompok/komunitas/${k.id_komunitas}`}
+						id={k.id_komunitas}
+					></Card2>
+				</div>
 			{/each}
 			<!-- <Card3 gambar={situs1} header="Putri Narpo Wandowo"></Card3>
 
