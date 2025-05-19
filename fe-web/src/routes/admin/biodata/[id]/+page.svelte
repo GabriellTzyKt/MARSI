@@ -17,6 +17,7 @@
 	let dataHistoryAmbil: any = $state(datahistory);
 	console.log('Data history : ', dataHistoryAmbil);
 
+	let dokumentasiId = $state('');
 	let success = $state(false);
 	let success2 = $state(false);
 	let id = $state(page.params.id);
@@ -62,6 +63,8 @@
 	let benderaUrl: string | null = $state(null);
 	let lambangUrl: string | null = $state(null);
 	let namarajaUrl: string | null = $state(null);
+	let namarajaUrl2: string | null = $state(null);
+
 	let videoName = $state('Silahkan Upload!');
 	let videoExists = $state(false);
 	let existingVideoId = $state(''); // Store the existing video ID
@@ -95,6 +98,7 @@
 
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.key === 'Enter') {
+			event.preventDefault(); // Mencegah form submit
 			fetchLocations();
 		}
 	}
@@ -141,6 +145,7 @@
 
 	function closeModal() {
 		showModal = false;
+		showModal2 = false;
 	}
 
 	// Fungsi untuk menangani perubahan file dengan preview langsung
@@ -163,6 +168,7 @@
 			} else if (type === 'raja') {
 				namafotoraja = file.name;
 				namarajaUrl = imageUrl;
+				namarajaUrl2 = imageUrl;
 			}
 		}
 	}
@@ -223,6 +229,7 @@
 				URL.revokeObjectURL(namarajaUrl);
 			}
 			namarajaUrl = null;
+			namarajaUrl2 = null;
 			namafotoraja = '';
 		} else if (type === 'video') {
 			videoName = 'No Video Selected';
@@ -348,6 +355,7 @@
 	let showDeleteConfirmation = $state(false);
 	let historyRajaIdToDelete = $state('');
 	let historyRajaIdToEdit = $state('');
+	let selectedRaja: any = $state(null);
 
 	// Fungsi untuk membuka modal konfirmasi hapus
 	function openDeleteConfirmation(id_history_raja: string) {
@@ -355,8 +363,35 @@
 		showDeleteConfirmation = true;
 	}
 
-	function openEditConfirmation(id_history_raja: string) {
-		historyRajaIdToEdit = id_history_raja;
+	function openEditConfirmation(raja: any) {
+		historyRajaIdToEdit = raja.id_history_raja;
+		selectedRaja = raja;
+
+		// Isi form dengan data raja yang dipilih
+		namaraja = raja.nama_raja || '';
+		gelarraja = raja.gelar_raja || '';
+		tanggallahir = raja.tanggal_lahir ? raja.tanggal_lahir.split('T')[0] : '';
+		tanggalmeninggal = raja.tanggal_meninggal ? raja.tanggal_meninggal.split('T')[0] : '';
+		kotalahir = raja.tempat_lahir || '';
+		agama = raja.agama || '';
+		dokumentasiId = raja.dokumentasi || '';
+		wangsa = raja.wangsa || '';
+		namaayah = raja.nama_ayah || '';
+		namaibu = raja.nama_ibu || '';
+		tanggalawal = raja.mulai_menjabat ? raja.mulai_menjabat.split('T')[0] : '';
+		tanggalakhir =
+			raja.selesai_menjabat && raja.selesai_menjabat !== '0001-01-01T00:00:00Z'
+				? raja.selesai_menjabat.split('T')[0]
+				: '';
+
+		isChecked = raja.selesai_menjabat === '0001-01-01T00:00:00Z' || !raja.selesai_menjabat;
+
+		if (raja.imageUrl) {
+			namarajaUrl2 = raja.imageUrl;
+		} else {
+			namarajaUrl2 = null;
+		}
+
 		showModal2 = true;
 	}
 
@@ -993,6 +1028,7 @@
 					<p class="text-md mb-10 opacity-70">
 						* Foto di urutan pertama akan menjadi foto besar awalan
 					</p>
+					<input type="hidden" name="existing_foto_umum_ids" value={dataubah.foto_umum || ''} />
 				</div>
 
 				<!-- Bendera -->
@@ -1021,6 +1057,11 @@
 								<p class="mt-3 text-center">Upload Bendera</p>
 							{/if}
 						</label>
+						<input
+							type="hidden"
+							name="existing_bendera_id"
+							value={dataubah.bendera_kerajaan || ''}
+						/>
 					</div>
 				</div>
 
@@ -1050,6 +1091,11 @@
 								<p class="mt-3 text-center">Upload Lambang</p>
 							{/if}
 						</label>
+						<input
+							type="hidden"
+							name="existing_lambang_id"
+							value={dataubah.lambang_kerajaan || ''}
+						/>
 					</div>
 				</div>
 			</div>
@@ -1389,7 +1435,6 @@
 						class="input-field rounded-lg border p-2 pr-8"
 						type="text"
 						id="nama"
-						bind:value={namaraja}
 						name="namaraja"
 						placeholder="John Doe"
 					/>
@@ -1405,7 +1450,6 @@
 						type="text"
 						id="nama"
 						name="gelarraja"
-						bind:value={gelarraja}
 						placeholder="John Doe"
 					/>
 					{#if error}
@@ -1424,7 +1468,6 @@
 								type="date"
 								id="tanggalLahir"
 								name="tanggallahir"
-								bind:value={tanggallahir}
 							/>
 							{#if error}
 								{#each error.tanggallahir as a}
@@ -1442,7 +1485,6 @@
 								type="date"
 								id="tanggalmeninggal"
 								name="tanggalmeninggal"
-								bind:value={tanggalmeninggal}
 							/>
 							{#if error}
 								{#each error.tanggalmeninggal as a}
@@ -1461,7 +1503,6 @@
 							type="text"
 							id="kotaLahir"
 							name="kotalahir"
-							bind:value={kotalahir}
 							placeholder="John Doe"
 						/>
 						{#if error}
@@ -1479,7 +1520,6 @@
 								type="text"
 								id="nama"
 								name="agama"
-								bind:value={agama}
 							/>
 							{#if error}
 								{#each error.agama as a}
@@ -1495,7 +1535,6 @@
 								type="text"
 								id="nama"
 								name="wangsa"
-								bind:value={wangsa}
 								placeholder="John Doe"
 							/>
 							{#if error}
@@ -1512,7 +1551,6 @@
 						type="text"
 						id="nama"
 						name="namaayah"
-						bind:value={namaayah}
 						placeholder="John Doe"
 					/>
 					{#if error}
@@ -1527,7 +1565,6 @@
 						type="text"
 						id="nama"
 						name="namaibu"
-						bind:value={namaibu}
 						placeholder="John Doe"
 					/>
 					{#if error}
@@ -1546,7 +1583,6 @@
 								type="date"
 								id="nama"
 								name="tanggalawal"
-								bind:value={tanggalawal}
 							/>
 							{#if error}
 								{#each error.tanggalawal as a}
@@ -1564,7 +1600,6 @@
 								type="date"
 								id="nama"
 								name="tanggalakhir"
-								bind:value={tanggalakhir}
 								placeholder="John Doe"
 								disabled={isChecked}
 							/>
@@ -1582,7 +1617,6 @@
 							id="textsamping"
 							value="masih"
 							name="inputcheckbox"
-							bind:checked={isChecked}
 							onchange={() => {
 								if (isChecked) {
 									tanggalakhir = ''; // Reset tanggal akhir jika checkbox dicentang
@@ -1616,13 +1650,37 @@
 					return async ({ result }) => {
 						console.log('Form submission result:', result);
 						if (result.type === 'success') {
-							// Set success state dan timer
+							// Reset form dan tutup modal
+							showModal2 = false;
+							selectedRaja = null;
+
+							// Reset nilai form
+							namaraja = '';
+							gelarraja = '';
+							tanggallahir = '';
+							tanggalmeninggal = '';
+							kotalahir = '';
+							agama = '';
+							wangsa = '';
+							namaayah = '';
+							namaibu = '';
+							tanggalawal = '';
+							tanggalakhir = '';
+							isChecked = false;
+							namarajaUrl = null;
+							namafotoraja = '';
+
+							// Reset input file element
+							const fileInput = document.getElementById('fileRaja') as HTMLInputElement;
+							if (fileInput) fileInput.value = '';
+
+							// Invalidate data untuk memastikan data terbaru dimuat
+							invalidateAll();
 							success = true;
 							clearTimeout(timer);
 							timer = setTimeout(() => {
 								success = false;
-								showModal = false;
-								// Invalidate data lagi setelah modal ditutup
+								showModal2 = false;
 								invalidateAll();
 							}, 3000);
 						} else if (result.type === 'failure') {
@@ -1661,9 +1719,9 @@
 							for="fileRaja"
 							class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
 						>
-							{#if namarajaUrl}
+							{#if namarajaUrl2}
 								<img
-									src={namarajaUrl}
+									src={namarajaUrl2}
 									alt="Bendera"
 									class="h-full w-full rounded-lg object-cover"
 								/>
@@ -1764,6 +1822,8 @@
 						{/if}
 					</div>
 
+					<input type="hidden" name="existing_foto_raja_id" bind:value={dokumentasiId} />
+
 					<div class="flex flex-grow gap-4">
 						<div class="w-full flex-col">
 							<label class="text-md mt-2 w-full self-start text-left" for="nama"> Agama : </label>
@@ -1888,9 +1948,9 @@
 					<button
 						class="bg-customGold w-fit self-end rounded-lg px-3 py-2 text-white"
 						type="submit"
-						formaction="?/tambah"
+						formaction="?/editHistory"
 					>
-						Tambah Data
+						Ubah data
 					</button>
 				</div>
 			</form>

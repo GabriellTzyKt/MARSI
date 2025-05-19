@@ -8,6 +8,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import SModal from '$lib/popup/SModal.svelte';
+	import SucessModal from '$lib/popup/SucessModal.svelte';
 
 	let currPage = $state(1);
 	let entries = $state(10);
@@ -18,6 +19,8 @@
 	let sedangDiprosesOpen = $state(false);
 	let sedangDiprosesOpen2 = $state(false);
 	let diajukanOpen = $state(false);
+	let processSuccess = $state(false);
+	let processError = $state('');
 
 	let { data } = $props();
 	const dataArsip = data.dataArsip || [];
@@ -345,255 +348,293 @@
 
 				<div class="w-full px-5">
 					<div class="mt-4 w-full">
-						<div
-							class="flex w-full cursor-pointer items-center justify-between border bg-gray-100 px-4 py-3"
-						>
-							<p>Detail Permintaan Anda :</p>
-						</div>
-						<div
-							class="rounded-b-lg border-x border-b bg-white p-4 transition-all duration-300 ease-in-out"
-						>
-							<!-- Website Kerajaan Section -->
-							<div class="mb-6">
-								<div class="mb-2 grid grid-cols-12">
-									<h3 class="col-span-8 text-lg font-semibold">Website Kerajaan</h3>
-									<!-- svelte-ignore a11y_click_events_have_key_events -->
-									<!-- svelte-ignore a11y_no_static_element_interactions -->
-									<div
-										class="col-span-2 cursor-pointer border-r border-gray-300 text-center font-medium"
-										class:active={selectedItem?.websiteFeatures !== null}
-									>
-										Ya
-									</div>
-									<!-- svelte-ignore a11y_click_events_have_key_events -->
-									<!-- svelte-ignore a11y_no_static_element_interactions -->
-									<div
-										class="col-span-2 cursor-pointer text-center font-medium"
-										class:active={selectedItem?.websiteFeatures === null}
-									>
-										Tidak
-									</div>
-								</div>
-
-								{#if selectedItem?.websiteFeatures !== null}
-									<div class="border-t border-gray-200 pt-2">
-										<!-- Fitur Situs -->
-										<div class="grid grid-cols-12 py-2">
-											<div class="col-span-8">Fitur Situs</div>
-											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												<span class="text-customOrange2 text-xl">✓</span>
-											</div>
-											<div class="col-span-2"></div>
-										</div>
-
-										<!-- Fitur Acara -->
-										<div class="grid grid-cols-12 py-2">
-											<div class="col-span-8">Fitur Acara</div>
-											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												<span class="text-customOrange2 text-xl">✓</span>
-											</div>
-											<div class="col-span-2"></div>
-										</div>
-
-										<!-- Fitur Aset -->
-										<div class="grid grid-cols-12 py-2">
-											<div class="col-span-8">Fitur Aset</div>
-											<div class="col-span-2 border-r border-gray-300"></div>
-											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
-											</div>
-										</div>
-
-										<!-- Fitur Komunitas -->
-										<div class="grid grid-cols-12 py-2">
-											<div class="col-span-8">Fitur Komunitas</div>
-											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
-											</div>
-											<div class="col-span-2 border-l border-gray-300"></div>
-										</div>
-
-										<!-- Fitur Organisasi -->
-										<div class="grid grid-cols-12 py-2">
-											<div class="col-span-8">Fitur Organisasi</div>
-											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												<span class="text-customOrange2 text-xl">✓</span>
-											</div>
-											<div class="col-span-2"></div>
-										</div>
-
-										<!-- Fitur Tugas -->
-										<div class="grid grid-cols-12 py-2">
-											<div class="col-span-8">Fitur Tugas</div>
-											<div class="col-span-2 border-r border-gray-300"></div>
-											<div class="col-span-2 flex justify-center">
-												<span class="text-customOrange2 text-xl">✓</span>
-											</div>
-										</div>
-									</div>
-								{/if}
+						<div class="mt-4 w-full">
+							<div
+								class="flex w-full cursor-pointer items-center justify-between border bg-gray-100 px-4 py-3"
+							>
+								<p>Detail Permintaan Anda :</p>
 							</div>
+							<div
+								class="rounded-b-lg border-x border-b bg-white p-4 transition-all duration-300 ease-in-out"
+							>
+								<!-- Website Kerajaan Section -->
+								<div class="mb-6">
+									<div class="mb-2 grid grid-cols-12">
+										<h3 class="col-span-8 text-lg font-semibold">Website Kerajaan</h3>
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_static_element_interactions -->
+										<div
+											class="col-span-2 cursor-pointer border-r border-gray-300 text-center font-medium"
+											class:active={selectedItem?.websiteFeatures !== null}
+										>
+											Ya
+										</div>
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_static_element_interactions -->
+										<div
+											class="col-span-2 cursor-pointer text-center font-medium"
+											class:active={selectedItem?.websiteFeatures === null}
+										>
+											Tidak
+										</div>
+									</div>
 
-							<div class="border-t border-gray-300 pt-4">
-								<div class="mb-2 grid grid-cols-12">
-									<h3 class="col-span-8 text-lg font-semibold">Aplikasi Mobile Kerajaan</h3>
-									<!-- svelte-ignore a11y_click_events_have_key_events -->
-									<!-- svelte-ignore a11y_no_static_element_interactions -->
-									<div
-										class="col-span-2 cursor-pointer border-r border-gray-300 text-center font-medium"
-										class:active={selectedItem?.mobileFeatures !== null}
-									>
-										Ya
-									</div>
-									<!-- svelte-ignore a11y_click_events_have_key_events -->
-									<!-- svelte-ignore a11y_no_static_element_interactions -->
-									<div
-										class="col-span-2 cursor-pointer text-center font-medium"
-										class:active={selectedItem?.mobileFeatures === null}
-									>
-										Tidak
-									</div>
+									{#if selectedItem?.websiteFeatures !== null}
+										<div class="border-t border-gray-200 pt-2">
+											<!-- Fitur Situs -->
+											<div class="grid grid-cols-12 py-2">
+												<div class="col-span-8">Fitur Situs</div>
+												<div class="col-span-2 flex justify-center border-r border-gray-300">
+													{#if selectedItem.websiteFeatures.fitur_situs === 1}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+												<div class="col-span-2 flex justify-center">
+													{#if selectedItem.websiteFeatures.fitur_situs === 0}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+											</div>
+
+											<!-- Fitur Acara -->
+											<div class="grid grid-cols-12 py-2">
+												<div class="col-span-8">Fitur Acara</div>
+												<div class="col-span-2 flex justify-center border-r border-gray-300">
+													{#if selectedItem.websiteFeatures.fitur_acara === 1}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+												<div class="col-span-2 flex justify-center">
+													{#if selectedItem.websiteFeatures.fitur_acara === 0}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+											</div>
+
+											<!-- Fitur Aset -->
+											<div class="grid grid-cols-12 py-2">
+												<div class="col-span-8">Fitur Aset</div>
+												<div class="col-span-2 flex justify-center border-r border-gray-300">
+													{#if selectedItem.websiteFeatures.fitur_aset === 1}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+												<div class="col-span-2 flex justify-center">
+													{#if selectedItem.websiteFeatures.fitur_aset === 0}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+											</div>
+
+											<!-- Fitur Komunitas -->
+											<div class="grid grid-cols-12 py-2">
+												<div class="col-span-8">Fitur Komunitas</div>
+												<div class="col-span-2 flex justify-center border-r border-gray-300">
+													{#if selectedItem.websiteFeatures.fitur_komunitas === 1}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+												<div class="col-span-2 flex justify-center">
+													{#if selectedItem.websiteFeatures.fitur_komunitas === 0}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+											</div>
+
+											<!-- Fitur Organisasi -->
+											<div class="grid grid-cols-12 py-2">
+												<div class="col-span-8">Fitur Organisasi</div>
+												<div class="col-span-2 flex justify-center border-r border-gray-300">
+													{#if selectedItem.websiteFeatures.fitur_organisasi === 1}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+												<div class="col-span-2 flex justify-center">
+													{#if selectedItem.websiteFeatures.fitur_organisasi === 0}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+											</div>
+
+											<!-- Fitur Tugas -->
+											<div class="grid grid-cols-12 py-2">
+												<div class="col-span-8">Fitur Tugas</div>
+												<div class="col-span-2 flex justify-center border-r border-gray-300">
+													{#if selectedItem.websiteFeatures.fitur_tugas === 1}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+												<div class="col-span-2 flex justify-center">
+													{#if selectedItem.websiteFeatures.fitur_tugas === 0}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+											</div>
+										</div>
+									{/if}
 								</div>
 
-								{#if selectedItem?.mobileFeatures !== null}
-									<div class="border-t border-gray-200 pt-2">
-										<!-- Fitur Penanggalan -->
-										<div class="grid grid-cols-12 py-2">
-											<div class="col-span-8">Fitur Penanggalan</div>
-											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												{#if selectedItem.mobileFeatures.fitur_kalender === 1}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-											<div class="col-span-2 flex justify-center">
-												{#if selectedItem.mobileFeatures.fitur_kalender === 0}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
+								<div class="border-t border-gray-300 pt-4">
+									<div class="mb-2 grid grid-cols-12">
+										<h3 class="col-span-8 text-lg font-semibold">Aplikasi Mobile Kerajaan</h3>
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_static_element_interactions -->
+										<div
+											class="col-span-2 cursor-pointer border-r border-gray-300 text-center font-medium"
+											class:active={selectedItem?.mobileFeatures !== null}
+										>
+											Ya
 										</div>
-
-										<!-- Fitur Tugas Pribadi -->
-										<div class="grid grid-cols-12 py-2">
-											<div class="col-span-8">Fitur Tugas Pribadi</div>
-											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												{#if selectedItem.mobileFeatures.fitur_tugas_pribadi === 1}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-											<div class="col-span-2 flex justify-center">
-												{#if selectedItem.mobileFeatures.fitur_tugas_pribadi === 0}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-										</div>
-
-										<!-- Fitur Tugas Acara -->
-										<div class="grid grid-cols-12 py-2">
-											<div class="col-span-8">Fitur Tugas Acara</div>
-											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												{#if selectedItem.mobileFeatures.fitur_tugas_acara === 1}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-											<div class="col-span-2 flex justify-center">
-												{#if selectedItem.mobileFeatures.fitur_tugas_acara === 0}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-										</div>
-
-										<!-- Fitur Situs Kerajaan -->
-										<div class="grid grid-cols-12 py-2">
-											<div class="col-span-8">Fitur Situs Kerajaan</div>
-											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												{#if selectedItem.mobileFeatures.fitur_situs === 1}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-											<div class="col-span-2 flex justify-center">
-												{#if selectedItem.mobileFeatures.fitur_situs === 0}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-										</div>
-
-										<!-- Fitur Check-In Situs -->
-										<div class="grid grid-cols-12 py-2">
-											<div class="col-span-8">Fitur Check-In Situs</div>
-											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												{#if selectedItem.mobileFeatures.fitur_check_in === 1}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-											<div class="col-span-2 flex justify-center">
-												{#if selectedItem.mobileFeatures.fitur_check_in === 0}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-										</div>
-
-										<!-- Fitur Acara Kerajaan -->
-										<div class="grid grid-cols-12 py-2">
-											<div class="col-span-8">Fitur Acara Kerajaan</div>
-											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												{#if selectedItem.mobileFeatures.fitur_acara === 1}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-											<div class="col-span-2 flex justify-center">
-												{#if selectedItem.mobileFeatures.fitur_acara === 0}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-										</div>
-
-										<!-- Fitur Group Chat -->
-										<div class="grid grid-cols-12 py-2">
-											<div class="col-span-8">Fitur Group Chat</div>
-											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												{#if selectedItem.mobileFeatures.fitur_chat === 1}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-											<div class="col-span-2 flex justify-center">
-												{#if selectedItem.mobileFeatures.fitur_chat === 0}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-										</div>
-
-										<!-- Fitur Forum -->
-										<div class="grid grid-cols-12 py-2">
-											<div class="col-span-8">Fitur Forum</div>
-											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												{#if selectedItem.mobileFeatures.fitur_forum === 1}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-											<div class="col-span-2 flex justify-center">
-												{#if selectedItem.mobileFeatures.fitur_forum === 0}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-										</div>
-
-										<!-- Fitur Permohonan -->
-										<div class="grid grid-cols-12 py-2">
-											<div class="col-span-8">Fitur Permohonan</div>
-											<div class="col-span-2 flex justify-center border-r border-gray-300">
-												{#if selectedItem.mobileFeatures.fitur_permohonan === 1}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
-											<div class="col-span-2 flex justify-center">
-												{#if selectedItem.mobileFeatures.fitur_permohonan === 0}
-													<span class="text-customOrange2 text-xl">✓</span>
-												{/if}
-											</div>
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_static_element_interactions -->
+										<div
+											class="col-span-2 cursor-pointer text-center font-medium"
+											class:active={selectedItem?.mobileFeatures === null}
+										>
+											Tidak
 										</div>
 									</div>
-								{/if}
-								<div class="h-0.5 w-full bg-gray-400 opacity-40"></div>
+
+									{#if selectedItem?.mobileFeatures !== null}
+										<div class="border-t border-gray-200 pt-2">
+											<!-- Fitur Penanggalan -->
+											<div class="grid grid-cols-12 py-2">
+												<div class="col-span-8">Fitur Penanggalan</div>
+												<div class="col-span-2 flex justify-center border-r border-gray-300">
+													{#if selectedItem.mobileFeatures.fitur_kalender === 1}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+												<div class="col-span-2 flex justify-center">
+													{#if selectedItem.mobileFeatures.fitur_kalender === 0}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+											</div>
+
+											<!-- Fitur Tugas Pribadi -->
+											<div class="grid grid-cols-12 py-2">
+												<div class="col-span-8">Fitur Tugas Pribadi</div>
+												<div class="col-span-2 flex justify-center border-r border-gray-300">
+													{#if selectedItem.mobileFeatures.fitur_tugas_pribadi === 1}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+												<div class="col-span-2 flex justify-center">
+													{#if selectedItem.mobileFeatures.fitur_tugas_pribadi === 0}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+											</div>
+
+											<!-- Fitur Tugas Acara -->
+											<div class="grid grid-cols-12 py-2">
+												<div class="col-span-8">Fitur Tugas Acara</div>
+												<div class="col-span-2 flex justify-center border-r border-gray-300">
+													{#if selectedItem.mobileFeatures.fitur_tugas_acara === 1}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+												<div class="col-span-2 flex justify-center">
+													{#if selectedItem.mobileFeatures.fitur_tugas_acara === 0}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+											</div>
+
+											<!-- Fitur Situs Kerajaan -->
+											<div class="grid grid-cols-12 py-2">
+												<div class="col-span-8">Fitur Situs Kerajaan</div>
+												<div class="col-span-2 flex justify-center border-r border-gray-300">
+													{#if selectedItem.mobileFeatures.fitur_situs === 1}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+												<div class="col-span-2 flex justify-center">
+													{#if selectedItem.mobileFeatures.fitur_situs === 0}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+											</div>
+
+											<!-- Fitur Check-In Situs -->
+											<div class="grid grid-cols-12 py-2">
+												<div class="col-span-8">Fitur Check-In Situs</div>
+												<div class="col-span-2 flex justify-center border-r border-gray-300">
+													{#if selectedItem.mobileFeatures.fitur_check_in === 1}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+												<div class="col-span-2 flex justify-center">
+													{#if selectedItem.mobileFeatures.fitur_check_in === 0}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+											</div>
+
+											<!-- Fitur Acara Kerajaan -->
+											<div class="grid grid-cols-12 py-2">
+												<div class="col-span-8">Fitur Acara Kerajaan</div>
+												<div class="col-span-2 flex justify-center border-r border-gray-300">
+													{#if selectedItem.mobileFeatures.fitur_acara === 1}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+												<div class="col-span-2 flex justify-center">
+													{#if selectedItem.mobileFeatures.fitur_acara === 0}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+											</div>
+
+											<!-- Fitur Group Chat -->
+											<div class="grid grid-cols-12 py-2">
+												<div class="col-span-8">Fitur Group Chat</div>
+												<div class="col-span-2 flex justify-center border-r border-gray-300">
+													{#if selectedItem.mobileFeatures.fitur_chat === 1}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+												<div class="col-span-2 flex justify-center">
+													{#if selectedItem.mobileFeatures.fitur_chat === 0}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+											</div>
+
+											<!-- Fitur Forum -->
+											<div class="grid grid-cols-12 py-2">
+												<div class="col-span-8">Fitur Forum</div>
+												<div class="col-span-2 flex justify-center border-r border-gray-300">
+													{#if selectedItem.mobileFeatures.fitur_forum === 1}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+												<div class="col-span-2 flex justify-center">
+													{#if selectedItem.mobileFeatures.fitur_forum === 0}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+											</div>
+
+											<!-- Fitur Permohonan -->
+											<div class="grid grid-cols-12 py-2">
+												<div class="col-span-8">Fitur Permohonan</div>
+												<div class="col-span-2 flex justify-center border-r border-gray-300">
+													{#if selectedItem.mobileFeatures.fitur_permohonan === 1}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+												<div class="col-span-2 flex justify-center">
+													{#if selectedItem.mobileFeatures.fitur_permohonan === 0}
+														<span class="text-customOrange2 text-xl">✓</span>
+													{/if}
+												</div>
+											</div>
+										</div>
+									{/if}
+									<div class="h-0.5 w-full bg-gray-400 opacity-40"></div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -978,7 +1019,39 @@
 								<div class="h-0.5 w-full bg-gray-400 opacity-40"></div>
 
 								<div class="mt-3 flex w-full justify-end">
-									<button class=" bg-customGold rounded-lg px-5 py-2 text-white"> Proses </button>
+									<form
+										action="?/processRequest"
+										method="post"
+										use:enhance={() => {
+											return async ({ result }) => {
+												if (result.type === 'success') {
+													// Tampilkan pesan sukses
+													success = true;
+													diajukanOpen = false;
+
+													// Tutup modal setelah berhasil
+													setTimeout(() => {
+														success = false;
+														invalidateAll();
+													}, 1500);
+												} else if (result.type === 'failure') {
+													// Tampilkan pesan error
+													// processError = result.data?.error || "Gagal memproses permintaan";
+												}
+											};
+										}}
+									>
+										<!-- Hidden inputs untuk mengirim data ke server -->
+										<input
+											type="hidden"
+											name="id_permintaan"
+											value={selectedItem?.id_permintaan || ''}
+										/>
+
+										<button type="submit" class="bg-customGold rounded-lg px-5 py-2 text-white">
+											Proses
+										</button>
+									</form>
 								</div>
 							</div>
 						</div>
@@ -987,6 +1060,10 @@
 			</div>
 		</div>
 	</div>
+{/if}
+
+{#if success}
+	<SModal text="Status berhasil diubah!"></SModal>
 {/if}
 
 <style>

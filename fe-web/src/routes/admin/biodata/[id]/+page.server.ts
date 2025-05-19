@@ -244,6 +244,8 @@ export const load: PageServerLoad = async ({ params }) => {
             videoUrl
         };
 
+        console.log("DATA RAJA : " , kerajaanWithMedia)
+
         return {
             detil_kerajaan: kerajaanWithMedia,
             jenisKerajaan: filteredJenisKerajaan,
@@ -439,19 +441,20 @@ export const actions: Actions = {
 
         // Extract all form data
         const res: Record<string, any> = Object.fromEntries(data);
-        console.log("res : ", res)
+        console.log("res : ", res);
 
-        // Get the existing data to preserve file IDs if not re-uploaded
-        let existingData;
-        try {
-            const response = await fetch(`${env.BASE_URL}/kerajaan/detail/${params.id}`);
-            if (response.ok) {
-                existingData = await response.json();
-                console.log("Retrieved existing data:", existingData);
-            }
-        } catch (error) {
-            console.error("Error fetching existing data:", error);
-        }
+        // Get existing IDs from form data
+        const existingBenderaId = data.get("existing_bendera_id")?.toString() || "";
+        const existingLambangId = data.get("existing_lambang_id")?.toString() || "";
+        const existingFotoUmumIds = data.get("existing_foto_umum_ids")?.toString() || "";
+        const existingVideoId = data.get("existing_video_id")?.toString() || data.get("existingVideoId")?.toString() || "";
+
+        console.log("Existing IDs from form:", {
+            bendera: existingBenderaId,
+            lambang: existingLambangId,
+            fotoUmum: existingFotoUmumIds,
+            video: existingVideoId
+        });
 
         // Process files
         let fotoUmumIds: string[] = [];
@@ -514,70 +517,53 @@ export const actions: Actions = {
         console.log("Foto umum files count:", dokumenFiles.length);
         console.log("Foto umum files details:", dokumenFiles.map(f => f instanceof File ? `${f.name} (${f.size} bytes)` : 'Not a file'));
 
-        // Clear existing fotoUmumIds if we're uploading new files
-        if (dokumenFiles.length > 0 && dokumenFiles.some(file => file instanceof File && file.size > 0)) {
+        // Check if we have new files to upload
+        const hasNewFotoUmum = dokumenFiles.length > 0 && dokumenFiles.some(file => file instanceof File && file.size > 0);
+
+        if (hasNewFotoUmum) {
+            // Clear existing IDs if we're uploading new files
             fotoUmumIds = [];
             console.log("Clearing existing fotoUmumIds for new uploads");
-        }
-
-        // Process each file individually
-        for (const file of dokumenFiles) {
-            if (file instanceof File && file.size > 0) {
-                console.log(`Processing foto umum file: ${file.name}, size: ${file.size}`);
-
-                // Create a new FormData for each file to avoid issues with multiple files
-                const singleFileFormData = new FormData();
-                singleFileFormData.append("nama_kerajaan", res.nama || "Unknown");
-                singleFileFormData.append("foto_umum", file);
-
-                try {
-                    console.log(`Uploading foto umum file: ${file.name}`);
-                    const response = await fetch(env.BASE_URL + "/file/umum", {
-                        method: 'POST',
-                        body: singleFileFormData
-                    });
-
-                    console.log(`Upload response status for ${file.name}: ${response.status}`);
-
-                    if (response.ok) {
-                        const result = await response.json();
-                        console.log(`Upload result for ${file.name}:`, result);
-
-                        // Extract ID based on response format
-                        if (result.id_path && result.id_path.data) {
-                            const newIds = result.id_path.data.split(',').map((id: string) => id.trim());
-                            fotoUmumIds.push(...newIds);
-                            console.log(`Added IDs from id_path.data: ${newIds.join(',')}`);
-                        } else if (result.id_path) {
-                            fotoUmumIds.push(result.id_path);
-                            console.log(`Added ID from id_path: ${result.id_path}`);
-                        } else if (result.id_dokumentasi) {
-                            fotoUmumIds.push(result.id_dokumentasi);
-                            console.log(`Added ID from id_dokumentasi: ${result.id_dokumentasi}`);
-                        } else {
-                            console.error(`No ID found in result for ${file.name}:`, result);
+            
+            // Process each file individually
+            for (const file of dokumenFiles) {
+                if (file instanceof File && file.size > 0) {
+                    console.log(`Processing foto umum file: ${file.name}, size: ${file.size}`);
+                    
+                    // Upload logic remains the same
+                    const singleFileFormData = new FormData();
+                    singleFileFormData.append("nama_kerajaan", res.nama || "Unknown");
+                    singleFileFormData.append("foto_umum", file);
+                    
+                    try {
+                        console.log(`Uploading foto umum file: ${file.name}`);
+                        const response = await fetch(env.BASE_URL + "/file/umum", {
+                            method: 'POST',
+                            body: singleFileFormData
+                        });
+                        
+                        if (response.ok) {
+                            const result = await response.json();
+                            // Extract ID logic remains the same
+                            if (result.id_path && result.id_path.data) {
+                                const newIds = result.id_path.data.split(',').map((id: string) => id.trim());
+                                fotoUmumIds.push(...newIds);
+                            } else if (result.id_path) {
+                                fotoUmumIds.push(result.id_path);
+                            } else if (result.id_dokumentasi) {
+                                fotoUmumIds.push(result.id_dokumentasi);
+                            }
                         }
-                    } else {
-                        console.error(`Failed to upload ${file.name}:`, response.status);
-                        const errorText = await response.text();
-                        console.error("Response text:", errorText);
+                    } catch (error) {
+                        console.error(`Exception during upload of ${file.name}:`, error);
                     }
-                } catch (error) {
-                    console.error(`Exception during upload of ${file.name}:`, error);
                 }
-
-                // Add a small delay between uploads to prevent race conditions
-                await new Promise(resolve => setTimeout(resolve, 500));
             }
-        }
-
-        // If we have existing foto_umum IDs and no new uploads, preserve them
-        if (fotoUmumIds.length === 0 && existingData && existingData.foto_umum) {
-            fotoUmumIds = existingData.foto_umum.split(',').map((id: string) => id.trim());
+        } else if (existingFotoUmumIds) {
+            // Use existing IDs if no new files
+            fotoUmumIds = existingFotoUmumIds.split(',').map((id: string) => id.trim());
             console.log("Using existing foto_umum IDs:", fotoUmumIds);
         }
-
-        console.log("Final fotoUmumIds:", fotoUmumIds);
 
         // 2. Process bendera file
         const bendera = data.get("inputbendera");
@@ -586,15 +572,15 @@ export const actions: Actions = {
             const result = await uploadFile(bendera, "/file/bendera", "bendera_kerajaan", {
                 "nama_kerajaan": res.nama || "Unknown"
             });
-
+            
             if (result && result.id_path) {
                 benderaId = result.id_path;
                 console.log("New bendera uploaded with ID:", benderaId);
             }
-        } else if (existingData && existingData.bendera_kerajaan) {
-            // If no new file uploaded, preserve existing ID
-            console.log("No new bendera file, preserving existing ID:", existingData.bendera_kerajaan);
-            benderaId = existingData.bendera_kerajaan;
+        } else if (existingBenderaId) {
+            // Use existing ID if no new file
+            benderaId = existingBenderaId;
+            console.log("Using existing bendera ID:", benderaId);
         }
 
         // 3. Process lambang file
@@ -604,40 +590,26 @@ export const actions: Actions = {
             const result = await uploadFile(lambang, "/file/lambang", "lambang_kerajaan", {
                 "nama_kerajaan": res.nama || "Unknown"
             });
-
+            
             if (result && result.id_path) {
                 lambangId = result.id_path;
                 console.log("New lambang uploaded with ID:", lambangId);
             }
-        } else if (existingData && existingData.lambang_kerajaan) {
-            // If no new file uploaded, preserve existing ID
-            console.log("No new lambang file, preserving existing ID:", existingData.lambang_kerajaan);
-            lambangId = existingData.lambang_kerajaan;
+        } else if (existingLambangId) {
+            // Use existing ID if no new file
+            lambangId = existingLambangId;
+            console.log("Using existing lambang ID:", lambangId);
         }
 
-        // 4. Process video file - direct approach to fix the empty video issue
+        // 4. Process video file
         const video = data.get("inputvideo");
-        const keepExistingVideo = data.get("keepExistingVideo");
-        const existingVideoId = data.get("existingVideoId") || data.get("video_kerajaan");
-
-        console.log("VIDEO DEBUG: Processing video in server action");
-        console.log("VIDEO DEBUG: video instanceof File:", video instanceof File);
-        console.log("VIDEO DEBUG: keepExistingVideo:", keepExistingVideo);
-        console.log("VIDEO DEBUG: existingVideoId:", existingVideoId);
-
-        // Get the existing video ID directly from the existing data
-        if (existingData && existingData.video_kerajaan) {
-            console.log("VIDEO DEBUG: Found video_kerajaan in existing data:", existingData.video_kerajaan);
-        }
-
-        // Process new video upload if provided
         if (video instanceof File && video.size > 0) {
             console.log("VIDEO DEBUG: New video file detected, uploading...");
             try {
                 const result = await uploadFile(video, "/file/video", "video_kerajaan", {
                     "nama_kerajaan": res.nama || "Unknown"
                 });
-
+                
                 if (result && result.id_path) {
                     videoId = result.id_path;
                     console.log("VIDEO DEBUG: New video uploaded with ID:", videoId);
@@ -645,25 +617,13 @@ export const actions: Actions = {
             } catch (error) {
                 console.error("VIDEO DEBUG: Error uploading video:", error);
             }
-        }
-        // If no new video but we should keep existing video
-        else if (keepExistingVideo === 'true' || existingVideoId) {
-            if (existingVideoId) {
-                videoId = existingVideoId.toString();
-                console.log("VIDEO DEBUG: Using provided existing video ID:", videoId);
-            } else if (existingData && existingData.video_kerajaan) {
-                videoId = existingData.video_kerajaan;
-                console.log("VIDEO DEBUG: Using video ID from existing data:", videoId);
-            }
-        }
-        // Fallback to existing data if available
-        else if (existingData && existingData.video_kerajaan) {
-            videoId = existingData.video_kerajaan;
-            console.log("VIDEO DEBUG: Using fallback video ID from existing data:", videoId);
+        } else if (existingVideoId) {
+            // Use existing ID if no new file
+            videoId = existingVideoId;
+            console.log("VIDEO DEBUG: Using existing video ID:", videoId);
         }
 
-        // IMPORTANT: Directly set the video_kerajaan in the kerajaanData object
-        // This ensures it's included in the final data sent to the API
+        // Create the kerajaan data object with all IDs
         const kerajaanData = {
             id_kerajaan: Number(params.id),
             longitude: Number(res.long || 0),
@@ -675,8 +635,8 @@ export const actions: Actions = {
             alamat_kerajaan: res.lokasi,
             bendera_kerajaan: benderaId,
             lambang_kerajaan: lambangId,
-            foto_umum: fotoUmumIds.length > 0 ? fotoUmumIds.join(',') : (existingData ? existingData.foto_umum : ""),
-            video_kerajaan: videoId || (existingData ? existingData.video_kerajaan : ""),
+            foto_umum: fotoUmumIds.join(','),
+            video_kerajaan: videoId,
             tahun_berdiri: res.tahun_berdiri || "1900",
             tahun_berakhir: res.tahunberakhir || "1980",
             era: res.era,
@@ -947,5 +907,39 @@ export const actions: Actions = {
             console.error("Error deleting history raja:", error);
             return fail(500, { errors: "Terjadi kesalahan saat menghapus data" });
         }
+    },
+
+    editHistory: async ({ request, params }) => {
+        const data = await request.formData();
+        console.log("EDIT HISTORY SERVER - ID dari URL:", params.id);
+        
+        // Log semua data yang diterima
+        console.log("EDIT HISTORY SERVER - All form data entries:");
+        for (const [key, value] of data.entries()) {
+            if (value instanceof File) {
+                console.log(`EDIT HISTORY SERVER - ${key}: File(${value.name}, ${value.size} bytes, ${value.type})`);
+            } else {
+                console.log(`EDIT HISTORY SERVER - ${key}: ${value}`);
+            }
+        }
+        
+        const res = Object.fromEntries(data);
+        console.log("EDIT HISTORY SERVER - Form data as object:", res);
+        
+        // Cek apakah ada ID foto raja yang sudah ada
+        const existingFotoRajaId = data.get("existing_foto_raja_id")?.toString() || "";
+        console.log("EDIT HISTORY SERVER - Existing foto raja ID:", existingFotoRajaId);
+        
+        // Cek apakah ada file foto raja baru
+        const newFotoRaja = data.get("inputfotoraja");
+        let fotoRajaId = existingFotoRajaId;
+        
+        if (newFotoRaja instanceof File && newFotoRaja.size > 0) {
+            console.log("EDIT HISTORY SERVER - New foto raja detected, will upload");
+            // Upload logic will go here
+        } else {
+            console.log("EDIT HISTORY SERVER - No new foto raja, using existing ID:", fotoRajaId);
+        }
+        
     },
 };

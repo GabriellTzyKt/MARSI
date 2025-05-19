@@ -71,7 +71,6 @@
 		<input type="hidden" name="id_kerajaan" value="27" />
 
 		<div class="mt-6 w-full rounded-lg border bg-white p-6 shadow-sm">
-			<!-- Success message -->
 			{#if success}
 				<SModal text="Kerajaan berhasil Ditambahkan"></SModal>
 			{/if}
