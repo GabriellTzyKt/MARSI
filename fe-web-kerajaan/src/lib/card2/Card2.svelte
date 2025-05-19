@@ -2,10 +2,9 @@
 	import { page } from '$app/state';
 
 	let { situs, header, isi, icon, id, href = '' } = $props();
-
 </script>
 
-<div class="h-full max-w-sm overflow-hidden rounded bg-white shadow-lg">
+<div class="max-w-sm overflow-hidden rounded bg-white shadow-lg">
 	<div class="w-full justify-center">
 		{#if situs == ''}
 			<div class="flex h-[150px] w-[300px] items-center justify-center">
@@ -13,7 +12,7 @@
 			</div>
 		{:else}
 			<img
-				class=" mx-auto mt-3 h-[200px] w-[300px] border-2 border-black p-1"
+				class=" mx-auto mt-3 h-auto w-[300px] border-2 border-black p-1"
 				src={situs}
 				alt="awawwa"
 			/>

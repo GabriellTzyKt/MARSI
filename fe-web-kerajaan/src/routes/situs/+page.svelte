@@ -9,7 +9,7 @@
 	// Ambil data dari server
 	let { data } = $props();
 	console.log('Data dari server:', data);
-    let datasitus = data.datasitus
+	let datasitus = data.data;
 
 	// Gunakan state untuk tab aktif
 	let activeTab = $state('organisasi');
@@ -17,7 +17,6 @@
 	function setActive(tab: string) {
 		activeTab = tab;
 	}
-
 </script>
 
 <Navbar></Navbar>
@@ -29,19 +28,22 @@
 		<p class="mt-10 text-center text-2xl font-bold">Situs Bersejarah</p>
 	</div>
 
-	<div class="mb-10 ml-5 mr-5 mt-10 flex justify-center">
-
+	<div class="mb-10 ml-5 mr-5 mt-10 flex h-full justify-center">
 		{#if datasitus}
-			<div class="mx-auto grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+			<div
+				class="mx-auto grid grid-flow-row auto-rows-auto gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+			>
 				{#each datasitus as item}
-					<Card2
-						situs={item.gambarHeader}
-						header={item.nama_tempat}
-						isi={item.isi}
-						icon={item.jenis_situs}
-						id={item.id}
-						href={`/situs/${item.id}`}
-					/>
+					<div class="h-auto">
+						<Card2
+							situs={item.imageUrls[0] || ''}
+							header={item.nama_situs}
+							isi={item.deskripsi_situs || 'No Description'}
+							icon={item.jenis_situs}
+							id={item.id_situs}
+							href={`/situs/${item.id_situs}`}
+						/>
+					</div>
 				{/each}
 			</div>
 		{/if}

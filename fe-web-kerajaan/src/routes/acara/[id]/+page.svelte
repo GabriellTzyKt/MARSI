@@ -8,7 +8,7 @@
 	const { data } = $props();
 	console.log('Data yang diterima:', data);
 
-	let idAktif = $state(" ")
+	let idAktif = $state(' ');
 
 	$effect(() => {
 		idAktif = page.params.id;
@@ -52,15 +52,17 @@
 				<div>
 					<img
 						src={gambar1}
-						class="mt-12 h-[50%] w-[500px] self-center rounded-lg object-cover"
+						class="mt-12 h-auto w-[500px] self-center rounded-lg object-cover"
 						alt="foto 1"
 					/>
 					<div class="mt-5">
 						<Marquee>
 							<div class="grid grid-cols-3 items-center">
-								<img src={gambar2} class="col-span-1 m-1 h-24 w-fit lg:h-fit" alt="" />
-								<img src={gambar3} class="col-span-1 m-1 h-24 w-fit lg:h-fit" alt="" />
-								<img src={gambar4} class="col-span-1 m-1 h-24 w-fit lg:h-fit" alt="" />
+								{#if imageUrls.length > 0}
+									{#each imageUrls as imageUrl (imageUrl)}
+										<img src={imageUrl} class="col-span-1 m-1 h-auto w-[200px]" alt="foto" />
+									{/each}
+								{/if}
 							</div>
 						</Marquee>
 					</div>

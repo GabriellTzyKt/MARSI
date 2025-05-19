@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { navigating } from '$app/state';
+	import { navigating, page } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummyAcara, dummyAnggota } from '$lib/dummy';
 	import Loader from '$lib/loader/Loader.svelte';
@@ -8,57 +8,68 @@
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
+	import { invalidateAll } from '$app/navigation';
 
 	let { data } = $props();
-	let dataambil = data.organisasi;
-	
+	let dataambil = data.acaraList;
+
 	// Transform the data to handle nested Acara objects
-	let dataacara : any= $state([]);
-	
-	// Check if allEvents exists and process it
-	if (data.allEvents && Array.isArray(data.allEvents)) {
-		dataacara = data.allEvents.map((item: any) => {
-			// If data has a nested Acara structure
-			if (item.Acara) {
-				return {
-					...item.Acara,
-					organisasi_id: item.id_organisasi,
-					organisasi_nama: item.nama_organisasi || 'Unknown Organization'
-				};
-			}
-			// If data is already in the expected format
-			return item;
-		});
-	}
-	
+	let dataacara: any = $state([]);
+
+	// // Check if allEvents exists and process it
+	// if (data.allEvents && Array.isArray(data.allEvents)) {
+	// 	dataacara = data.allEvents.map((item: any) => {
+	// 		// If data has a nested Acara structure
+	// 		if (item.Acara) {
+	// 			return {
+	// 				...item.Acara,
+	// 				organisasi_id: item.id_organisasi,
+	// 				organisasi_nama: item.nama_organisasi || 'Unknown Organization'
+	// 			};
+	// 		}
+	// 		// If data is already in the expected format
+	// 		return item;
+	// 	});
+	// }
+
 	let keyword = $state('');
 	let entries = $state(10);
 	let currPage = $state(1);
-	
+
 	function pagination(data: any[]) {
 		if (!data || !Array.isArray(data)) return [];
 		let start = (currPage - 1) * entries;
 		let end = start + entries;
 		return data.slice(start, end);
 	}
-	
+
 	function filterD(data: any[]) {
 		if (!data || !Array.isArray(data)) return [];
 		return data.filter(
 			(item) =>
 				(item?.nama_acara?.toLowerCase() || '').includes(keyword.toLowerCase()) ||
-				(item?.tanggal?.toLowerCase() || '').includes(keyword.toLowerCase()) ||
-				(item?.lokasi?.toLowerCase() || '').includes(keyword.toLowerCase()) ||
-				(item?.penanggungjawab?.toLowerCase() || '').includes(keyword.toLowerCase()) ||
+				(item?.waktu_mulai?.toLowerCase() || '').includes(keyword.toLowerCase()) ||
+				(item?.alamat_acara?.toLowerCase() || '').includes(keyword.toLowerCase()) ||
+				(item?.nama_penanggung_jawab?.toLowerCase() || '').includes(keyword.toLowerCase()) ||
 				(item?.jenis_acara?.toLowerCase() || '').includes(keyword.toLowerCase()) ||
-				(item?.kapasitas?.toString()?.toLowerCase() || '').includes(keyword.toLowerCase()) ||
+				(item?.kapasitas_acara?.toString()?.toLowerCase() || '').includes(keyword.toLowerCase()) ||
 				(item?.status?.toLowerCase() || '').includes(keyword.toLowerCase())
 		);
 	}
-	
+
 	// Use the processed data for pagination and filtering
 	let filteredData = $derived(filterD(dataacara));
 	let resdata = $derived(pagination(filteredData));
+
+	// Function to refresh data
+	async function refreshData() {
+		try {
+			await invalidateAll();
+			console.log('Data invalidated, refreshing...');
+		} catch (error) {
+			console.error('Error refreshing data:', error);
+		}
+	}
 </script>
 
 {#if navigating.to}
@@ -68,7 +79,8 @@
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
 		<button
 			class="bg-badran-bt cursor-pointer rounded-lg px-3 py-2 text-white"
-			onclick={() => goto('acara/tambah')}>+Tambah Data</button
+			onclick={() => goto(`/abdi/dashboard/organisasi/beranda/${idOrganisasi}/detail/acara/tambah`)}
+			>+Tambah Data</button
 		>
 		<div
 			class="mt-4 flex flex-col items-center justify-center gap-2 md:flex-row xl:mt-0 xl:justify-start"
@@ -131,7 +143,6 @@
 	<div class="flex w-full flex-col">
 		<Table
 			table_header={[
-				['id_acara', 'Id Acara'],
 				['nama_acara', 'Nama Acara'],
 				['waktu_mulai', 'Tanggal'],
 				['alamat_acara', 'Lokasi'],
@@ -141,28 +152,41 @@
 				['children', 'Status'],
 				['children', 'Aksi']
 			]}
-			table_data={dataacara}
+			table_data={resdata}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
 					<DropDown
 						text={`Apakah yakin ingin mengarsipkan ${data.nama_acara || 'acara ini'}?`}
 						successText={`Berhasil mengarsipkan ${data.nama_acara || 'acara ini'}!`}
-						link="/abdi/dashboard/organisasi/detail/acara"
+						link={`/abdi/dashboard/organisasi/beranda/${idOrganisasi}/detail/acara`}
 						items={[
-							['Detail', `/abdi/dashboard/organisasi/detail/acara/detail/${data.id_acara}`],
-							['Ubah', `/abdi/dashboard/organisasi/detail/acara/ubah/${data.id_acara}`],
-							['Laporan', `/abdi/dashboard/organisasi/detail/acara/laporan/${data.id_acara}`],
+							[
+								'Detail',
+								`/abdi/dashboard/organisasi/beranda/${idOrganisasi}/detail/acara/detail/${data.id_acara}`
+							],
+							[
+								'Ubah',
+								`/abdi/dashboard/organisasi/beranda/${idOrganisasi}/detail/acara/ubah/${data.id_acara}`
+							],
+							[
+								'Laporan',
+								`/abdi/dashboard/organisasi/beranda/${idOrganisasi}/detail/acara/laporan/${data.id_acara}`
+							],
 							['children', 'Arsip', '']
 						]}
 						id={`id-${index}`}
-						data={data}
+						{data}
+						onSuccess={refreshData}
 					></DropDown>
 				{:else if header === 'Status'}
 					<Status status={data.status || 'unknown'}></Status>
 				{/if}
 			{/snippet}
 		</Table>
+		{#if dataacara.length === 0}
+			<p class="flex items-center justify-center text-center">No data available</p>
+		{/if}
 		<div>
 			<Pagination bind:currPage bind:entries totalItems={filteredData.length} />
 		</div>
