@@ -106,13 +106,16 @@
 			>
 				{#each filteredData() as item}
 					<div class="h-auto">
+						<!-- svelte-ignore attribute_quoted -->
 						<Card2
 							situs={item.situs}
 							header={item.header}
 							isi={item.isi}
 							icon=""
 							id={item.id}
-							href={`/kelompok/${item.id}`}
+							href={item.status === 'organisasi'
+								? `/kelompok/organisasi/${item.id}`
+								: `/kelompok/komunitas/${item.id}`}
 						/>
 					</div>
 				{/each}

@@ -16,18 +16,18 @@
 	});
 
 	// Check if data exists and has the expected structure
-	const situs = data?.data || {}; // Access first item in array or use empty object as fallback
-	const nama_acara = situs?.nama_acara || 'Nama Acara Tidak Tersedia';
-	const tanggal = situs?.tanggal_mulai || '-';
-	const jam = situs?.waktu_mulai || '-';
-	const jam_selesai = situs?.waktu_selesai || '-';
-	const id = situs?.id_acara || '';
-	const lokasi = situs?.alamat_acara || 'Lokasi tidak tersedia';
-	const isi = situs?.deskripsi_acara || 'Tidak ada deskripsi';
-	const penanggung_jawab = situs?.penanggungjawab || situs?.nama_penanggung_jawab || '-';
+	const acara = data?.data || {}; // Access first item in array or use empty object as fallback
+	const nama_acara = acara?.nama_acara || 'Nama Acara Tidak Tersedia';
+	const tanggal = acara?.tanggal_mulai || '-';
+	const jam = acara?.waktu_mulai || '-';
+	const jam_selesai = acara?.waktu_selesai || '-';
+	const id = acara?.id_acara || '';
+	const lokasi = acara?.alamat_acara || 'Lokasi tidak tersedia';
+	const isi = acara?.deskripsi_acara || 'Tidak ada deskripsi';
+	const penanggung_jawab = acara?.penanggungjawab || acara?.nama_penanggung_jawab || '-';
 
 	// Handle image URLs safely
-	const imageUrls = situs?.imageUrls || [];
+	const imageUrls = acara?.imageUrls || [];
 	const gambar1 = imageUrls[0] || 'https://picsum.photos/200/300'; // Use placeholder if no image
 	const gambar2 = imageUrls[1] || gambar1; // Fallback to first image or placeholder
 	const gambar3 = imageUrls[2] || gambar1;

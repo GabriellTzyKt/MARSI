@@ -112,12 +112,12 @@
 		<div
 			class="mx-auto grid grid-flow-row auto-rows-auto gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
 		>
-			{#each data.data as event}
+			{#each dataambil as event}
 				<div class="h-auto">
 					<Card2
 						situs={event.imageUrls[0] || ''}
 						header={event.nama_aset}
-						isi={event.deskripsi_aset || 'No Description'}
+						isi={event.deskripsi || 'No Description'}
 						icon=""
 						href="/aset/{event.id_aset}"
 						id={event.id_aset}

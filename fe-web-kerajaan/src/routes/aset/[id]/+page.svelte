@@ -23,13 +23,13 @@
 			<div
 				class="flex items-center justify-center self-center pt-10 text-center text-3xl font-bold"
 			>
-				<p>{dataambil.nama_aset}</p>
+				<p class="max-w-full break-words px-4">{dataambil.nama_aset}</p>
 			</div>
-			<div class="grid grid-cols-1 gap-8 p-4 px-10 md:grid-cols-2">
+			<div class="grid grid-cols-1 gap-8 p-4 px-4 md:grid-cols-2 md:px-10">
 				<div>
 					<img
 						src={imageUrls[0] ? imageUrls[0] : 'https://picsum.photos/200/300'}
-						class=" h-auto w-[500px] self-center rounded-lg object-cover"
+						class="mx-auto h-auto w-full max-w-[500px] self-center rounded-lg object-cover"
 						alt="foto 1"
 					/>
 					<div class="mt-5 flex items-center justify-center">
@@ -41,8 +41,8 @@
 						</div>
 					</div>
 				</div>
-				<div class="">
-					<div class="">
+				<div class="flex flex-col">
+					<div class="mb-4">
 						<Marquee>
 							<div class="flex items-center gap-2">
 								{#if imageUrls.length > 0}
@@ -58,7 +58,9 @@
 						</Marquee>
 					</div>
 					<div class="mt-4">
-						<p class="text-justify">{dataambil.deskripsi}</p>
+						<p class="overflow-hidden whitespace-normal break-words text-justify">
+							{dataambil.deskripsi}
+						</p>
 					</div>
 				</div>
 			</div>

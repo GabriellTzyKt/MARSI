@@ -23,31 +23,50 @@ export const load: PageServerLoad = async () => {
             };
     
             try {
-                
-                    const res = await fetch(`${env.URL_KERAJAAN}/doc/${item.dokumentasi}`);
-                    if (!res.ok) {
-                        throw new Error(`HTTP Error! Status: ${res.status}`);
-                    }
-                    const docData = await res.json();
-                let filePath = docData.file_dokumentasi || docData;
-                
-                // Handle both string and array responses
-                if (typeof filePath === 'string') {
-                    filePath = filePath.split(',').map(path => path.trim());
-                }
-                
-                if (Array.isArray(filePath)) {
-                    for (const path of filePath) {
-                        const imagePath = typeof path === 'string' ? 
-                            path : 
-                            path.file_dokumentasi;
+                // Check if dokumentasi exists and is not empty
+                if (item.dokumentasi && item.dokumentasi.trim() !== '') {
+                    // Split the comma-separated IDs
+                    const docIds = item.dokumentasi.split(',').map(id => id.trim());
+                    console.log(`Processing dokumentasi for asset ${item.id_aset}:`, docIds);
+                    
+                    // Process each document ID
+                    for (const docId of docIds) {
+                        try {
+                            console.log(`Fetching document ID: ${docId}`);
+                            const res = await fetch(`${env.URL_KERAJAAN}/doc/${docId}`);
                             
-                        if (imagePath) {
-                            formattedItem.imageUrls.push(
-                                `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(imagePath)}`
-                            );
+                            if (!res.ok) {
+                                console.error(`Failed to fetch doc/${docId}: ${res.status}`);
+                                continue;
+                            }
+                            
+                            const docData = await res.json();
+                            console.log(`Document data for ID ${docId}:`, docData);
+                            
+                            let filePath = docData.file_dokumentasi || docData;
+                            console.log(`File path for ID ${docId}:`, filePath);
+                            
+                            if (typeof filePath === 'string') {
+                                const imageUrl = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`;
+                                console.log(`Adding image URL: ${imageUrl}`);
+                                formattedItem.imageUrls.push(imageUrl);
+                            } else if (Array.isArray(filePath)) {
+                                for (const path of filePath) {
+                                    const imagePath = typeof path === 'string' ? path : path.file_dokumentasi;
+                                    
+                                    if (imagePath) {
+                                        const imageUrl = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(imagePath)}`;
+                                        console.log(`Adding image URL from array: ${imageUrl}`);
+                                        formattedItem.imageUrls.push(imageUrl);
+                                    }
+                                }
+                            }
+                        } catch (docError) {
+                            console.error(`Error processing document ID ${docId}:`, docError);
                         }
                     }
+                } else {
+                    console.log(`No dokumentasi found for asset ${item.id_aset}`);
                 }
             } catch (error) {
                 console.error(`Error processing images for aset ${item.id_aset}:`, error);
