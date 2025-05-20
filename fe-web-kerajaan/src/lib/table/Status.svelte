@@ -3,7 +3,7 @@
 </script>
 
 <div
-	class="rounded-full px-2 py-1 text-center"
+	class="mx-2 rounded-full px-2 py-1 text-center"
 	class:bg-berlangsung={status === 'Berlangsung' || status === 'Ditugaskan'}
 	class:bg-disetujui={status === 'Disetujui' || status === 'Selesai'}
 	class:bg-ditolak={status === 'Ditolak'}

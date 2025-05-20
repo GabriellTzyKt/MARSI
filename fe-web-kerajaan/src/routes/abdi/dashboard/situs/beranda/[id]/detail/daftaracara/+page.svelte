@@ -1,32 +1,53 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { page } from '$app/state';
+	import { enhance } from '$app/forms';
+	import { goto, invalidateAll } from '$app/navigation';
+	import { navigating, page } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
+	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
 	import { dummyAcara, dummyAnggota } from '$lib/dummy';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
 	let { data } = $props();
-	let dataevent = data.events
-	let dataID = data.locationIds
-	let datatotal = data.situsCount
-	console.log("Data event : ", dataevent)
-	console.log("Data ID : ", dataID)
-	console.log("Data Length : ", datatotal)
+	let dataevent = data.events;
+	let loading = $state(false);
+	let dataID = data.locationIds;
+	let datatotal = data.situsCount;
+	console.log('Data event : ', dataevent);
+	console.log('Data ID : ', dataID);
+	console.log('Data Length : ', datatotal);
 
-
-	let idAktif = $state(page.params.id)
+	let idAktif = $state(page.params.id);
 	$effect(() => {
 		idAktif = page.params.id;
-		console.log("ID Aktif : ", idAktif)
+		console.log('ID Aktif : ', idAktif);
 	});
-
-
+	let Dmodal = $state(false);
+	function openModal() {
+		Dmodal = true;
+	}
 	let keyword = $state('');
 	let entries = $state(10);
 	let currPage = $state(1);
+	let success = $state(false);
+	let dataDelete = $state('');
+	function deleteID(id: string) {
+		console.log('Anda Menghapus acara : ', id);
+		dataDelete = dataevent.find((item) => item.id_acara === id).id_acara;
+		console.log('Data Delete : ', dataDelete);
+		Dmodal = true;
+	}
+	function reloadPage() {
+		const thisPage = window.location.pathname;
+
+		console.log('goto ' + thisPage);
+
+		goto('/').then(() => goto(thisPage));
+	}
 	function filterD(data: any[]) {
 		return data.filter(
 			(item) =>
@@ -46,7 +67,7 @@
 		console.log(d);
 		return d.slice(start, end);
 	}
-	let dataambil = $derived(pagination(dummyAcara));
+	let dataambil = $derived(pagination(dataevent || []));
 	$effect(() => {
 		if (keyword || entries) {
 			currPage = 1;
@@ -54,6 +75,12 @@
 	});
 </script>
 
+{#if loading}
+	<Loader></Loader>
+{/if}
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
 		<button
@@ -123,9 +150,8 @@
 	<div class="flex w-full flex-col">
 		<Table
 			table_header={[
-				['id_acara', 'Id Acara'],
 				['nama_acara', 'Nama Acara'],
-				['created_at', 'Tanggal'],
+				['tanggal_mulai', 'Tanggal'],
 				['situs_alamat', 'Lokasi'],
 				['penanggung_jawab_nama', 'Penanggung Jawab'],
 				['jenis_acara', 'Jenis Acara'],
@@ -137,17 +163,24 @@
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
-					<DropDown
-						text={`Apakah yakin ingin mengarsipkan ${data.nama_acara}?`}
-						successText={`Berhasil mengarsipkan ${data.nama_acara}!`}
-						link="/abdi/dashboard/situs/daftaracara"
+					<DropDownNew
+						text={`Apakah yakin ingin mengarsipkan ${data.nama_anggota}?`}
 						items={[
-							['Detail', `/abdi/dashboard/situs/detail/daftaracara/detail`],
-							['Laporan', `/abdi/dashboard/situs/detail/daftaracara/laporan`]
+							{
+								label: 'Edit',
+								action: () =>
+									goto(
+										`/abdi/dashboard/situs/beranda/${idAktif}/detail/daftaracara/edit/${data.id_acara}`
+									)
+							},
+							{
+								label: 'Hapus',
+								action: () => deleteID(data.id_acara)
+							}
 						]}
 						id={`id-${index}`}
 						data={dataambil}
-					></DropDown>
+					></DropDownNew>
 				{:else if header === 'Status'}
 					<Status status={data.status}></Status>
 				{/if}
@@ -156,3 +189,43 @@
 		<Pagination bind:currPage bind:entries totalItems={filterD(dummyAcara).length}></Pagination>
 	</div>
 </div>
+{#if Dmodal}
+	<form
+		action="?/delete"
+		method="post"
+		use:enhance={() => {
+			loading = true;
+			return async ({ result }) => {
+				loading = false;
+				if (result.type === 'success') {
+					console.log('Success deleting ID:', dataDelete);
+					try {
+						success = true;
+						// goto(`/abdi/dashboard/situs/beranda/${idAktif}/detail/daftaracara`, {
+						// 	replaceState: true
+						// });
+						setTimeout(() => {
+							Dmodal = false;
+							success = false;
+							reloadPage();
+						}, 3000);
+					} catch (error) {}
+				}
+				if (result.type === 'failure') {
+					console.log(result.data?.errors);
+				}
+			};
+		}}
+	>
+		<DeleteModal
+			bind:value={Dmodal}
+			text="Apakah yakin ingin menghapus acara ini?"
+			successText="Acara berhasil dihapus!"
+			choose="delete"
+		></DeleteModal>
+		<input hidden name="id_acara" value={dataDelete} />
+	</form>
+{/if}
+{#if success}
+	<SuccessModal text="Acara berhasil dihapus!"></SuccessModal>
+{/if}

@@ -4,82 +4,66 @@
 	import { goto } from '$app/navigation';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import { enhance } from '$app/forms';
-	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
-	import { onMount } from 'svelte';
-	import jd from '$lib/asset/profile/jdpp.jpg';
+	import { navigating } from '$app/state';
 	import { writable } from 'svelte/store';
-
+	import { onMount } from 'svelte';
+	import { Item } from '@radix-ui/react-dropdown-menu';
 	// Get data from server
 	let { data } = $props();
 	let users = data.users || [];
-	let situs = data.situs || [];
-	console.log(users);
-	console.log(situs);
+	let situsTypes = data.situsTypes || [];
+	let situs = data.situs || {};
+	console.log('data situs : ', situs);
+	console.log('Data jenis_situs', situsTypes);
 	let open = $state(false);
 	let timer: number;
 	let errors = $state();
 	let loading = $state(false);
+	let success = $state(false);
 
 	// Profile picture handling
-	let pictUrl = $state(jd);
-	let pictUrlFiles = $state();
+	let pictUrl = $state(
+		situs.imageUrls && situs.imageUrls.length > 0 ? situs.imageUrls[0] : gambardefault
+	);
+	let pictUrlFiles = $state(null);
 
 	function handleFiles(event) {
-		const input = event.target as HTMLInputElement;
+		const input = event.target;
 		if (input.files && input.files[0]) {
 			const file = input.files[0];
-
-			// Check file size (limit to 5MB)
-			if (file.size > 5 * 1024 * 1024) {
-				alert('File terlalu besar. Maksimal ukuran file adalah 5MB.');
-				input.value = '';
-				return;
-			}
-
-			// Check file type
-			if (!file.type.match('image.*')) {
-				alert('Hanya file gambar yang diperbolehkan.');
-				input.value = '';
-				return;
-			}
-
 			pictUrlFiles = file;
 			pictUrl = URL.createObjectURL(file);
 		}
 	}
 
-	// Clean up object URLs when component is destroyed
-	onMount(() => {
-		return () => {
-			if (pictUrl && pictUrl !== jd) {
-				URL.revokeObjectURL(pictUrl);
-			}
-		};
-	});
-
 	// User selection for pembina and pelindung
-	let pembinaSearchTerm = $state('');
-	let pelindungSearchTerm = $state('');
-	let selectedPembina = $state<any>(null);
-	let selectedPelindung = $state<any>(null);
+	let pembinaSearchTerm = $state(situs.pembina || '');
+	let pelindungSearchTerm = $state(situs.pelindung || '');
+	let selectedPembina = $state(situs.pembina || null);
+	let selectedPelindung = $state(situs.pelindung || null);
 	let showPembinaDropdown = $state(false);
 	let showPelindungDropdown = $state(false);
 	let showJuruKunciDropdown = $state(false);
-	let selectedJuruKunci = $state<any>(null);
-	let juruKunciSearchTerm = $state('');
-	let situsSearchTerm = $state('');
-	let selectedSitus = $state<any>(null);
+	let selectedJuruKunci = $state(situs.juru_kunci || null);
+	let juruKunciSearchTerm = $state(situs.juru_kunci || '');
+	let find = situsTypes.find((item) => item.id === situs.id_jenis_situs);
+	let situsSearchTerm = $state(find.name || '');
+	console.log('find', find);
+	let selectedSitus = $state(find || null);
 	let showSitusDropdown = $state(false);
 
 	// Filter users based on search term
-
 	function filterUser(searchTerm: string) {
-		return users.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+		return users.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()) || '');
 	}
+
 	function filterSitus(searchTerm: string) {
-		return data.situs.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+		return situsTypes.filter(
+			(item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()) || ''
+		);
 	}
+
 	let filteredPelindungUsers = $derived(filterUser(pelindungSearchTerm));
 	let filteredPembinaUsers = $derived(filterUser(pembinaSearchTerm));
 	let filteredJuruKunciUsers = $derived(filterUser(juruKunciSearchTerm));
@@ -97,11 +81,13 @@
 		pelindungSearchTerm = user.name;
 		showPelindungDropdown = false;
 	}
+
 	function selectJuruKunci(user: any) {
 		selectedJuruKunci = user;
 		juruKunciSearchTerm = user.name;
 		showJuruKunciDropdown = false;
 	}
+
 	function selectSitus(situs: any) {
 		selectedSitus = situs;
 		situsSearchTerm = situs.name;
@@ -122,8 +108,13 @@
 		if (selectedPelindung) {
 			formData.set('pelindung', selectedPelindung.id);
 		}
+
 		if (selectedJuruKunci) {
 			formData.set('juru_kunci', selectedJuruKunci.id);
+		}
+
+		if (selectedSitus) {
+			formData.set('jenis_situs', selectedSitus.id);
 		}
 
 		// Add profile picture if selected
@@ -138,13 +129,12 @@
 	// Location search functionality
 	let results = writable<string[]>([]);
 	let showDropdown = writable(false);
-	let alamat = $state('');
+	let alamat = $state(situs.alamat || '');
 	let locationsData: any[] = [];
-	let lat = $state('');
-	let long = $state('');
+	let lat = $state(situs.latitude || '');
+	let long = $state(situs.longitude || '');
 	let selectedLocation: any = $state('');
 	let isSearching = $state(false);
-	let success = $state(false);
 	const API_KEY = 'pk.def50126ee21d7c7b667386e05fc8bcb'; // LocationIQ API key
 
 	async function searchLocations() {
@@ -197,88 +187,96 @@
 			console.log('Coordinates not found.');
 		}
 	}
+
+	// Clean up object URLs when component is destroyed
+	onMount(() => {
+		return () => {
+			if (pictUrl && pictUrl !== gambardefault) {
+				URL.revokeObjectURL(pictUrl);
+			}
+		};
+	});
 </script>
 
-<div class="container mx-auto px-4 py-8">
-	<h1 class="mb-6 text-2xl font-bold">Buat Situs Baru</h1>
-
+{#if loading}
+	<Loader></Loader>
+{/if}
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+<div class="h-full w-full">
 	<form
-		method="POST"
-		action="?/tambahSitus"
+		action="?/editSitus"
+		method="post"
 		enctype="multipart/form-data"
 		use:enhance={() => {
 			loading = true;
-			return async ({ result }) => {
+			return async ({ result, update }) => {
 				loading = false;
+				if (result.type === 'success') {
+					open = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						open = false;
+						// goto('/abdi/sekretariat/situs');
+					}, 3000);
+				}
 				if (result.type === 'failure') {
 					errors = result.data?.errors;
-					console.log(errors);
-				} else if (result.type === 'success') {
-					success = true;
-					// open = true;
-					timer = setTimeout(() => {
-						success = false;
-						goto('/abdi/sekretariat/situs');
-					}, 2000);
 				}
 			};
 		}}
 	>
-		<!-- Profile Picture Section -->
-		<div class="flex justify-center">
-			<div class="relative flex">
-				<img
-					src={pictUrl}
-					class="h-24 w-24 rounded-full sm:h-28 sm:w-28 md:h-36 md:w-36"
-					alt="Profile"
-				/>
-				<!-- Tombol Edit Foto -->
-				<!-- svelte-ignore a11y_consider_explicit_label -->
-				<!-- svelte-ignore a11y_label_has_associated_control -->
-				<label
-					class="absolute bottom-0 right-0 cursor-pointer rounded-xl bg-white p-2 shadow-md hover:bg-gray-100"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="1.5"
-						stroke="currentColor"
-						class="size-6"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-						/>
-					</svg>
-					<input
-						type="file"
-						hidden
-						name="profile_picture"
-						accept="image/*"
-						onchange={handleFiles}
-					/>
-				</label>
-			</div>
-		</div>
-		{#if errors?.profile_picture}
-			{#each errors.profile_picture as e}
-				<p class="text-left text-red-500">- {e}</p>
-			{/each}
-		{/if}
-
 		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<!-- 1 -->
 			<div>
+				<div class="relative mx-auto mb-4 flex w-full items-center justify-center">
+					<div class="relative flex">
+						<img
+							src={pictUrl}
+							class="h-24 w-24 rounded-full sm:h-28 sm:w-28 md:h-36 md:w-36"
+							alt="Profile"
+						/>
+						<!-- Tombol Edit Foto -->
+						<!-- svelte-ignore a11y_consider_explicit_label -->
+						<!-- svelte-ignore a11y_label_has_associated_control -->
+						<label
+							class="absolute bottom-0 right-0 cursor-pointer rounded-xl bg-white p-2 shadow-md hover:bg-gray-100"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-6"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+								/>
+							</svg>
+							<input
+								type="file"
+								hidden
+								name="profile_picture"
+								accept="image/*"
+								onchange={handleFiles}
+							/>
+						</label>
+					</div>
+				</div>
+
 				<div>
 					<p>Nama Situs:</p>
 					<div class="relative">
 						<input
 							type="text"
 							name="nama_situs"
+							value={situs.nama_situs || '-'}
 							placeholder="Masukkan Nama Situs"
-							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 pr-10"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 						/>
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 					</div>
@@ -298,7 +296,7 @@
 							name="alamat"
 							bind:value={alamat}
 							onkeydown={handleKeyDown}
-							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 pr-10"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 						/>
 						<!-- svelte-ignore a11y_consider_explicit_label -->
 						<button
@@ -326,7 +324,6 @@
 						<input type="hidden" name="latitude" bind:value={lat} />
 						<input type="hidden" name="longitude" bind:value={long} />
 					</div>
-
 					<!-- Location dropdown -->
 					{#if $showDropdown}
 						<div class="relative">
@@ -350,7 +347,6 @@
 					<p class="mt-1 text-xs text-gray-500">
 						Ketik alamat dan tekan Enter atau klik ikon pencarian untuk mencari
 					</p>
-
 					{#if errors}
 						{#if errors.alamat}
 							{#each errors.alamat as e}
@@ -369,8 +365,6 @@
 						{/if}
 					{/if}
 				</div>
-
-				<!-- Location preview when coordinates are available -->
 				{#if lat && long}
 					<div class="mt-2 overflow-hidden rounded-lg border border-gray-300">
 						<div
@@ -434,22 +428,37 @@
 					</div>
 				{/if}
 
-				<div>
-					<p class="mt-5">Email:</p>
-					<div class="relative">
+				<div class="flexcoba mt-5 flex gap-6">
+					<div class="w-full">
+						<p>No telepon :</p>
 						<input
 							type="text"
-							placeholder="Masukkan Email"
-							name="email"
-							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 pr-10"
+							name="phone"
+							value={situs.no_telp || '-'}
+							placeholder="Masukkan Nomer Telepon"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 						/>
-						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+						{#if errors}
+							{#each errors.phone as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
 					</div>
-					{#if errors}
-						{#each errors.email as e}
-							<p class="text-left text-red-500">- {e}</p>
-						{/each}
-					{/if}
+					<div class="w-full">
+						<p>Kepemilikan :</p>
+						<input
+							type="text"
+							name="kepemilikan"
+							value={situs.pemilik_situs || '-'}
+							placeholder="Masukkan Kepemilikan"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+						{#if errors}
+							{#each errors.kepemilikan as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
 				</div>
 
 				<div>
@@ -458,7 +467,8 @@
 						<textarea
 							placeholder="Masukkan Deskripsi Situs"
 							name="deskripsi_situs"
-							class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 pr-10 text-lg"
+							value={situs.deskripsi_situs || '-'}
+							class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg"
 						></textarea>
 						<div class="h-full">
 							<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
@@ -474,7 +484,7 @@
 
 			<!-- 2 -->
 			<div>
-				<div>
+				<div class="mt-5">
 					<p>Juru Kunci:</p>
 					<div class="relative">
 						<input
@@ -518,127 +528,125 @@
 						{/each}
 					{/if}
 				</div>
-
-				<div class="mt-5 flex items-center gap-3">
+				<div class="flexcoba mt-5 flex gap-6">
 					<div class="w-full">
-						<p>Pembina:</p>
-						<div class="relative">
-							<input
-								type="text"
-								placeholder="Cari pembina..."
-								bind:value={pembinaSearchTerm}
-								onfocus={() => (showPembinaDropdown = true)}
-								onblur={() => {
-									// Delay hiding dropdown to allow for click
-									setTimeout(() => {
-										showPembinaDropdown = false;
-									}, 200);
-								}}
-								class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
-							/>
-							<input type="hidden" name="pembina" value={selectedPembina?.name || ''} />
+						<p>Dibangun Oleh :</p>
+						<input
+							type="text"
+							value={situs.nama_pendiri || '-'}
+							placeholder="Masukkan nama"
+							name="dibangun_oleh"
+							class="border-blackpx-2 mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
+						/>
+						{#if errors}
+							{#each errors.dibangun_oleh as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
+					<div class="w-full">
+						<p>Tahun Berdiri :</p>
+						<input
+							value={situs.tahun_berdiri || '-'}
+							type="text"
+							placeholder="Masukkan Tahun"
+							name="tahun_berdiri"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
+						{#if errors}
+							{#each errors.tahun_berdiri as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
 
-							{#if showPembinaDropdown && filteredPembinaUsers.length > 0}
-								<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
-									<ul class="max-h-60 overflow-y-auto">
-										{#each filteredPembinaUsers as user}
-											<!-- svelte-ignore a11y_click_events_have_key_events -->
-											<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-											<li
-												class="cursor-pointer px-3 py-2 hover:bg-gray-100"
-												onclick={() => selectPembina(user)}
-											>
-												<div class="flex flex-col">
-													<span class="font-medium">{user.name}</span>
-													<span class="text-sm text-gray-500">{user.email}</span>
-												</div>
-											</li>
-										{/each}
-									</ul>
-								</div>
-							{/if}
-						</div>
-						{#if errors?.pembina}
+				<div class="mt-5 flex w-full gap-6">
+					<div class="w-full">
+						<p>Pembina :</p>
+						<input
+							type="text"
+							placeholder="Cari pembina..."
+							bind:value={pembinaSearchTerm}
+							onfocus={() => (showPembinaDropdown = true)}
+							onblur={() => {
+								// Delay hiding dropdown to allow for click
+								setTimeout(() => {
+									showPembinaDropdown = false;
+								}, 200);
+							}}
+							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
+						/>
+						<input type="hidden" name="pembina" value={selectedPembina?.name || ''} />
+
+						{#if showPembinaDropdown && filteredPembinaUsers.length > 0}
+							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+								<ul class="max-h-60 overflow-y-auto">
+									{#each filteredPembinaUsers as user}
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+										<li
+											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+											onclick={() => selectPembina(user)}
+										>
+											<div class="flex flex-col">
+												<span class="font-medium">{user.name}</span>
+												<span class="text-sm text-gray-500">{user.email}</span>
+											</div>
+										</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
+						{#if errors}
 							{#each errors.pembina as e}
 								<p class="text-left text-red-500">- {e}</p>
 							{/each}
 						{/if}
 					</div>
-					<button
-						type="button"
-						class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white"
-						onclick={() => {
-							// Reset pembina selection
-							selectedPembina = null;
-							pembinaSearchTerm = '';
-						}}
-					>
-						Permohonan
-					</button>
-				</div>
-
-				<div class="mt-5 flex items-center gap-3">
 					<div class="w-full">
-						<p>Pelindung:</p>
-						<div class="relative">
-							<input
-								type="text"
-								placeholder="Cari pelindung..."
-								bind:value={pelindungSearchTerm}
-								onfocus={() => (showPelindungDropdown = true)}
-								onblur={() => {
-									// Delay hiding dropdown to allow for click
-									setTimeout(() => {
-										showPelindungDropdown = false;
-									}, 200);
-								}}
-								class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
-							/>
-							<input type="hidden" name="pelindung" value={selectedPelindung?.name || ''} />
+						<p>Pelindung :</p>
+						<input
+							type="text"
+							placeholder="Cari pelindung..."
+							bind:value={pelindungSearchTerm}
+							onfocus={() => (showPelindungDropdown = true)}
+							onblur={() => {
+								// Delay hiding dropdown to allow for click
+								setTimeout(() => {
+									showPelindungDropdown = false;
+								}, 200);
+							}}
+							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
+						/>
+						<input type="hidden" name="pelindung" value={selectedPelindung?.name || ''} />
 
-							{#if showPelindungDropdown && filteredPelindungUsers.length > 0}
-								<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
-									<ul class="max-h-60 overflow-y-auto">
-										{#each filteredPelindungUsers as user}
-											<!-- svelte-ignore a11y_click_events_have_key_events -->
-											<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-											<li
-												class="cursor-pointer px-3 py-2 hover:bg-gray-100"
-												onclick={() => selectPelindung(user)}
-											>
-												<div class="flex flex-col">
-													<span class="font-medium">{user.name}</span>
-													<span class="text-sm text-gray-500">{user.email}</span>
-												</div>
-											</li>
-										{/each}
-									</ul>
-								</div>
-							{/if}
-						</div>
-						{#if errors?.pelindung}
+						{#if showPelindungDropdown && filteredPelindungUsers.length > 0}
+							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+								<ul class="max-h-60 overflow-y-auto">
+									{#each filteredPelindungUsers as user}
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+										<li
+											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+											onclick={() => selectPelindung(user)}
+										>
+											<div class="flex flex-col">
+												<span class="font-medium">{user.name}</span>
+												<span class="text-sm text-gray-500">{user.email}</span>
+											</div>
+										</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
+						{#if errors}
 							{#each errors.pelindung as e}
 								<p class="text-left text-red-500">- {e}</p>
 							{/each}
 						{/if}
 					</div>
-					<button
-						type="button"
-						class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white"
-						onclick={() => {
-							// Reset pelindung selection
-							selectedPelindung = null;
-							pelindungSearchTerm = '';
-						}}
-					>
-						Permohonan
-					</button>
 				</div>
-				{#if errors}
-					{#each errors.pelindung as e}
-						<p class="text-left text-red-500">- {e}</p>
-					{/each}
-				{/if}
 				<div class="mt-5 grid w-full grid-cols-1 flex-col gap-4 lg:grid-cols-2">
 					<div class="relative col-span-full w-full">
 						<p>Jenis Situs:</p>
@@ -658,7 +666,7 @@
 
 						<input type="hidden" name="jenis_situs" value={selectedSitus?.id || ''} />
 						{#if showSitusDropdown && filteredSitus.length > 0}
-							<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
+							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
 								<ul class="max-h-60 overflow-y-auto">
 									{#each filteredSitus as situs}
 										<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -684,76 +692,95 @@
 						{/if}
 					</div>
 				</div>
-				<div class="mt-5 grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
-					<div class="w-full">
-						<p>Jam Buka:</p>
-						<input
-							type="time"
-							name="jam_buka"
-							placeholder=""
-							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
-						/>
-						{#if errors}
-							{#each errors.jam_buka as e}
-								<p class="text-left text-red-500">- {e}</p>
-							{/each}
-						{/if}
+				<div class="mt-5">
+					<div class="flexcoba mt-5 flex gap-6">
+						<div class="w-full">
+							<p>Jam Buka :</p>
+							<input
+								type="time"
+								name="jam_buka"
+								value={situs.jam_buka || '-'}
+								placeholder=""
+								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+							/>
+							{#if errors}
+								{#each errors.jam_buka as e}
+									<p class="text-left text-red-500">- {e}</p>
+								{/each}
+							{/if}
+						</div>
+						<div class="w-full">
+							<p>Jam Tutup :</p>
+							<input
+								type="time"
+								name="jam_tutup"
+								placeholder=""
+								value={situs.jam_tutup || '-'}
+								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+							/>
+							{#if errors}
+								{#each errors.jam_tutup as e}
+									<p class="text-left text-red-500">- {e}</p>
+								{/each}
+							{/if}
+						</div>
+						<div class="w-full">
+							<p>Jumlah Anggota :</p>
+							<input
+								type="number"
+								name="jumlah_anggota"
+								value={situs.jumlah_anggota || '0'}
+								placeholder="Masukkan Jumlah anggota"
+								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+							/>
+							{#if errors}
+								{#each errors.jumlah_anggota as e}
+									<p class="text-left text-red-500">- {e}</p>
+								{/each}
+							{/if}
+						</div>
 					</div>
-					<div class="w-full">
-						<p>Jam Tutup:</p>
-						<input
-							type="time"
-							name="jam_tutup"
-							placeholder=""
-							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
-						/>
-						{#if errors}
-							{#each errors.jam_tutup as e}
-								<p class="text-left text-red-500">- {e}</p>
-							{/each}
-						{/if}
-					</div>
-				</div>
-				<div class="mt-5 flex gap-12">
-					<div class="w-full lg:w-[50%]">
-						<p>No telepon :</p>
-						<input
-							type="text"
-							name="phone"
-							placeholder="Masukkan No Telp"
-							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-						/>
-					</div>
-					<div class="hidden w-[50%]"></div>
-				</div>
-				{#if errors}
-					{#each errors.phone as e}
-						<p class="text-left text-red-500">- {e}</p>
-					{/each}
-				{/if}
-			</div>
-		</div>
 
-		<div class="relative flex w-full justify-center lg:justify-end">
-			<button
-				class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
-				type="submit">Simpan Data</button
-			>
+					<div class="mt-3">
+						<p>Wisata:</p>
+						<div class="relative">
+							<input
+								type="text"
+								name="wisata"
+								value={situs.wisata || '-'}
+								placeholder="Masukkan Pembina"
+								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+							/>
+						</div>
+						{#if errors}
+							{#each errors.wisata as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
+			</div>
+
+			<div class="relative flex w-full justify-center lg:justify-end">
+				<button
+					class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
+					type="submit">Simpan Data</button
+				>
+			</div>
 		</div>
 	</form>
 </div>
-
 {#if open}
-	<SuccessModal text="Situs Berhasil Dibuat"></SuccessModal>
-{/if}
-{#if loading}
-	<Loader></Loader>
-{/if}
-{#if success}
-	<SuccessModal text="Situs Berhasil Dibuat"></SuccessModal>
+	<SuccessModal text="Situs Berhasil Diedit"></SuccessModal>
 {/if}
 
 <style>
+	@media (max-width: 768px) {
+		.flexcoba {
+			flex-direction: column;
+		}
+	}
+
 	.raphael--edit {
 		display: inline-block;
 		width: 28px;
@@ -761,5 +788,14 @@
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23a59494' d='M27.87 7.863L23.024 4.82l-7.89 12.566l4.843 3.04zM14.395 21.25l-.107 2.855l2.527-1.337l2.35-1.24l-4.673-2.936zM29.163 3.24L26.63 1.647a1.364 1.364 0 0 0-1.88.43l-1 1.588l4.843 3.042l1-1.586c.4-.64.21-1.483-.43-1.883zm-3.965 23.82c0 .275-.225.5-.5.5h-19a.5.5 0 0 1-.5-.5v-19a.5.5 0 0 1 .5-.5h13.244l1.884-3H5.698c-1.93 0-3.5 1.57-3.5 3.5v19c0 1.93 1.57 3.5 3.5 3.5h19c1.93 0 3.5-1.57 3.5-3.5V11.097l-3 4.776v11.19z'/%3E%3C/svg%3E");
+	}
+
+	.mdi--edit {
+		display: inline-block;
+		width: 32px;
+		height: 32px;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'/%3E%3C/svg%3E");
 	}
 </style>

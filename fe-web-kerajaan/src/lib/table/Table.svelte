@@ -31,25 +31,25 @@
 			{#each table_data as data, i}
 				<tr class="">
 					<td
-						class=" whitespace-normal break-words py-3 text-center"
+						class=" mx-2 whitespace-normal break-words py-3 text-center"
 						class:border-y={i !== table_data.length - 1}
 						class:border-bl-xl={i === table_data.length - 1}
 						class:border-br-xl={i === table_data.length - 1}
 					>
-						{i + 1}
+						{i + 1 || '-'}
 					</td>
 					{#each table_header as header, b}
 						{#if typeof header === 'string'}
 							<td
-								class=" whitespace-normal break-words py-3 text-left"
+								class="  whitespace-normal break-words px-2 py-3 text-left"
 								class:border-y={i !== table_data.length - 1}
 								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}
-								>{data[header]}</td
+								>{data[header] || '-'}</td
 							>
 						{:else if header[0] === 'children'}
 							<td
-								class=" whitespace-normal break-words py-3 text-left"
+								class="  whitespace-normal break-words px-2 py-3 text-left"
 								class:border-y={i !== table_data.length - 1}
 								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}
@@ -57,7 +57,7 @@
 							>
 						{:else if header[0] === 'picture'}
 							<td
-								class=" whitespace-normal break-words py-3 text-left"
+								class=" whitespace-normal break-words px-2 py-3 text-left"
 								class:border-y={i !== table_data.length - 1}
 								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}
@@ -65,11 +65,11 @@
 							>
 						{:else}
 							<td
-								class=" whitespace-normal break-words py-3 text-left"
+								class="  whitespace-normal break-words px-2 py-3 text-left"
 								class:border-y={i !== table_data.length - 1}
 								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}
-								>{data[header[0]]}
+								>{data[header[0]] || '-'}
 							</td>
 						{/if}
 					{/each}

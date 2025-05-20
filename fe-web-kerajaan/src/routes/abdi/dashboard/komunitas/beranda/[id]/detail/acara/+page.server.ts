@@ -3,6 +3,7 @@ import { z } from "zod";
 import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
 import { error } from "@sveltejs/kit";
+import { formatDatetoUI, formatTime } from "$lib";
 
 export const load: PageServerLoad = async ({fetch, params, depends}) => {
     // Add a dependency that can be invalidated
@@ -44,6 +45,10 @@ export const load: PageServerLoad = async ({fetch, params, depends}) => {
             if (item.Acara) {
                 return {
                     ...item.Acara,
+                    tanggal_mulai: formatDatetoUI(item.Acara.waktu_mulai),
+                    tanggal_selesai: formatDatetoUI(item.Acara.waktu_selesai),
+                    waktu_mulai: formatTime(item.Acara.waktu_mulai),
+                    waktu_selesai: formatTime(item.Acara.waktu_selesai),
                     // id_komunitas: item.id_komunitas,
                     // komunitas_nama: currentKomunitas.nama_komunitas || 'Unknown Komunitas'
                 };

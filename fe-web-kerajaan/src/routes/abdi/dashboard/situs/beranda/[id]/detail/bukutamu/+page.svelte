@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { navigating } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
+	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
 	import { dummyAcara, dummyAnggota, dummyBukuTamu } from '$lib/dummy';
 	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
@@ -143,7 +144,6 @@
 	<div class="flex w-full flex-col">
 		<Table
 			table_header={[
-				['id_kunjungan', 'Id Kunjungan'],
 				['nama_pengunjung', 'Nama Pengunjung'],
 				['tanggal', 'Tanggal'],
 				['no_telepon', 'Nomer Telepon'],
@@ -155,14 +155,21 @@
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
-					<DropDown
-						text={`Apakah yakin ingin mengarsipkan ${data.nama_acara}?`}
-						successText={`Berhasil mengarsipkan ${data.nama_acara}!`}
-						link="/abdi/dashboard/situs/bukutamu"
-						items={[['Detail', `/abdi/dashboard/situs/detail`]]}
+					<DropDownNew
+						text={`Apakah yakin ingin mengarsipkan ${data.nama_anggota}?`}
+						items={[
+							{
+								label: 'Edit',
+								action: () => handleEdit(data.id_user)
+							},
+							{
+								label: 'Hapus',
+								action: () => handleDelete(data.id_user)
+							}
+						]}
 						id={`id-${index}`}
-						data={dataambil}
-					></DropDown>
+						data={resdata}
+					></DropDownNew>
 				{:else if header === 'Status'}
 					<Status status={data.status}></Status>
 				{/if}

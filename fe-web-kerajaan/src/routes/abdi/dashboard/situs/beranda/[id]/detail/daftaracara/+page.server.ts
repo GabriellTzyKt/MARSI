@@ -1,67 +1,55 @@
 import { env } from "$env/dynamic/private";
-import { error } from "@sveltejs/kit";
+import { error, fail, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "../$types";
+import { formatDatetoUI, formatTime } from "$lib";
 
-export const load: PageServerLoad = async ({ cookies }) => {
+export const load: PageServerLoad = async ({ cookies, params }) => {
     try {
-        // Fetch all situs
-        console.log("Fetching all situs from:", `${env.URL_KERAJAAN}/situs`);
-        const situsResponse = await fetch(`${env.URL_KERAJAAN}/situs`);
+        // Get the situs ID from params
+        const situsId = params.id;
+        console.log("Fetching acara for situs ID:", situsId);
+        
+        // Get token from cookies
+        const token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
+        console.log("Token:", token);
+        
+        // Fetch all data in parallel using Promise.all
+        const [situsResponse, eventsResponse, usersResponse] = await Promise.all([
+            fetch(`${env.URL_KERAJAAN}/situs/${situsId}`),
+            fetch(`${env.URL_KERAJAAN}/acara/situs/${situsId}`),
+            fetch(`${env.PUB_PORT}/users`, {
+                headers: {
+                    "Authorization": `Bearer ${token?.token}`
+                }
+            })
+        ]);
+        
+        // Handle situs response
         if (!situsResponse.ok) {
             throw error(situsResponse.status, `Failed to fetch Situs: ${situsResponse.statusText}`);
         }
+        const situsData = await situsResponse.json();
+        console.log("Situs data:", situsData);
         
-        const allSitusData = await situsResponse.json();
-        console.log(`Retrieved ${allSitusData.length} situs records`);
-        
-        // Extract all unique location IDs
-        const locationIds = [...new Set(
-            allSitusData
-                .filter((situs : any) => situs.id_lokasi && situs.deleted_at === '0001-01-01T00:00:00Z')
-                .map((situs : any) => situs.id_lokasi)
-        )];
-        
-        console.log(`Found ${locationIds.length} unique location IDs:`, locationIds);
-        
-        // Fetch events for each location ID
-        const allEvents = [];
-        
-        for (const locationId of locationIds) {
-            try {
-                console.log(`Fetching events for location ID ${locationId}`);
-                const eventsResponse = await fetch(`${env.URL_KERAJAAN}/acara/situs/${locationId}`);
-                
-                if (eventsResponse.ok) {
-                    const events = await eventsResponse.json();
-                    console.log(`Found ${events.length} events for location ${locationId}`);
-                    
-                    // Find the situs info for this location
-                    const situsInfo = allSitusData.find((s : any) => s.id_lokasi === locationId);
-                    
-                    // Add situs info to each event
-                    const eventsWithSitusInfo = events.map((event : any) => ({
-                        ...event,
-                        situs_nama: situsInfo?.nama_situs || 'Unknown',
-                        situs_alamat: situsInfo?.alamat || 'Unknown Location'
-                    }));
-                    
-                    // Add to our collection
-                    allEvents.push(...eventsWithSitusInfo);
-                } else {
-                    console.error(`Failed to fetch events for location ${locationId}: ${eventsResponse.status}`);
-                }
-            } catch (eventError) {
-                console.error(`Error fetching events for location ${locationId}:`, eventError);
-            }
+        // Handle events response
+        if (!eventsResponse.ok) {
+            throw error(eventsResponse.status, `Failed to fetch Events: ${eventsResponse.statusText}`);
         }
+        let events = await eventsResponse.json();
+        console.log(`Found ${events.length} events for situs ${situsId}`);
+        events = events.filter((event : any) => {
+            // Keep only items where deleted_at is the default value (not deleted)
+            return event.deleted_at === '0001-01-01T00:00:00Z' || !event.deleted_at;
+        });
+        // Add situs info to each event
+        const eventsWithSitusInfo = events.map((event : any) => ({
+            ...event,
+            situs_nama: situsData.nama_situs || 'Unknown',
+            situs_alamat: situsData.alamat || 'Unknown Location'
+        }));
         
-        console.log(`Total events found across all locations: ${allEvents.length}`);
-        
-        // Fetch all users to get names for penanggung_jawab
-        console.log("Fetching all users");
-        const usersResponse = await fetch(`${env.BASE_URL}/users`);
+        // Handle users response
         let allUsers = [];
-        
         if (usersResponse.ok) {
             allUsers = await usersResponse.json();
             console.log(`Retrieved ${allUsers.length} users`);
@@ -75,8 +63,8 @@ export const load: PageServerLoad = async ({ cookies }) => {
             userMap.set(user.id_user, user);
         });
         
-        // Add penanggung_jawab names to events
-        const eventsWithUserInfo = allEvents.map((event : any) => {
+        // Add penanggung_jawab names to events and format dates
+        const eventsWithUserInfo = eventsWithSitusInfo.map((event : any) => {
             let penanggungJawabName = 'Unknown';
             
             if (event.id_penanggung_jawab && userMap.has(event.id_penanggung_jawab)) {
@@ -86,7 +74,11 @@ export const load: PageServerLoad = async ({ cookies }) => {
             
             return {
                 ...event,
-                penanggung_jawab_nama: penanggungJawabName
+                penanggung_jawab_nama: penanggungJawabName,
+                tanggal_mulai: formatDatetoUI(event.waktu_mulai),
+                tanggal_selesai: formatDatetoUI(event.waktu_selesai),
+                waktu_mulai: formatTime(event.waktu_mulai),
+                waktu_selesai: formatTime(event.waktu_selesai)
             };
         });
         
@@ -99,11 +91,40 @@ export const load: PageServerLoad = async ({ cookies }) => {
         
         return {
             events: eventsWithUserInfo,
-            locationIds: locationIds,
-            situsCount: allSitusData.length
+            situs: situsData
         };
     } catch (err) {
         console.error("Error in load function:", err);
         throw error(500, "Failed to load situs and events data");
     }
 }
+export const actions: Actions = {
+    delete: async ({ request }) => {
+        console.log("Deleting acara");
+        const data = await request.formData();
+        const id = data.get("id_acara");
+        console.log("Deleting acara with ID:", id);
+        try {
+            const delres = await fetch(`${env.URL_KERAJAAN}/acara/${id}`, {
+                method: "DELETE"
+            });
+            if (!delres.ok) {
+                const errorData = await delres.json().catch(() => ({}));
+                console.error("Delete failed:", delres.status, errorData);
+                return fail(delres.status, { 
+                    error: errorData.message || `Gagal menghapus acara (${delres.status})` 
+                });
+            }
+            const successData = await delres.json().catch(() => ({ message: "Success" }));
+            console.log("Delete successful:", successData);
+            return {
+                success: true,
+                message: "Acara berhasil dihapus"
+            };
+        }
+        catch (error) {
+            console.log(error)
+            return fail(500, { error: "Terjadi kesalahan saat menghapus acara" });
+        }
+    }
+};

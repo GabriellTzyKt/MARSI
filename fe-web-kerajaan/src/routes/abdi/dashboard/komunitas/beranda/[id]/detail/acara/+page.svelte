@@ -133,7 +133,7 @@
 		<Table
 			table_header={[
 				['nama_acara', 'Nama Acara'],
-				['waktu_mulai', 'Tanggal'],
+				['tanggal_mulai', 'Tanggal'],
 				['alamat_acara', 'Lokasi'],
 				['nama_penanggung_jawab', 'Penanggung Jawab'],
 				['jenis_acara', 'Jenis Acara'],

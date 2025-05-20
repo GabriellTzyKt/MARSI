@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { enhance } from '$app/forms';
+	import { goto, invalidateAll } from '$app/navigation';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import { dummySekreSitus, dummyAnggota } from '$lib/dummy';
 	import Search from '$lib/table/Search.svelte';
@@ -8,10 +9,18 @@
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Loader from '$lib/loader/Loader.svelte';
 	import { navigating } from '$app/state';
+	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	let { data } = $props();
 	let keyword = $state('');
+	let loading = $state(false);
+	let success = $state(false);
 	let entries = $state(10);
 	let currPage = $state(1);
+	let dataDelete = $state();
+	let deleteModal = $state(false);
+	// let id = $state();
 	function filterD(data: any) {
 		return data.filter(
 			(item) =>
@@ -21,6 +30,12 @@
 				item?.juru_kunci?.toLowerCase().includes(keyword.toLowerCase())
 			// item?.wisata?.toLowerCase().includes(keyword.toLowerCase())
 		);
+	}
+	function deleteID(id: string) {
+		console.log('Anda Menghapus situs : ', id);
+		dataDelete = data.data.find((item) => item.id_situs === id).id_situs;
+		deleteModal = true;
+		console.log('Data Delete : ', dataDelete);
 	}
 	function pagination(data: any) {
 		let d = filterD(data);
@@ -40,6 +55,9 @@
 	});
 </script>
 
+{#if loading}
+	<Loader></Loader>
+{/if}
 {#if navigating.to}
 	<Loader text="Navigating..."></Loader>
 {/if}
@@ -111,28 +129,74 @@
 				['alamat', 'Alamat Situs'],
 				['nama_pendiri', 'Dibangun Oleh'],
 				['juru_kunci', 'Juru Kunci'],
-				['wisata', 'Wisata']
+				['wisata', 'Wisata'],
+				['children', 'Aksi']
 			]}
 			table_data={resData}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
-					<DropDown
-						text=" apa yakin mau menghapus acara ini?"
+					<DropDownNew
+						text={`Apakah yakin ingin mengarsipkan ${data.nama_situs}?`}
 						items={[
-							['Detail', '/abdi/sekretariat/situs/detail'],
-							['Ubah', '/abdi/sekretariat/situs/edit'],
-							['Buku Tamu', '/abdi/sekretariat/situs/bukutamu'],
-
-							['children', 'Hapus', '']
+							{
+								label: 'Detail',
+								action: () => goto(`/abdi/sekretariat/situs/detail/${data.id_situs}`)
+							},
+							{
+								label: 'Edit',
+								action: () => goto(`/abdi/sekretariat/situs/edit/${data.id_situs}`)
+							},
+							{
+								label: 'Buku Tamu',
+								action: () => goto(`/abdi/sekretariat/situs/bukutamu/${data.id_situs}`)
+							},
+							{
+								label: 'Hapus',
+								action: () => deleteID(data.id_situs)
+							}
 						]}
 						id={`id-${index}`}
 						{data}
-					></DropDown>
+					></DropDownNew>
 				{/if}
 			{/snippet}
 		</Table>
-		<Pagination bind:currPage bind:entries totalItems={filterD(dummySekreSitus).length}
-		></Pagination>
+		<Pagination bind:currPage bind:entries totalItems={filterD(data.data).length}></Pagination>
 	</div>
 </div>
+{#if deleteModal}
+	<form
+		action="?/hapus"
+		method="post"
+		use:enhance={() => {
+			loading = true;
+			return async ({ result }) => {
+				loading = false;
+				if (result.type === 'success') {
+					success = true;
+					dataDelete = false;
+					invalidateAll();
+					setTimeout(() => {
+						success = false;
+					}, 3000);
+				}
+				if (result.type === 'failure') {
+					console.log(result.data?.errors);
+				}
+			};
+		}}
+	>
+		<DeleteModal
+			bind:value={dataDelete}
+			text="Apakah yakin ingin menghapus situs ini?"
+			successText="Situs berhasil dihapus!"
+			choose="delete"
+		></DeleteModal>
+
+		<input type="hidden" name="id_situs" value={dataDelete} />
+	</form>
+{/if}
+{#if success}
+	<SuccessModal text="Situs berhasil dihapus!"></SuccessModal>
+{/if}

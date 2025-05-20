@@ -171,6 +171,9 @@
 				{/if}
 			{/snippet}
 		</Table>
+		{#if resData.length === 0}
+			<p class="flex items-center justify-center text-center">No data available</p>
+		{/if}
 		<Pagination bind:currPage bind:entries totalItems={filteredTotal}></Pagination>
 	</div>
 	{#if errors}
