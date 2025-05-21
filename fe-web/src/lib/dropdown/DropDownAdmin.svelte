@@ -15,6 +15,7 @@
 	let timer: number;
 	let valo = $state(false);
 	let statusUpdated = $state(false);
+	let statusUpdated2 = $state(false);
 	let loading = $state(false);
 	let isAktif : any = $state(false);
 
@@ -164,19 +165,24 @@
 					<!-- svelte-ignore a11y_consider_explicit_label -->
 					<button
 						class="flex gap-1 rounded-lg bg-red-500 px-6 py-2 text-white"
-						onclick={() => {
+						onclick={(e) => {
+							e.stopPropagation();
+							if (!data || !data.id_admin) {
+								console.error('Missing admin ID, cannot delete');
+								return;
+							}
+							console.log('Opening delete confirmation for admin ID:', data.id_admin);
 							value = true;
 						}}
-						><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-							><path
-								fill="currentColor"
-								d="M14.722 12.759a.75.75 0 0 0-1.498-.074L13 17.24a.75.75 0 0 0 1.498.074zm-4.734-.786a.75.75 0 0 0-.712.785l.224 4.557a.75.75 0 1 0 1.498-.074l-.224-4.556a.75.75 0 0 0-.786-.712"
-							/><path
-								fill="currentColor"
-								d="M10.249 2a2.25 2.25 0 0 0-2.25 2.25V5H5.5a2.25 2.25 0 0 0-.587 4.423l.628 10.462A2.25 2.25 0 0 0 7.787 22h8.424a2.25 2.25 0 0 0 2.246-2.115l.628-10.462A2.25 2.25 0 0 0 18.498 5h-2.499v-.75A2.25 2.25 0 0 0 13.749 2zm4.25 3h-5v-.75a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75zM5.5 6.5h12.998a.75.75 0 1 1 0 1.5H5.5a.75.75 0 0 1 0-1.5m.92 3h11.158l-.618 10.295a.75.75 0 0 1-.749.705H7.787a.75.75 0 0 1-.749-.705z"
-							/></svg
-						> Hapus</button
-					>
+					><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+						><path
+							fill="currentColor"
+							d="M14.722 12.759a.75.75 0 0 0-1.498-.074L13 17.24a.75.75 0 0 0 1.498.074zm-4.734-.786a.75.75 0 0 0-.712.785l.224 4.557a.75.75 0 1 0 1.498-.074l-.224-4.556a.75.75 0 0 0-.786-.712"
+						/><path
+							fill="currentColor"
+							d="M10.249 2a2.25 2.25 0 0 0-2.25 2.25V5H5.5a2.25 2.25 0 0 0-.587 4.423l.628 10.462A2.25 2.25 0 0 0 7.787 22h8.424a2.25 2.25 0 0 0 2.246-2.115l.628-10.462A2.25 2.25 0 0 0 18.498 5h-2.499v-.75A2.25 2.25 0 0 0 13.749 2zm4.25 3h-5v-.75a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75zM5.5 6.5h12.998a.75.75 0 1 1 0 1.5H5.5a.75.75 0 0 1 0-1.5m.92 3h11.158l-.618 10.295a.75.75 0 0 1-.749.705H7.787a.75.75 0 0 1-.749-.705z"
+						/></svg
+					> Hapus</button>
 				</div>
 				<div>
 					<!-- svelte-ignore a11y_consider_explicit_label -->
@@ -204,12 +210,42 @@
 	{/if}
 </div>
 {#if value}
-	<DeleteModal
-		bind:value
-		choose="arsip"
-		text="Apakah Adna Ingin Mengarsip Admin?"
-		successText="Admin Berhasil Dihapus"
-	></DeleteModal>
+	<form
+		action="?/delete"
+		method="POST"
+		use:enhance={() => {
+			if (!data || !data.id_admin) {
+				console.error('Missing admin ID, cannot delete');
+				return;
+			}
+			
+			console.log("Deleting admin ID:", data.id_admin);
+			
+			return async ({ result }) => {
+				console.log(result);
+				if (result.type === 'success') {
+					value = false;
+					// Show success message
+					statusUpdated2 = true;
+					clearTimeout(timer);
+					invalidateAll();
+					timer = setTimeout(() => {
+						statusUpdated2 = false;
+						invalidateAll();
+					}, 3000);
+					await invalidateAll();
+				}
+			};
+		}}
+	>
+		<input type="hidden" name="id_admin" value={data?.id_admin} />
+		<DeleteModal
+			bind:value
+			choose="delete"
+			text="Apakah Anda Ingin Menghapus Admin?"
+			successText="Admin Berhasil Dihapus"
+		></DeleteModal>
+	</form>
 {/if}
 {#if edit}
 	<form
@@ -248,6 +284,10 @@
 
 {#if statusUpdated}
 	<SModal text="Status berhasil diubah"></SModal>
+{/if}
+
+{#if statusUpdated2}
+	<SModal text="Data berhasil dihapus"></SModal>
 {/if}
 
 {#if loading}

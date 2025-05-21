@@ -26,19 +26,24 @@ export const load: PageServerLoad = async () => {
         let adminMarsiData = [];
         let kerajaanData = [];
         if (adminBaseResponse.ok) {
-            adminMarsiData = await adminBaseResponse.json();
-            console.log("Admin data from BASE_URL:", adminMarsiData);
+            const adminData = await adminBaseResponse.json();
+            adminMarsiData = adminData.filter((admin: any) => 
+                admin.deleted_at === "0001-01-01T00:00:00Z" || !admin.deleted_at
+            );
+            console.log("Filtered admin data:", adminMarsiData);
         } else {
             console.error(`Error fetching from BASE_URL: ${adminBaseResponse.status}`);
         }
+        
         if (allKerajaan.ok) {
-            kerajaanData = await allKerajaan.json();
-            console.log("Kerajaan data from BASE_URL:", kerajaanData);
+            const allKerajaanData = await allKerajaan.json();
+            kerajaanData = allKerajaanData.filter((kerajaan: any) => 
+                kerajaan.deleted_at === "0001-01-01T00:00:00Z" || !kerajaan.deleted_at
+            );
+            console.log("Filtered kerajaan data:", kerajaanData);
         } else {
             console.error(`Error fetching from BASE_URL: ${allKerajaan.status}`);
         }
-
-
 
         return {
             adminMarsiData,
@@ -397,6 +402,60 @@ export const actions: Actions = {
                 success: false,
                 message: "Server error when updating admin"
             });
+        }
+    },
+
+    delete: async ({ request }) => {
+        const data = await request.formData();
+        const id_admin = data.get("id_admin");
+        
+        if (!id_admin) {
+            return fail(400, { error: "ID Admin tidak ditemukan" });
+        }
+        
+        console.log("Deleting admin with ID:", id_admin);
+        
+        try {
+            // First, check if the admin exists
+            const checkRes = await fetch(`${env.BASE_URL}/admin/${id_admin}`, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+            
+            if (!checkRes.ok) {
+                console.error(`Failed to find admin: ${checkRes.status}`);
+                return fail(404, { error: "Admin tidak ditemukan" });
+            }
+            
+            // Perform the delete operation
+            const deleteRes = await fetch(`${env.BASE_URL}/admin/${id_admin}`, {
+                method: "DELETE",
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+            
+            if (!deleteRes.ok) {
+                const errorData = await deleteRes.json().catch(() => ({}));
+                console.error("Delete failed:", deleteRes.status, errorData);
+                return fail(deleteRes.status, { 
+                    error: errorData.message || `Gagal menghapus admin (${deleteRes.status})` 
+                });
+            }
+            
+            const successData = await deleteRes.json().catch(() => ({ message: "Success" }));
+            console.log("Delete successful:", successData);
+            
+            // Return success response
+            return {
+                success: true,
+                message: "Admin berhasil dihapus"
+            };
+        } catch (error) {
+            console.error("Error in delete action:", error);
+            return fail(500, { error: "Terjadi kesalahan saat menghapus admin" });
         }
     }
 };
