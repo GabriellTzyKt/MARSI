@@ -15,13 +15,16 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         }
         
         const komunitasList = await komunitasResponse.json();
-        const filteredData = komunitasList.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
+        // Perbaikan baris 46: Tambahkan pengecekan null/undefined
+        const filteredData = komunitasList.filter((item : any) => 
+            item && (item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at)
+        );
         console.log("komunitas : ", komunitasList);
         const finalData = await Promise.all(filteredData.map(async (data: any) => {
             const res = await fetch(`${env.PUB_PORT}/user/${data.id_user}`)
             if (res.ok) {
                 let dataAnggota = await res.json()
-                if(dataAnggota.deleted_at !== '0001-01-01T00:00:00Z') return null;
+                if(dataAnggota && dataAnggota.deleted_at !== '0001-01-01T00:00:00Z') return null;
                 return {
                     ...dataAnggota, 
                     tanggal_bergabung: formatDate(data.tanggal_bergabung),
@@ -75,11 +78,16 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         }
         const dataUser = await userData.json()
         // console.log("data user : ", dataUser)
+        // Perbaikan baris 79: Tambahkan pengecekan null/undefined
         return {
-            data: finalData.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at),
+            data: finalData.filter(item => 
+                item && (item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at)
+            ),
             dataUser,
             komunitas_id: params.id,
-            komunitasList: komunitasList.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at)
+            komunitasList: komunitasList.filter((item : any) => 
+                item && (item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at)
+            )
         }
         
         // Array untuk menyimpan semua data anggota dari semua komunitas

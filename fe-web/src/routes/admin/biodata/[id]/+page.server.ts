@@ -320,7 +320,7 @@ export const actions: Actions = {
             namaayah: z.string().trim().min(1, "Minimal 1!"),
             namaibu: z.string().trim().min(1, "Minimal 1!"),
             tanggalawal: z.coerce.date({ message: "Tanggal Tidak valid (YYYY-MM-DD)" }),
-            tanggalakhir: z.coerce.date({ message: "Tanggal Tidak valid (YYYY-MM-DD)" }),
+            // tanggalakhir: z.coerce.date({ message: "Tanggal Tidak valid (YYYY-MM-DD)" }),
             inputcheckbox: z.string().trim().optional(),
         });
 
@@ -329,7 +329,7 @@ export const actions: Actions = {
 
         form = {
             // inputfotoraja: data.get("inputfotoraja"),
-            tanggalmeninggal: data.get("tanggalmeninggal"),
+            // tanggalmeninggal: data.get("tanggalmeninggal"),
             namaraja: data.get("namaraja"),
             gelarraja: data.get("gelarraja"),
             tanggallahir: data.get("tanggallahir"),
@@ -339,7 +339,7 @@ export const actions: Actions = {
             namaayah: data.get("namaayah"),
             namaibu: data.get("namaibu"),
             tanggalawal: data.get("tanggalawal"),
-            tanggalakhir: data.get("tanggalakhir"),
+            // tanggalakhir: data.get("tanggalakhir"),
             inputcheckbox: data.get("inputcheckbox") || " ",
         };
 
@@ -384,6 +384,8 @@ export const actions: Actions = {
             formData.append("selesai_menjabat", res.tanggalakhir || "")
             formData.append("foto_raja", res.inputfotoraja || "")
             formData.append("gelar_raja", res.gelarraja)
+
+            console.log("Form Data : ", formData)
 
             // Kirim request ke API
             const result = await fetch(env.BASE_URL + "/history-raja", {
@@ -911,7 +913,6 @@ export const actions: Actions = {
 
     editHistory: async ({ request, params }) => {
         const data = await request.formData();
-        console.log("EDIT HISTORY SERVER - ID dari URL:", params.id);
         
         // Log semua data yang diterima
         console.log("EDIT HISTORY SERVER - All form data entries:");
@@ -935,11 +936,87 @@ export const actions: Actions = {
         let fotoRajaId = existingFotoRajaId;
         
         if (newFotoRaja instanceof File && newFotoRaja.size > 0) {
-            console.log("EDIT HISTORY SERVER - New foto raja detected, will upload");
-            // Upload logic will go here
+            console.log("EDIT HISTORY SERVER - New foto raja detected, uploading...");
+            try {
+                // Upload foto raja to API
+                const fotoRajaFormData = new FormData();
+                fotoRajaFormData.append("nama_kerajaan", res.nama_kerajaan || res.nama_raja || "Unknown");
+                fotoRajaFormData.append("dokumentasi", res.inputfotoraja);
+                
+                const fotoRajaResponse = await fetch(`${env.BASE_URL}/file/raja`, {
+                    method: 'POST',
+                    body: fotoRajaFormData,
+                });
+                
+                if (fotoRajaResponse.ok) {
+                    const fotoRajaResult = await fotoRajaResponse.json();
+                    fotoRajaId = fotoRajaResult.id_path || "";
+                    console.log("EDIT HISTORY SERVER - Foto raja uploaded, ID:", fotoRajaId);
+                } else {
+                    console.error("EDIT HISTORY SERVER - Failed to upload foto raja:", await fotoRajaResponse.text());
+                }
+            } catch (error) {
+                console.error("EDIT HISTORY SERVER - Error uploading foto raja:", error);
+            }
         } else {
             console.log("EDIT HISTORY SERVER - No new foto raja, using existing ID:", fotoRajaId);
         }
         
+        // Prepare data for history-raja update
+        try {
+            // Check if "masih" checkbox is checked
+            const masihMenjabat = data.get("inputcheckbox") === "masih";
+            
+            const historyRajaData = {
+                id_raja: Number(res.id_raja),
+                id_kerajaan: Number(res.id || params.id),
+                nama_raja: res.namaraja,
+                tempat_lahir: res.kotalahir,
+                tanggal_lahir: res.tanggallahir,
+                tanggal_meninggal: res.tanggalmeninggal || "",
+                nama_ayah: res.namaayah,
+                nama_ibu: res.namaibu,
+                agama: res.agama,
+                wangsa: res.wangsa,
+                mulai_menjabat: res.tanggalawal,
+                selesai_menjabat: masihMenjabat ? "" : (res.tanggalakhir || ""),
+                dokumentasi: fotoRajaId,
+                gelar_raja: res.gelarraja
+            };
+            
+            console.log("EDIT HISTORY SERVER - Sending update to API:", historyRajaData);
+            
+            const updateResponse = await fetch(`${env.BASE_URL}/history-raja`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(historyRajaData),
+            });
+            
+            const updateResult = await updateResponse.text();
+            console.log("EDIT HISTORY SERVER - API response status:", updateResponse.status);
+            
+            let parsedResult;
+            try {
+                parsedResult = JSON.parse(updateResult);
+            } catch (e) {
+                console.error("EDIT HISTORY SERVER - Failed to parse response as JSON:", e);
+                parsedResult = { message: updateResult };
+            }
+            
+            if (updateResponse.ok) {
+                console.log("EDIT HISTORY SERVER - Update successful");
+                return { success: true };
+            } else {
+                console.error("EDIT HISTORY SERVER - Update failed:", parsedResult);
+                return fail(updateResponse.status, { 
+                    errors: parsedResult.message || `Error updating history raja (${updateResponse.status})` 
+                });
+            }
+        } catch (error) {
+            console.error("EDIT HISTORY SERVER - Error during update:", error);
+            return fail(500, { errors: "Terjadi kesalahan saat memperbarui data" });
+        }
     },
 };

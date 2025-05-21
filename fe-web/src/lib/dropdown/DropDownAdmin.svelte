@@ -6,13 +6,24 @@
 	import ModalAdmin from '$lib/popup/ModalAdmin.svelte';
 	import { enhance } from '$app/forms';
 	import SModal from '$lib/popup/SModal.svelte';
+	import { invalidateAll } from '$app/navigation';
+	import Loader from '$lib/loader/Loader.svelte';
+	let { data = null, edit = $bindable(), error = null } = $props();
+
 	let open = $state(false);
 	let value = $state(false);
 	let timer: number;
-	// let edit = $state(false);
-	let isAktif = $state(true);
 	let valo = $state(false);
-	let { data = null, edit = $bindable(), error = null } = $props();
+	let statusUpdated = $state(false);
+	let loading = $state(false);
+	let isAktif : any = $state(false);
+
+	$effect(() => {
+		if (data) {
+			isAktif = data.status_aktif === 1 ? 1 : 0;
+			console.log('Setting isAktif to:', isAktif, 'based on data.status:', data.status_aktif);
+		}
+	});
 
 	function isAktiforNon(event: Event) {
 		event.stopPropagation();
@@ -36,24 +47,65 @@
 	class="flex w-full max-w-[800px] flex-col place-self-start rounded-lg border border-[#76768033] bg-white shadow-2xl"
 >
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<div class="mx-2 flex lg:flex-row flex-col cursor-pointer justify-between gap-3 p-4" onclick={() => toggle()}>
+	<div
+		class="mx-2 flex cursor-pointer flex-col justify-between gap-3 p-4 lg:flex-row"
+		onclick={() => toggle()}
+	>
 		<div class="flex items-center">
 			<img src={jd} class="h-auto max-w-[55px] rounded-full" alt="" />
 		</div>
 		<div class="flex grow flex-col justify-center gap-4">
 			<div>
-				<p class="ml-2 text-lg font-[600]">Eric Yoel</p>
+				<p class="ml-2 text-lg font-[600]">{data.nama_lengkap}</p>
 			</div>
 			<div class="flex w-full items-center justify-between text-nowrap px-2">
 				<div>
-					<p class="text-md mr-5">Super Admin</p>
+					<p class="text-md mr-5">{data?.jenis_admin}</p>
 				</div>
-				<div
-					class="status cursor-pointer rounded-md px-3 py-1 {isAktif ? 'aktif' : 'non-aktif'}"
-					onclick={isAktiforNon}
+				<form
+					method="POST"
+					action="?/updateStatus"
+					use:enhance={() => {
+						loading = true;
+						console.log('Submitting form for:', data?.nama_lengkap, data?.id_admin);
+						return async ({ result }) => {
+							loading = false;
+							console.log('Form result for:', data?.nama_lengkap, data?.id_admin, result);
+							if (result.type === 'success') {
+								statusUpdated = true;
+								isAktif = !isAktif;
+								clearTimeout(timer);
+								timer = setTimeout(() => {
+									statusUpdated = false;
+								}, 3000);
+								await invalidateAll();
+							}
+						};
+					}}
 				>
-					<p class="font-[500]">{isAktif ? 'Aktif' : 'Non-Aktif'}</p>
-				</div>
+					<input type="hidden" name="id_admin" value={data?.id_admin} />
+					<input type="hidden" name="id_kerajaan" value={data?.id_kerajaan} />
+					<input type="hidden" name="nama_lengkap" value={data?.nama_lengkap} />
+					<input type="hidden" name="jenis_kelamin" value={data?.jenis_kelamin} />
+					<input type="hidden" name="tempat_lahir" value={data?.tempat_lahir} />
+					<input type="hidden" name="tanggal_lahir" value={data?.tanggal_lahir} />
+					<input type="hidden" name="username" value={data?.username} />
+					<input type="hidden" name="password" value={data?.password} />
+					<input type="hidden" name="email" value={data?.email} />
+					<input type="hidden" name="no_telp" value={data?.no_telp} />
+					<input type="hidden" name="jenis_admin" value={data?.jenis_admin} />
+					<input type="hidden" name="status_aktif" value={isAktif ? 1 : 0} />
+					<button
+						type="submit"
+						class="status cursor-pointer rounded-md px-3 py-1 {isAktif ? 'aktif' : 'non-aktif'}"
+						onclick={(e) => {
+							console.log('Status button clicked for:', data?.nama_lengkap, data?.id_admin);
+							e.stopPropagation();
+						}}
+					>
+						<p class="font-[500]">{isAktif ? 'Aktif' : 'Non-Aktif'}</p>
+					</button>
+				</form>
 			</div>
 		</div>
 		<div class="flex items-center transition-transform duration-150" class:rotate-180={open}>
@@ -154,26 +206,38 @@
 	></DeleteModal>
 {/if}
 {#if edit}
-	<form action="?/ubah" method="POST" use:enhance={() => {
-		return async ({ result }) => {
-			console.log(result);
-			if (result.type === 'success') {
-				valo = true;
-				clearTimeout(timer);
-				timer = setTimeout(() => {
-					valo = false;
-					edit = false;
-				}, 3000);
-			} else if (result.type === 'failure') {
-				error = result?.data?.errors;
-			}
-		};
-	}}>
+	<form
+		action="?/ubah"
+		method="POST"
+		use:enhance={() => {
+			return async ({ result }) => {
+				console.log(result);
+				if (result.type === 'success') {
+					valo = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						valo = false;
+						edit = false;
+					}, 3000);
+				} else if (result.type === 'failure') {
+					error = result?.data?.errors;
+				}
+			};
+		}}
+	>
 		<ModalAdmin textM="Ubah" bind:value={edit} bind:open={valo} errors={error} {data}></ModalAdmin>
 	</form>
 {/if}
 {#if valo}
 	<SModal text="Admin Berhasil Dirubah"></SModal>
+{/if}
+
+{#if statusUpdated}
+	<SModal text="Status berhasil diubah"></SModal>
+{/if}
+
+{#if loading}
+	<Loader></Loader>
 {/if}
 
 <style>

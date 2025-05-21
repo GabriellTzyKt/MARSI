@@ -5,12 +5,14 @@
 	import SModal from '$lib/popup/SModal.svelte';
 	import gambartemp from '../../../../asset/gambarsementara.jpg';
 	import { writable } from 'svelte/store';
-	import { page } from '$app/state';
+	import { navigating, page } from '$app/state';
 	import { onMount } from 'svelte';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	const { data } = $props();
 	const dataGet = data.detil_kerajaan;
 	const datajenis = data.jenisKerajaan;
+	let loading = $state(false);
 	const datahistory = data.historyRaja;
 	let dataubah = $state(dataGet);
 	let dataJenisAmbil = $state(datajenis);
@@ -54,6 +56,7 @@
 	let long: any = $state('');
 	let error: any = $state('');
 	let isChecked: any = $state('');
+	let idRaja: any = $state('');
 
 	let uploadedFiles: File[] = [];
 	let uploadedFileUrls: string[] = $state([]);
@@ -368,10 +371,13 @@
 		selectedRaja = raja;
 
 		// Isi form dengan data raja yang dipilih
+		idRaja = raja.id_raja;
 		namaraja = raja.nama_raja || '';
 		gelarraja = raja.gelar_raja || '';
 		tanggallahir = raja.tanggal_lahir ? raja.tanggal_lahir.split('T')[0] : '';
-		tanggalmeninggal = raja.tanggal_meninggal ? raja.tanggal_meninggal.split('T')[0] : '';
+		tanggalmeninggal = raja.tanggal_meninggal && raja.tanggal_meninggal !== '0001-01-01T00:00:00Z'
+				? raja.tanggal_meninggal.split('T')[0]
+				: '';
 		kotalahir = raja.tempat_lahir || '';
 		agama = raja.agama || '';
 		dokumentasiId = raja.dokumentasi || '';
@@ -613,12 +619,19 @@
 	});
 </script>
 
+{#if loading}
+	<Loader text="Processing..."></Loader>
+{/if}
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="ml-2 flex h-fit w-full flex-col md:ml-6">
 	<form
 		method="post"
 		action="?/selesai"
 		enctype="multipart/form-data"
 		use:enhance={({ formData }) => {
+			loading = true;
 			if (uploadedFiles && uploadedFiles.length > 0) {
 				// ngapus dokumen kalo sblmnya ada
 				formData.delete('dokumen');
@@ -817,6 +830,7 @@
 			// }
 
 			return async ({ result }) => {
+				loading = false;
 				console.log('Form submission result:', result);
 				if (result.type === 'success') {
 					open = true;
@@ -1230,7 +1244,7 @@
 					</button>
 				</div>
 				<div class="mt-8 w-full">
-					{#each dataHistoryAmbil as raja, index}
+					{#each data.historyRaja || [] as raja, index}
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<div
@@ -1266,7 +1280,7 @@
 											</div>
 											<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
 												<p class="text-md px-2 py-2">
-													Tanggal Lahir : <span class="font-bold">{raja.tanggal_lahir}</span>
+													Tanggal Lahir : <span class="font-bold">{raja.tanggal_lahir.split("T")[0]}</span>
 												</p>
 											</div>
 											<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
@@ -1338,6 +1352,8 @@
 				enctype="multipart/form-data"
 				use:enhance={() => {
 					return async ({ result }) => {
+						loading = true;
+
 						console.log('Form submission result:', result);
 
 						if (result.type === 'success') {
@@ -1366,7 +1382,8 @@
 							const fileInput = document.getElementById('fileRaja') as HTMLInputElement;
 							if (fileInput) fileInput.value = '';
 
-							// Invalidate data untuk memastikan data terbaru dimuat
+							loading = false;
+
 							invalidateAll();
 
 							// Set success state dan timer
@@ -1375,7 +1392,6 @@
 							timer = setTimeout(() => {
 								success = false;
 								showModal = false;
-								// Invalidate data lagi setelah modal ditutup
 								invalidateAll();
 							}, 3000);
 						} else if (result.type === 'failure') {
@@ -1485,6 +1501,8 @@
 								type="date"
 								id="tanggalmeninggal"
 								name="tanggalmeninggal"
+								bind:value={tanggalmeninggal}
+								disabled={isChecked}
 							/>
 							{#if error}
 								{#each error.tanggalmeninggal as a}
@@ -1601,6 +1619,7 @@
 								id="nama"
 								name="tanggalakhir"
 								placeholder="John Doe"
+								bind:value={tanggalakhir}
 								disabled={isChecked}
 							/>
 							{#if error}
@@ -1617,9 +1636,11 @@
 							id="textsamping"
 							value="masih"
 							name="inputcheckbox"
+							bind:checked={isChecked}
 							onchange={() => {
 								if (isChecked) {
-									tanggalakhir = ''; // Reset tanggal akhir jika checkbox dicentang
+									tanggalakhir = '';
+									tanggalmeninggal = '';
 								}
 							}}
 						/>
@@ -1630,6 +1651,7 @@
 						class="bg-customGold w-fit self-end rounded-lg px-3 py-2 text-white"
 						type="submit"
 						formaction="?/tambah"
+						onclick={() => (loading = true)}
 					>
 						Tambah Data
 					</button>
@@ -1647,7 +1669,10 @@
 				action="?/editHistory"
 				enctype="multipart/form-data"
 				use:enhance={() => {
+					loading = true;
+
 					return async ({ result }) => {
+						loading = false;
 						console.log('Form submission result:', result);
 						if (result.type === 'success') {
 							// Reset form dan tutup modal
@@ -1701,6 +1726,10 @@
 				<div class="h-1 bg-gray-300"></div>
 
 				<input hidden name="id" bind:value={id} />
+
+				<input hidden name="id_raja" bind:value={idRaja} />
+
+				<input hidden name="nama_kerajaan" bind:value={dataubah.nama_kerajaan} />
 
 				<div class="flex flex-col items-center justify-center">
 					<p class="text-nowrap">Foto Raja</p>
@@ -1794,6 +1823,7 @@
 								id="tanggalmeninggal"
 								name="tanggalmeninggal"
 								bind:value={tanggalmeninggal}
+								disabled={isChecked}
 							/>
 							{#if error}
 								{#each error.tanggalmeninggal as a}
@@ -1939,6 +1969,7 @@
 							onchange={() => {
 								if (isChecked) {
 									tanggalakhir = ''; // Reset tanggal akhir jika checkbox dicentang
+									tanggalmeninggal = '';
 								}
 							}}
 						/>
@@ -1975,9 +2006,10 @@
 		method="post"
 		action="?/hapusHistoryRaja"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result }) => {
 				console.log('Delete history raja result:', result);
-
+				loading = false;
 				if (result.type === 'success') {
 					// Tutup modal konfirmasi
 					showDeleteConfirmation = false;

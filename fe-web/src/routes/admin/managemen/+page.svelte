@@ -7,7 +7,12 @@
 	import { onMount } from 'svelte';
 	import SModal from '$lib/popup/SModal.svelte';
 	import { enhance } from '$app/forms';
-	let { form } = $props();
+	let { form, data } = $props();
+	let adminMarsi = data.adminMarsiData;
+	let dataKerajaan = data.kerajaanData;
+	console.log("Base Admin Data: ", adminMarsi);
+	console.log("Data Kerajaan : ", dataKerajaan)
+	
 	let open = $state(false);
 	let admin = $state();
 	let valo = $state(false);
@@ -16,33 +21,7 @@
 	let selected = $state('Super Admin');
 	let error = $state();
 	let timer: number;
-	let data = $state();
-	onMount(() => {
-		if (form?.errors) {
-			error = form.errors;
-			data = form.formData;
-			if (form.type === 'add') {
-				open = true;
-			} else {
-				edit = true;
-			}
-			valo = false;
-		} else if (form?.success) {
-			if (form.type === 'add') {
-				open = false;
-			} else {
-				edit = false;
-			}
-			valo = true;
-			timer = setTimeout(() => {
-				valo = false;
-			}, 3000);
-		} else {
-			open = false;
-			valo = false;
-			edit = false;
-		}
-	});
+	
 </script>
 
 <div class="flex w-full flex-col md:mx-6">
@@ -74,18 +53,13 @@
 	<div class="grid w-full auto-rows-min grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
 		<!-- container -->
 		{#if selected === 'Super Admin'}
-			<DropDownAdmin bind:edit {error} {data}></DropDownAdmin>
-
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
+			{#each data.adminMarsiData?.filter((admin : any) => admin.jenis_admin?.toLowerCase() === "super admin") || [] as admin}
+				<DropDownAdmin bind:edit {error} data={admin}></DropDownAdmin>
+			{/each}
 		{:else if selected === 'Admin Kerajaan'}
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
+			{#each data.adminMarsiData?.filter((admin : any) => admin.jenis_admin?.toLowerCase() === "admin kerajaan") || [] as admin}
+				<DropDownAdmin bind:edit {error} data={admin}></DropDownAdmin>
+			{/each}
 		{/if}
 
 		<div
@@ -108,7 +82,7 @@
 	<!-- line -->
 </div>
 {#if open}
-	<form action="?/tambah" method="post" use:enhance={() => {
+	<form action="?/tambah" method="post" autocomplete="off" use:enhance={() => {
 		return async ({ result }) => {
 			console.log(result);
 			if (result.type === 'success') {
@@ -123,7 +97,7 @@
 			}
 		};
 	}}>
-		<ModalAdmin textM="Tambah" bind:value={open} bind:open={valo} errors={error} {data}
+		<ModalAdmin textM="Tambah" bind:value={open} bind:open={valo} errors={error} {data} datakerajaan = {dataKerajaan}
 		></ModalAdmin>
 	</form>
 {/if}

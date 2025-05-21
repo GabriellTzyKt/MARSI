@@ -86,7 +86,7 @@
 				</button>
 			</div>
 			
-			{#if name === 'nama_gelar'}
+			<!-- {#if name === 'nama_gelar'}
 				<div class="mt-2">
 					<label for="singkatan">Singkatan:</label>
 					<input
@@ -96,7 +96,7 @@
 						placeholder="Field ini otomatis terisi, silahkan input nama gelar"
 					/>
 				</div>
-			{/if}
+			{/if} -->
 
 			{#if daftarGelar.length > 0}
 				<div class="w-full overflow-x-auto">

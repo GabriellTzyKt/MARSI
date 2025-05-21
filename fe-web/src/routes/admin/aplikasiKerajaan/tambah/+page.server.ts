@@ -32,6 +32,10 @@ export const actions: Actions = {
             forum: data.get("fitur-forum") === "ya" ? 1 : 0,
             permohonan: data.get("fitur-permohonan") === "ya" ? 1 : 0,
         };
+        
+        // Debug: Log payload yang akan dikirim ke API
+        console.log("Website features payload:", websiteFeatures);
+        console.log("Mobile features payload:", mobileFeatures);
 
         try {
             // Send website features to API

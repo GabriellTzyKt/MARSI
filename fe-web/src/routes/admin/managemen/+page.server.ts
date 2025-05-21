@@ -5,70 +5,60 @@ import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
 
 export const load: PageServerLoad = async () => {
+    try {
+        // Fetch admin data from both endpoints in parallel
+        const [adminBaseResponse, allKerajaan] = await Promise.all([
+            fetch(`${env.BASE_URL}/admin`, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }),
+            fetch(`${env.BASE_URL}/kerajaan?limit=200`, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            })
+        ]);
 
-    // try {
-        
-    //     // const res = await fetch(`${env.PUB_PORT}/kerajaan`)
-    //     // if (res.ok) {
-    //     //     const data = await res.json()
-    //     //     const adminKerajaan = data.filter((item) => { item?.role === "admin" })
-            
+        // Process first response
+        let adminMarsiData = [];
+        let kerajaanData = [];
+        if (adminBaseResponse.ok) {
+            adminMarsiData = await adminBaseResponse.json();
+            console.log("Admin data from BASE_URL:", adminMarsiData);
+        } else {
+            console.error(`Error fetching from BASE_URL: ${adminBaseResponse.status}`);
+        }
+        if (allKerajaan.ok) {
+            kerajaanData = await allKerajaan.json();
+            console.log("Kerajaan data from BASE_URL:", kerajaanData);
+        } else {
+            console.error(`Error fetching from BASE_URL: ${allKerajaan.status}`);
+        }
 
-    //     //     const superAdmin = data.filter((item) => { item?.role === "superADmin" })
-    //     //     return {superadmin: superAdmin, adminKerajaan: adminKerajaan}
-    //     // }
-    // }
-    // catch {
-        
-    // }
 
 
-    // return {admin: }
-};
+        return {
+            adminMarsiData,
+            kerajaanData
+        };
 
-class Form {
-    nama_lengkap: string | undefined
-    username: string | undefined
-    email: string | undefined
-    no_telp: string | undefined
-    password: string | undefined
-    tgl_lahir: string | undefined
-    kota_lahir: string | undefined
-    jenis_kelamin: string | undefined
-    afiliasi: string | undefined
-    admin_role: string | undefined
-    constructor(
-        nama_lengkap?: string,
-        username?: string,
-        email?: string,
-        no_telp?: string,
-        password?: string,
-        tgl_lahir?: string,
-        kota_lahir?: string,
-        jenis_kelamin?: string,
-        afiliasi?: string,
-        admin_role?: string
-
-    ) {
-        this.nama_lengkap = nama_lengkap;
-        this.username = username;
-        this.email = email
-        this.no_telp = no_telp
-        this.tgl_lahir = tgl_lahir
-        this.password = password
-        this.kota_lahir = kota_lahir
-        this.jenis_kelamin = jenis_kelamin
-        this.afiliasi = afiliasi
-        this.admin_role = admin_role
-
+    } catch (error) {
+        console.error("Error fetching admin data:", error);
+        return {
+            adminBaseData: [],
+            admin8008Data: []
+        };
     }
-
 }
 
 export const actions: Actions = {
     tambah: async ({ request }) => {
         const data = await request.formData()
         console.log(data)
+
         const ver = z.object({
             nama_lengkap:
                 z.string({ message: "Harus diisi / harus berupa string" })
@@ -76,7 +66,7 @@ export const actions: Actions = {
                     .max(300, "Nama Terlalu Panjang (max = 300)")
                     .trim(),
 
-            inputradio: z.string().trim().min(1, "Minimal 1!"),
+            // inputradio: z.string().trim().min(1, "Minimal 1!"),
 
             email:
                 z.string({ message: "Harus diisi / harus berupa string" })
@@ -132,13 +122,11 @@ export const actions: Actions = {
                     .nonempty("FieldTidak Boleh Kosong")
                     .max(255, "Max 255 Kata")
                     .trim()
-
-
         })
+
         const nama_lengkap = data.get("nama_lengkap")
         const username = data.get("username")
         const email = data.get("email")
-        const inputradio = data.get("superadmin")
         const password = data.get("password")
         const jenis_kelamin = data.get("jenis_kelamin")
         const no_telp = data.get("no_telp")
@@ -146,10 +134,10 @@ export const actions: Actions = {
         const kota_lahir = data.get("kota_lahir")
         const afiliasi = data.get("afiliasi")
         const admin_role = data.get("admin_role")
+
         const formData = {
             nama_lengkap,
             username,
-            inputradio,
             email,
             no_telp,
             password,
@@ -162,20 +150,78 @@ export const actions: Actions = {
         const verif = ver.safeParse({ ...formData })
 
         if (!verif.success) {
-
             const fieldErrors = verif.error.flatten().fieldErrors;
-
             console.log("errors : ", fieldErrors)
-
             return fail(406, {
                 errors: fieldErrors,
                 success: false,
                 formData: formData,
                 type: "add"
             });
-
         }
-        return { success: true, formData, type: "add" }
+        
+        try {
+            const formattedDate = tgl_lahir instanceof Date 
+                ? tgl_lahir.toISOString().split('T')[0] 
+                : new Date(String(tgl_lahir)).toISOString().split('T')[0];
+            
+            const id_kerajaan = afiliasi === "marsi" ? 0 : 
+                0;
+            
+            // Prepare payload for API
+            const adminPayload = {
+                nama_lengkap: String(nama_lengkap),
+                jenis_kelamin: String(jenis_kelamin),
+                tempat_lahir: String(kota_lahir),
+                tanggal_lahir: formattedDate,
+                username: String(username),
+                password: String(password),
+                email: String(email),
+                no_telp: String(no_telp),
+                id_kerajaan: id_kerajaan,
+                jenis_admin: String(admin_role)
+            };
+            
+            console.log("Sending admin data to API:", adminPayload);
+            
+            // Send data to API
+            const response = await fetch(`${env.BASE_URL}/admin`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(adminPayload)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error creating admin:", errorData);
+                return fail(response.status, {
+                    errors: { api: [errorData.message || "Failed to create admin"] },
+                    success: false,
+                    formData: formData,
+                    type: "add"
+                });
+            }
+            
+            const responseData = await response.json();
+            console.log("Admin created successfully:", responseData);
+            
+            return { 
+                success: true, 
+                message: "Admin berhasil ditambahkan",
+                formData, 
+                type: "add" 
+            };
+        } catch (error) {
+            console.error("Error in tambah action:", error);
+            return fail(500, {
+                errors: { exception: ["Server error when creating admin"] },
+                success: false,
+                formData: formData,
+                type: "add"
+            });
+        }
     },
 
     ubah: async ({ request }) => {
@@ -293,6 +339,64 @@ export const actions: Actions = {
         }
         return { success: true, formData, type: "edit" }
 
-    }
+    },
 
+    updateStatus: async ({ request }) => {
+        const data = await request.formData();
+        console.log(data);
+
+        const adminId = data.get("id_admin");
+        const newStatus = data.get("status_aktif") === "1" ? 0 : 1; 
+
+        try {
+            // Get all admin data from the form
+            const adminData: any = Object.fromEntries(data);
+            console.log("Data admin : ", adminData)
+
+            // Convert ID fields to numbers
+            adminData.id_admin = Number(adminData.id_admin);
+            adminData.id_kerajaan = Number(adminData.id_kerajaan);
+            adminData.password = adminData.password || "password";
+            adminData.tanggal_lahir = adminData.tanggal_lahir.split("T")[0];
+
+            // Update the status_aktif field with the new value
+            adminData.status_aktif = newStatus;
+
+            console.log("Sending admin update with data:", adminData);
+
+            const response = await fetch(`${env.BASE_URL}/admin`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(adminData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error updating admin:", errorData);
+                return fail(response.status, {
+                    success: false,
+                    message: `Failed to update admin: ${errorData.message || response.statusText}`
+                });
+            }
+
+            if (response.ok) {
+                console.log("Saya mau main juga")
+            }
+
+            return {
+                success: true,
+                message: "Admin updated successfully",
+                adminId,
+                newStatus
+            };
+        } catch (error) {
+            console.error("Error in updateStatus action:", error);
+            return fail(500, {
+                success: false,
+                message: "Server error when updating admin"
+            });
+        }
+    }
 };

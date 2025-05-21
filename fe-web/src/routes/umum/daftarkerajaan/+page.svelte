@@ -211,7 +211,7 @@
 			<Cardshow
 				judul={situs.nama_kerajaan}
 				lokasi={situs.lokasi}
-				gambar={situs.gambardepan}
+				gambar={situs.imageUrl}
 				id={situs.id}
 				tahun={situs.tahun}
 			/>
