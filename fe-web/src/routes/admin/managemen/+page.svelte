@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
 	import SModal from '$lib/popup/SModal.svelte';
 	import { enhance } from '$app/forms';
+	import Loader from '$lib/loader/Loader.svelte';
 	let { form, data } = $props();
 	let adminMarsi = data.adminMarsiData;
 	let dataKerajaan = data.kerajaanData;
@@ -21,6 +22,7 @@
 	let selected = $state('Super Admin');
 	let error = $state();
 	let timer: number;
+	let loading = $state(false);
 	
 </script>
 
@@ -85,12 +87,14 @@
 	<form action="?/tambah" method="post" autocomplete="off" use:enhance={() => {
 		return async ({ result }) => {
 			console.log(result);
+			loading = true;
 			if (result.type === 'success') {
 				valo = true;
 				clearTimeout(timer);
 				timer = setTimeout(() => {
 					valo = false;
 					open = false;
+					loading = false;
 				}, 3000);
 			} else if (result.type === 'failure') {
 				error = result?.data?.errors;
@@ -103,4 +107,7 @@
 {/if}
 {#if valo}
 	<SModal text="Admin Berhasil Ditambah"></SModal>
+{/if}
+{#if loading}
+	<Loader></Loader>
 {/if}
