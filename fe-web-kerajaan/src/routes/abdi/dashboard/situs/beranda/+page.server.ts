@@ -4,7 +4,7 @@ import { env } from "$env/dynamic/private";
 
 export const load: PageServerLoad = async ({ }) => {
     try {
-        const situsResponse = await fetch(`${env.URL_KERAJAAN}/situs?limit=200`);
+        const situsResponse = await fetch(`${env.URL_KERAJAAN}/situs?limit=1000`);
         if (!situsResponse.ok) {
             throw error(situsResponse.status, `Failed to fetch situsResponse: ${situsResponse.statusText}`);
         }

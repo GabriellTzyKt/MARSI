@@ -6,15 +6,52 @@
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import ModalAdmin from '$lib/popup/ModalAdmin.svelte';
 	import TambahAdminSekre from '$lib/popup/TambahAdminSekre.svelte';
+	import { invalidateAll } from '$app/navigation';
 
 	let open = $state(false);
 	let value = $state(false);
 	let timer: number;
 	// let edit = $state(false);
-	let isAktif = $state(true);
 	let valo = $state(false);
 	let { data = null, edit = $bindable(), error = null } = $props();
 
+	// Initialize isAktif with a safe default value
+	let isAktif = $state(data?.status_aktif === 1 ? true : false);
+
+	// Update isAktif when data changes
+	$effect(() => {
+		if (data) {
+			isAktif = data.status_aktif === 1 ? true : false;
+		}
+	});
+
+	function formatTanggalLahir(isoString: string): string {
+		if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
+
+		const date = new Date(isoString);
+		const day = date.getDate();
+
+		// Array of month names in Indonesian
+		const monthNames = [
+			'Januari',
+			'Februari',
+			'Maret',
+			'April',
+			'Mei',
+			'Juni',
+			'Juli',
+			'Agustus',
+			'September',
+			'Oktober',
+			'November',
+			'Desember'
+		];
+
+		const month = monthNames[date.getMonth()];
+		const year = date.getFullYear();
+
+		return `${day} ${month} ${year}`;
+	}
 	function isAktiforNon(event: Event) {
 		event.stopPropagation();
 		if (isAktif == true) {
@@ -46,7 +83,7 @@
 		</div>
 		<div class="flex grow flex-col justify-center gap-4">
 			<div>
-				<p class="ml-2 text-lg font-[600]">Eric Yoel</p>
+				<p class="ml-2 text-lg font-[600]">{data?.nama_lengkap || '-'}</p>
 			</div>
 			<div class="flex w-full items-center justify-between text-nowrap px-2">
 				<div
@@ -69,7 +106,13 @@
 	<div
 		class="flex w-full max-w-[800px] flex-col place-self-start rounded-lg border border-[#76768033] bg-white shadow-2xl"
 	>
-		<p> P </p>
+		{#if data && data.afiliasi}
+			{#each data.afiliasi.split(',') as dt}
+				<div class="flex rounded-full border border-[#76768033] p-2">
+					<p class="text-sm text-[#5B5B5B]">{dt}</p>
+				</div>
+			{/each}
+		{/if}
 	</div>
 
 	{#if open}
@@ -83,35 +126,41 @@
 					<p class="font-[500]">No Telepon</p>
 				</div>
 				<div>
-					<p class="text-sm text-[#5B5B5B]">No Telepon</p>
+					<p class="text-sm text-[#5B5B5B]">{data?.no_telp || '-'}</p>
 				</div>
 				<!-- Jenis Kelamin-->
 				<div>
 					<p class="font-[500]">Jenis Kelamin</p>
 				</div>
 				<div>
-					<p class="text-sm text-[#5B5B5B]">Perempuan</p>
+					<p class="text-sm text-[#5B5B5B]">{data?.jenis_kelamin || '-'}</p>
 				</div>
 				<!-- TTL -->
 				<div>
 					<p class="font-[500]">Tempat, Tanggal Lahir</p>
 				</div>
 				<div>
-					<p class="text-sm text-[#5B5B5B]">Sukowono, 22 Desember 2004</p>
+					<p class="text-sm text-[#5B5B5B]">
+						{#if data?.tempat_lahir && data?.tanggal_lahir}
+							{data.tempat_lahir}, {formatTanggalLahir(data.tanggal_lahir)}
+						{:else}
+							-
+						{/if}
+					</p>
 				</div>
 				<!-- Email -->
 				<div>
 					<p class="font-[500]">Email</p>
 				</div>
 				<div>
-					<p class="text-sm text-[#5B5B5B]">jd3@gmail.com</p>
+					<p class="text-sm text-[#5B5B5B]">{data?.email || '-'}</p>
 				</div>
 				<!-- Afiliasi -->
 				<div>
 					<p class="font-[500]">Afiliasi</p>
 				</div>
 				<div>
-					<p class="text-sm text-[#5B5B5B]">MARSI</p>
+					<p class="text-sm text-[#5B5B5B]">{data?.afiliasi || '-'}</p>
 				</div>
 			</div>
 			<div class="flex w-full justify-end gap-4 p-4">
@@ -153,16 +202,37 @@
 	{/if}
 </div>
 {#if value}
-	<DeleteModal
-		bind:value
-		choose="arsip"
-		text="Apakah Adna Ingin Mengarsip Admin?"
-		successText="Admin Berhasil Dihapus"
-	></DeleteModal>
+	<form
+		action="?/hapusAdmin"
+		method="POST"
+		use:enhance={() => {
+			return async ({ result }) => {
+				if (result.type === 'success') {
+					valo = true;
+					clearTimeout(timer);
+					invalidateAll();
+					timer = setTimeout(() => {
+						valo = false;
+						value = false;
+					}, 3000);
+				} else if (result.type === 'failure') {
+					error = result?.data?.errors;
+				}
+			};
+		}}
+	>
+		<DeleteModal
+			bind:value
+			choose="arsip"
+			text="Apakah Adna Ingin Mengarsip Admin?"
+			successText="Admin Berhasil Dihapus"
+		></DeleteModal>
+		<input type="text" hidden name="id_user" value={data.id_admin} />
+	</form>
 {/if}
 {#if edit}
 	<form
-		action="?/ubah"
+		action="?/ubahAdmin"
 		method="POST"
 		use:enhance={() => {
 			return async ({ result }) => {
@@ -170,6 +240,7 @@
 				if (result.type === 'success') {
 					valo = true;
 					clearTimeout(timer);
+					invalidateAll();
 					timer = setTimeout(() => {
 						valo = false;
 						edit = false;

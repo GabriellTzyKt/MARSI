@@ -186,6 +186,9 @@
 				{/if}
 			{/snippet}
 		</Table>
+		{#if dataevent.length === 0}
+			<p class="flex items-center justify-center text-center">No data available</p>
+		{/if}
 		<Pagination bind:currPage bind:entries totalItems={filterD(dummyAcara).length}></Pagination>
 	</div>
 </div>

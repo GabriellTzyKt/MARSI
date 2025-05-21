@@ -17,6 +17,17 @@
 	let res = $state();
 	let isLocationSelected = $state(false);
 
+	let penanggungjawabSearchTerm = $state('');
+	let filteredPenanggungJawab = $derived(data?.user ? filterPenanggungJawab(data.user) : []);
+	let showPenanggungjawabDropdown = $state(false);
+	let selectedPenanggungjawab: any = $state(null);
+
+	function filterPenanggungJawab(data: any[]) {
+		return data.filter((item) =>
+			item.name.toLowerCase().includes(penanggungjawabSearchTerm.toLowerCase())
+		);
+	}
+
 	let namaacara = $state();
 	let alamatacara = $state();
 	let waktumulai = $state();
@@ -24,8 +35,7 @@
 	let tujuanacara = $state();
 	let tanggalmulai = $state();
 	let tanggalselesai = $state();
-
-
+	let penganggungjawab = $state();
 	let panggilan = $state([]);
 	let namabawah = $state([]);
 	let namalengkapbawah = $state([]);
@@ -47,7 +57,7 @@
 	let success = $state(false);
 	let lokasi_acara = $state('');
 	let id_alamat = $state();
-	let lokasi = $state("");
+	let lokasi = $state('');
 	function filter(data: any[]) {
 		return data.filter((item) =>
 			item.nama_situs.toLowerCase().includes(lokasi_acara.toLowerCase())
@@ -97,7 +107,11 @@
 		console.log('Sesudah hapus:', invitations);
 		console.log('Sesudah hapus:', invitationIds);
 	}
-
+	function selectPenanggungjawab(user: any) {
+		selectedPenanggungjawab = user;
+		penanggungjawabSearchTerm = user.name;
+		showPenanggungjawabDropdown = false;
+	}
 	function tambah2() {
 		// id nya dipakei date.now itu supaya pasti beda
 		const newId = Date.now();
@@ -185,7 +199,7 @@
 					<p>Nama Acara:</p>
 					<input
 						type="text"
-						name="nama_acara"
+						name="namaacara"
 						placeholder="Masukkan Nama"
 						bind:value={namaacara}
 						class="w-full rounded-lg border px-2 py-1"
@@ -295,45 +309,104 @@
 			</div>
 
 			<div class="col-span-2">
-				<div class="ml-10 flex">
-					<div class="mr-10 w-full items-center text-center">
-						<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara</p>
-						<div class="mt-2 flex items-center justify-center self-center">
-							<div class="mx-2 flex items-center justify-center">
-								<input
-									id="default-radio-1"
-									type="radio"
-									value="private"
-									bind:group={input_radio}
-									name="default-radio"
-									class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-								/>
-								<label for="default-radio-1" class="mx-5 ms-2 text-sm font-medium text-gray-900"
-									>Private</label
-								>
-							</div>
-							<div class="mx-2 flex items-center justify-center">
-								<input
-									id="default-radio-2"
-									type="radio"
-									value="public"
-									bind:group={input_radio}
-									name="default-radio"
-									class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
-								/>
-								<label for="default-radio-2" class="mx-5 ms-2 text-sm font-medium text-black"
-									>Public</label
-								>
-							</div>
+				<div class=" flex">
+					<div class="grid w-full grid-cols-1 lg:grid-cols-2">
+						<div class="flex flex-col">
+							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Kapasitas Acara</p>
+							<input
+								name="kapasitasacara"
+								type="text"
+								placeholder="Masukkan Jumlah Kapasitas"
+								class="w-full rounded-lg border px-2 py-1"
+							/>
 						</div>
-						{#if errors}
-							{#each errors.inputradio as a}
-								<p class="text-center text-red-500">{a}</p>
-							{/each}
-						{/if}
+						<div class="mr-10 w-full items-center text-center">
+							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara</p>
+							<div class="mt-2 flex items-center justify-center self-center">
+								<div class="mx-2 flex items-center justify-center">
+									<input
+										id="default-radio-1"
+										type="radio"
+										value="private"
+										bind:group={input_radio}
+										name="default-radio"
+										class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+									/>
+									<label for="default-radio-1" class="mx-5 ms-2 text-sm font-medium text-gray-900"
+										>Private</label
+									>
+								</div>
+								<div class="mx-2 flex items-center justify-center">
+									<input
+										id="default-radio-2"
+										type="radio"
+										value="public"
+										bind:group={input_radio}
+										name="default-radio"
+										class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
+									/>
+									<label for="default-radio-2" class="mx-5 ms-2 text-sm font-medium text-black"
+										>Public</label
+									>
+								</div>
+							</div>
+							{#if errors}
+								{#each errors.inputradio as a}
+									<p class="text-center text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
 					</div>
 				</div>
 
+				<div class="mt-3 w-full">
+					<p>Penanggung Jawab:</p>
+					<div class="relative">
+						<input
+							type="text"
+							placeholder="Masukkan Juru Kunci"
+							bind:value={penanggungjawabSearchTerm}
+							onfocus={() => (showPenanggungjawabDropdown = true)}
+							onblur={() => {
+								// Delay hiding dropdown to allow for click
+								setTimeout(() => {
+									showPenanggungjawabDropdown = false;
+								}, 200);
+							}}
+							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
+						/>
+						<input
+							type="hidden"
+							name="penanggungjawab"
+							value={selectedPenanggungjawab?.name || ''}
+						/>
+
+						{#if showPenanggungjawabDropdown && filteredPenanggungJawab.length > 0}
+							<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
+								<ul class="max-h-60 overflow-y-auto">
+									{#each filteredPenanggungJawab as user}
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+										<li
+											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+											onclick={() => selectPenanggungjawab(user)}
+										>
+											<div class="flex flex-col">
+												<span class="font-medium">{user.name}</span>
+												<span class="text-sm text-gray-500">{user.email}</span>
+											</div>
+										</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
+					</div>
+					{#if errors}
+						{#each errors.juru_kunci as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
+				</div>
 				<div class="mt-3 w-full">
 					<p>Tujuan Acara:</p>
 					<input
@@ -354,7 +427,7 @@
 						<p>Tanggal Mulai:</p>
 						<input
 							type="date"
-							name="tanggal_mulai"
+							name="tanggalmulai"
 							bind:value={tanggalmulai}
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
@@ -370,7 +443,7 @@
 							<p>Tanggal Selesai:</p>
 							<input
 								type="date"
-								name="tanggal_selesai"
+								name="tanggalselesai"
 								bind:value={tanggalselesai}
 								placeholder="Masukkan Nama"
 								class="w-full rounded-lg border px-2 py-1"

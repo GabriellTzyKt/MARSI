@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ fetch, params, cookies }) => {
     const token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
     try {
         // Fetch all organizations
-        const organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi?limit=200`);
+        const organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi?limit=20000000`);
         if (!organisasiResponse.ok) {
             throw error(organisasiResponse.status, `Failed to fetch organisasi: ${organisasiResponse.statusText}`);
         }

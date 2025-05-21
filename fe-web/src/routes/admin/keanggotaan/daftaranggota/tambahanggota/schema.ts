@@ -8,7 +8,7 @@ export const schema = z.object({
         .refine((datetostr) => {
             const date = new Date(datetostr)
             return (!isNaN(date.getTime())&& datetostr === date.toISOString().split("T")[0])
-    },{message:"Tanggal Tidak Valid"}),
+        }, { message: "Tanggal Tidak Valid" }),
     era_kerajaan: z.string().nonempty("Field Era Kerajaan Tidak Boleh Kosong"),
     rumpun_kerajaan: z.string().nonempty("Field Rumpun Kerajaan Tidak Boleh Kosong"),
     jenis_kerajaan: z.string().nonempty("Field Jenis Kerajaan Tidak Boleh Kosong"),

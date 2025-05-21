@@ -11,6 +11,8 @@
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import Loader from '$lib/loader/Loader.svelte';
+	import Bracode from '$lib/popup/Bracode.svelte';
+
 	let { form, data } = $props();
 
 	console.log(data);
@@ -22,6 +24,44 @@
 	let errMsgA = $state('');
 	let errMsgB = $state('');
 	let err = form?.errors;
+
+	// Profile picture handling
+	let pictUrl = $state(data.data.profileUrl || jd);
+	let pictUrlFiles = $state(null);
+
+	function handleFiles(event) {
+		const input = event.target as HTMLInputElement;
+		if (input.files && input.files[0]) {
+			const file = input.files[0];
+
+			// Check file size (limit to 5MB)
+			if (file.size > 5 * 1024 * 1024) {
+				alert('File terlalu besar. Maksimal ukuran file adalah 5MB.');
+				input.value = '';
+				return;
+			}
+
+			// Check file type
+			if (!file.type.match('image.*')) {
+				alert('Hanya file gambar yang diperbolehkan.');
+				input.value = '';
+				return;
+			}
+
+			pictUrlFiles = file;
+			pictUrl = URL.createObjectURL(file);
+		}
+	}
+
+	// Clean up object URLs when component is destroyed
+	onMount(() => {
+		return () => {
+			if (pictUrl && pictUrl !== jd && pictUrl !== data.data.profileUrl) {
+				URL.revokeObjectURL(pictUrl);
+			}
+		};
+	});
+
 	function cekRadio(e: SubmitEvent) {
 		if (!ayahAbdi && !ibuAbdi) {
 			e.preventDefault();
@@ -45,23 +85,7 @@
 			open = true;
 		} else open = false;
 	};
-	let pictUrl = $state(jd);
-	let pictUrlFiles = $state();
-	function handleFiles(event) {
-		const input = event.target as HTMLInputElement;
-		if (input.files && input.files[0]) {
-			pictUrlFiles = input.files[0];
-			pictUrl = URL.createObjectURL(input.files[0]);
-		}
-	}
-	// Clean up object URLs when component is destroyed
-	onMount(() => {
-		return () => {
-			if (pictUrl && pictUrl !== jd) {
-				URL.revokeObjectURL(pictUrl);
-			}
-		};
-	});
+
 	const akun = data.akun;
 	let loading = $state(false);
 
@@ -130,7 +154,7 @@
 			</button>
 		</div>
 
-		<!-- Foto Profil -->
+		<!-- Profile Picture Section -->
 		<div class="relative">
 			<img
 				src={pictUrl}
@@ -140,7 +164,9 @@
 			<!-- Tombol Edit Foto -->
 			<!-- svelte-ignore a11y_consider_explicit_label -->
 			<!-- svelte-ignore a11y_label_has_associated_control -->
-			<label class="absolute bottom-0 right-0 rounded-xl bg-white p-2 shadow-md">
+			<label
+				class="absolute bottom-0 right-0 cursor-pointer rounded-xl bg-white p-2 shadow-md hover:bg-gray-100"
+			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
@@ -155,7 +181,7 @@
 						d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
 					/>
 				</svg>
-				<input type="file" hidden name="profilepict" accept="image/*" onchange={handleFiles} />
+				<input type="file" hidden name="profile_picture" accept="image/*" onchange={handleFiles} />
 			</label>
 		</div>
 

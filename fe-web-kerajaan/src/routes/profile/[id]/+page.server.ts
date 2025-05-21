@@ -6,17 +6,20 @@ import { env } from "$env/dynamic/private";
 import { formatDatetoUI } from "$lib";
 
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, fetch }) => {
     try {
-        const res = await fetch(`${env.PUB_PORT}/user/${params.id}`)
-        let final = []
+        const res = await fetch(`${env.PUB_PORT}/user/${params.id}`);
+        let final = [];
+        
         if(!res.ok){
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }
-        const data = await res.json()
+        
+        const data = await res.json();
+        
         if (data.profile && data) {
             try {
-                const resProfilepict = await fetch(`${env.URL_KERAJAAN}/doc/${data.profile.profile_pict}`)
+                const resProfilepict = await fetch(`${env.URL_KERAJAAN}/doc/${data.profile.profile_pict}`);
                 if (!resProfilepict.ok) {
                     console.error(`HTTP Error! Status: ${resProfilepict.status}`);
                     final = [{
@@ -59,9 +62,47 @@ export const load: PageServerLoad = async ({ params }) => {
     }
 };
 export const actions: Actions = {
-    ubah: async({request}) => {
-        const data = await request.formData()
-        console.log(data)
+    ubah: async ({ request, params, fetch }) => {
+        const data = await request.formData();
+        console.log("Form data received:", data);
+        
+        // Handle profile picture upload
+        const profilePicture = data.get("profile_picture");
+        let profilePictId = null;
+        
+        if (profilePicture instanceof File && profilePicture.size > 0) {
+            try {
+                console.log("Uploading profile picture:", profilePicture.name, profilePicture.size);
+                
+                // Create a new FormData for the file upload
+                const fileFormData = new FormData();
+                fileFormData.append("profile_picture", profilePicture);
+                fileFormData.append("user_id", params.id);
+                
+                // Upload the profile picture
+                const uploadResponse = await fetch(`${env.URL_KERAJAAN}/file/profile`, {
+                    method: 'POST',
+                    body: fileFormData
+                });
+                
+                if (!uploadResponse.ok) {
+                    console.error("Failed to upload profile picture:", uploadResponse.status);
+                    const errorText = await uploadResponse.text();
+                    console.error("Upload error:", errorText);
+                } else {
+                    const uploadResult = await uploadResponse.json();
+                    profilePictId = uploadResult.id_path || uploadResult.id;
+                    console.log("Profile picture uploaded successfully, ID:", profilePictId);
+                    
+                    // Add the profile picture ID to the form data
+                    data.append("profile_pict_id", profilePictId);
+                }
+            } catch (uploadError) {
+                console.error("Error uploading profile picture:", uploadError);
+            }
+        }
+        
+        // Continue with form validation
         const ver = z.object({
             nama_lengkap: 
                 z.string({ message: "Field Nama Lengkap tidak boleh kosong" })
@@ -120,42 +161,83 @@ export const actions: Actions = {
                 z.string({ message: "Field Nama Ibu tidak boleh kosong" })
                     .nonempty("Tolong isi minimal 1 huruf")
                     .max(155, "Field Nama Ibu sudah mencapai batas max (255 huruf)")            
-        })
+        });
 
-        const nama_lengkap = data.get("nama_lengkap")
-        const tempat_lahir = data.get("tempat_lahir")
-        const tanggal_lahir = data.get("tanggal_lahir")
-        const jenis_kelamin = data.get("jenis_kelamin")
-        const alamat = data.get("alamat")
-        const no_telp = data.get("no_telp")
-        const pekerjaan = data.get("pekerjaan")
-        const wongso = data.get("wongso")
-        const email = data.get("email")
-        const hobi = data.get("hobi")
-        const agama = data.get("agama")
-        const asma_dalem = data.get("asma_dalem")
-        const nama_ayah = data.get("nama_ayah")
-        const nama_ibu = data.get("nama_ibu")
         const form = {
-            nama_lengkap,
-            tempat_lahir,
-            tanggal_lahir,
-            jenis_kelamin,
-            alamat,
-            no_telp,
-            pekerjaan,
-            wongso,
-            email,
-            hobi,
-            agama,
-            asma_dalem,
-            nama_ayah,
-            nama_ibu
-        }
-        const verif = ver.safeParse({ ...form })
+            nama_lengkap: data.get("nama_lengkap"),
+            tempat_lahir: data.get("tempat_lahir"),
+            tanggal_lahir: data.get("tanggal_lahir"),
+            jenis_kelamin: data.get("jenis_kelamin"),
+            alamat: data.get("alamat"),
+            no_telp: data.get("no_telp"),
+            pekerjaan: data.get("pekerjaan"),
+            wongso: data.get("wongso"),
+            email: data.get("email"),
+            hobi: data.get("hobi"),
+            agama: data.get("agama"),
+            asma_dalem: data.get("asma_dalem"),
+            nama_ayah: data.get("nama_ayah"),
+            nama_ibu: data.get("nama_ibu")
+        };
+        
+        const verif = ver.safeParse({ ...form });
         if (!verif.success) {
-            return fail(500,{errors: verif.error.flatten().fieldErrors, success: false, FormData: form})
+            return fail(500, {
+                errors: verif.error.flatten().fieldErrors, 
+                success: false, 
+                FormData: form
+            });
         }
-         return {errors: "no error", success: true, FormData: form}
+        
+        // Prepare data for API update
+        const updateData = {
+            ...verif.data,
+            id_user: params.id,
+            tanggal_lahir: verif.data.tanggal_lahir.toISOString().split('T')[0],
+            ayah_abdi: data.get("ayah_abdi") === "yes",
+            ibu_abdi: data.get("ibu_abdi") === "yes"
+        };
+        
+        // Add profile picture ID if available
+        if (profilePictId) {
+            updateData.profile_pict = profilePictId;
+        }
+        
+        try {
+            // Send the update to the API
+            const updateResponse = await fetch(`${env.PUB_PORT}/user/update`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updateData)
+            });
+            
+            if (!updateResponse.ok) {
+                const errorData = await updateResponse.json().catch(() => ({}));
+                console.error("Update failed:", updateResponse.status, errorData);
+                return fail(updateResponse.status, {
+                    errors: { server: [errorData.message || `Failed to update profile (${updateResponse.status})`] },
+                    success: false,
+                    FormData: form
+                });
+            }
+            
+            const updateResult = await updateResponse.json();
+            console.log("Profile updated successfully:", updateResult);
+            
+            return {
+                success: true,
+                message: "Profile berhasil diperbarui",
+                FormData: form
+            };
+        } catch (updateError) {
+            console.error("Error updating profile:", updateError);
+            return fail(500, {
+                errors: { server: ["Terjadi kesalahan saat memperbarui profil"] },
+                success: false,
+                FormData: form
+            });
+        }
     }
 };

@@ -3,6 +3,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { navigating, page } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
+	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
 	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
@@ -152,19 +153,29 @@
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
-					<DropDown
-						text=" apa yakin mau menghapus acara ini?"
+					<DropDownNew
+						text={`Apakah yakin ingin mengarsipkan ${data.nama_acara}?`}
 						items={[
-							['Detail', `/abdi/sekretariat/acara/detail/${data.id_acara}`],
-							['Edit', `/abdi/sekretariat/acara/edit/${data.id_acara}`],
-							['Laporan', '/abdi/sekretariat/acara/laporan'],
-							['children', 'Non Aktifkan', `/abdi/sekretariat/acara?delete=${data.id_acara}`],
-							// Use a direct link for delete with the ID as a parameter
-							['children', 'Hapus', `/abdi/sekretariat/acara?delete=${data.id_acara}`]
+							{
+								label: 'Detail',
+								action: () => goto(`/abdi/sekretariat/acara/detail/${data.id_acara}`)
+							},
+							{
+								label: 'Edit',
+								action: () => goto(`/abdi/sekretariat/acara/edit/${data.id_acara}`)
+							},
+							{
+								label: 'Laporan',
+								action: () => goto(`/abdi/sekretariat/acara/laporan/${data.id_acara}`)
+							},
+							{
+								label: 'Non Aktifkan',
+								action: () => goto(`/abdi/sekretariat/acara?delete=${data.id_acara}`)
+							}
 						]}
 						id={`id-${index}`}
 						{data}
-					/>
+					></DropDownNew>
 				{/if}
 				{#if header === 'Status'}
 					<Status status={data.status}></Status>

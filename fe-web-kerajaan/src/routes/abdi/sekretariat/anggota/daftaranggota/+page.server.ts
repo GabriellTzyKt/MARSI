@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({cookies}) => {
     console.log("Token:", token);
     if(!token) redirect(302, '/login') ;
     try {
-        const res = await fetch(`${env.PUB_PORT}/users`, {
+        const res = await fetch(`${env.URL_KERAJAAN}/anggota`, {
             headers: {
                 'Authorization': `Bearer ${token?.token}`
             }

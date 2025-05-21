@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import xbutton from '$lib/asset/icon/xbutton.png';
+	import { formatDate } from '$lib/index';
+
 	let { value = $bindable(), textM, open = $bindable(), errors = null, data = null } = $props();
 
-	let namagelar = $state('');
+	let namagelar = $state(data?.afiliasi || '');
 	let daftarGelar: any = $state([]);
 	function tambahGelar() {
 		if (namagelar.trim() !== '') {
@@ -16,7 +18,7 @@
 		daftarGelar = daftarGelar.filter((_: any, i: number) => i !== index);
 	}
 
-	let radioinput = $state('sekre_ya');
+	let radioinput = $state(textM === 'Ubah' ? 'sekre_tidak' : 'sekre_ya');
 
 	console.log('data : ', data);
 
@@ -29,7 +31,52 @@
 		}, 3000);
 		clearTimeout(timer);
 	}
-	if (data) {
+
+	// Format date for date input (YYYY-MM-DD)
+	function formatDateForInput(isoString: string): string {
+		if (!isoString || isoString === '0001-01-01T00:00:00Z') return '';
+
+		try {
+			const date = new Date(isoString);
+			if (isNaN(date.getTime())) return '';
+
+			const year = date.getFullYear();
+			const month = String(date.getMonth() + 1).padStart(2, '0');
+			const day = String(date.getDate()).padStart(2, '0');
+
+			return `${year}-${month}-${day}`;
+		} catch (error) {
+			console.error('Error formatting date:', error);
+			return '';
+		}
+	}
+
+	function formatTanggalLahir(isoString: string): string {
+		if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
+
+		const date = new Date(isoString);
+		const day = date.getDate();
+
+		// Array of month names in Indonesian
+		const monthNames = [
+			'Januari',
+			'Februari',
+			'Maret',
+			'April',
+			'Mei',
+			'Juni',
+			'Juli',
+			'Agustus',
+			'September',
+			'Oktober',
+			'November',
+			'Desember'
+		];
+
+		const month = monthNames[date.getMonth()];
+		const year = date.getFullYear();
+
+		return `${day} ${month} ${year}`;
 	}
 </script>
 
@@ -65,19 +112,21 @@
 			<div class="flex w-full flex-col md:col-span-full">
 				<div class="flex justify-between">
 					<p>Nama Lengkap</p>
-					<div class="flex items-center justify-between gap-2">
-						<p>Apakah Sudah memiliki akun sebelumnya?</p>
-						<input
-							type="radio"
-							bind:group={radioinput}
-							value="sekre_ya"
-							name="superadmin"
-							checked
-						/>
-						<p>Sudah</p>
-						<input type="radio" bind:group={radioinput} value="sekre_tidak" name="superadmin" />
-						<p>Belum</p>
-					</div>
+					{#if textM !== 'Ubah'}
+						<div class="flex items-center justify-between gap-2">
+							<p>Apakah Sudah memiliki akun sebelumnya?</p>
+							<input
+								type="radio"
+								bind:group={radioinput}
+								value="sekre_ya"
+								name="superadmin"
+								checked
+							/>
+							<p>Sudah</p>
+							<input type="radio" bind:group={radioinput} value="sekre_tidak" name="superadmin" />
+							<p>Belum</p>
+						</div>
+					{/if}
 				</div>
 				<div class="relative w-full">
 					<input
@@ -186,7 +235,7 @@
 							name="password"
 							placeholder="password"
 							id=""
-							value={data ? data.password : ''}
+							value={data ? data.password : '-'}
 						/>
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -239,7 +288,7 @@
 								name="tgl_lahir"
 								placeholder="Jane Doe"
 								id=""
-								value={data ? data.tgl_lahir : ''}
+								value={data ? formatDateForInput(data.tanggal_lahir) : ''}
 							/>
 						</div>
 						{#if errors}
@@ -261,7 +310,7 @@
 								name="kota_lahir"
 								placeholder="Surabaya"
 								id=""
-								value={data ? data.kota_lahir : ''}
+								value={data ? data.tempat_lahir : ''}
 							/>
 							{#if errors}
 								{#each errors.kota_lahir as a}
@@ -280,8 +329,8 @@
 							<select
 								name="jenis_kelamin"
 								class="w-full rounded-lg border border-gray-300 px-2 py-2 pr-10 focus:outline-none"
-								value="Laki-laki"
-								id=""
+								value={data ? data.jenis_kelamin : ''}
+								id={data ? data.jenis_kelamin : ''}
 							>
 								<option value="Laki-Laki">Laki-Laki</option>
 								<option value="Perempuan">Perempuan</option>
@@ -305,12 +354,15 @@
 				<div>
 					<select
 						name="admin_role"
+						value={data ? data.jenis_admin : ''}
 						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-500 focus:outline-none"
 						id=""
 					>
 						<option value="" selected disabled>Pilih Role</option>
 						<option value="super_admin">Super Admin</option>
-						<option value="admin_kerajaan">Admin Kerajaan</option>
+						<option value="admin_situs">Admin Situs</option>
+						<option value="admin_komunitas">Admin Komunitas</option>
+						<option value="admin_organisasi">Admin Organisasi</option>
 					</select>
 					{#if errors}
 						{#each errors.admin_role as a}

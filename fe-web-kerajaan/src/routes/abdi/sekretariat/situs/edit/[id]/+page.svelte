@@ -36,16 +36,18 @@
 			pictUrl = URL.createObjectURL(file);
 		}
 	}
-
+	function searchUser(searchTerm: string) {
+		return users.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+	}
 	// User selection for pembina and pelindung
 	let pembinaSearchTerm = $state(situs.pembina || '');
 	let pelindungSearchTerm = $state(situs.pelindung || '');
-	let selectedPembina = $state(situs.pembina || null);
-	let selectedPelindung = $state(situs.pelindung || null);
+	let selectedPembina = $state(searchUser(situs.pembina) || null);
+	let selectedPelindung = $state(searchUser(situs.pelindung) || null);
 	let showPembinaDropdown = $state(false);
 	let showPelindungDropdown = $state(false);
 	let showJuruKunciDropdown = $state(false);
-	let selectedJuruKunci = $state(situs.juru_kunci || null);
+	let selectedJuruKunci = $state(searchUser(situs.juru_kunci) || null);
 	let juruKunciSearchTerm = $state(situs.juru_kunci || '');
 	let find = situsTypes.find((item) => item.id === situs.id_jenis_situs);
 	let situsSearchTerm = $state(find.name || '');
@@ -218,7 +220,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						// goto('/abdi/sekretariat/situs');
+						goto('/abdi/sekretariat/situs');
 					}, 3000);
 				}
 				if (result.type === 'failure') {
@@ -227,6 +229,7 @@
 			};
 		}}
 	>
+		<input type="text" hidden name="id_situs" id="" value={situs.id_situs} />
 		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<!-- 1 -->
 			<div>

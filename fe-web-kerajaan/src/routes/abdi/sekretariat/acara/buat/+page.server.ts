@@ -3,21 +3,40 @@ import { any, z } from "zod";
 import type { PageServerLoad } from "../$types";
 import { env } from "$env/dynamic/private";
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ cookies }) => {
     try {
-        const res = await fetch(`${env.URL_KERAJAAN}/situs`);
-        
+        let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
+        let res = await fetch(`${env.URL_KERAJAAN}/situs`);
+        let resUser = await fetch(`${env.PUB_PORT}/users`,{
+            headers: {
+                "Authorization": `Bearer ${token?.token}`
+            }
+        });
+        if(!resUser.ok){
+            throw error(resUser.status, `Failed to fetch user: ${resUser.statusText}`);
+        }
+        let userData = await resUser.json()
+        userData = userData.filter((item: any) => {
+            return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
+        }).map((item: any) => {
+            return {
+                id: item.id_user,
+                name: item.nama_lengkap,
+                email: item.email
+            }
+        });
         if (!res) {
             console.error("Failed to initialize fetch request");
             return fail(500, { error: "Server error: Failed to initialize request" });
         }
         
         if (res.ok) {
-            const data = await res.json();
-            console.log("Data: ",data);
-            return { data };
+            let data = await res.json();
+            console.log("Data: ", data);
+            
+            return { data, user: userData };
         } else {
-            const errorData = await res.text().catch(() => "Unknown error");
+            let errorData = await res.text().catch(() => "Unknown error");
             console.error(`API error: ${res.status} - ${errorData}`);
             return fail(res.status, { 
                 error: `Failed to retrieve data: ${res.status}`,
@@ -26,7 +45,7 @@ export const load: PageServerLoad = async () => {
         }
     }
     catch (err) {
-         const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+         let errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
         console.error("Error in load function:", errorMessage);
         return fail(500, { error: "Server error", details: errorMessage });
     }

@@ -7,7 +7,7 @@ import type { late } from "zod";
 
 export const load: PageServerLoad = async () => {
     try {
-        let res = await fetch(`${env.URL_KERAJAAN}/situs`);
+        let res = await fetch(`${env.URL_KERAJAAN}/situs?limit=1000`);
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }

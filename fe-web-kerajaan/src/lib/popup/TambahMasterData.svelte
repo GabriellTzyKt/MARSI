@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import { fade } from 'svelte/transition';
 	import {
@@ -10,132 +10,208 @@
 		dummyKategoriSitus
 	} from '$lib/store';
 	import { get } from 'svelte/store';
+	import { enhance } from '$app/forms';
+	import { createEventDispatcher } from 'svelte';
 
-	let { value = $bindable(), text = '', selectm = 'Gelar', data = null } = $props();
-	let open = $state(false);
-	let nama = $state(data ? getNamaDariData(data, selectm) : '');
-	let isEditMode = data !== null;
-	let timer: number;
+	const dispatch = createEventDispatcher();
 
-	function getNamaDariData(data, selectm) {
-		if (!data) return '';
-		if (selectm === 'Gelar') return data.gelar;
-		if (selectm === 'Bintang Jasa') return data.nama;
-		if (selectm === 'Jenis Situs') return data.jenis;
-		if (selectm === 'Penghargaan') return data.penghargaan;
-		if (selectm === 'Kategori Situs') return data.kategori;
-		return '';
-	}
+	let {
+		open = $bindable(false),
+		editMode = $bindable(false),
+		currentItem = $bindable(null),
+		type = $bindable(''),
+		loading = $bindable(false),
+		success = $bindable(false),
+		error = $bindable()
+	} = $props();
 
-	function updateData(store) {
-		store.update((list) =>
-			list.map((item) => {
-				if (item.id === data.id) {
-					return { ...item, nama }; // Perbarui nama di objek
-				}
-				return item;
-			})
-		);
-	}
-
-	function addOrUpdateData() {
-		if (nama.trim() === '') return;
-
-		if (isEditMode) {
-			// Mode Edit
-			if (selectm === 'Gelar') updateData(dummyGelar);
-			else if (selectm === 'Bintang Jasa') updateData(dummyBintangJasa);
-			else if (selectm === 'Jenis Situs') updateData(dummyJenisSitus);
-			else if (selectm === 'Penghargaan') updateData(dummyPenghargaan);
-			else if (selectm === 'Kategori Situs') updateData(dummyKategoriSitus);
-
-			// Pastikan data diperbarui
-			data = { ...data, nama };
-		} else {
-			// Mode Tambah
-			if (selectm === 'Gelar') {
-				dummyGelar.update((list) => [...list, { id: list.length + 1, gelar: nama }]);
-			} else if (selectm === 'Bintang Jasa') {
-				dummyBintangJasa.update((list) => [...list, { id: list.length + 1, nama }]);
-			} else if (selectm === 'Jenis Situs') {
-				dummyJenisSitus.update((list) => [...list, { id: list.length + 1, jenis: nama }]);
-			} else if (selectm === 'Penghargaan') {
-				dummyPenghargaan.update((list) => [...list, { id: list.length + 1, penghargaan: nama }]);
-			} else if (selectm === 'Kategori Situs') {
-				dummyKategoriSitus.update((list) => [...list, { id: list.length + 1, kategori: nama }]);
+	let nama = $state('');
+	console.log(type);
+	$effect(() => {
+		if (open && editMode && currentItem) {
+			// Set name based on item type
+			if (type === 'Penghargaan') {
+				nama = currentItem.nama_penghargaan || '';
+			} else if (type === 'Jenis Situs') {
+				nama = currentItem.jenis_situs || '';
+			} else if (type === 'Jenis Aset') {
+				nama = currentItem.nama_jenis || '';
+			} else if (type === 'Kategori Situs') {
+				nama = currentItem.nama_kategori || '';
+			} else if (type === 'Wisata') {
+				nama = currentItem.nama_wisata || '';
+			} else if (type === 'Gelar') {
+				nama = currentItem.nama_gelar || '';
 			}
+		} else if (open && !editMode) {
+			// Reset form for new item
+			nama = '';
 		}
+	});
 
-		console.log('Data berhasil diproses:', data);
+	function getTypeValue() {
+		switch (type) {
+			case 'Penghargaan':
+				return 'penghargaan';
+			case 'Jenis Situs':
+				return 'jenisSitus';
+			case 'Jenis Aset':
+				return 'jenisAset';
+			case 'Kategori Situs':
+				return 'kategoriSitus';
+			case 'Wisata':
+				return 'wisata';
+			case 'Gelar':
+				return 'gelar';
+			default:
+				return '';
+		}
 	}
 
-	function setTimer() {
-		open = true;
-		if (timer) {
-			clearTimeout(timer);
+	function getIdField() {
+		switch (type) {
+			case 'Penghargaan':
+				return 'id_penghargaan';
+			case 'Jenis Situs':
+				return 'id_jenis_situs';
+			case 'Jenis Aset':
+				return 'id_jenis_aset';
+			case 'Kategori Situs':
+				return 'id_kategori_situs';
+			case 'Wisata':
+				return 'id_wisata';
+			case 'Gelar':
+				return 'id_gelar';
+			default:
+				return '';
 		}
-		timer = setTimeout(() => {
-			addOrUpdateData();
-			open = false;
-			value = false;
-			goto('/abdi/sekretariat/masterdata');
-		}, 3000);
+	}
+
+	function close() {
+		open = false;
+		dispatch('close');
 	}
 </script>
 
-<div
-	class="fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black/75"
-	transition:fade={{ duration: 100 }}
->
-	<div
-		class="relative m-8 flex max-h-full w-full max-w-[600px] flex-col overflow-y-auto rounded-lg border bg-white p-6"
-	>
-		<!-- svelte-ignore a11y_click_events_have_key_events -->
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div
-			class="absolute right-0 top-0 me-4 mt-7 cursor-pointer p-2"
-			onclick={() => {
-				value = false;
-			}}
-		>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke-width="1.5"
-				stroke="currentColor"
-				class="size-8"
-			>
-				<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-			</svg>
-		</div>
-		<div class="my-4 flex justify-self-start">
-			<p class=" text-xl font-[500]">{isEditMode ? 'Edit ' + selectm : 'Tambah ' + selectm}</p>
-		</div>
-		<div class="flex w-full flex-col">
-			<div>
-				<p class="text-sm">Nama {selectm}</p>
+{#if open}
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+		<div class="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+			<div class="mb-4 flex items-center justify-between">
+				<h2 class="text-xl font-bold">
+					{editMode ? `Edit ${type}` : `Tambah ${type}`}
+				</h2>
+				<!-- svelte-ignore a11y_consider_explicit_label -->
+				<button class="text-gray-500 hover:text-gray-700" onclick={close}>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="1.5"
+						stroke="currentColor"
+						class="size-6"
+					>
+						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+					</svg>
+				</button>
 			</div>
-			<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
-				<div class="grow">
+
+			{#if success}
+				<div class="mb-4 rounded-md bg-green-100 p-4 text-green-700">
+					Data berhasil {editMode ? 'diperbarui' : 'ditambahkan'}!
+				</div>
+			{/if}
+
+			{#if error}
+				<div class="mb-4 rounded-md bg-red-100 p-4 text-red-700">
+					{error}
+				</div>
+			{/if}
+
+			<form
+				method="POST"
+				action={editMode ? '?/ubah' : '?/tambah'}
+				use:enhance={() => {
+					loading = true;
+					return ({ result }) => {
+						loading = false;
+						if (result.type === 'success') {
+							success = true;
+							invalidateAll();
+							setTimeout(() => {
+								success = false;
+								close();
+							}, 3000);
+							error = '';
+						} else if (result.type === 'failure') {
+							error = result?.data?.error || 'An error occurred';
+						}
+					};
+				}}
+			>
+				<input type="hidden" name="type" value={getTypeValue()} />
+				{#if editMode && currentItem}
+					<input type="hidden" name="id" value={currentItem[getIdField()]} />
+				{/if}
+
+				<div class="mb-4">
+					<label for="nama" class="mb-2 block font-medium">Nama {type}</label>
 					<input
 						type="text"
-						class="my-2 w-full pe-2 ps-2 focus:outline-none"
-						placeholder="Nama {selectm}"
+						id="nama"
+						name="nama"
 						bind:value={nama}
+						class="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-[#FFA600] focus:outline-none"
+						required
 					/>
 				</div>
-			</div>
-		</div>
-		<div class="mt-4 flex w-full lg:justify-end">
-			<button
-				class="w-full cursor-pointer rounded-lg bg-green-500 px-4 py-2 text-white lg:w-auto"
-				type="submit"
-				onclick={setTimer}>{isEditMode ? 'Update' : 'Tambah'}</button
-			>
+
+				<div class="flex justify-end gap-2">
+					<button
+						type="button"
+						class="rounded-md border border-gray-300 px-4 py-2 hover:bg-gray-100"
+						onclick={close}
+						disabled={loading}
+					>
+						Batal
+					</button>
+					<button
+						type="submit"
+						class="rounded-md bg-[#FFA600] px-4 py-2 font-medium text-white hover:bg-[#E69500]"
+						disabled={loading}
+					>
+						{#if loading}
+							<span class="flex items-center gap-2">
+								<svg
+									class="size-4 animate-spin"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+								>
+									<circle
+										class="opacity-25"
+										cx="12"
+										cy="12"
+										r="10"
+										stroke="currentColor"
+										stroke-width="4"
+									></circle>
+									<path
+										class="opacity-75"
+										fill="currentColor"
+										d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+									></path>
+								</svg>
+								Loading...
+							</span>
+						{:else}
+							{editMode ? 'Simpan' : 'Tambah'}
+						{/if}
+					</button>
+				</div>
+			</form>
 		</div>
 	</div>
-</div>
-{#if open}
-	<SuccessModal text={isEditMode ? 'Berhasil Diperbarui' : 'Berhasil Ditambah'}></SuccessModal>
+{/if}
+{#if success}
+	<SuccessModal text="Data berhasil {editMode ? 'diperbarui' : 'ditambahkan'}!"></SuccessModal>
 {/if}

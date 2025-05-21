@@ -8,42 +8,39 @@ import {
 
 export const load: PageServerLoad = async () => {
     try {
-        const res = await fetch(`${env.URL_KERAJAAN}/acara`);
+        let res = await fetch(`${env.URL_KERAJAAN}/acara?limit=1000`);
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }
-        const data = await res.json();
+        let data = await res.json();
         console.log(data)
 
-        const formatDateTime = (isoString) => {
+        let formatDateTime = (isoString) => {
     if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
-    const date = new Date(isoString);
+    let date = new Date(isoString);
     
     // Format date: dd-mm-yyyy
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
+    let day = String(date.getDate()).padStart(2, '0');
+    let month = String(date.getMonth() + 1).padStart(2, '0');
+    let year = date.getFullYear();
     
     // Format time: HH:MM:SS
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
+    let hours = String(date.getHours()).padStart(2, '0');
+    let minutes = String(date.getMinutes()).padStart(2, '0');
+    let seconds = String(date.getSeconds()).padStart(2, '0');
     
     return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
 };
 
-         const formatDate = (isoString) => {
+         let formatDate = (isoString) => {
             if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
-            const date = new Date(isoString);
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
+            let date = new Date(isoString);
+            let day = String(date.getDate()).padStart(2, '0');
+            let month = String(date.getMonth() + 1).padStart(2, '0');
+            let year = date.getFullYear();
             return `${day}-${month}-${year}`;
         };
-        const mergedData = data.filter((event) => {
-                // Keep only items where deleted_at is the default value (not deleted)
-                return event.deleted_at === '0001-01-01T00:00:00Z' || !event.deleted_at;
-            }).map(event => ({
+        let mergedData = data.map((event: any) => ({
             ...event,
             waktu_mulai: formatDate(event.waktu_mulai),
                 waktu_selesai: formatDate(event.waktu_selesai),
@@ -52,7 +49,29 @@ export const load: PageServerLoad = async () => {
             // lokasi_detail: locationMap.get(event.lokasi_acara) || { nama_lokasi: 'Lokasi tidak ditemukan' },
             // penanggungjawab_detail: personMap.get(event.penanggung_jawab) || { nama: 'PJ tidak ditemukan' }
         }));
-        console.log(mergedData)
+        let finalData = await Promise.all(mergedData.map(async (item) => {
+            let resLoc = await fetch(`${env.URL_KERAJAAN}/lokasi/${item.id_lokasi}`);
+            if (!resLoc.ok) {
+            }
+            let locData = await resLoc.json();
+            console.log("Found Lokasi : ", locData)
+              
+
+            const formattedItem = {
+                ...item,
+                tanggal_mulai: formatDate(item.waktu_mulai),
+                tanggal_selesai: formatDate(item.waktu_selesai),
+                waktu_mulai: formatTime(item.waktu_mulai),
+                waktu_selesai: formatTime(item.waktu_selesai),
+                waktu_mulai_full: formatDateTime(item.waktu_mulai),
+                waktu_selesai_full: formatDateTime(item.waktu_selesai),
+                waktu_mulai_original: item.waktu_mulai,
+                waktu_selesai_original: item.waktu_selesai,
+            };
+            return formattedItem;
+        }));
+
+        console.log("Merged Data:",mergedData)
         return { data: mergedData };
     }
     catch (error) {
@@ -60,14 +79,14 @@ export const load: PageServerLoad = async () => {
         return { errors: "Error fetching data" };
     }
 };
-export const actions: Actions = {
+export let actions: Actions = {
     delete: async ({ request }) => { 
-        const data = await request.formData()
+        let data = await request.formData()
         console.log(data)
-        const id = data.get("id_acara")
+        let id = data.get("id_acara")
         //   console.log("Deleting acara with ID:", id);
         try {
-            const res = await fetch(`${env.URL_KERAJAAN}/acara/detail/${id}`, {
+            let res = await fetch(`${env.URL_KERAJAAN}/acara/detail/${id}`, {
                 method: "GET"
             })
             if (!res.ok) {
@@ -75,22 +94,22 @@ export const actions: Actions = {
                 return fail(404, { error: "Acara tidak ditemukan" });
             }
            
-              const eventData = await res.json()
+              let eventData = await res.json()
                 console.log(eventData)
             
-                const delres = await fetch(`${env.URL_KERAJAAN}/acara/${id}`, {
+                let delres = await fetch(`${env.URL_KERAJAAN}/acara/${id}`, {
                     method: "DELETE",
                    
                     // body: JSON.stringify(formattedEvents)
                 })
                 if (!delres.ok) {
-                  const errorData = await delres.json().catch(() => ({}));
+                  let errorData = await delres.json().catch(() => ({}));
                 console.error("Delete failed:", delres.status, errorData);
                 return fail(delres.status, { 
                     error: errorData.message || `Gagal menghapus acara (${delres.status})` 
                 });
                 }
-                 const successData = await delres.json().catch(() => ({ message: "Success" }));
+                 let successData = await delres.json().catch(() => ({ message: "Success" }));
             console.log("Delete successful:", successData);
 
             

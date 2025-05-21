@@ -65,7 +65,6 @@
 							class="btn-setuju rounded-xl px-8 py-3 font-[500] text-white hover:cursor-pointer hover:ring hover:ring-gray-600"
 							onclick={() => {
 								setTimer();
-								goto('/abdi/dashboard/organisasi/beranda/2/detail/daftaranggota')
 							}}>Iya, arispkan</button
 						>
 					{:else if choose == 'delete'}
@@ -79,9 +78,6 @@
 			</div>
 		</div>
 	</div>
-{/if}
-{#if open}
-	<SuccessModal text={successText}></SuccessModal>
 {/if}
 
 <style>

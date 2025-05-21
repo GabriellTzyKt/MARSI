@@ -3,7 +3,6 @@ import { z } from "zod";
 import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
 import { error } from "@sveltejs/kit";
-import { formatDatetoUI, formatTime } from "$lib";
 
 export const load: PageServerLoad = async ({fetch, params, depends}) => {
     // Add a dependency that can be invalidated
@@ -14,61 +13,43 @@ export const load: PageServerLoad = async ({fetch, params, depends}) => {
         const currentKomId = params.id;
         console.log("Current komunitas ID:", currentKomId);
         
-        // Fetch current komunitas details
-        const komunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas/${currentKomId}`, {
-            cache: 'no-store'
-        });
+        // Fetch all data in parallel using Promise.all
+        const [komunitasResponse, acaraResponse, allKomunitasResponse] = await Promise.all([
+            fetch(`${env.URL_KERAJAAN}/komunitas/${currentKomId}`, { cache: 'no-store' }),
+            fetch(`${env.URL_KERAJAAN}/acara/komunitas/${currentKomId}`, { cache: 'no-store' }),
+            fetch(`${env.URL_KERAJAAN}/komunitas`, { cache: 'no-store' })
+        ]);
         
+        // Handle komunitas response
         if (!komunitasResponse.ok) {
             throw error(komunitasResponse.status, `Failed to fetch komunitas: ${komunitasResponse.statusText}`);
         }
-        
         const currentKomunitas = await komunitasResponse.json();
-        console.log("Current komunitas:", currentKomunitas);
         
-        // Directly fetch events for the current komunitas using the correct API endpoint
-        const acaraResponse = await fetch(`${env.URL_KERAJAAN}/acara/komunitas/${currentKomId}`, {
-            cache: 'no-store'
-        });
-        
+        // Handle acara response
         if (!acaraResponse.ok) {
-            console.error(`Failed to fetch acara for komunitas ${currentKomId}: ${acaraResponse.statusText}`);
             throw error(acaraResponse.status, `Failed to fetch acara: ${acaraResponse.statusText}`);
         }
-        
         const acaraNestedData = await acaraResponse.json();
-        console.log(`Raw events for komunitas ${currentKomId}:`, acaraNestedData);
         
-        // Extract and process the acara data from the nested structure
+        // Process acara data - extract from nested structure
         const processedAcara = acaraNestedData.map(item => {
-            // Check if the item has an Acara property (nested structure)
             if (item.Acara) {
                 return {
                     ...item.Acara,
-                    tanggal_mulai: formatDatetoUI(item.Acara.waktu_mulai),
-                    tanggal_selesai: formatDatetoUI(item.Acara.waktu_selesai),
-                    waktu_mulai: formatTime(item.Acara.waktu_mulai),
-                    waktu_selesai: formatTime(item.Acara.waktu_selesai),
-                    // id_komunitas: item.id_komunitas,
-                    // komunitas_nama: currentKomunitas.nama_komunitas || 'Unknown Komunitas'
+                    id_komunitas: item.id_komunitas,
+                    komunitas_nama: currentKomunitas.nama_komunitas || 'Unknown Komunitas'
                 };
             } else {
-                // Fallback for items that might not have the nested structure
                 return {
                     ...item,
-                    // id_komunitas: currentKomId,
-                    // komunitas_nama: currentKomunitas.nama_komunitas || 'Unknown Komunitas'
+                    id_komunitas: currentKomId,
+                    komunitas_nama: currentKomunitas.nama_komunitas || 'Unknown Komunitas'
                 };
             }
         });
         
-        console.log("Processed acara data:", processedAcara);
-
-        // Fetch all komunitas for reference (if needed)
-        const allKomunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas`, {
-            cache: 'no-store'
-        });
-        
+        // Handle all komunitas response
         let komunitasList = [];
         if (allKomunitasResponse.ok) {
             komunitasList = await allKomunitasResponse.json();

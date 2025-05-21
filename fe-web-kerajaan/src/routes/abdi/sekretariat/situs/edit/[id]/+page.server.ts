@@ -1,5 +1,5 @@
 import SuccessModal from "$lib/modal/SuccessModal.svelte";
-import { error, fail, type Actions } from "@sveltejs/kit";
+import { error, fail, json, type Actions } from "@sveltejs/kit";
 import { number, z } from "zod";
 import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
@@ -190,6 +190,31 @@ export let actions: Actions = {
                 z.string({ message: "Field Wisata harus diisi" })
                     .nonempty("Field Ini tidak boleh kosong")
         })
+
+          const formatTimeField = (timeString) => {
+        if (!timeString) return '';
+        
+        // If it's already in HH:MM format, return as is
+        if (/^\d{1,2}:\d{2}$/.test(timeString)) {
+            // Ensure hours are padded with leading zero if needed
+            const [hours, minutes] = timeString.split(':');
+            return `${hours.padStart(2, '0')}:${minutes}`;
+        }
+        
+        // If it's a Date object or timestamp, convert to HH:MM
+        try {
+            const date = new Date(timeString);
+            if (!isNaN(date.getTime())) {
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${hours}:${minutes}`;
+            }
+        } catch (e) {
+            console.error("Error parsing time:", e);
+        }
+        
+        return timeString;
+    };
          let formData = {
             nama_situs: String(data.get("nama_situs")),
             alamat: String(data.get("alamat")),
@@ -216,6 +241,48 @@ export let actions: Actions = {
                 errors: verification.error.flatten().fieldErrors, success: false, formData
             })
         }
-        return { success: true, formData}
+        try {
+            let sendData = {
+                 id_situs: parseInt(String(data.get("id_situs"))),
+    id_jenis_situs: parseInt(String(data.get("jenis_situs"))),
+    foto_situs: "2", // pastikan ini benar
+    nama_situs: String(data.get("nama_situs")),
+    deskripsi_situs: String(data.get("deskripsi_situs")),
+    alamat: String(data.get("alamat")),
+    longitude: parseFloat(String(data.get("longitude"))),
+    latitude: parseFloat(String(data.get("latitude"))),
+    nama_pendiri: String(data.get("dibangun_oleh")),
+    pemilik_situs: String(data.get("kepemilikan")),
+    tahun_berdiri: parseInt(String(data.get("tahun_berdiri"))),
+    pelindung: String(data.get("pelindung")),
+    pembina: String(data.get("pembina")),
+    juru_kunci: String(data.get("juru_kunci")),
+    jam_buka: formatTimeField(String(data.get("jam_buka"))),
+        jam_tutup: formatTimeField(String(data.get("jam_tutup"))),
+    no_telp: String(data.get("phone")),
+    // jumlah_anggota: parseInt(String(data.get("jumlah_anggota"))),
+    // wisata: String(data.get("wisata"))
+            }
+            console.log(sendData)
+            const response = await fetch(`${env.URL_KERAJAAN}/situs`, {
+                method: "PUT",
+                headers: {
+        "Content-Type": "application/json"
+    },
+                body: JSON.stringify(sendData)
+            })
+            console.log(response)
+            if(!response.ok){
+                const errorText = await response.text();
+                console.error(`HTTP Error! Status: ${response.status}, Response: ${errorText}`);
+                return fail(400,{ success: false, error: `Error: ${response.status} - ${errorText}` });
+
+            }
+            return {data: "berhasil", success: true}
+        } catch (error) {
+             console.error("Exception during API call:", error);
+             return { success: false, error: String(error) };
+        }
+       
     }
 };

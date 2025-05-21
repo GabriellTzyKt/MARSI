@@ -11,8 +11,6 @@ export const load: PageServerLoad = async () => {
             fetch(`${env.URL_KERAJAAN}/organisasi`),
             fetch(`${env.URL_KERAJAAN}/komunitas`)
         ]);
-        console.log("Fetch promises created");
-       
 
         // Check responses
         if (!situsRes.ok) throw new Error(`Situs API error: ${situsRes.status}`);
@@ -20,18 +18,11 @@ export const load: PageServerLoad = async () => {
         if (!organisasiRes.ok) throw new Error(`Organisasi API error: ${organisasiRes.status}`);
         if (!komunitasRes.ok) throw new Error(`Komunitas API error: ${komunitasRes.status}`);
 
-        // Parse JSON responses one by one to identify the issue
+        // Parse JSON responses
         const situsData = await situsRes.json();
         const acaraData = await acaraRes.json();
         const organisasiData = await organisasiRes.json();
         const komunitasData = await komunitasRes.json();
-        console.log("Responses:", situsRes, acaraRes, organisasiRes, komunitasRes);
-        console.log("Raw data types:", {
-            situs: typeof situsData, isArray: Array.isArray(situsData),
-            acara: typeof acaraData, isArray: Array.isArray(acaraData),
-            organisasi: typeof organisasiData, isArray: Array.isArray(organisasiData),
-            komunitas: typeof komunitasData, isArray: Array.isArray(komunitasData)
-        });
 
         // Ensure all data are arrays
         const situsArray = Array.isArray(situsData) ? situsData : [situsData];
@@ -39,15 +30,32 @@ export const load: PageServerLoad = async () => {
         const organisasiArray = Array.isArray(organisasiData) ? organisasiData : [organisasiData];
         const komunitasArray = Array.isArray(komunitasData) ? komunitasData : [komunitasData];
 
-        console.log("Raw data counts:", {
-            situs: situsArray.length,
-            acara: acaraArray.length,
-            organisasi: organisasiArray.length,
-            komunitas: komunitasArray.length
+        // Filter out soft-deleted items
+        const filteredSitus = situsArray.filter(item => 
+            item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
+        );
+        
+        const filteredAcara = acaraArray.filter(item => 
+            item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
+        );
+        
+        const filteredOrganisasi = organisasiArray.filter(item => 
+            item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
+        );
+        
+        const filteredKomunitas = komunitasArray.filter(item => 
+            item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
+        );
+
+        console.log("Filtered data counts:", {
+            situs: filteredSitus.length,
+            acara: filteredAcara.length,
+            organisasi: filteredOrganisasi.length,
+            komunitas: filteredKomunitas.length
         });
 
         // Process situs data with photos
-        const processedSitus = await Promise.all(situsArray.map(async (item) => {
+        const processedSitus = await Promise.all(filteredSitus.map(async (item) => {
             const processedItem = { ...item, imageUrls: [] };
             
             if (item.foto_situs && item.foto_situs.trim() !== '') {
@@ -87,7 +95,7 @@ export const load: PageServerLoad = async () => {
         }));
 
         // Process acara data with photos
-        const processedAcara = await Promise.all(acaraArray.map(async (item) => {
+        const processedAcara = await Promise.all(filteredAcara.map(async (item) => {
             const processedItem = {
                 ...item,
                 tanggal_mulai: formatDatetoUI(item.tanggal_mulai),
@@ -132,7 +140,7 @@ export const load: PageServerLoad = async () => {
         }));
 
         // Process organisasi data with photos
-        const processedOrganisasi = await Promise.all(organisasiArray.map(async (item) => {
+        const processedOrganisasi = await Promise.all(filteredOrganisasi.map(async (item) => {
             const processedItem = {
                 ...item,
                 tanggal_berdiri: item.tanggal_berdiri ? formatDatetoUI(item.tanggal_berdiri) : '',
@@ -176,7 +184,7 @@ export const load: PageServerLoad = async () => {
         }));
 
         // Process komunitas data with photos
-        const processedKomunitas = await Promise.all(komunitasArray.map(async (item) => {
+        const processedKomunitas = await Promise.all(filteredKomunitas.map(async (item) => {
             const processedItem = {
                 ...item,
                 tanggal_berdiri: item.tanggal_berdiri ? formatDatetoUI(item.tanggal_berdiri) : '',
@@ -244,3 +252,4 @@ export const load: PageServerLoad = async () => {
         };
     }
 };
+

@@ -7,10 +7,11 @@
 	import TambahAdminSekre from '$lib/popup/TambahAdminSekre.svelte';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
+	import { invalidateAll } from '$app/navigation';
 	// import { load } from '../organisasi/daftaranggota/proxy+page.server.js';
 	let selectTipe = $state<string>('');
 
-	let { form } = $props();
+	let { data } = $props();
 	let open = $state(false);
 	let valo = $state(false);
 	let edit = $state(false);
@@ -19,6 +20,8 @@
 	let timer: number;
 
 	let activeTab = $state('ASitus');
+	console.log(data.data);
+	let user = data.data;
 
 	function setActive(tab: string) {
 		activeTab = tab;
@@ -26,7 +29,6 @@
 		console.log('Selected : ', selected);
 	}
 
-	let data = $state();
 	// onMount(() => {
 	// 	if (form?.errors) {
 	// 		error = form.errors;
@@ -155,6 +157,9 @@
 	<div class="grid w-full auto-rows-min grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
 		<!-- container -->
 		{#if selected === 'ASitus'}
+			{#each user as data}
+				<DropDownAdmin {data}></DropDownAdmin>
+			{/each}
 			<DropDownAdmin bind:edit {error} {data}></DropDownAdmin>
 
 			<DropDownAdmin></DropDownAdmin>
@@ -204,11 +209,14 @@
 		action="?/tambah"
 		method="post"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result }) => {
+				loading = false;
 				console.log(result);
 				if (result.type === 'success') {
 					valo = true;
 					clearTimeout(timer);
+					invalidateAll();
 					timer = setTimeout(() => {
 						valo = false;
 						open = false;
