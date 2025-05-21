@@ -128,35 +128,35 @@
 					<p class="font-[500]">No Telepon</p>
 				</div>
 				<div>
-					<p class="text-sm text-[#5B5B5B]">No Telepon</p>
+					<p class="text-sm text-[#5B5B5B]">{data.no_telp}</p>
 				</div>
 				<!-- Jenis Kelamin-->
 				<div>
 					<p class="font-[500]">Jenis Kelamin</p>
 				</div>
 				<div>
-					<p class="text-sm text-[#5B5B5B]">Perempuan</p>
+					<p class="text-sm text-[#5B5B5B]">{data.jenis_kelamin}</p>
 				</div>
 				<!-- TTL -->
 				<div>
 					<p class="font-[500]">Tempat, Tanggal Lahir</p>
 				</div>
 				<div>
-					<p class="text-sm text-[#5B5B5B]">Sukowono, 22 Desember 2004</p>
+					<p class="text-sm text-[#5B5B5B]">{data.tempat_lahir}, {data.tanggal_lahir ? data.tanggal_lahir.split('T')[0] : data.tanggal_lahir}</p>
 				</div>
 				<!-- Email -->
 				<div>
 					<p class="font-[500]">Email</p>
 				</div>
 				<div>
-					<p class="text-sm text-[#5B5B5B]">jd3@gmail.com</p>
+					<p class="text-sm text-[#5B5B5B]">{data.email}</p>
 				</div>
 				<!-- Afiliasi -->
 				<div>
 					<p class="font-[500]">Afiliasi</p>
 				</div>
 				<div>
-					<p class="text-sm text-[#5B5B5B]">MARSI</p>
+					<p class="text-sm text-[#5B5B5B]">{data.jenis_admin}</p>
 				</div>
 			</div>
 			<div class="flex w-full justify-end gap-4 p-4">
