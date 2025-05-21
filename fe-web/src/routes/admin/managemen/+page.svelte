@@ -11,9 +11,9 @@
 	let { form, data } = $props();
 	let adminMarsi = data.adminMarsiData;
 	let dataKerajaan = data.kerajaanData;
-	console.log("Base Admin Data: ", adminMarsi);
-	console.log("Data Kerajaan : ", dataKerajaan)
-	
+	// console.log("Base Admin Data: ", adminMarsi);
+	// console.log("Data Kerajaan : ", dataKerajaan)
+
 	let open = $state(false);
 	let admin = $state();
 	let valo = $state(false);
@@ -23,7 +23,12 @@
 	let error = $state();
 	let timer: number;
 	let loading = $state(false);
-	
+	let dataEdit = $state();
+	function handleEdit(admin: any) {
+		console.log('ADMIN EDIT : ', admin);
+		dataEdit = admin;
+		edit = true;
+	}
 </script>
 
 <div class="flex w-full flex-col md:mx-6">
@@ -55,11 +60,16 @@
 	<div class="grid w-full auto-rows-min grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
 		<!-- container -->
 		{#if selected === 'Super Admin'}
-			{#each data.adminMarsiData?.filter((admin : any) => admin.jenis_admin?.toLowerCase() === "super admin") || [] as admin}
-				<DropDownAdmin bind:edit {error} data={admin}></DropDownAdmin>
+			{#each data.adminMarsiData?.filter((admin: any) => admin.jenis_admin?.toLowerCase() === 'super admin') || [] as admin}
+				<DropDownAdmin
+					bind:edit
+					{error}
+					data={admin}
+					actions={[{ action: () => handleEdit(admin) }]}
+				></DropDownAdmin>
 			{/each}
 		{:else if selected === 'Admin Kerajaan'}
-			{#each data.adminMarsiData?.filter((admin : any) => admin.jenis_admin?.toLowerCase() === "admin kerajaan") || [] as admin}
+			{#each data.adminMarsiData?.filter((admin: any) => admin.jenis_admin?.toLowerCase() === 'admin kerajaan') || [] as admin}
 				<DropDownAdmin bind:edit {error} data={admin}></DropDownAdmin>
 			{/each}
 		{/if}
@@ -84,24 +94,35 @@
 	<!-- line -->
 </div>
 {#if open}
-	<form action="?/tambah" method="post" autocomplete="off" use:enhance={() => {
-		return async ({ result }) => {
-			console.log(result);
-			loading = true;
-			if (result.type === 'success') {
-				valo = true;
-				clearTimeout(timer);
-				timer = setTimeout(() => {
-					valo = false;
-					open = false;
-					loading = false;
-				}, 3000);
-			} else if (result.type === 'failure') {
-				error = result?.data?.errors;
-			}
-		};
-	}}>
-		<ModalAdmin textM="Tambah" bind:value={open} bind:open={valo} errors={error} {data} datakerajaan = {dataKerajaan}
+	<form
+		action="?/tambah"
+		method="post"
+		autocomplete="off"
+		use:enhance={() => {
+			return async ({ result }) => {
+				console.log(result);
+				loading = true;
+				if (result.type === 'success') {
+					valo = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						valo = false;
+						open = false;
+						loading = false;
+					}, 3000);
+				} else if (result.type === 'failure') {
+					error = result?.data?.errors;
+				}
+			};
+		}}
+	>
+		<ModalAdmin
+			textM="Tambah"
+			bind:value={open}
+			bind:open={valo}
+			errors={error}
+			{data}
+			datakerajaan={dataKerajaan}
 		></ModalAdmin>
 	</form>
 {/if}
@@ -110,4 +131,42 @@
 {/if}
 {#if loading}
 	<Loader></Loader>
+{/if}
+{#if edit}
+	<form
+		action="?/ubah"
+		method="POST"
+		use:enhance={() => {
+			// Verify the ID before submitting edit form
+			if (!data || !data.id_admin) {
+				console.error('Missing admin ID, cannot submit edit');
+				return;
+			}
+
+			console.log('Data kirim : ', data);
+
+			return async ({ result }) => {
+				console.log(result);
+				if (result.type === 'success') {
+					valo = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						valo = false;
+						edit = false;
+					}, 3000);
+				} else if (result.type === 'failure') {
+					error = result?.data?.errors;
+				}
+			};
+		}}
+	>
+		<ModalAdmin
+			textM="Ubah"
+			bind:value={edit}
+			bind:open={valo}
+			errors={error}
+			data={dataEdit}
+			datakerajaan={dataKerajaan}
+		></ModalAdmin>
+	</form>
 {/if}

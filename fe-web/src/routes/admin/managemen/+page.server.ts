@@ -231,7 +231,7 @@ export const actions: Actions = {
 
     ubah: async ({ request }) => {
         const data = await request.formData()
-        console.log(data)
+        console.log("Edit:",data)
         const ver = z.object({
             nama_lengkap:
                 z.string({ message: "Harus diisi / harus berupa string" })
