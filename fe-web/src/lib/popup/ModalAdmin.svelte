@@ -25,7 +25,7 @@
 		kota_lahir: '',
 		jenis_kelamin: 'Laki-laki',
 		afiliasi: 'marsi',
-		admin_role: 'super_admin'
+		admin_role: 'super admin'
 	});
 	
 	$effect(() => {
@@ -40,7 +40,7 @@
 			formValues.kota_lahir = data.tempat_lahir || '';
 			formValues.jenis_kelamin = data.jenis_kelamin || 'Laki-laki';
 			formValues.afiliasi = data.afiliasi || 'marsi';
-			formValues.admin_role = data.afiliasi === 'marsi' ? 'super_admin' : 'admin_kerajaan';
+			formValues.admin_role = data.afiliasi === 'marsi' ? 'super admin' : 'admin kerajaan';
 			
 			console.log('Form values updated:', formValues);
 		}
@@ -48,7 +48,7 @@
 	
 	// Update admin_role when afiliasi changes
 	$effect(() => {
-		formValues.admin_role = formValues.afiliasi === 'marsi' ? 'super_admin' : 'admin_kerajaan';
+		formValues.admin_role = formValues.afiliasi === 'marsi' ? 'super admin' : 'admin kerajaan';
 		console.log('Admin role updated based on afiliasi:', formValues.admin_role);
 	});
 
@@ -303,6 +303,12 @@
 						name="afiliasi"
 						class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none"
 						bind:value={formValues.afiliasi}
+						onchange={() => {
+							// Explicitly update admin_role when afiliasi changes
+							formValues.admin_role = formValues.afiliasi === 'marsi' ? 'super admin' : 'admin kerajaan';
+							console.log('Afiliasi changed to:', formValues.afiliasi);
+							console.log('Admin role updated to:', formValues.admin_role);
+						}}
 					>
 						<option value="marsi">MARSI</option>
 						{#if datakerajaan && Array.isArray(datakerajaan)}
@@ -346,7 +352,6 @@
 						id="admin_role_field"
 						autocomplete="new-password"
 						bind:value={formValues.admin_role}
-						disabled
 					>
 						<option value="super admin">Super Admin</option>
 						<option value="admin kerajaan">Admin Kerajaan</option>

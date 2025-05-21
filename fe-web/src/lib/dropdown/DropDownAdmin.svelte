@@ -183,6 +183,12 @@
 					<button
 						class="flex gap-1 rounded-lg bg-[#FFA600] px-6 py-2 text-white"
 						onclick={() => {
+							// Verify the ID before opening edit modal
+							if (!data || !data.id_admin) {
+								console.error('Missing admin ID, cannot edit');
+								return;
+							}
+							console.log('Opening edit modal for admin ID:', data.id_admin);
 							edit = true;
 						}}
 						><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -210,6 +216,14 @@
 		action="?/ubah"
 		method="POST"
 		use:enhance={() => {
+			// Verify the ID before submitting edit form
+			if (!data || !data.id_admin) {
+				console.error('Missing admin ID, cannot submit edit');
+				return;
+			}
+
+			console.log("Data kirim : ", data)
+			
 			return async ({ result }) => {
 				console.log(result);
 				if (result.type === 'success') {

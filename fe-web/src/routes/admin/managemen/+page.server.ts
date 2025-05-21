@@ -8,7 +8,7 @@ export const load: PageServerLoad = async () => {
     try {
         // Fetch admin data from both endpoints in parallel
         const [adminBaseResponse, allKerajaan] = await Promise.all([
-            fetch(`${env.BASE_URL}/admin`, {
+            fetch(`${env.BASE_URL}/admin?limit=200`, {
                 method: "GET",
                 headers: {
                     "Accept": "application/json"
