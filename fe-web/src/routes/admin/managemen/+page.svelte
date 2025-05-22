@@ -124,6 +124,7 @@
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
+					console.log("Errors : ", error)
 				}
 			};
 		}}
@@ -133,7 +134,7 @@
 			bind:value={open}
 			bind:open={valo}
 			errors={error}
-			{data}
+			data
 			datakerajaan={dataKerajaan}
 		></ModalAdmin>
 	</form>
