@@ -1,5 +1,6 @@
 <script lang="ts">
 	let { currPage = $bindable(), entries = $bindable(), totalItems = $bindable() } = $props();
+	console.log('total items', totalItems);
 	let total_pages = $derived(Math.ceil(totalItems / entries));
 </script>
 

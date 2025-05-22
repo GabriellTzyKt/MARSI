@@ -55,7 +55,7 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<div
 		transition:fly={{ y: 20, duration: 300 }}
-		class="ml-7 mr-5 mt-2 flex items-center justify-between rounded-md p-3 transition-all duration-300 hover:cursor-pointer hover:bg-gray-100 hover:bg-gray-200
+		class="ml-7 mr-5 mt-2 flex items-center justify-between rounded-md p-3 transition-all duration-300 hover:cursor-pointer hover:bg-blue-400 hover:bg-blue-600
 		{active ? 'active-class' : 'active-class2'}"
 		onclick={handleClick}
 	>
@@ -64,7 +64,7 @@
 				{icon}
 				class="text-md text-gray-700 transition-colors duration-300 hover:text-blue-600"
 			/>
-			<span class="font-semibold text-gray-800">{anchor}</span>
+			<span class="font-semibold text-white">{anchor}</span>
 		</a>
 		{#if hasChildren}
 			<span class="mr-2 text-gray-600 transition-all hover:text-blue-600">
@@ -82,7 +82,7 @@
 			onclick={reveal}
 			onmouseleave={hide}
 		>
-			<div class="space-y-2 text-xs lg:text-md">
+			<div class="lg:text-md space-y-2 text-xs">
 				{@render children()}
 			</div>
 		</div>
@@ -94,7 +94,7 @@
 		transition: all 0.3s ease;
 	}
 	.active-class {
-		background: #eee4e4;
+		background: black;
 		border-left: 5px solid blue;
 		font-weight: bold;
 	}

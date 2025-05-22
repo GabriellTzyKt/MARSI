@@ -4,130 +4,131 @@ import { env } from "$env/dynamic/private";
 
 export const load: PageServerLoad = async ({ params, cookies }) => {
     const id = params.id;
-    const token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
+    const cookie = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
     
     try {
-        // Fetch komunitas data from API
-        const komunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas/${id}`);
-        
-        if (!komunitasResponse.ok) {
-            throw error(komunitasResponse.status, `Failed to fetch komunitas: ${komunitasResponse.statusText}`);
+        // Fetch komunitas data
+        const komunitasRes = await fetch(`${env.URL_KERAJAAN}/komunitas/${id}`);
+        if (!komunitasRes.ok) {
+            throw error(komunitasRes.status, `Failed to fetch komunitas: ${komunitasRes.statusText}`);
         }
         
-        const komunitasData = await komunitasResponse.json();
-        console.log("Komunitas data:", komunitasData);
+        const komunitas = await komunitasRes.json();
+        console.log("Komunitas data:", komunitas);
+        
+        // Process image URLs
+        let imageUrls = [];
         
         // Fetch profile image if available
         let profileUrl = null;
-        if (komunitasData.profile) {
+        if (komunitas.profile) {
             try {
-                const filePathResponse = await fetch(`${env.URL_KERAJAAN}/doc/${komunitasData.profile}`);
-                if (filePathResponse.ok) {
-                    const filePathData = await filePathResponse.json();
-                    
-                    const filePath = filePathData.file_dokumentasi;
-                    if (filePath) {
-                        profileUrl = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`;
+                const profileRes = await fetch(`${env.URL_KERAJAAN}/doc/${komunitas.profile}`);
+                if (profileRes.ok) {
+                    const profileData = await profileRes.json();
+                    if (profileData.file_dokumentasi) {
+                        profileUrl = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(profileData.file_dokumentasi)}`;
                     }
                 }
-            } catch (fileError) {
-                console.error("Error fetching profile:", fileError);
+            } catch (err) {
+                console.error("Error fetching profile image:", err);
             }
         }
-
-        // Fetch foto_komunitas images if available
-        let imageUrls = [];
-        if (komunitasData.foto_komunitas && komunitasData.foto_komunitas.trim() !== '') {
-            try {
-                const docIds = komunitasData.foto_komunitas.split(',').map(id => id.trim());
-                console.log("Document IDs:", docIds);
-                
-                for (const docId of docIds) {
-                    if (!docId) continue;
-                    
-                    console.log(`Fetching document with ID: ${docId}`);
+        
+        // Fetch foto_komunitas images
+        if (komunitas.foto_komunitas && komunitas.foto_komunitas.trim() !== '') {
+            const docIds = komunitas.foto_komunitas.split(',').map(id => id.trim()).filter(id => id);
+            
+            for (const docId of docIds) {
+                try {
                     const docRes = await fetch(`${env.URL_KERAJAAN}/doc/${docId}`);
-                    
                     if (docRes.ok) {
                         const docData = await docRes.json();
-                        console.log("Document data:", docData);
-                        
                         if (docData.file_dokumentasi) {
-                            const imageUrl = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(docData.file_dokumentasi)}`;
-                            imageUrls.push(imageUrl);
+                            imageUrls.push(`${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(docData.file_dokumentasi)}`);
                         }
                     }
+                } catch (err) {
+                    console.error(`Error fetching document ${docId}:`, err);
                 }
-            } catch (error) {
-                console.error("Error processing foto_komunitas:", error);
             }
         }
-
-        // Fetch additional user data for penanggung_jawab, pembina, and pelindung
-        const [penanggungJawabData, pembinaData, pelindungData, lokasiData] = await Promise.all([
-            fetchUserData(komunitasData.penanggung_jawab, token),
-            fetchUserData(komunitasData.pembina, token),
-            fetchUserData(komunitasData.pelindung, token),
-            fetchLokasiData(komunitasData.lokasi, token)
-        ]);
-
-        return {
-            data: {
-                komunitas: komunitasData,
-                profileUrl,
-                imageUrls,
-                penanggungJawab: penanggungJawabData,
-                pembina: pembinaData,
-                pelindung: pelindungData,
-                lokasi: lokasiData
+        
+        // Fetch penanggung_jawab data
+        let penanggungJawab = null;
+        if (komunitas.penanggung_jawab && komunitas.penanggung_jawab !== '0') {
+            try {
+                const userRes = await fetch(`${env.PUB_PORT}/user/${komunitas.penanggung_jawab}`, {
+                    headers: {
+                        "Authorization": `Bearer ${cookie?.token}`
+                    }
+                });
+                if (userRes.ok) {
+                    penanggungJawab = await userRes.json();
+                }
+            } catch (err) {
+                console.error("Error fetching penanggung_jawab:", err);
             }
+        }
+        
+        // Fetch pembina data
+        let pembina = null;
+        if (komunitas.pembina && komunitas.pembina !== '0') {
+            try {
+                const userRes = await fetch(`${env.PUB_PORT}/user/${komunitas.pembina}`, {
+                    headers: {
+                        "Authorization": `Bearer ${cookie?.token}`
+                    }
+                });
+                if (userRes.ok) {
+                    pembina = await userRes.json();
+                }
+            } catch (err) {
+                console.error("Error fetching pembina:", err);
+            }
+        }
+        
+        // Fetch pelindung data
+        let pelindung = null;
+        if (komunitas.pelindung && komunitas.pelindung !== '0') {
+            try {
+                const userRes = await fetch(`${env.PUB_PORT}/user/${komunitas.pelindung}`, {
+                    headers: {
+                        "Authorization": `Bearer ${cookie?.token}`
+                    }
+                });
+                if (userRes.ok) {
+                    pelindung = await userRes.json();
+                }
+            } catch (err) {
+                console.error("Error fetching pelindung:", err);
+            }
+        }
+        
+        // Fetch lokasi data
+        let lokasi = null;
+        if (komunitas.lokasi && komunitas.lokasi !== '0') {
+            try {
+                const lokasiRes = await fetch(`${env.URL_KERAJAAN}/lokasi/${komunitas.lokasi}`);
+                if (lokasiRes.ok) {
+                    lokasi = await lokasiRes.json();
+                }
+            } catch (err) {
+                console.error("Error fetching lokasi:", err);
+            }
+        }
+        
+        return {
+            komunitas,
+            imageUrls,
+            profileUrl,
+            penanggungJawab,
+            pembina,
+            pelindung,
+            lokasi
         };
     } catch (err) {
         console.error("Error in load function:", err);
         throw error(500, "Failed to load komunitas details");
-    }
-};
-
-// Helper function to fetch user data
-async function fetchUserData(userId: number | string, token: any) {
-    if (!userId || userId === '0') return null;
-    
-    try {
-        const response = await fetch(`${env.PUB_PORT}/user/${userId}`, {
-            headers: {
-                "Authorization": `Bearer ${token?.token}`
-            }
-        });
-        
-        if (response.ok) {
-            return await response.json();
-        }
-        console.error(`Failed to fetch user ${userId}: ${response.statusText}`);
-        return null;
-    } catch (error) {
-        console.error(`Error fetching user ${userId}:`, error);
-        return null;
-    }
-}
-
-// Helper function to fetch lokasi data
-async function fetchLokasiData(lokasiId: number | string, token: any) {
-    if (!lokasiId || lokasiId === '0') return null;
-    
-    try {
-        const response = await fetch(`${env.URL_KERAJAAN}/lokasi/${lokasiId}`, {
-            headers: {
-                "Authorization": `Bearer ${token?.token}`
-            }
-        });
-        
-        if (response.ok) {
-            return await response.json();
-        }
-        console.error(`Failed to fetch lokasi ${lokasiId}: ${response.statusText}`);
-        return null;
-    } catch (error) {
-        console.error(`Error fetching lokasi ${lokasiId}:`, error);
-        return null;
     }
 }

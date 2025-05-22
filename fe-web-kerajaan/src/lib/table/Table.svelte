@@ -31,7 +31,7 @@
 			{#each table_data as data, i}
 				<tr class="">
 					<td
-						class=" mx-2 whitespace-normal break-words py-3 text-center"
+						class=" max-w-[200px] overflow-hidden truncate text-ellipsis whitespace-nowrap px-2 py-3 text-left"
 						class:border-y={i !== table_data.length - 1}
 						class:border-bl-xl={i === table_data.length - 1}
 						class:border-br-xl={i === table_data.length - 1}
@@ -41,7 +41,7 @@
 					{#each table_header as header, b}
 						{#if typeof header === 'string'}
 							<td
-								class="  whitespace-normal break-words px-2 py-3 text-left"
+								class="max-w-[200px] overflow-hidden truncate text-ellipsis whitespace-nowrap px-2 py-3 text-left"
 								class:border-y={i !== table_data.length - 1}
 								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}
@@ -65,7 +65,7 @@
 							>
 						{:else}
 							<td
-								class="  whitespace-normal break-words px-2 py-3 text-left"
+								class="max-w-[200px] overflow-hidden truncate text-ellipsis whitespace-nowrap px-2 py-3 text-left"
 								class:border-y={i !== table_data.length - 1}
 								class:border-bl-xl={i === table_data.length - 1 && b === table_header.length - 1}
 								class:border-br-xl={i === table_data.length - 1 && b === table_header.length - 1}

@@ -3,7 +3,11 @@
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import { fade } from 'svelte/transition';
 	import jd from '$lib/asset/profile/jdpp.jpg';
-	let { value = $bindable(), text = '' } = $props();
+	import { onMount } from 'svelte';
+	let { value = $bindable(), text = '', data = null } = $props();
+	onMount(() => {
+		console.log('data: ', data);
+	});
 	let total = $state(8);
 	let open = $state(false);
 	let timer: number;
@@ -59,6 +63,8 @@
 				<div class="grow">
 					<input
 						type="text"
+						readonly
+						value={data?.pemberi_tugas || '-'}
 						class="my-2 w-full pe-2 ps-2 focus:outline-none"
 						placeholder="Jane Doe"
 						name=""
@@ -94,6 +100,8 @@
 						type="text"
 						class="my-2 w-full pe-2 ps-2 focus:outline-none"
 						placeholder="Jane Doe"
+						readonly
+						value={data?.nama_tugas || '-'}
 						name=""
 						id=""
 					/>
@@ -128,7 +136,8 @@
 						class="my-2 w-full pe-2 ps-2 focus:outline-none"
 						placeholder="13-12-2001"
 						name=""
-						value="2003-12-14"
+						readonly
+						value={data?.tanggal_mulai || '-'}
 						id=""
 					/>
 				</div>
@@ -146,6 +155,8 @@
 						class="my-2 w-full pe-2 ps-2 focus:outline-none"
 						placeholder="Jane Doe"
 						name=""
+						readonly
+						value={data?.penerima_tugas || '-'}
 						id=""
 					/>
 				</div>
@@ -169,13 +180,15 @@
 		</div>
 		<div class="mt-2 flex w-full flex-col">
 			<div>
-				<p class="text-sm">Anggota yang Ditugaskan</p>
+				<p class="text-sm">Deskripsi Tugas:</p>
 			</div>
 			<!-- nama Tugas -->
 			<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
 				<div class="grow">
 					<textarea
 						name=""
+						readonly
+						value={data?.deskripsi_tugas || '-'}
 						class="w-full pe-2 ps-2 pt-2 focus:outline-none"
 						placeholder="Deskripsi"
 						id=""

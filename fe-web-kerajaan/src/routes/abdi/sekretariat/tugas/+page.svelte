@@ -1,9 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { navigating } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
+	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
 	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import BuktiLaporan from '$lib/popup/BuktiLaporan.svelte';
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import TambahTugas from '$lib/popup/TambahTugas.svelte';
 	import Pagination from '$lib/table/Pagination.svelte';
 
@@ -13,15 +17,23 @@
 
 	let { data } = $props();
 	console.log('data : ', data);
-	const dataAmbil = data.data;
-	let situsData = $state(data.situs);
-
+	let dataAmbil = $derived(data.data);
+	let situsData = $state(
+		data.situs.filter((item: any) => item.deleted_at === '0001-01-01T00:00:00Z')
+	);
+	console.log(dataAmbil);
 	let open = $state(false);
 	let success = $state(false);
 	let errors = $state();
 	let entries = $state(10);
 	let keyword = $state('');
 	let currPage = $state(1);
+	let dataToDelete = $state();
+	let deleteModal = $state(false);
+	let editData = $state();
+	let detailData = $state();
+	let modalDetail = $state(false);
+	let editModal = $state(false);
 	function filterD(data: any[]) {
 		return data.filter(
 			(item) =>
@@ -34,6 +46,23 @@
 		);
 	}
 
+	function deleteID(id: any) {
+		console.log('Anda Menghapus tugas : ', id);
+		let datahapus = dataAmbil.find((item: any) => item.id_tugas === id).id_tugas;
+		dataToDelete = datahapus;
+		console.log('Data Yang Dihapus', dataToDelete);
+		deleteModal = true;
+	}
+	function editID(data: any) {
+		console.log('Data to edit : ', data);
+		editData = data;
+		editModal = true;
+	}
+	function detailID(data: any) {
+		console.log(' Data to detail : ', data);
+		detailData = data;
+		modalDetail = true;
+	}
 	function pagination(data: any[]) {
 		let d = filterD(data);
 		let start = (currPage - 1) * entries;
@@ -41,6 +70,8 @@
 		console.log(d);
 		return d.slice(start, end);
 	}
+	let resData = $derived(pagination(dataAmbil));
+
 	$effect(() => {
 		if (keyword || entries) {
 			currPage = 1;
@@ -128,10 +159,9 @@
 			</div>
 		</div>
 	</div>
-	<div class="mx-4 flex flex-col">
+	<div class="me-4 ms-4 flex flex-col">
 		<Table
 			table_header={[
-				['id_tugas', 'Id Tugas'],
 				['nama_tugas', 'Nama Tugas'],
 				['pemberi_tugas', 'Pemberi Tugas'],
 				['penerima_tugas', 'Anggota yang Ditugaskan'],
@@ -141,28 +171,36 @@
 				['children', 'Status'],
 				['children', 'Aksi']
 			]}
-			table_data={dataAmbil}
+			table_data={resData}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
-					<DropDown
-						text=" apa yakin mau menghapus acara ini?"
+					<DropDownNew
+						text={`Apakah yakin ingin mengarsipkan ${data.nama_tugas}?`}
 						items={[
-							['children', 'Bukti', 'Bukti Laporan'],
-							['children', 'Ubah Tugas', 'Ubah Tugas'],
-
-							['children', 'Arsip', '']
+							{
+								label: 'Detail',
+								action: () => detailID(data)
+							},
+							{
+								label: 'Edit',
+								action: () => editID(data)
+							},
+							{
+								label: 'Hapus',
+								action: () => deleteID(data.id_tugas)
+							}
 						]}
 						id={`id-${index}`}
-						{data}
-					></DropDown>
+						data={dataAmbil}
+					></DropDownNew>
 				{/if}
 				{#if header === 'Status'}
 					<Status status={data.status_tugas}></Status>
 				{/if}
 			{/snippet}
 		</Table>
-		<Pagination bind:currPage bind:entries totalItems={filterD(dataAmbil).length}></Pagination>
+		<Pagination bind:currPage bind:entries totalItems={dataAmbil.length}></Pagination>
 	</div>
 </div>
 
@@ -177,8 +215,8 @@
 				if (result.type === 'success') {
 					let timer: number;
 					success = true;
-
-					timer = setTimeout(() => {
+					invalidateAll();
+					setTimeout(() => {
 						open = false;
 						success = false;
 						errors = null;
@@ -195,10 +233,82 @@
 			text="Tambah Tugas"
 			bind:data={situsData}
 			{errors}
+			userData={data?.userData}
+			dataAcara={data?.acaraData}
 			successText="Tugas Berhasil Ditambah"
 		></TambahTugas>
 	</form>
 {/if}
+{#if deleteModal}
+	<form
+		action="?/hapusTugas"
+		method="post"
+		use:enhance={() => {
+			loading = true;
+			return async ({ result }) => {
+				loading = false;
+				if (result.type === 'success') {
+					success = true;
+					deleteModal = false;
+					await invalidateAll();
+					setTimeout(() => {
+						success = false;
+					}, 3000);
+				}
+				if (result.type === 'failure') {
+					console.log(result.data?.errors);
+				}
+			};
+		}}
+	>
+		<DeleteModal
+			bind:value={deleteModal}
+			text="Apakah yakin ingin menghapus tugas ini?"
+			successText="Tugas berhasil dihapus!"
+			choose="delete"
+		></DeleteModal>
+		<input type="text" name="id_tugas" value={dataToDelete} hidden />
+	</form>
+{/if}
 {#if success}
-	<SuccessModal text="Tugas BErhasil Ditambah"></SuccessModal>
+	<SuccessModal text="Tugas Berhasil Ditambah"></SuccessModal>
+{/if}
+{#if modalDetail}
+	<BuktiLaporan bind:value={modalDetail} text="Detail Tugas"></BuktiLaporan>
+{/if}
+{#if editModal}
+	<form
+		action="?/ubahTugas"
+		method="post"
+		use:enhance={() => {
+			loading = true;
+			return async ({ result }) => {
+				loading = false;
+				if (result.type === 'success') {
+					success = true;
+					editModal = false;
+					await invalidateAll();
+					setTimeout(() => {
+						success = false;
+					}, 3000);
+				}
+				if (result.type === 'failure') {
+					errors = result.data?.errors;
+					console.log(result.data?.errors);
+				}
+			};
+		}}
+	>
+		<TambahTugas
+			bind:value={editModal}
+			text="Edit Tugas"
+			bind:data={situsData}
+			{errors}
+			userData={data?.userData}
+			dataAcara={data?.acaraData}
+			editmode={true}
+			dataEdit={editData}
+			successText="Tugas Berhasil Ditambah"
+		></TambahTugas>
+	</form>
 {/if}

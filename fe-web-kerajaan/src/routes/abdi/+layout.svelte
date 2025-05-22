@@ -287,7 +287,7 @@
 {/if} -->
 <header class="w-full lg:flex lg:h-full lg:min-w-full">
 	<div
-		class="test2 width_head1 flex items-center justify-between bg-blue-400 p-2 lg:w-[16.7%] lg:justify-center"
+		class="test2 width_head1 bg-sidebar-admin flex items-center justify-between p-2 lg:w-[16.7%] lg:justify-center"
 	>
 		<div class="buttonshow lg:hidden">
 			<button
@@ -303,7 +303,7 @@
 	</div>
 	<!-- mobile -->
 	{#if $sidebarActive}
-		<div class="mobile-sidebar-options flex w-full flex-col bg-blue-400 p-2 lg:hidden">
+		<div class="mobile-sidebar-options bg-sidebar-admin flex w-full flex-col p-2 lg:hidden">
 			{#if page.route.id?.startsWith('/abdi/dashboard/komunitas')}
 				<Sidebar>
 					<SidebarMenu
@@ -518,7 +518,7 @@
 
 <!-- Website -->
 <div class="flex h-fit min-w-full">
-	<div class="test hidden min-h-screen w-fit bg-blue-400 lg:block lg:w-[16.7%]">
+	<div class="test bg-sidebar-admin hidden min-h-screen w-fit lg:block lg:w-[16.7%]">
 		{#if page.route.id === '/abdi/dashboard'}
 			<Sidebar>
 				<SidebarMenu

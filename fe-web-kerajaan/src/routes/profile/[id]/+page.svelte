@@ -19,8 +19,8 @@
 	onMount(() => {});
 	let open = $state(false);
 	let timer: number;
-	let ayahAbdi = $state('');
-	let ibuAbdi = $state('');
+	let ayahAbdi = $state('ayah_no');
+	let ibuAbdi = $state('ibu_no');
 	let errMsgA = $state('');
 	let errMsgB = $state('');
 	let err = form?.errors;
@@ -62,24 +62,6 @@
 		};
 	});
 
-	function cekRadio(e: SubmitEvent) {
-		if (!ayahAbdi && !ibuAbdi) {
-			e.preventDefault();
-			errMsgA = 'Mohon isi ayah adalah abdi';
-			errMsgB = 'Mohon isi ibu adalah abdi';
-		}
-		if (!ayahAbdi) {
-			e.preventDefault();
-			errMsgA = 'Mohon isi ayah adalah abdi';
-		} else if (!ibuAbdi) {
-			e.preventDefault();
-			errMsgB = 'Mohon isi ibu adalah abdi';
-		} else {
-			errMsgA = '';
-			errMsgB = '';
-		}
-	}
-
 	let toggle = () => {
 		if (!open) {
 			open = true;
@@ -110,7 +92,6 @@
 {/if}
 <form
 	action="?/ubah"
-	onsubmit={(e) => cekRadio(e)}
 	method="post"
 	enctype="multipart/form-data"
 	use:enhance={() => {
@@ -435,11 +416,11 @@
 					</div>
 
 					<div class=" flex items-center justify-center gap-1">
-						<input type="radio" name="ayah_abdi" bind:group={ayahAbdi} id="" value="yes" />
+						<input type="radio" name="ayah_abdi" bind:group={ayahAbdi} id="" value="ayah_yes" />
 						<p>Yes</p>
 					</div>
 					<div class="flex items-center justify-center gap-1">
-						<input type="radio" name="ayah_abdi" bind:group={ayahAbdi} id="" value="no" />
+						<input type="radio" name="ayah_abdi" bind:group={ayahAbdi} id="" value="ayah_no" />
 						<p>No</p>
 					</div>
 				</div>
@@ -468,11 +449,11 @@
 					</div>
 
 					<div class=" flex items-center justify-center gap-1">
-						<input type="radio" name="ibu_abdi" bind:group={ibuAbdi} id="" value="yes" />
+						<input type="radio" name="ibu_abdi" bind:group={ibuAbdi} id="" value="ibu_yes" />
 						<p>Yes</p>
 					</div>
 					<div class="flex items-center justify-center gap-1">
-						<input type="radio" name="ibu_abdi" bind:group={ibuAbdi} id="" value="no" />
+						<input type="radio" name="ibu_abdi" bind:group={ibuAbdi} id="" value="ibu_no" />
 						<p>No</p>
 					</div>
 				</div>
