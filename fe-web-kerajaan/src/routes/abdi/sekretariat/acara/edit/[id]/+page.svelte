@@ -14,6 +14,7 @@
 	let total = $state(8);
 	let activeTab = $state('upcoming');
 	let showDropdown = $state(false);
+	console.log('User: ', data.data.jenis_acara);
 	let input_radio = $state(data?.data?.jenis_acara || '');
 	let res = $state();
 	let isLocationSelected = $state(false);
