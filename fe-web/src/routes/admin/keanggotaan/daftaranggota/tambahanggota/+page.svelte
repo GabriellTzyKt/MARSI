@@ -8,6 +8,9 @@
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import { writable } from 'svelte/store';
 
+	let { data } = $props()
+	let dataambil = data.jenisKerajaan
+	console.log("Data ambil : ", dataambil)
 	let results = writable<string[]>([]);
 	let showDropdown = writable(false);
 	let lokasi = $state(' ');
@@ -193,13 +196,16 @@
 				</div>
 				<div class="flex flex-col">
 					<p class="text-md mb-1 self-start text-left">Jenis Kerajaan</p>
-					<input
+					<select
 						class="input-field rounded-lg border p-2"
-						type="text"
-						id="nama"
+						id="jenis_kerajaan"
 						name="jenis_kerajaan"
-						placeholder="jenis..."
-					/>
+					>
+						<option value="" disabled selected>Pilih Jenis Kerajaan</option>
+						{#each dataambil as jenis}
+							<option value={jenis.id_jenis_kerajaan}>{jenis.nama_jenis_kerajaan}</option>
+						{/each}
+					</select>
 					{#if errors}
 						{#each errors.jenis_kerajaan as e}
 							<p class="text-left text-red-500">{e}</p>

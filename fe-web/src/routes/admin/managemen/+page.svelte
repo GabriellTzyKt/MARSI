@@ -18,16 +18,23 @@
 	let open = $state(false);
 	let admin = $state();
 	let valo = $state(false);
+	let valo2 = $state(false);
 	let edit = $state(false);
 	let list = ['Super Admin', 'Admin Kerajaan'];
 	let selected = $state('Super Admin');
 	let error = $state();
 	let timer: number;
 	let loading = $state(false);
-	let dataEdit = $state();
+	let dataEdit : any = null;
+
 	function handleEdit(admin: any) {
 		console.log('ADMIN EDIT : ', admin);
-		dataEdit = admin;
+		// Buat salinan mendalam dari data admin
+		dataEdit = JSON.parse(JSON.stringify(admin));
+
+		console.log('Data edit : ', dataEdit);
+
+		// Buka modal edit setelah data siap
 		edit = true;
 	}
 </script>
@@ -63,7 +70,6 @@
 		{#if selected === 'Super Admin'}
 			{#each data.adminMarsiData?.filter((admin: any) => admin.jenis_admin?.toLowerCase() === 'super admin') || [] as admin}
 				<DropDownAdmin
-					bind:edit
 					{error}
 					data={admin}
 					actions={[{ action: () => handleEdit(admin) }]}
@@ -72,7 +78,6 @@
 		{:else if selected === 'Admin Kerajaan'}
 			{#each data.adminMarsiData?.filter((admin: any) => admin.jenis_admin?.toLowerCase() === 'admin kerajaan') || [] as admin}
 				<DropDownAdmin
-					bind:edit
 					{error}
 					data={admin}
 					actions={[{ action: () => handleEdit(admin) }]}
@@ -105,16 +110,17 @@
 		method="post"
 		autocomplete="off"
 		use:enhance={() => {
+			loading = true
 			return async ({ result }) => {
 				console.log(result);
-				loading = true;
+				loading = false;
 				if (result.type === 'success') {
 					valo = true;
 					clearTimeout(timer);
+					invalidateAll();
 					timer = setTimeout(() => {
 						valo = false;
 						open = false;
-						loading = false;
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
@@ -135,6 +141,9 @@
 {#if valo}
 	<SModal text="Admin Berhasil Ditambah"></SModal>
 {/if}
+{#if valo2}
+	<SModal text="Admin Berhasil Diubah"></SModal>
+{/if}
 {#if loading}
 	<Loader></Loader>
 {/if}
@@ -143,22 +152,20 @@
 		action="?/ubah"
 		method="POST"
 		use:enhance={() => {
-			console.log('Data kirim : ', data);
-
+			loading = true;
 			return async ({ result }) => {
-				loading = true;
+				loading = false;
 				console.log(result);
 				if (result.type === 'success') {
-					valo = true;
+					valo2 = true;
 					clearTimeout(timer);
 					invalidateAll();
 					timer = setTimeout(() => {
-						loading = false
-						valo = false;
+						valo2 = false;
 						edit = false;
-						invalidateAll();
 					}, 3000);
 				} else if (result.type === 'failure') {
+					loading = false;
 					error = result?.data?.errors;
 				}
 			};

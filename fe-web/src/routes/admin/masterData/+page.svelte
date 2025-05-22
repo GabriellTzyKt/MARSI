@@ -22,7 +22,10 @@
 	let input = $state(false);
 	let entries = $state(10);
 
-	let currPage = $state(1);
+	let currPage = $state(1);  // Untuk Arsip
+	let currPage2 = $state(1); // Untuk Jenis Kerajaan
+	let currPage3 = $state(1); // Untuk Gelar
+
 	let success = $state(false);
 	let namagelar = $state('');
 	let timer: number;
@@ -38,6 +41,9 @@
 	let openmodaledit = $state(false);
 	function change(p: string) {
 		select = p;
+		if (p === 'Arsip') currPage = 1;
+		else if (p === 'Jenis Kerajaan') currPage2 = 1;
+		else if (p === 'Gelar') currPage3 = 1;
 	}
 	function filteredData(data: any[], tipe: any) {
 		if (tipe === 'arsip') {
@@ -53,7 +59,14 @@
 	function paginate(data: any[], tipe: any) {
 		const filter = filteredData(data, tipe);
 		console.log('filter:', filter);
-		const start = (currPage - 1) * entries;
+		
+		let currentPage;
+		if (tipe === 'arsip') currentPage = currPage;
+		else if (tipe === 'jenis_kerajaan') currentPage = currPage2;
+		else if (tipe === 'gelar') currentPage = currPage3;
+		else currentPage = 1;
+		
+		const start = (currentPage - 1) * entries;
 		console.log('start:', start);
 		const end = start + entries;
 		console.log('end:', end);
@@ -199,9 +212,9 @@
 				<div>
 					{#if select === 'Gelar'}
 						<p>
-							Showing {(currPage - 1) * entries + 1}
+							Showing {(currPage3 - 1) * entries + 1}
 							to {Math.min(
-								currPage * entries,
+								currPage3 * entries,
 								(filteredData(data.dataGelar ?? [], 'gelar') ?? []).length
 							)}
 							of {(filteredData(data.dataGelar ?? [], 'gelar') ?? []).length}
@@ -211,53 +224,53 @@
 				<div class="flex flex-row gap-3">
 					<button
 						class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
-						disabled={currPage === 1}
+						disabled={currPage3 === 1}
 						onclick={() => {
-							currPage--;
+							currPage3--;
 						}}>Previous</button
 					>
 					{#if total_pages_3 <= 5}
 						{#each Array(total_pages_3) as _, i}
 							<button
 								class="rounded-lg p-4"
-								class:bg-[#F9D48B]={currPage === i + 1}
-								class:text-white={currPage === i + 1}
-								onclick={() => (currPage = i + 1)}>{i + 1}</button
+								class:bg-[#F9D48B]={currPage3 === i + 1}
+								class:text-white={currPage3 === i + 1}
+								onclick={() => (currPage3 = i + 1)}>{i + 1}</button
 							>
 						{/each}
 					{:else}
 						<button
 							class="rounded-lg p-4"
-							class:bg-[#F9D48B]={currPage === 1}
-							class:text-white={currPage === 1}
-							onclick={() => (currPage = 1)}>1</button
+							class:bg-[#F9D48B]={currPage3 === 1}
+							class:text-white={currPage3 === 1}
+							onclick={() => (currPage3 = 1)}>1</button
 						>
 
 						<!-- Ellipsis after first page if current page is far enough -->
-						{#if currPage > 3}
+						{#if currPage3 > 3}
 							<span class="flex items-center px-2">...</span>
 						{/if}
 
 						<!-- Pages around current page -->
 						{#each Array(Math.min(3, total_pages_3 - 2)) as _, i}
-							{#if currPage > 2 && currPage < total_pages_3 - 1}
+							{#if currPage3 > 2 && currPage3 < total_pages_3 - 1}
 								<!-- Show pages around current page -->
-								{#if currPage - 1 + i > 1 && currPage - 1 + i < total_pages_3}
+								{#if currPage3 - 1 + i > 1 && currPage3 - 1 + i < total_pages_3}
 									<button
 										class="rounded-lg p-4"
-										class:bg-[#F9D48B]={currPage === currPage - 1 + i}
-										class:text-white={currPage === currPage - 1 + i}
-										onclick={() => (currPage = currPage - 1 + i)}>{currPage - 1 + i}</button
+										class:bg-[#F9D48B]={currPage3 === currPage3 - 1 + i}
+										class:text-white={currPage3 === currPage3 - 1 + i}
+										onclick={() => (currPage3 = currPage3 - 1 + i)}>{currPage3 - 1 + i}</button
 									>
 								{/if}
-							{:else if currPage <= 2}
+							{:else if currPage3 <= 2}
 								<!-- Show first few pages -->
 								{#if i + 2 < total_pages_3}
 									<button
 										class="rounded-lg p-4"
-										class:bg-[#F9D48B]={currPage === i + 2}
-										class:text-white={currPage === i + 2}
-										onclick={() => (currPage = i + 2)}>{i + 2}</button
+										class:bg-[#F9D48B]={currPage3 === i + 2}
+										class:text-white={currPage3 === i + 2}
+										onclick={() => (currPage3 = i + 2)}>{i + 2}</button
 									>
 								{/if}
 							{:else}
@@ -265,32 +278,32 @@
 								{#if total_pages_3 - 3 + i > 1}
 									<button
 										class="rounded-lg p-4"
-										class:bg-[#F9D48B]={currPage === total_pages_3 - 3 + i}
-										class:text-white={currPage === total_pages_3 - 3 + i}
-										onclick={() => (currPage = total_pages_3 - 3 + i)}>{total_pages_3 - 3 + i}</button
+										class:bg-[#F9D48B]={currPage3 === total_pages_3 - 3 + i}
+										class:text-white={currPage3 === total_pages_3 - 3 + i}
+										onclick={() => (currPage3 = total_pages_3 - 3 + i)}>{total_pages_3 - 3 + i}</button
 									>
 								{/if}
 							{/if}
 						{/each}
 
 						<!-- Ellipsis before last page if current page is far enough -->
-						{#if currPage < total_pages_3 - 2}
+						{#if currPage3 < total_pages_3 - 2}
 							<span class="flex items-center px-2">...</span>
 						{/if}
 
 						<!-- Last page -->
 						<button
 							class="rounded-lg p-4"
-							class:bg-[#F9D48B]={currPage === total_pages_3}
-							class:text-white={currPage === total_pages_3}
-							onclick={() => (currPage = total_pages_3)}>{total_pages_3}</button
+							class:bg-[#F9D48B]={currPage3 === total_pages_3}
+							class:text-white={currPage3 === total_pages_3}
+							onclick={() => (currPage3 = total_pages_3)}>{total_pages_3}</button
 						>
 					{/if}
 					<button
 						class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
-						disabled={currPage === total_pages_3}
+						disabled={currPage3 === total_pages_3}
 						onclick={() => {
-							currPage++;
+							currPage3++;
 						}}>Next</button
 					>
 				</div>
@@ -316,9 +329,9 @@
 					{#if select === 'Jenis Kerajaan'}
 						{console.log('ay')}
 						<p>
-							Showing {(currPage - 1) * entries + 1}
+							Showing {(currPage2 - 1) * entries + 1}
 							to {Math.min(
-								currPage * entries,
+								currPage2 * entries,
 								(filteredData(data.dataJenisKerajaan ?? [], 'jenis_kerajaan') ?? []).length
 							)}
 							of {(filteredData(data.dataJenisKerajaan ?? [], 'jenis_kerajaan') ?? []).length}
@@ -328,53 +341,53 @@
 				<div class="flex flex-row gap-3">
 					<button
 						class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
-						disabled={currPage === 1}
+						disabled={currPage2 === 1}
 						onclick={() => {
-							currPage--;
+							currPage2--;
 						}}>Previous</button
 					>
 					{#if total_pages_2 <= 5}
 						{#each Array(total_pages_2) as _, i}
 							<button
 								class="rounded-lg p-4"
-								class:bg-[#F9D48B]={currPage === i + 1}
-								class:text-white={currPage === i + 1}
-								onclick={() => (currPage = i + 1)}>{i + 1}</button
+								class:bg-[#F9D48B]={currPage2 === i + 1}
+								class:text-white={currPage2 === i + 1}
+								onclick={() => (currPage2 = i + 1)}>{i + 1}</button
 							>
 						{/each}
 					{:else}
 						<button
 							class="rounded-lg p-4"
-							class:bg-[#F9D48B]={currPage === 1}
-							class:text-white={currPage === 1}
-							onclick={() => (currPage = 1)}>1</button
+							class:bg-[#F9D48B]={currPage2 === 1}
+							class:text-white={currPage2 === 1}
+							onclick={() => (currPage2 = 1)}>1</button
 						>
 
 						<!-- Ellipsis after first page if current page is far enough -->
-						{#if currPage > 3}
+						{#if currPage2 > 3}
 							<span class="flex items-center px-2">...</span>
 						{/if}
 
 						<!-- Pages around current page -->
 						{#each Array(Math.min(3, total_pages_2 - 2)) as _, i}
-							{#if currPage > 2 && currPage < total_pages_2 - 1}
+							{#if currPage2 > 2 && currPage2 < total_pages_2 - 1}
 								<!-- Show pages around current page -->
-								{#if currPage - 1 + i > 1 && currPage - 1 + i < total_pages_2}
+								{#if currPage2 - 1 + i > 1 && currPage2 - 1 + i < total_pages_2}
 									<button
 										class="rounded-lg p-4"
-										class:bg-[#F9D48B]={currPage === currPage - 1 + i}
-										class:text-white={currPage === currPage - 1 + i}
-										onclick={() => (currPage = currPage - 1 + i)}>{currPage - 1 + i}</button
+										class:bg-[#F9D48B]={currPage2 === currPage2 - 1 + i}
+										class:text-white={currPage2 === currPage2 - 1 + i}
+										onclick={() => (currPage2 = currPage2 - 1 + i)}>{currPage2 - 1 + i}</button
 									>
 								{/if}
-							{:else if currPage <= 2}
+							{:else if currPage2 <= 2}
 								<!-- Show first few pages -->
 								{#if i + 2 < total_pages_2}
 									<button
 										class="rounded-lg p-4"
-										class:bg-[#F9D48B]={currPage === i + 2}
-										class:text-white={currPage === i + 2}
-										onclick={() => (currPage = i + 2)}>{i + 2}</button
+										class:bg-[#F9D48B]={currPage2 === i + 2}
+										class:text-white={currPage2 === i + 2}
+										onclick={() => (currPage2 = i + 2)}>{i + 2}</button
 									>
 								{/if}
 							{:else}
@@ -382,9 +395,9 @@
 								{#if total_pages_2 - 3 + i > 1}
 									<button
 										class="rounded-lg p-4"
-										class:bg-[#F9D48B]={currPage === total_pages_2 - 3 + i}
-										class:text-white={currPage === total_pages_2 - 3 + i}
-										onclick={() => (currPage = total_pages_2 - 3 + i)}
+										class:bg-[#F9D48B]={currPage2 === total_pages_2 - 3 + i}
+										class:text-white={currPage2 === total_pages_2 - 3 + i}
+										onclick={() => (currPage2 = total_pages_2 - 3 + i)}
 										>{total_pages_2 - 3 + i}</button
 									>
 								{/if}
@@ -392,23 +405,23 @@
 						{/each}
 
 						<!-- Ellipsis before last page if current page is far enough -->
-						{#if currPage < total_pages_2 - 2}
+						{#if currPage2 < total_pages_2 - 2}
 							<span class="flex items-center px-2">...</span>
 						{/if}
 
 						<!-- Last page -->
 						<button
 							class="rounded-lg p-4"
-							class:bg-[#F9D48B]={currPage === total_pages_2}
-							class:text-white={currPage === total_pages_2}
-							onclick={() => (currPage = total_pages_2)}>{total_pages_2}</button
+							class:bg-[#F9D48B]={currPage2 === total_pages_2}
+							class:text-white={currPage2 === total_pages_2}
+							onclick={() => (currPage2 = total_pages_2)}>{total_pages_2}</button
 						>
 					{/if}
 					<button
 						class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
-						disabled={currPage === total_pages_2}
+						disabled={currPage2 === total_pages_2}
 						onclick={() => {
-							currPage++;
+							currPage2++;
 						}}>Next</button
 					>
 				</div>

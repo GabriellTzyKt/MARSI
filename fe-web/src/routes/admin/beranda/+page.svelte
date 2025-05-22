@@ -8,6 +8,12 @@
 
 	let hex = '#878272ed';
 
+	let { data } = $props();
+	let dataambil = data.adminCount;
+	let datadetail = data.adminData
+	let dataambil2 = data.arsipCount
+	let dataambil3 = data.kerajaanCount
+
 	let rgb = {
 		r: 135,
 		g: 130,
@@ -30,8 +36,8 @@
 
 	<div class="flex w-full flex-col flex-wrap items-center gap-6 overflow-auto p-5 lg:flex-row">
 		<div class="flex-shrink-1 h-[380px] flex-grow rounded-md border border-gray-500 bg-white p-5">
-			<p class="mb-3 text-center text-xl font-bold">Jumlah Anggota MARSI Tahun 2024</p>
-			<Barplot />
+			<p class="mb-3 text-center text-xl font-bold">Jumlah Anggota MARSI Tahun 2025</p>
+			<Barplot data = {datadetail}/>
 		</div>
 		<div class="flex-shrink-1 h-[380px] flex-grow rounded-md border border-gray-500 bg-white p-5">
 			<p class="mb-3 text-center text-xl font-bold">Persentase Anggota MARSI Berdasarkan Pulau</p>
@@ -65,7 +71,7 @@
 									: 'Jumlah Total Kerajaan:'}
 					</p>
 					<p class="text-3xl font-bold">
-						{i === 0 ? 460 : i === 1 ? 100 : i === 2 ? 240 : 300}
+						{i === 0 ? dataambil : i === 1 ? dataambil2 : i === 2 ? 240 : dataambil3}
 					</p>
 				</div>
 			</div>

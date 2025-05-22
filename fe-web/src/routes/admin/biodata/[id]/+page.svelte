@@ -1369,8 +1369,9 @@
 				action="?/tambah"
 				enctype="multipart/form-data"
 				use:enhance={() => {
+					loading=true
 					return async ({ result }) => {
-						loading = true;
+						loading = false;
 
 						console.log('Form submission result:', result);
 

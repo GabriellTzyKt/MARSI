@@ -109,7 +109,7 @@
 			['alamat_kerajaan', 'Alamat Kerajaan'],
 			['tanggal_berdiri', 'Tanggal Berdiri'],
 			['era', 'Era'],
-			['jenis_kerajaan', 'Jenis Kerajaan'],
+			['jenis_kerajaan_nama', 'Jenis Kerajaan'],
 			['raja_sekarang', 'Nama Raja'],
 			['bendera_kerajaan', 'Bendera & Lambang Kerajaan'],
 

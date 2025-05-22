@@ -3,6 +3,33 @@ import { string, z } from "zod";
 import { schema } from "./schema";
 import { env } from "$env/dynamic/private";
 
+export const load = async ({ fetch }) => {
+    try {
+        const response = await fetch(`${env.PUB_PORT}/kerajaan/jenis?limit=200`, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP Error! Status: ${response.status}`);
+        }
+
+        const jenisKerajaan = await response.json();
+        console.log("Jenis kerajaan data:", jenisKerajaan);
+        
+        // Filter out deleted items
+        const filteredJenisKerajaan = Array.isArray(jenisKerajaan) 
+            ? jenisKerajaan.filter((item) => item.deleted_at === "0001-01-01T00:00:00Z" || !item.deleted_at)
+            : [];
+
+        return { jenisKerajaan: filteredJenisKerajaan };
+    } catch (e) {
+        console.error("Error fetching jenis kerajaan:", e);
+        return { jenisKerajaan: [] };
+    }
+};
 
 export const actions: Actions = {
     tambah: async ({ request }) => {

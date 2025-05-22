@@ -7,60 +7,74 @@ import { fail } from "@sveltejs/kit";
 
 
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ fetch }) => {
     try {
-        // const header = {
-        //     method: "GET",
-        //     headers: {
-        //         "accept": "application/json"
-        //     }
-        // }
-       const request =await fetch(env.PUB_PORT + "/kerajaan?limit=200", {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-       })
+        // Fetch both endpoints in parallel
+        const [kerajaanResponse, jenisKerajaanResponse] = await Promise.all([
+            fetch(env.PUB_PORT + "/kerajaan?limit=200", {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }),
+            fetch(env.PUB_PORT + "/kerajaan/jenis?limit=200", {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            })
+        ]);
         
-        console.log(request)
-        if (request.ok) {
-            const data = await request.json()
-            console.log("Ini data: ", data)
-            const formatDate = (iso: string) => {
-                const date = new Date(iso);
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const year = date.getFullYear();
-                return `${day}-${month}-${year}`;
-            };
+        // Check if both requests were successful
+        if (!kerajaanResponse.ok || !jenisKerajaanResponse.ok) {
+            throw new Error("Failed to fetch data");
+        }
+        
+        // Parse the JSON responses
+        const kerajaanData = await kerajaanResponse.json();
+        const jenisKerajaanData = await jenisKerajaanResponse.json();
+        
+        const formatDate = (iso: string) => {
+            const date = new Date(iso);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        };
 
-            const kerajaanFormatted = data.map((item: any) => ({
+        // Create a map of jenis_kerajaan IDs for quick lookup
+        const jenisKerajaanMap = new Map();
+        jenisKerajaanData.forEach((jenis: any) => {
+            jenisKerajaanMap.set(jenis.id_jenis_kerajaan, jenis);
+        });
+        
+        // Format kerajaan data and add jenis_kerajaan name directly
+        const kerajaanFormatted = kerajaanData.map((item: any) => {
+            const jenisDetail = jenisKerajaanMap.get(item.jenis_kerajaan);
+            
+            return {
                 ...item,
                 tanggal_berdiri: formatDate(item.tanggal_berdiri),
                 tanggal_berakhir:
                     item.tanggal_berakhir !== '0001-01-01T00:00:00Z'
                         ? formatDate(item.tanggal_berakhir)
                         : '-',
-            }));
-            console.log(kerajaanFormatted)
-            return {dataKerajaan : kerajaanFormatted}
-        }
-        else return {dataKerajaan: "Failed"}
+                jenis_kerajaan_nama: jenisDetail ? jenisDetail.nama_jenis_kerajaan : '-'
+            };
+        });
         
-       
-        // const data = await fetch(env.URL_BASE,{
-        //     method: 'GET',
-        //     headers: {
-        //         'x-rapidapi-key': 'Sign Up for Key',
-        //         'x-rapidapi-host': 'covid-19-data.p.rapidapi.com'
-        //     }
-        // }).then((r)=>r.json())
-        // console.log(data)
-        // return {tabel: data}
+        return {
+            dataKerajaan: kerajaanFormatted,
+            jenisKerajaan: jenisKerajaanData
+        };
     }
-   catch (e){
-    if(e instanceof Error) return console.log(e.message)
-   }
+    catch (e) {
+        if (e instanceof Error) console.log(e.message);
+        return {
+            dataKerajaan: "Failed",
+            jenisKerajaan: []
+        };
+    }
 };
 
 export const actions: Actions = {

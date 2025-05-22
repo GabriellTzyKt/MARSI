@@ -12,6 +12,8 @@
 		datakerajaan = null
 	} = $props();
 
+	console.log('Errors : ', errors)
+
 	console.log('Modal received data:', data);
 
 	let isRadioYa = $state(false);
@@ -268,7 +270,7 @@
 						class="w-full rounded-lg border border-gray-300 text-gray-500 focus:outline-none"
 						name="nama_lengkap"
 						placeholder="Jane Doe"
-						bind:value={data.nama_lengkap}
+						value={data.nama_lengkap}
 					/>
 				</div>
 				{#if errors}
@@ -288,7 +290,7 @@
 						class="w-full rounded-lg border border-gray-300 text-gray-500 focus:outline-none"
 						name="username"
 						placeholder="janedoe"
-						bind:value={formValues.username}
+						value={formValues.username}
 						readonly={textM === 'Ubah'}
 					/>
 				</div>
@@ -309,7 +311,7 @@
 						class="w-full rounded-lg border border-gray-300 text-gray-500 focus:outline-none"
 						name="email"
 						placeholder="janedoe@example.com"
-						bind:value={formValues.email}
+						value={formValues.email}
 					/>
 				</div>
 				{#if errors}
@@ -335,7 +337,7 @@
 						class="w-full rounded-lg border border-gray-300 text-gray-500 focus:outline-none"
 						name="no_telp"
 						placeholder="08123456789"
-						bind:value={formValues.no_telp}
+						value={formValues.no_telp}
 					/>
 				</div>
 				{#if errors}
@@ -358,7 +360,7 @@
 						placeholder="password"
 						id="password_field"
 						autocomplete="new-password"
-						bind:value={formValues.password}
+						value={formValues.password}
 						readonly={textM === 'Ubah'}
 					/>
 					<!-- Only show eye icon if not in edit mode -->
@@ -416,7 +418,7 @@
 						placeholder="Jane Doe"
 						id="tgl_lahir_field"
 						autocomplete="new-password"
-						bind:value={formValues.tgl_lahir}
+						value={formValues.tgl_lahir}
 					/>
 				</div>
 				{#if errors}
@@ -438,7 +440,7 @@
 						placeholder="Surabaya"
 						autocomplete="new-password"
 						id="kota_lahir_field"
-						bind:value={formValues.kota_lahir}
+						value={formValues.kota_lahir}
 					/>
 					{#if errors}
 						{#each errors.kota_lahir as a}
@@ -456,7 +458,7 @@
 					<select
 						name="jenis_kelamin"
 						class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none"
-						bind:value={formValues.jenis_kelamin}
+						value={formValues.jenis_kelamin}
 					>
 						<option value="Laki-laki">Laki-laki</option>
 						<option value="Perempuan">Perempuan</option>
@@ -476,7 +478,7 @@
 					<select
 						name="afiliasi"
 						class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none"
-						value={newafiliasi !== ' ' ? newafiliasi.toString() : formValues.afiliasi.toString()}
+						value={newafiliasi}
 						onclick={(e) => handleAfiliasiChange(e)}
 						disabled={radioValue === 'ya'}
 					>

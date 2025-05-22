@@ -1,7 +1,60 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import * as d3 from 'd3';
 	import { data_barplots } from '$lib/dummy';
+
+	let { data } = $props();
+	let dataambil = data;
+	console.log("Barplot : ", dataambil);
+
+	// Fungsi untuk mendapatkan nama bulan dari angka bulan
+	function getNamaBulan(bulanNum: string) {
+		const namaBulan : any = {
+			'01': 'Januari',
+			'02': 'Februari',
+			'03': 'Maret',
+			'04': 'April',
+			'05': 'Mei',
+			'06': 'Juni',
+			'07': 'Juli',
+			'08': 'Agustus',
+			'09': 'September',
+			'10': 'Oktober',
+			'11': 'November',
+			'12': 'Desember'
+		};
+		return namaBulan[bulanNum] || bulanNum;
+	}
+
+	function processData(dataAPI : any) {
+		const bulanCount : any = {};
+		
+		dataAPI.forEach((item : any) => {
+			if (item.tanggal_lahir) {
+				const tanggalPart = item.created_at.split('T')[0];
+				const bulan = tanggalPart.split('-')[1];
+				
+				// Tambahkan ke counter
+				if (bulanCount[bulan]) {
+					bulanCount[bulan]++;
+				} else {
+					bulanCount[bulan] = 1;
+				}
+			}
+		});
+		
+		// Konversi ke format yang dibutuhkan untuk chart
+		const result = Object.keys(bulanCount).map(bulan => ({
+			name: 'Admin',
+			bulan: getNamaBulan(bulan),
+			total: bulanCount[bulan]
+		}));
+		
+		return result;
+	}
+
+	// Data untuk chart
+	let chartData = dataambil && dataambil.length > 0 ? processData(dataambil) : data_barplots;
 
 	// @ts-ignore
 	let chartContainer;
@@ -26,12 +79,8 @@
 			.append('g')
 			.attr('transform', `translate(${margin.left},${margin.top})`);
 
-		// Ambil data dari CSV
-		const data = data_barplots.map((item) => ({
-			name: item.nama_lenkgap,
-			bulan: item.bulan,
-			total: item.total
-		}));
+		// Gunakan data yang sudah diproses
+		const data = chartData;
 
 		// Buat X axis
 		const x = d3
@@ -48,7 +97,7 @@
 			.style('text-anchor', 'end');
 
 		// Buat Y axis
-		const maxValue = d3.max(data, (d) => d.total) || 0;
+		const maxValue = d3.max(data, (d: any) => d.total || 0) || 0;
 		const y = d3
 			.scaleLinear()
 			.domain([0, maxValue * 1.1])
@@ -58,7 +107,11 @@
 		// Tambahkan bar
 		svg
 			.selectAll('mybar')
-			.data(data)
+			.data(data.map(d => ({
+				name: 'name' in d ? d.name : ('nama_lenkgap' in d ? d.nama_lenkgap : ''),
+				bulan: d.bulan,
+				total: d.total
+			})))
 			.enter()
 			.append('rect')
 			// @ts-ignore

@@ -156,7 +156,7 @@ export const actions: Actions = {
 
         if (!verif.success) {
             const fieldErrors = verif.error.flatten().fieldErrors;
-            console.log("errors : ", fieldErrors)
+            console.log("errors di tambah: ", fieldErrors)
             return fail(406, {
                 errors: fieldErrors,
                 success: false,
