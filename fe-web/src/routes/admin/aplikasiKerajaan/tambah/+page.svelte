@@ -68,7 +68,7 @@
 			};
 		}}
 	>
-		<input type="hidden" name="id_kerajaan" value="31" />
+		<input type="hidden" name="id_kerajaan" value="32" />
 
 		<div class="mt-6 w-full rounded-lg border bg-white p-6 shadow-sm">
 			{#if success}

@@ -34,6 +34,19 @@ export const load: PageServerLoad = async ({ params }) => {
 
         const jenisKerajaan = await jenisResponse.json();
 
+        const gelarResponse = await fetch(`${env.BASE_URL}/gelar?limit=200`, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+
+        if (!gelarResponse.ok) {
+            throw new Error(`HTTP Error! Status: ${gelarResponse.status}`);
+        }
+
+        const gelarKerajaan = await gelarResponse.json();
+
         const historyResponse = await fetch(`${env.BASE_URL}/history-raja?limit=200`, {
             method: "GET",
             headers: {
@@ -249,7 +262,8 @@ export const load: PageServerLoad = async ({ params }) => {
         return {
             detil_kerajaan: kerajaanWithMedia,
             jenisKerajaan: filteredJenisKerajaan,
-            historyRaja: historyRajaWithImages
+            historyRaja: historyRajaWithImages,
+            gelar: gelarKerajaan
         };
     } catch (error) {
         console.error("Error loading data:", error);
@@ -372,6 +386,7 @@ export const actions: Actions = {
             // Buat FormData baru dan pastikan format data sesuai dengan yang berhasil di Postman
             const formData = new FormData()
             formData.append("id_kerajaan", String(params.id))
+            formData.append("id_gelar", res.gelarraja)
             formData.append("nama_raja", res.namaraja)
             formData.append("tempat_lahir", res.kotalahir)
             formData.append("tanggal_lahir", res.tanggallahir)
@@ -383,7 +398,6 @@ export const actions: Actions = {
             formData.append("mulai_menjabat", res.tanggalawal)
             formData.append("selesai_menjabat", res.tanggalakhir || "")
             formData.append("foto_raja", res.inputfotoraja || "")
-            formData.append("gelar_raja", res.gelarraja)
 
             console.log("Form Data : ", formData)
 
@@ -969,7 +983,8 @@ export const actions: Actions = {
             
             const historyRajaData = {
                 id_raja: Number(res.id_raja),
-                id_kerajaan: Number(res.id || params.id),
+                id_kerajaan: Number(res.id || params.id),   
+                id_gelar: Number(res.gelarraja),
                 nama_raja: res.namaraja,
                 tempat_lahir: res.kotalahir,
                 tanggal_lahir: res.tanggallahir,
@@ -981,7 +996,6 @@ export const actions: Actions = {
                 mulai_menjabat: res.tanggalawal,
                 selesai_menjabat: masihMenjabat ? "" : (res.tanggalakhir || ""),
                 dokumentasi: fotoRajaId,
-                gelar_raja: res.gelarraja
             };
             
             console.log("EDIT HISTORY SERVER - Sending update to API:", historyRajaData);

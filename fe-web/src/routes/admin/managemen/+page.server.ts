@@ -170,7 +170,7 @@ export const actions: Actions = {
                 ? tgl_lahir.toISOString().split('T')[0] 
                 : new Date(String(tgl_lahir)).toISOString().split('T')[0];
             
-            const id_kerajaan = afiliasi === "marsi" ? 0 : 
+            const id_kerajaan = afiliasi === "marsi" || afiliasi === "marsi2" ? 0 : 
                 0;
             
             // Prepare payload for API
@@ -230,57 +230,36 @@ export const actions: Actions = {
     },
 
     ubah: async ({ request }) => {
-        const data = await request.formData()
-        console.log("Edit:",data)
+        const data = await request.formData();
+        console.log("Edit form data:", data);
+        
         const ver = z.object({
             nama_lengkap:
                 z.string({ message: "Harus diisi / harus berupa string" })
                     .nonempty("Tidak Boleh kosong")
                     .max(300, "Nama Terlalu Panjang (max = 300)")
                     .trim(),
-
-
-            inputradio: z.string().trim().min(1, "Minimal 1!"),
-
-
             username:
                 z.string({ message: "Harus diisi / harus berupa string" })
                     .nonempty("Field Tidak Boleh Kosong")
                     .max(255, "Max 255 Kata")
                     .trim(),
-
-
             email:
                 z.string({ message: "Harus diisi / harus berupa string" })
                     .email("Email Tidak Valid")
                     .nonempty("Field Tidak Boleh Kosong")
                     .trim(),
-
             no_telp:
                 z.string({ message: "Input Harus Ada" })
                     .min(10, { message: "nomer telepon minimal  10 angka" })
                     .max(13, { message: "nomer telepon maximal 15 angka" })
                     .regex(/^\d+$/, "Harus berupa nomer")
                     .trim(),
-
-
             jenis_kelamin:
                 z.string({ message: "Harus diisi / harus berupa kata" })
                     .nonempty("Tidak Boleh kosong")
                     .max(255, "Input hanya bisa sampai 255 kata")
                     .trim(),
-
-
-            password:
-                z.string({ message: "password bukan string" })
-                    .min(8, { message: "Password minimal 8 huruf" })
-                    .max(255, { message: "Password sudah maximal!" })
-                    .nonempty({ message: "Password tidak boleh kosong" })
-                    .regex(/[A-Z]/, { message: "Password Harus ada minimal 1 huruf Kapital" })
-                    .regex(/[0-9]/, { message: "Password Harus ada miniam 1 angka" })
-                    .regex(/[^A-Za-z0-9]/, { message: "Password harus ada simbol" }),
-
-
             tgl_lahir:
                 z.coerce.date({ message: "Tanggal Tidak valid (YYYY-MM-DD)" }),
             kota_lahir:
@@ -298,52 +277,113 @@ export const actions: Actions = {
                     .nonempty("FieldTidak Boleh Kosong")
                     .max(255, "Max 255 Kata")
                     .trim()
-
-
-        })
-        const nama_lengkap = data.get("nama_lengkap")
-        const username = data.get("username")
-        const inputradio = data.get("superadmin")
-        const email = data.get("email")
-        const no_telp = data.get("no_telp")
-        const password = data.get("password")
-        const tgl_lahir = data.get("tgl_lahir")
-        const kota_lahir = data.get("kota_lahir")
-        const jenis_kelamin = data.get("jenis_kelamin")
-        const afiliasi = data.get("afiliasi")
-        const admin_role = data.get("admin_role")
+        });
+        
+        // Extract form fields
+        const id_admin = data.get("id_admin");
+        const id_user = data.get("id_user");
+        const nama_lengkap = data.get("nama_lengkap");
+        const username = data.get("username");
+        const email = data.get("email");
+        const no_telp = data.get("no_telp");
+        const password = data.get("password") || "password"; // Default password if not provided
+        const tgl_lahir = data.get("tgl_lahir");
+        const kota_lahir = data.get("kota_lahir");
+        const jenis_kelamin = data.get("jenis_kelamin");
+        const afiliasi = data.get("afiliasi");
+        const admin_role = data.get("admin_role");
+        const status_aktif = data.get("status_aktif") || 0;
+        
         const formData = {
             nama_lengkap,
             username,
-            inputradio,
             email,
             no_telp,
-            password,
             tgl_lahir,
             jenis_kelamin,
             kota_lahir,
             afiliasi,
             admin_role
-        }
-        console.log(formData)
-        const verif = ver.safeParse({ ...formData })
-        console.log(verif.error?.flatten().fieldErrors)
+        };
+        
+        const verif = ver.safeParse({ ...formData });
+        
         if (!verif.success) {
-
             const fieldErrors = verif.error.flatten().fieldErrors;
-
-            console.log("errors : ", fieldErrors)
-
             return fail(406, {
                 errors: fieldErrors,
                 success: false,
                 formData: formData,
-                type: "add"
+                type: "edit"
             });
-
         }
-        return { success: true, formData, type: "edit" }
-
+        
+        try {
+            // Format date for API
+            const formattedDate = tgl_lahir instanceof Date 
+                ? tgl_lahir.toISOString().split('T')[0] 
+                : new Date(String(tgl_lahir)).toISOString().split('T')[0];
+            
+            // Determine id_kerajaan based on afiliasi
+            const id_kerajaan = afiliasi === "marsi" ? 0 : Number(afiliasi);
+            
+            // Prepare payload for API
+            const adminPayload = {
+                id_admin: Number(id_admin),
+                id_user: Number(id_user || 0),
+                nama_lengkap: String(nama_lengkap),
+                jenis_kelamin: String(jenis_kelamin),
+                tempat_lahir: String(kota_lahir),
+                tanggal_lahir: formattedDate,
+                username: String(username),
+                password: String(password),
+                email: String(email),
+                no_telp: String(no_telp),
+                id_kerajaan: id_kerajaan,
+                jenis_admin: String(admin_role),
+                status_aktif: Number(status_aktif)
+            };
+            
+            console.log("Sending admin update to API:", adminPayload);
+            
+            // Send data to API
+            const response = await fetch(`${env.BASE_URL}/admin`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(adminPayload)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error updating admin:", errorData);
+                return fail(response.status, {
+                    errors: { api: [errorData.message || "Failed to update admin"] },
+                    success: false,
+                    formData: formData,
+                    type: "edit"
+                });
+            }
+            
+            const responseData = await response.json();
+            console.log("Admin updated successfully:", responseData);
+            
+            return { 
+                success: true, 
+                message: "Admin berhasil diperbarui",
+                formData, 
+                type: "edit" 
+            };
+        } catch (error) {
+            console.error("Error in ubah action:", error);
+            return fail(500, {
+                errors: { exception: ["Server error when updating admin"] },
+                success: false,
+                formData: formData,
+                type: "edit"
+            });
+        }
     },
 
     updateStatus: async ({ request }) => {

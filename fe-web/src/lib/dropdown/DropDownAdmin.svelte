@@ -176,7 +176,12 @@
 					<p class="font-[500]">Afiliasi</p>
 				</div>
 				<div>
-					<p class="text-sm text-[#5B5B5B]">{data.jenis_admin}</p>
+					{#if data.jenis_admin === "super admin"}
+						<p class="text-sm text-[#5B5B5B]">MARSI</p>
+					{/if}
+					{#if data.jenis_admin === "admin kerajaan"}
+						<p class="text-sm text-[#5B5B5B]">Kerajaan</p>
+					{/if}
 				</div>
 			</div>
 			<div class="flex w-full justify-end gap-4 p-4">

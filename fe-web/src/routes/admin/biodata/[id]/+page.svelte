@@ -9,9 +9,13 @@
 	import { onMount } from 'svelte';
 	import Loader from '$lib/loader/Loader.svelte';
 
+
+
 	const { data } = $props();
-	const dataGet = data.detil_kerajaan;
-	const datajenis = data.jenisKerajaan;
+	let datagelar = data.gelar;
+	console.log("data gelar : ", datagelar)
+	let dataGet = data.detil_kerajaan;
+	let datajenis = data.jenisKerajaan;
 	let loading = $state(false);
 	const datahistory = data.historyRaja;
 	let dataubah = $state(dataGet);
@@ -194,6 +198,8 @@
 		}
 	}
 
+	let uploadedFileIds = $state(dataubah.foto_umum ? dataubah.foto_umum.split(',').map((id : any) => id.trim()) : []);
+
 	// Fungsi untuk menghapus gambar
 	function removeImage(index: number) {
 		// Bersihkan URL objek jika itu adalah blob URL -> supaya gak makan memori yg bisa ngehambat
@@ -209,8 +215,17 @@
 			uploadedFiles = uploadedFiles.slice(0, index).concat(uploadedFiles.slice(index + 1));
 		}
 
+		// Hapus ID dari array jika ada
+		if (uploadedFileIds && index < uploadedFileIds.length) {
+			uploadedFileIds = uploadedFileIds.slice(0, index).concat(uploadedFileIds.slice(index + 1));
+		}
+
 		// Update namafoto untuk form submission
 		namafoto = uploadedFiles.map((file) => file.name).join(',');
+		
+		// Update existing_foto_umum_ids untuk form submission
+		const updatedIds = uploadedFileIds.join(',');
+		console.log('Updated foto_umum IDs after removal:', updatedIds);
 	}
 
 	// Fungsi untuk mengganti gambar
@@ -373,9 +388,10 @@
 		// Isi form dengan data raja yang dipilih
 		idRaja = raja.id_raja;
 		namaraja = raja.nama_raja || '';
-		gelarraja = raja.gelar_raja || '';
+		gelarraja = raja.gelar || '';
 		tanggallahir = raja.tanggal_lahir ? raja.tanggal_lahir.split('T')[0] : '';
-		tanggalmeninggal = raja.tanggal_meninggal && raja.tanggal_meninggal !== '0001-01-01T00:00:00Z'
+		tanggalmeninggal =
+			raja.tanggal_meninggal && raja.tanggal_meninggal !== '0001-01-01T00:00:00Z'
 				? raja.tanggal_meninggal.split('T')[0]
 				: '';
 		kotalahir = raja.tempat_lahir || '';
@@ -1042,7 +1058,7 @@
 					<p class="text-md mb-10 opacity-70">
 						* Foto di urutan pertama akan menjadi foto besar awalan
 					</p>
-					<input type="hidden" name="existing_foto_umum_ids" value={dataubah.foto_umum || ''} />
+					<input type="hidden" name="existing_foto_umum_ids" value={uploadedFileIds.join(',')} />
 				</div>
 
 				<!-- Bendera -->
@@ -1280,7 +1296,9 @@
 											</div>
 											<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
 												<p class="text-md px-2 py-2">
-													Tanggal Lahir : <span class="font-bold">{raja.tanggal_lahir.split("T")[0]}</span>
+													Tanggal Lahir : <span class="font-bold"
+														>{raja.tanggal_lahir.split('T')[0]}</span
+													>
 												</p>
 											</div>
 											<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
@@ -1461,18 +1479,24 @@
 					{/if}
 
 					<label class="text-md mt-2 self-start text-left" for="nama">Gelar Raja</label>
-					<input
-						class="input-field rounded-lg border p-2 pr-8"
-						type="text"
-						id="nama"
-						name="gelarraja"
-						placeholder="John Doe"
-					/>
-					{#if error}
-						{#each error.gelarraja as a}
-							<p class="text-left text-red-500">{a}</p>
-						{/each}
-					{/if}
+					<div class="relative">
+						<select
+							class="input-field rounded-lg border p-2 pr-8 w-full"
+							id="gelarraja"
+							name="gelarraja"
+							bind:value={gelarraja}
+						>
+							<option value="" selected disabled>Pilih Gelar Raja</option>
+							{#each datagelar as gelar}
+								<option value={gelar.id_gelar}>{gelar.nama_gelar || gelar.gelar}</option>
+							{/each}
+						</select>
+						{#if error}
+							{#each error.gelarraja as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
 
 					<div class="flex flex-grow gap-4">
 						<div class="flex w-2/4 flex-col">
@@ -1780,19 +1804,25 @@
 					{/if}
 
 					<label class="text-md mt-2 self-start text-left" for="nama">Gelar Raja</label>
-					<input
-						class="input-field rounded-lg border p-2 pr-8"
-						type="text"
-						id="nama"
-						name="gelarraja"
-						bind:value={gelarraja}
-						placeholder="John Doe"
-					/>
-					{#if error}
-						{#each error.gelarraja as a}
-							<p class="text-left text-red-500">{a}</p>
-						{/each}
-					{/if}
+					<div class="relative">
+						<select
+							class="input-field rounded-lg border p-2 pr-8 w-full"
+							id="gelarraja"
+							name="gelarraja"
+							bind:value={gelarraja}
+						>
+						{console.log("Gelar raja : ", gelarraja)}
+							<option value="" selected disabled>Pilih Gelar Raja</option>
+							{#each datagelar as gelar}
+								<option value={gelar.id_gelar}>{gelar.nama_gelar || gelar.gelar}</option>
+							{/each}
+						</select>
+						{#if error}
+							{#each error.gelarraja as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
 
 					<div class="flex flex-grow gap-4">
 						<div class="flex w-2/4 flex-col">

@@ -92,13 +92,9 @@
 				};
 			}}
 		>
-			<DeleteModal
-				bind:value={del}
-				choose="delete"
-				text="Apakah Yakin ingin di delete?"
-				successText="Berhasil Delete"
-				{name}
-				data={data.id_jenis_arsip}
+			<input type="hidden" name="id_jenis_arsip" value={data.id_jenis_arsip} />
+
+			<DeleteModal bind:value={del} text="Apakah Yakin ingin di delete?" data={data.id_jenis_arsip}
 			></DeleteModal>
 		</form>
 	{/if}
@@ -128,12 +124,11 @@
 				};
 			}}
 		>
+			<input type="hidden" name="id_jenis_kerajaan" value={data.id_jenis_kerajaan} />
+
 			<DeleteModal
 				bind:value={del}
-				choose="delete"
 				text="Apakah Yakin ingin di delete?"
-				successText="Berhasil Delete"
-				{name}
 				data={data.id_jenis_kerajaan}
 			></DeleteModal>
 		</form>
@@ -164,12 +159,11 @@
 				};
 			}}
 		>
+			<input type="hidden" name="id_gelar" value={data.id_gelar} />
+
 			<DeleteModal
 				bind:value={del}
-				choose="delete"
 				text="Apakah Yakin ingin di delete?"
-				successText="Berhasil Delete"
-				{name}
 				data={data.id_gelar}
 			></DeleteModal>
 		</form>

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import xbutton from '../../asset/icons/xbutton.png';
-	import SModal from './SModal.svelte';	
-	
+	import SModal from './SModal.svelte';
+
 	let {
 		value = $bindable(),
 		textM,
@@ -13,9 +13,13 @@
 	} = $props();
 
 	console.log('data  : ', data);
-	
+
+	let isRadioYa = $state(false);
+
 	// Tambahkan state reaktif untuk nilai form
 	let formValues = $state({
+		id_admin: 0,
+		id_user: 0,
 		nama_lengkap: '',
 		username: '',
 		email: '',
@@ -25,30 +29,42 @@
 		kota_lahir: '',
 		jenis_kelamin: 'Laki-laki',
 		afiliasi: 'marsi',
-		admin_role: 'super admin'
+		admin_role: 'super admin',
+		id_kerajaan: 0
 	});
-	
+
 	$effect(() => {
 		if (data && Object.keys(data).length > 0) {
 			console.log('Updating form values with data:', data);
+			formValues.id_admin = data.id_admin || 0;
+			formValues.id_user = data.id_user || 0;
 			formValues.nama_lengkap = data.nama_lengkap || '';
 			formValues.username = data.username || '';
 			formValues.email = data.email || '';
 			formValues.no_telp = data.no_telp || '';
 			formValues.password = data.password || '';
-			formValues.tgl_lahir = data.tanggal_lahir || '';
+			formValues.tgl_lahir = data.tanggal_lahir.split('T')[0] || '';
 			formValues.kota_lahir = data.tempat_lahir || '';
+			formValues.id_kerajaan = data.id_kerajaan || 0;
 			formValues.jenis_kelamin = data.jenis_kelamin || 'Laki-laki';
-			formValues.afiliasi = data.afiliasi || 'marsi';
-			formValues.admin_role = data.afiliasi === 'marsi' ? 'super admin' : 'admin kerajaan';
-			
+			formValues.afiliasi =
+				data.jenis_admin === 'super admin' || data.id_kerajaan === 0 ? 'marsi' : data.id_kerajaan;
+			formValues.admin_role = data.jenis_admin === 'super admin' ? 'super admin' : 'admin kerajaan';
+
 			console.log('Form values updated:', formValues);
 		}
 	});
-	
+
 	// Update admin_role when afiliasi changes
 	$effect(() => {
-		formValues.admin_role = formValues.afiliasi === 'marsi' ? 'super admin' : 'admin kerajaan';
+		if (isRadioYa === true && formValues.afiliasi === 'marsi') {
+			formValues.admin_role = 'admin kerajaan';
+		} else {
+			isRadioYa = false;
+			if (formValues.admin_role !== 'admin kerajaan') {
+				formValues.admin_role = formValues.afiliasi === 'marsi' ? 'super admin' : 'admin kerajaan';
+			}
+		}
 		console.log('Admin role updated based on afiliasi:', formValues.admin_role);
 	});
 
@@ -61,6 +77,147 @@
 		}, 3000);
 		clearTimeout(timer);
 	}
+
+	// Add these state variables
+	let radioValue = $state('tidak'); // Default to 'tidak'
+	let newafiliasi = $state(' ');
+	let newroleadmin = $state(' ');
+
+	// Add a function to get kingdom name from ID
+	function getKerajaanName(id: any) {
+		console.log('Getting name for ID:', id, 'Type:', typeof id);
+
+		if (id === 0) return 'MARSI';
+
+		if (datakerajaan && Array.isArray(datakerajaan)) {
+			// Convert both to strings for comparison to handle type mismatches
+			const kerajaan = datakerajaan.find((k) => k.id_kerajaan.toString() === id.toString());
+			console.log('Found kerajaan:', kerajaan);
+			return kerajaan ? kerajaan.nama_kerajaan : id;
+		}
+		return id;
+	}
+
+	// Add a display variable for showing the selected kingdom name
+	let displayKerajaanName = $state('');
+
+	// Update display name when affiliation changes
+	$effect(() => {
+		console.log('Current afiliasi value:', formValues.afiliasi);
+		console.log('New afiliasi value:', newafiliasi);
+		const currentAfiliasi = newafiliasi !== ' ' ? newafiliasi : formValues.afiliasi;
+		displayKerajaanName = getKerajaanName(currentAfiliasi);
+		console.log('Display name updated to:', displayKerajaanName);
+	});
+
+	function handleAfiliasiChange(event: any) {
+		const selectedValue = event.target.value;
+		console.log('Selected value:', selectedValue);
+
+		// Langsung update newafiliasi
+		newafiliasi = selectedValue;
+
+		// Update display name
+		displayKerajaanName = getKerajaanName(selectedValue);
+		console.log("afiliasi : ", newafiliasi)
+		console.log('Display name updated to:', displayKerajaanName);
+
+		// Only update admin_role if radio is not "Ya"
+		if (radioValue !== 'ya') {
+			// If MARSI is selected directly from dropdown, set role to super admin
+			if (selectedValue === 'marsi') {
+				newroleadmin = 'super admin';
+				formValues.id_kerajaan = 0;
+			} else {
+				// For other kingdoms, set to admin kerajaan
+				newroleadmin = 'admin kerajaan';
+				formValues.id_kerajaan = selectedValue;
+				formValues.afiliasi = selectedValue;
+			}
+		}
+
+		console.log(
+			'Afiliasi changed to:',
+			selectedValue,
+			'Name:',
+			displayKerajaanName,
+			'Role set to:',
+			newroleadmin
+		);
+	}
+
+	// Handle changes to radio buttons
+	function handleRadioChange(value: any) {
+		radioValue = value;
+
+		if (value === 'ya') {
+			// When "Ya" is selected, force MARSI affiliation with admin kerajaan role
+			newafiliasi = 'marsi';
+			newroleadmin = 'admin kerajaan';
+			formValues.id_kerajaan = 0;
+			isRadioYa = true;
+		} else {
+			// When "Tidak" is selected
+			isRadioYa = false;
+
+			// Reset based on current affiliation
+			if (newafiliasi === 'marsi' || formValues.afiliasi === 'marsi') {
+				newroleadmin = 'super admin';
+			} else {
+				newroleadmin = 'admin kerajaan';
+			}
+		}
+
+		console.log(
+			'Radio changed to:',
+			value,
+			'Role set to:',
+			newroleadmin,
+			'Affiliation:',
+			newafiliasi
+		);
+	}
+
+	$effect(() => {
+		console.log('Current afiliasi value:', formValues.afiliasi);
+		console.log('New afiliasi value:', newafiliasi);
+		console.log('Data kerajaan:', datakerajaan);
+
+		// Check if the current value exists in the options
+		if (datakerajaan && Array.isArray(datakerajaan)) {
+			const found = datakerajaan.find(
+				(k) =>
+					k.id_kerajaan.toString() ===
+					(newafiliasi !== ' ' ? newafiliasi : formValues.afiliasi).toString()
+			);
+			console.log('Found matching kerajaan:', found);
+		}
+	});
+
+	// Make sure datakerajaan is properly initialized
+	$effect(() => {
+		console.log('Data kerajaan available:', datakerajaan);
+		if (datakerajaan && Array.isArray(datakerajaan)) {
+			console.log('Number of kingdoms:', datakerajaan.length);
+			datakerajaan.forEach((k) => console.log('Kingdom:', k.nama_kerajaan, 'ID:', k.id_kerajaan));
+		}
+	});
+
+	// Make sure the current value is properly set
+	$effect(() => {
+		if (data && Object.keys(data).length > 0) {
+			console.log('Setting afiliasi from data:', data.id_kerajaan);
+			// Set the ID value directly
+			if (data.jenis_admin === 'super admin' || data.id_kerajaan === 0) {
+				formValues.afiliasi = 'marsi';
+				formValues.id_kerajaan = 0;
+			} else {
+				formValues.afiliasi = data.id_kerajaan.toString();
+				formValues.id_kerajaan = data.id_kerajaan.toString();
+			}
+			console.log('Afiliasi set to:', formValues.afiliasi);
+		}
+	});
 </script>
 
 <div
@@ -126,6 +283,7 @@
 						name="username"
 						placeholder="janedoe"
 						bind:value={formValues.username}
+						readonly={textM === 'Ubah'}
 					/>
 				</div>
 				{#if errors}
@@ -154,6 +312,11 @@
 					{/each}
 				{/if}
 			</div>
+
+			<input type="hidden" name="id_admin" value={formValues.id_admin} />
+			<input type="hidden" name="id_user" value={formValues.id_user} />
+			<input type="hidden" name="id_kerajaan" value={formValues.id_kerajaan} />
+
 			<!-- No Telp -->
 			<div class="flex flex-col md:col-span-full">
 				<div class="">
@@ -189,36 +352,40 @@
 						id="password_field"
 						autocomplete="new-password"
 						bind:value={formValues.password}
+						readonly={textM === 'Ubah'}
 					/>
-					<!-- svelte-ignore a11y_click_events_have_key_events -->
-					<div
-						class="me-1 ms-1 flex cursor-pointer items-center"
-						onclick={() => {
-							if (type === 'password') {
-								type = 'text';
-							} else type = 'password';
-						}}
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="size-6"
+					<!-- Only show eye icon if not in edit mode -->
+					{#if textM !== 'Ubah'}
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<div
+							class="me-1 ms-1 flex cursor-pointer items-center"
+							onclick={() => {
+								if (type === 'password') {
+									type = 'text';
+								} else type = 'password';
+							}}
 						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-							/>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-							/>
-						</svg>
-					</div>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-6"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+								/>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+								/>
+							</svg>
+						</div>
+					{/if}
 				</div>
 				<div>
 					<p>*Password harus memiliki kombinasi minimal 8 huruf, angka, dan simbol</p>
@@ -302,21 +469,24 @@
 					<select
 						name="afiliasi"
 						class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none"
-						bind:value={formValues.afiliasi}
-						onchange={() => {
-							// Explicitly update admin_role when afiliasi changes
-							formValues.admin_role = formValues.afiliasi === 'marsi' ? 'super admin' : 'admin kerajaan';
-							console.log('Afiliasi changed to:', formValues.afiliasi);
-							console.log('Admin role updated to:', formValues.admin_role);
-						}}
+						value={newafiliasi !== ' ' ? newafiliasi.toString() : formValues.afiliasi.toString()}
+						onclick={(e) => handleAfiliasiChange(e)}
+						disabled={radioValue === 'ya'}
 					>
+						{console.log("ayayay:", newafiliasi)}
 						<option value="marsi">MARSI</option>
 						{#if datakerajaan && Array.isArray(datakerajaan)}
 							{#each datakerajaan as kerajaan}
-								<option value={kerajaan.id_kerajaan}>{kerajaan.nama_kerajaan}</option>
+								<option value={kerajaan.id_kerajaan.toString()}>{kerajaan.nama_kerajaan}</option>
 							{/each}
 						{/if}
 					</select>
+
+					<!-- Add a display for the selected kingdom name -->
+					{#if displayKerajaanName && newafiliasi !== ' ' && newafiliasi !== 'marsi'}
+						<p class="mt-1 text-sm text-gray-600">Selected: {displayKerajaanName}</p>
+					{/if}
+
 					{#if errors}
 						{#each errors.afiliasi as a}
 							<p class="text-left text-red-500">{a}</p>
@@ -329,19 +499,31 @@
 			<div class="flex flex-col md:col-span-full">
 				<div class="flex flex-col md:flex-row md:justify-between">
 					<p>Role Admin</p>
-					{#if formValues.afiliasi !== 'marsi'}
+					{#if (newafiliasi !== ' ' ? newafiliasi : formValues.afiliasi) !== 'marsi' || ((newafiliasi !== ' ' ? newafiliasi : formValues.afiliasi) === 'marsi' && (newroleadmin !== ' ' ? newroleadmin : formValues.admin_role) === 'admin kerajaan')}
 						<div class="flex items-center gap-2">
 							<p>Buat Menjadi Super Admin Kerajaan juga?</p>
-							<input type="radio" value="superadmin_kerajaan_ya" name="superadmin" />
+							<input
+								type="radio"
+								value="ya"
+								name="superadmin"
+								checked={radioValue === 'ya'}
+								onclick={() => handleRadioChange('ya')}
+							/>
 							<p>Ya</p>
-							<input type="radio" value="superadmin_kerajaan_tidak" name="superadmin" />
+							<input
+								type="radio"
+								value="tidak"
+								name="superadmin"
+								checked={radioValue === 'tidak'}
+								onclick={() => handleRadioChange('tidak')}
+							/>
 							<p>Tidak</p>
 						</div>
-					{/if}
-					{#if errors}
-						{#each errors.inputradio as a}
-							<p class="text-left text-red-500">{a}</p>
-						{/each}
+						{#if errors}
+							{#each errors.inputradio as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
 					{/if}
 				</div>
 
@@ -351,12 +533,22 @@
 						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-500 focus:outline-none"
 						id="admin_role_field"
 						autocomplete="new-password"
-						bind:value={formValues.admin_role}
+						value={newroleadmin !== ' ' ? newroleadmin : formValues.admin_role}
+						disabled={radioValue === 'ya'}
 					>
 						<option value="super admin">Super Admin</option>
 						<option value="admin kerajaan">Admin Kerajaan</option>
 					</select>
-					<input type="hidden" name="admin_role" value={formValues.admin_role} />
+					<input
+						type="hidden"
+						name="admin_role"
+						value={newroleadmin !== ' ' ? newroleadmin : formValues.admin_role}
+					/>
+					<input
+						type="hidden"
+						name="afiliasi"
+						value={newafiliasi !== ' ' ? newafiliasi : formValues.afiliasi}
+					/>
 					{#if errors}
 						{#each errors.admin_role as a}
 							<p class="text-left text-red-500">{a}</p>

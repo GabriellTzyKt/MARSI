@@ -4,22 +4,22 @@
 	import SuccessModal from './SucessModal.svelte';
 	import SModal from './SModal.svelte';
 
-	let { text, value = $bindable() } = $props();
+	let { text, value = $bindable(), data } = $props();
 
-	console.log('name : ', name);
+	console.log('name : ', data);
 
 	let success = $state(false);
 
 	const dispatch = createEventDispatcher();
 
 	function handleSubmit() {
-		// console.log('DeleteModal submitting with data:', itemData);
-		// dispatch('submit', { id: itemData });
+		console.log('DeleteModal submitting with data:', data);
+		dispatch('submit', { id: data });
 	}
 
 	function handleCancel() {
 		value = false;
-		// dispatch('close');
+		dispatch('close');
 	}
 </script>
 

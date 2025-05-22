@@ -8,6 +8,7 @@
 	import SModal from '$lib/popup/SModal.svelte';
 	import { enhance } from '$app/forms';
 	import Loader from '$lib/loader/Loader.svelte';
+	import { invalidateAll } from '$app/navigation';
 	let { form, data } = $props();
 	let adminMarsi = data.adminMarsiData;
 	let dataKerajaan = data.kerajaanData;
@@ -70,7 +71,12 @@
 			{/each}
 		{:else if selected === 'Admin Kerajaan'}
 			{#each data.adminMarsiData?.filter((admin: any) => admin.jenis_admin?.toLowerCase() === 'admin kerajaan') || [] as admin}
-				<DropDownAdmin bind:edit {error} data={admin}></DropDownAdmin>
+				<DropDownAdmin
+					bind:edit
+					{error}
+					data={admin}
+					actions={[{ action: () => handleEdit(admin) }]}
+				></DropDownAdmin>
 			{/each}
 		{/if}
 
@@ -137,22 +143,20 @@
 		action="?/ubah"
 		method="POST"
 		use:enhance={() => {
-			// Verify the ID before submitting edit form
-			if (!data || !data.id_admin) {
-				console.error('Missing admin ID, cannot submit edit');
-				return;
-			}
-
 			console.log('Data kirim : ', data);
 
 			return async ({ result }) => {
+				loading = true;
 				console.log(result);
 				if (result.type === 'success') {
 					valo = true;
 					clearTimeout(timer);
+					invalidateAll();
 					timer = setTimeout(() => {
+						loading = false
 						valo = false;
 						edit = false;
+						invalidateAll();
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;

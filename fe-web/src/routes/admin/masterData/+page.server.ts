@@ -250,6 +250,7 @@ export const actions: Actions = {
         const data = await request.formData()
         try {
             console.log("ID : ", data.get("id_jenis_kerajaan"))
+            console.log("Ya")
             // Menggunakan id_jenis_kerajaan bukan id_jenis_arsip
             const del = await fetch(`${env.PUB_PORT}/kerajaan/jenis/${data.get("id_jenis_kerajaan")}`, {
                 method: "DELETE"
@@ -363,6 +364,7 @@ export const actions: Actions = {
         const data = await request.formData()
         try {
             console.log("ID : ", data.get("id_gelar"))
+            console.log("Ya")
             // Menggunakan id_jenis_kerajaan bukan id_jenis_arsip
             const del = await fetch(`${env.PUB_PORT}/gelar/${data.get("id_gelar")}`, {
                 method: "DELETE"
