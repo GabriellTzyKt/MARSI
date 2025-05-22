@@ -12,25 +12,36 @@
 		datakerajaan = null
 	} = $props();
 
-	console.log('data  : ', data);
+	console.log('Modal received data:', data);
 
 	let isRadioYa = $state(false);
 
-	// Tambahkan state reaktif untuk nilai form
+	// Inisialisasi formValues dengan data yang diterima
 	let formValues = $state({
-		id_admin: 0,
-		id_user: 0,
-		nama_lengkap: '',
-		username: '',
-		email: '',
-		no_telp: '',
-		password: '',
-		tgl_lahir: '',
-		kota_lahir: '',
-		jenis_kelamin: 'Laki-laki',
-		afiliasi: 'marsi',
-		admin_role: 'super admin',
-		id_kerajaan: 0
+		id_admin: data?.id_admin || 0,
+		id_user: data?.id_user || 0,
+		nama_lengkap: data?.nama_lengkap || '',
+		username: data?.username || '',
+		email: data?.email || '',
+		no_telp: data?.no_telp || '',
+		password: data?.password || '',
+		tgl_lahir: data?.tanggal_lahir ? data.tanggal_lahir.split('T')[0] : '',
+		kota_lahir: data?.tempat_lahir || '',
+		jenis_kelamin: data?.jenis_kelamin || 'Laki-laki',
+		afiliasi: data?.id_kerajaan === 0 ? 'marsi' : data?.id_kerajaan?.toString() || 'marsi',
+		admin_role: data?.jenis_admin?.toLowerCase() || 'super admin',
+		id_kerajaan: data?.id_kerajaan || 0,
+		status_aktif: data?.status_aktif || 0
+	});
+
+	// Inisialisasi variabel lain berdasarkan data
+	let radioValue = $state(formValues.admin_role === 'admin kerajaan' && formValues.afiliasi === 'marsi' ? 'ya' : 'tidak');
+	let newafiliasi = $state(formValues.afiliasi);
+	let newroleadmin = $state(formValues.admin_role);
+
+	// Update isRadioYa berdasarkan radioValue
+	$effect(() => {
+		isRadioYa = radioValue === 'ya';
 	});
 
 	$effect(() => {
@@ -77,11 +88,6 @@
 		}, 3000);
 		clearTimeout(timer);
 	}
-
-	// Add these state variables
-	let radioValue = $state('tidak'); // Default to 'tidak'
-	let newafiliasi = $state(' ');
-	let newroleadmin = $state(' ');
 
 	// Add a function to get kingdom name from ID
 	function getKerajaanName(id: any) {
@@ -316,6 +322,7 @@
 			<input type="hidden" name="id_admin" value={formValues.id_admin} />
 			<input type="hidden" name="id_user" value={formValues.id_user} />
 			<input type="hidden" name="id_kerajaan" value={formValues.id_kerajaan} />
+			<input type="hidden" name="status_aktif" value={formValues.status_aktif} />
 
 			<!-- No Telp -->
 			<div class="flex flex-col md:col-span-full">
