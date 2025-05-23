@@ -3,57 +3,100 @@ import { date, z } from "zod";
 import type { Actions, PageServerLoad } from "./$types";
 import { fail } from "@sveltejs/kit";
 import { env } from "$env/dynamic/private";
-import { formatDatetoUI } from "$lib";
+import { formatDate, formatDatetoUI } from "$lib";
 
 
-export const load: PageServerLoad = async ({ params, fetch }) => {
+export const load: PageServerLoad = async ({ params, fetch, cookies }) => {
     try {
-        const res = await fetch(`${env.PUB_PORT}/user/${params.id}`);
-        let final = [];
+        const session = JSON.parse(cookies.get("userSession") as string);
         
-        if(!res.ok){
-            throw new Error(`HTTP Error! Status: ${res.status}`);
+        // Use Promise.all to fetch data in parallel
+        const [userRes, allUsersRes] = await Promise.all([
+            fetch(`${env.PUB_PORT}/user/${params.id}`),
+            fetch(`${env.PUB_PORT}/users`, {
+                headers: {
+                    "Authorization": `Bearer ${session.token}`
+                }
+            })
+        ]);
+        
+        if(!userRes.ok){
+            throw new Error(`HTTP Error! Status: ${userRes.status}`);
         }
         
-        const data = await res.json();
+        const data = await userRes.json();
+        let allUsers = [];
         
+        if (allUsersRes.ok) {
+            allUsers = await allUsersRes.json();
+            allUsers = allUsers.filter((item: any) => 
+                item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
+            ).map((item: any) => ({
+                id: item.id_user,
+                name: item.nama_lengkap || 'Nama tidak tersedia',
+                email: item.email || 'Email tidak tersedia'
+            }));
+        } else {
+            console.error(`Failed to fetch users: ${allUsersRes.statusText}`);
+        }
+
         if (data.profile && data) {
             try {
-                const resProfilepict = await fetch(`${env.URL_KERAJAAN}/doc/${data.profile.profile_pict}`);
-                if (!resProfilepict.ok) {
-                    console.error(`HTTP Error! Status: ${resProfilepict.status}`);
-                    final = [{
+                // Only fetch profile picture if it exists
+                if (data.profile.profile_pict) {
+                    const resProfilepict = await fetch(`${env.URL_KERAJAAN}/doc/${data.profile.profile_pict}`);
+                    if (resProfilepict.ok) {
+                        const profilepict = await resProfilepict.json();
+                        return { 
+                            akun: {
+                                ...data,
+                                tanggal_lahir_UI: formatDatetoUI(data.tanggal_lahir || ''),
+                                profilepict: `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(profilepict.file_dokumentasi)}`
+                            },
+                            allUsers 
+                        };
+                    }
+                }
+                
+                // Return data without profile picture if fetch failed or no picture
+                return { 
+                    akun: {
                         ...data,
+                        tanggal_lahir: formatDate(data.tanggal_lahir || ''),
                         tanggal_lahir_UI: formatDatetoUI(data.tanggal_lahir || ''),
                         profilepict: null
-                    }];
-                    return { akun: final[0] };
-                }
-                const profilepict = await resProfilepict.json()
-                const pict = await fetch(`${env.URL_KERAJAAN}/file?file_path=${profilepict.file_dokumentasi}`)
-                final = [{
-                    ...data,
-                    tanggal_lahir_UI: formatDatetoUI(data.tanggal_lahir || ''),
-                    profilepict: resProfilepict.ok ? resProfilepict : null
-                }];
-                return { akun: final[0] }
+                    },
+                    allUsers 
+                };
             }
             catch (pictError) {
                 console.error("Error fetching profile picture:", pictError);
-                final = [{
-                    ...data,
-                    tanggal_lahir_UI: formatDatetoUI(data.tanggal_lahir || ''),
-                    profilepict: null
-                }];
-                return { akun: final[0] };
+                return { 
+                    akun: {
+                        ...data,
+                        tanggal_lahir: formatDate(data.tanggal_lahir || ''),
+                        tanggal_lahir_UI: formatDatetoUI(data.tanggal_lahir || ''),
+                        profilepict: null
+                    }, 
+                    allUsers 
+                };
             }
         } else if (data) {
-            final = Array.isArray(data) ? data.map(item => ({
-                ...item,
-                tanggal_lahir_UI: formatDatetoUI(item.tanggal_lahir || '')
-            })) : [data];
-            return { data: final[0] };
+            const formattedData = Array.isArray(data) 
+                ? data.map(item => ({
+                    ...item,
+                    tanggal_lahir: formatDate(item.tanggal_lahir || ''),
+                    tanggal_lahir_UI: formatDatetoUI(item.tanggal_lahir || '')
+                }))[0]
+                : {
+                    ...data,
+                    tanggal_lahir: formatDate(data.tanggal_lahir || ''),
+                    tanggal_lahir_UI: formatDatetoUI(data.tanggal_lahir || '')
+                };
+                
+            return { data: formattedData, allUsers };
         }
+        
         return { data: null, error: "No data returned from API" };
     }
     catch (error) {
@@ -62,7 +105,8 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
     }
 };
 export const actions: Actions = {
-    ubah: async ({ request, params, fetch }) => {
+    ubah: async ({ request, params, fetch, cookies }) => {
+        const session = JSON.parse(cookies.get("userSession") as string);
         const data = await request.formData();
         console.log("Form data received:", data);
         
@@ -117,7 +161,13 @@ export const actions: Actions = {
                 z.string()
                     .min(1, "Tanggal Harus diisi")
                     .transform((v) => new Date(v))
-                    .refine((d) => !isNaN(d.getTime()), { message: "Tanggal Harus Sesuai Format (YYYY-MM-DD)" }),
+                    .refine((d) => {
+                        try {
+                            return !isNaN(new Date(d).getTime());
+                        } catch (e) {
+                            return false;
+                        }
+                    }, { message: "Tanggal Harus Sesuai Format (YYYY-MM-DD)" }),
             jenis_kelamin:
                 z.string({ message: "Field Jenis Kelamin tidak boleh kosong" })
                     .min(1, "Minimal Pilih 1 pilihan"),
@@ -190,25 +240,36 @@ export const actions: Actions = {
         }
         
         // Prepare data for API update
-        const updateData = {
-            ...verif.data,
-            id_user: params.id,
-            tanggal_lahir: verif.data.tanggal_lahir.toISOString().split('T')[0],
-            ayah_abdi: data.get("ayah_abdi") === "yes",
-            ibu_abdi: data.get("ibu_abdi") === "yes"
+        let updateData = {
+            id_user: Number(data.get('id_user')),
+            nama_lengkap: data.get('nama_lengkap'),
+            alamat: data.get('alamat'),
+            tempat_lahir: data.get('tempat_lahir'),
+            tanggal_lahir: data.get('tanggal_lahir'),
+            email: data.get('email'),
+            no_telp: data.get('no_telp'),
+            pekerjaan: data.get('pekerjaan'),
+            agama: data.get('agama'),
+            jenis_kelamin: data.get('jenis_kelamin'),
+            hobi: data.get('hobi'),
+            nama_ayah: data.get('nama_ayah'),
+            nama_ibu: data.get('nama_ibu'),
+            keturunan: data.get('wongso'),
+            
         };
         
         // Add profile picture ID if available
         if (profilePictId) {
             updateData.profile_pict = profilePictId;
         }
-        
+        console.log("SendData: ", updateData);
         try {
             // Send the update to the API
-            const updateResponse = await fetch(`${env.PUB_PORT}/user/update`, {
+            const updateResponse = await fetch(`${env.PUB_PORT}/user`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    "Authorization": `Bearer ${session.token}`
                 },
                 body: JSON.stringify(updateData)
             });

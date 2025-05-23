@@ -13,9 +13,10 @@
 	import Loader from '$lib/loader/Loader.svelte';
 	import Bracode from '$lib/popup/Bracode.svelte';
 
-	let { form, data } = $props();
+	let { data } = $props();
 
 	console.log(data);
+	let users = data?.allUsers || [];
 	onMount(() => {});
 	let open = $state(false);
 	let timer: number;
@@ -23,11 +24,36 @@
 	let ibuAbdi = $state('ibu_no');
 	let errMsgA = $state('');
 	let errMsgB = $state('');
-	let err = form?.errors;
+
+	let ayahKeyword = $state(data.data.nama_ayah || '');
+	let selectedAyah = $state(null);
+	let showAyahDropdown = $state(false);
+	let filteredAyahUsers = $derived(filterUser(ayahKeyword));
+
+	let ibuKeyword = $state(data.data.nama_ibu || '');
+	let selectedIbu = $state(null);
+	let showIbuDropdown = $state(false);
+	let filteredIbuUsers = $derived(filterUser(ibuKeyword));
+
+	function filterUser(searchTerm: string) {
+		return users.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+	}
 
 	// Profile picture handling
-	let pictUrl = $state(data.data.profileUrl || jd);
+	let pictUrl = $state(data.data.profilepict || jd);
 	let pictUrlFiles = $state(null);
+	function selectAyah(user: any) {
+		selectedAyah = user;
+		ayahKeyword = user.name;
+		showAyahDropdown = false;
+		errMsgA = ''; // Clear any error messages
+	}
+	function selectIbu(user: any) {
+		selectedIbu = user;
+		ibuKeyword = user.name;
+		showIbuDropdown = false;
+		errMsgB = ''; // Clear any error messages
+	}
 
 	function handleFiles(event) {
 		const input = event.target as HTMLInputElement;
@@ -70,6 +96,7 @@
 
 	const akun = data.akun;
 	let loading = $state(false);
+	let errors = $state();
 
 	// Tambahkan state untuk kontrol popup
 	let showBarcode = $state(false);
@@ -81,6 +108,7 @@
 		barcodeData = data?.data?.id_user?.toString() || 'User ID';
 		showBarcode = true;
 	}
+	let success = $state(false);
 </script>
 
 <Navbar></Navbar>
@@ -98,9 +126,17 @@
 		loading = true;
 		return async ({ result }) => {
 			loading = false;
-			console.log(result.data.errors);
 			if (result.type === 'success') {
+				errors = null;
+				success = true;
+				clearTimeout(timer);
+				timer = setTimeout(() => {
+					success = false;
+					goto('/profile');
+				}, 3000);
 			} else if (result.type === 'failure') {
+				console.log(result?.data.errors);
+				errors = result?.data.errors;
 			}
 		};
 	}}
@@ -223,9 +259,9 @@
 				<p class="text-xl">Nama Lengkap</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="nama_lengkap" value={data.data.nama_lengkap || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.nama_lengkap as e}
+				<Input type="text" name="nama_lengkap" value={data.data.nama_lengkap || ''}></Input>
+				{#if errors}
+					{#each errors?.nama_lengkap as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -237,9 +273,9 @@
 				<p class="text-xl">Tempat Lahir</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="tempat_lahir" value={data.data.nama_lengkap || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.tempat_lahir as e}
+				<Input type="text" name="tempat_lahir" value={data.data.nama_lengkap || ''}></Input>
+				{#if errors}
+					{#each errors?.tempat_lahir as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -256,10 +292,10 @@
 					name="tanggal_lahir"
 					class="w-full rounded-lg border border-gray-500 bg-white py-2 ps-2 text-gray-500 focus:outline-none"
 					id="tanggal_lahir"
-					value={data.data.tanggal_lahir_UI || '-'}
+					value={data.data.tanggal_lahir || ''}
 				/>
-				{#if form?.errors}
-					{#each form?.errors.tanggal_lahir as e}
+				{#if errors}
+					{#each errors?.tanggal_lahir as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -274,14 +310,14 @@
 				<select
 					name="jenis_kelamin"
 					class="w-full rounded-lg border border-gray-500 py-2 pe-2 ps-2"
-					value={data.data.jenis_kelamin || '-'}
+					value={data.data.jenis_kelamin || ''}
 					id=""
 				>
 					<option value="Perempuan">Perempuan</option>
 					<option value="Laki_Laki">Laki - Laki</option>
 				</select>
-				{#if form?.errors}
-					{#each form?.errors.jenis_kelamin as e}
+				{#if errors}
+					{#each errors?.jenis_kelamin as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -293,9 +329,9 @@
 				<p class="text-xl">Alamat</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="alamat" value={data.data.alamat || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.alamat as e}
+				<Input type="text" name="alamat" value={data.data.alamat || ''}></Input>
+				{#if errors}
+					{#each errors?.alamat as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -307,9 +343,9 @@
 				<p class="text-xl">No Telpon</p>
 			</div>
 			<div class="mt-2">
-				<Input type="phone" name="no_telp" value={data.data.no_telp || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.no_telp as e}
+				<Input type="phone" name="no_telp" value={data.data.no_telp || ''}></Input>
+				{#if errors}
+					{#each errors?.no_telp as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -322,9 +358,9 @@
 				<p class="text-xl">Pekerjaan</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="pekerjaan" value={data.data.pekerjaan || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.pekerjaan as e}
+				<Input type="text" name="pekerjaan" value={data.data.pekerjaan || ''}></Input>
+				{#if errors}
+					{#each errors?.pekerjaan as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -336,9 +372,9 @@
 				<p class="text-xl">Wongso</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="wongso" value={data.data.wongso || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.wongso as e}
+				<Input type="text" name="wongso" value={data?.data?.keturunan || ''}></Input>
+				{#if errors}
+					{#each errors?.wongso as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -351,9 +387,9 @@
 				<p class="text-xl">Email</p>
 			</div>
 			<div class="mt-2">
-				<Input type="email" name="email" value={data.data.email || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.email as e}
+				<Input type="email" name="email" value={data.data.email || ''}></Input>
+				{#if errors}
+					{#each errors?.email as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -365,9 +401,9 @@
 				<p class="text-xl">Hobi</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="hobi" value={data.data.hobi || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.hobi as e}
+				<Input type="text" name="hobi" value={data.data.hobi || ''}></Input>
+				{#if errors}
+					{#each errors?.hobi as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -380,9 +416,9 @@
 				<p class="text-xl">Agama</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="agama" value={data.data.agama || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.agama as e}
+				<Input type="text" name="agama" value={data.data.agama || ''}></Input>
+				{#if errors}
+					{#each errors?.agama as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -396,9 +432,9 @@
 				<p class="text-xl">Asma Dalem</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="asma_dalem" value={data.data.panggilan || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.asma_dalem as e}
+				<Input type="text" name="asma_dalem" value={data.data.panggilan || ''}></Input>
+				{#if errors}
+					{#each errors?.asma_dalem as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -425,10 +461,45 @@
 					</div>
 				</div>
 			</div>
-			<div class="mt-2">
-				<Input type="text" name="nama_ayah" value={accounts[0].ayah}></Input>
-				{#if form?.errors}
-					{#each form?.errors.nama_ayah as e}
+			<div class="relative mt-2">
+				<input
+					type="text"
+					name="nama_ayah"
+					bind:value={ayahKeyword}
+					oninput={() => {
+						if (ayahAbdi == 'ayah_yes') {
+							showAyahDropdown = true;
+						}
+					}}
+					onblur={() => {
+						// Add delay to allow click to register first
+						setTimeout(() => {
+							showAyahDropdown = false;
+						}, 200);
+					}}
+					class="w-full rounded-lg border border-gray-500 bg-white py-2 ps-2 text-gray-500 focus:outline-none"
+					id=""
+				/>
+				{#if showAyahDropdown && filteredAyahUsers.length > 0}
+					<p>Silahkan Pilih Dari dropdown yang tertampil</p>
+					<ul
+						class="absolute bottom-full z-10 mt-1 max-h-60 overflow-y-auto rounded-lg border bg-white shadow-lg"
+					>
+						{#each filteredAyahUsers as user}
+							<!-- svelte-ignore a11y_click_events_have_key_events -->
+							<!-- svelte-ignore a11y_no_static_element_interactions -->
+							<div
+								class="cursor-pointer py-1 hover:bg-gray-100"
+								onmousedown={() => selectAyah(user)}
+							>
+								<li class="px-3">{user.name}</li>
+								<li class="px-3 text-sm text-gray-500">{user.email}</li>
+							</div>
+						{/each}
+					</ul>
+				{/if}
+				{#if errors}
+					{#each errors?.nama_ayah as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -458,10 +529,45 @@
 					</div>
 				</div>
 			</div>
-			<div class="mt-2">
-				<Input type="text" name="nama_ibu" value={accounts[0].ibu}></Input>
-				{#if form?.errors}
-					{#each form?.errors.nama_ibu as e}
+			<div class="relative mt-2">
+				<input
+					type="text"
+					name="nama_ibu"
+					bind:value={ibuKeyword}
+					oninput={() => {
+						if (ibuAbdi == 'ibu_yes') {
+							showIbuDropdown = true;
+						}
+					}}
+					onblur={() => {
+						// Add delay to allow click to register first
+						setTimeout(() => {
+							showIbuDropdown = false;
+						}, 200);
+					}}
+					class="w-full rounded-lg border border-gray-500 bg-white py-2 ps-2 text-gray-500 focus:outline-none"
+					id=""
+				/>
+				{#if showIbuDropdown && filteredIbuUsers.length > 0}
+					<p>Silahkan Pilih Dari dropdown yang tertampil</p>
+					<ul
+						class="absolute bottom-full z-10 mt-1 max-h-60 overflow-y-auto rounded-lg border bg-white shadow-lg"
+					>
+						{#each filteredIbuUsers as user}
+							<!-- svelte-ignore a11y_click_events_have_key_events -->
+							<!-- svelte-ignore a11y_no_static_element_interactions -->
+							<div
+								class="cursor-pointer py-1 hover:bg-gray-100"
+								onmousedown={() => selectIbu(user)}
+							>
+								<li class="px-3">{user.name}</li>
+								<li class="px-3 text-sm text-gray-500">{user.email}</li>
+							</div>
+						{/each}
+					</ul>
+				{/if}
+				{#if errors}
+					{#each errors?.nama_ibu as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -471,6 +577,7 @@
 			</div>
 		</div>
 	</div>
+	<input hidden name="id_user" value={data.data.id_user} />
 </form>
 
 <Footer></Footer>
@@ -478,12 +585,4 @@
 	<SuccessModal text="Akun Sudah Aktif!"></SuccessModal>
 {/if}
 
-<!-- Tambahkan tombol untuk menampilkan barcode -->
-<button class="rounded-lg border border-gray-500 px-3 py-2 shadow-2xl" onclick={openBarcode}>
-	Tampilkan Barcode
-</button>
-
 <!-- Tambahkan komponen Bracode -->
-{#if showBarcode}
-	<Bracode bind:value={showBarcode} data={barcodeData} />
-{/if}
