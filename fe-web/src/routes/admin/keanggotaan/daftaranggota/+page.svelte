@@ -10,7 +10,7 @@
 	import KerajaanPopup from '$lib/popup/KerajaanPopup.svelte';
 	import { enhance } from '$app/forms';
 	import SModal from '$lib/popup/SModal.svelte';
-	import { goto } from '$app/navigation';
+	import { goto, invalidate, invalidateAll } from '$app/navigation';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
 	import { easeBack } from 'd3';
@@ -18,7 +18,7 @@
 	let { data } = $props();
 	console.log(data.dataKerajaan);
 	console.log('GELAR : ', data.gelar);
-	let dataanggota = data.anggotaKerajaan;
+	let dataanggota = $state(data.anggotaKerajaan);
 
 	console.log('Anggota : ', data.anggotaKerajaan);
 	// import {dropId} from './DropDown.svelte'
@@ -162,10 +162,6 @@
 							class="rounded-xl bg-orange-500 px-6 py-2 text-white"
 							onclick={() => {
 								selectedKerajaanId = data.id_kerajaan;
-								console.log(
-									dataanggota?.find((item: any) => item.id_kerajaan === selectedKerajaanId)
-										?.anggota || []
-								);
 								tambah = true;
 							}}
 						>
@@ -175,15 +171,16 @@
 				</div>
 				<Table
 					table_header={[
-						['id_gelar', 'Nama Anggota', 'justify-start flex grow'],
+						['nama_anggota', 'Nama Anggota', 'justify-start flex grow'],
 						['children', 'Aksi', 'text-right pe-48']
 					]}
-					table_data={dataanggota?.find((item: any) => item.id_kerajaan === selectedKerajaanId)
-						?.anggota || []}	
+					table_data={dataanggota?.find((item: any) => item.id_kerajaan === data.id_kerajaan)
+						?.anggota || []}
 				>
 					{#snippet children({ header, data, index })}
 						{#if header === 'Aksi'}
-							<CustomBtn tipe="anggota"></CustomBtn>
+							<CustomBtn data={dataanggota?.find((item: any) => item.id_kerajaan === data.id_kerajaan)
+								?.anggota || []} tipe="anggota" id={data.id_kerajaan}></CustomBtn>
 						{/if}
 					{/snippet}
 				</Table>
@@ -211,6 +208,7 @@
 				if (result.type === 'success') {
 					success = true;
 					let timer: number;
+					invalidateAll();
 					timer = setTimeout(() => {
 						edit = false;
 						success = false;
@@ -238,9 +236,10 @@
 					success = true;
 					let timer: number;
 					timer = setTimeout(() => {
+						invalidateAll();
+
 						resetFormState();
 						success = false;
-						goto('/admin/keanggotaan/daftaranggota');
 					}, 3000);
 				}
 				if (result.type === 'failure') {

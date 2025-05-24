@@ -5,8 +5,10 @@
 
 	const dispatch = createEventDispatcher();
 	
-	let { value = $bindable(), data = null, errors = $bindable(), type = '', dataGelar = [] } = $props();
+	let { value = $bindable(), data = null, errors = $bindable(), error = $bindable(), type = '', dataGelar = [] } = $props();
 	
+	console.log("data popup : ", data)
+
 	function handleClose() {
 		value = false;
 		dispatch('close');

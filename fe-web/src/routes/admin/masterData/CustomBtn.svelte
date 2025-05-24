@@ -5,15 +5,18 @@
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import Modal from '$lib/popup/Modal.svelte';
 	import SModal from '$lib/popup/SModal.svelte';
+	import KerajaanPopup from '$lib/popup/KerajaanPopup.svelte';
 	import type { Snippet } from 'svelte';
 	import { any } from 'zod';
 	import Input from './Input.svelte';
 	let loading = $state(false);
 	let success = $state(false);
 	let timer: number;
-	let error = $state();
-	let { data = null, name = '', tipe = '', del = false, edit = false} = $props();
+	let error : any = $state();
+	let { data = null, name = '', tipe = '', del = false, edit = false, id = null } = $props();
 	console.log('Tipe : ', tipe);
+	console.log('Data : ', data);
+	console.log('ID : ', id);
 	// let edit = $state(false);
 	// let del = $state(false);
 </script>
@@ -161,10 +164,7 @@
 		>
 			<input type="hidden" name="id_gelar" value={data.id_gelar} />
 
-			<DeleteModal
-				bind:value={del}
-				text="Apakah Yakin ingin di delete?"
-				data={data.id_gelar}
+			<DeleteModal bind:value={del} text="Apakah Yakin ingin di delete?" data={data.id_gelar}
 			></DeleteModal>
 		</form>
 	{/if}
@@ -282,7 +282,6 @@
 		</form>
 	{/if}
 
-	
 	{#if tipe === 'anggota'}
 		<form
 			action="?/ubahKerajaan"
@@ -308,14 +307,13 @@
 				};
 			}}
 		>
-			<Input
-				bind:value={data}
-				name="nama_jenis_kerajaan"
-				{error}
-				bind:input={edit}
-				header="Jenis Kerajaan"
-				tipe="jenis_kerajaan"
-			></Input>
+			<KerajaanPopup
+				{data}
+				bind:value={edit}
+				bind:error
+				type="Ubah"
+				dataGelar={data.gelar}
+			></KerajaanPopup>
 		</form>
 	{/if}
 {/if}

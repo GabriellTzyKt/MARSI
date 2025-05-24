@@ -15,6 +15,8 @@
 	let dropdown: number | null = $state(null);
 
 	let { table_data, table_header, children, details, custom, isdrop = false }: IProps = $props();
+
+	console.log("Data table : ", table_data)
 </script>
 
 <div class="mt-4 flex w-full flex-col overflow-x-auto rounded-xl">
