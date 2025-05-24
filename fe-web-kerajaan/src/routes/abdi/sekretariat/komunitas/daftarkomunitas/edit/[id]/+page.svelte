@@ -120,7 +120,7 @@
 		}}
 	>
 		<input type="hidden" name="id_komunitas" value={dataisi?.id_komunitas || ''} />
-		<input type="hidden" name="id_pengajuan" value={data?.user.id_user || ''} />
+		<input type="hidden" name="id_pengajuan" value={data?.user?.id_user || ''} />
 		<div class="relative mx-auto flex w-full items-center justify-center">
 			<div class="group relative h-[100px] w-[100px]">
 				{#if datafile !== 'gada' && namaimage !== 'exist'}
