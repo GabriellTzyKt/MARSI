@@ -4,7 +4,7 @@
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
-	import CustomBtn from '../../masterData/CustomBtn.svelte';
+	import CustomBtn from './CustomBtn.svelte';
 	import { slide } from 'svelte/transition';
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import KerajaanPopup from '$lib/popup/KerajaanPopup.svelte';
@@ -40,7 +40,14 @@
 			errors = null;
 		}
 	});
-
+	function editID(id: any) {
+		console.log('EDIT ID : ', id);
+		edit = true;
+	}
+	function deleteID(id: any) {
+		console.log('DELETE ID : ', id);
+		del = true;
+	}
 	// const {data} = $props()
 	// console.log(data.tabel)
 	function filterData(data: any[]) {
@@ -179,8 +186,22 @@
 				>
 					{#snippet children({ header, data, index })}
 						{#if header === 'Aksi'}
-							<CustomBtn data={dataanggota?.find((item: any) => item.id_kerajaan === data.id_kerajaan)
-								?.anggota || []} tipe="anggota" id={data.id_kerajaan}></CustomBtn>
+							<CustomBtn
+								actionDel={{
+									action: () => {
+										deleteID(data.id_keanggotaan);
+									}
+								}}
+								actionEdit={{
+									action: () => {
+										editID(data.id_keanggotaan);
+									}
+								}}
+								data={dataanggota?.find((item: any) => item.id_kerajaan === data.id_kerajaan)
+									?.anggota || []}
+								tipe="anggota"
+								id={data.id_kerajaan}
+							></CustomBtn>
 						{/if}
 					{/snippet}
 				</Table>
