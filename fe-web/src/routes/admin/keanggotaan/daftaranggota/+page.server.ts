@@ -141,7 +141,7 @@ export const actions: Actions = {
                     id_kerajaan: Number(entry.id_kerajaan),
                     id_gelar: Number(entry.gelar_anggota),
                     nama_anggota: entry.nama_lengkap_anggota,
-                    posisi: entry.posisi
+                    posisi: entry.posisi_anggota
                 })
             });
             
@@ -166,14 +166,104 @@ export const actions: Actions = {
             });
         }
     },
-    ubahKerajaan: async ({request}) => {
+    ubahAnggota: async ({request}) => {
         const data = await request.formData().then((v)=> Object.fromEntries(v))
+        console.log("Data anggota : ", data)
+        
         const verif = schema.safeParse(data)
         if (!verif.success) {
             console.log(verif.error.flatten().fieldErrors)
             return fail(418, {errors: verif.error.flatten().fieldErrors, success: false, data})
         }
-        return {errors: "No Error", success: true}
-        console.log(data)
+        
+        try {
+            // Membuat request ke API untuk mengubah data anggota
+            const response = await fetch(env.PUB_PORT + "/kerajaan/anggota", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id_keanggotaan: Number(data.id_keanggotaan),
+                    id_kerajaan: Number(data.id_kerajaan2),
+                    id_gelar: Number(data.gelar_anggota),
+                    nama_anggota: data.nama_lengkap_anggota,
+                    posisi: data.posisi_anggota
+                })
+            });
+            
+            const result = await response.json();
+            console.log("API Response:", result);
+            
+            if (!response.ok) {
+                return fail(response.status, {
+                    errors: { api: [`Error: ${response.status} - ${result.message || "Terjadi kesalahan"}`] },
+                    success: false,
+                    data
+                });
+            }
+            
+            return {errors: "No Error", success: true}
+        } catch (error) {
+            console.error("API Error:", error);
+            return fail(500, {
+                errors: { api: ["Terjadi kesalahan saat menghubungi server"] },
+                success: false,
+                data
+            });
+        }
+    },
+
+    hapusAnggota: async ({request}) => {
+        const data = await request.formData();
+        const id_keanggotaan = Number(data.get("id_keanggotaan"));
+        
+        console.log("Menghapus anggota dengan ID:", id_keanggotaan);
+        
+        if (!id_keanggotaan) {
+            return fail(400, {
+                errors: { api: ["ID keanggotaan tidak ditemukan"] },
+                success: false
+            });
+        }
+        
+        try {
+            // Membuat request ke API untuk menghapus data anggota
+            const response = await fetch(`${env.PUB_PORT}/kerajaan/anggota/${id_keanggotaan}`, {
+                method: "DELETE",
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+
+            console.log("Ay")
+            
+            // Jika response tidak OK, kembalikan error
+            if (!response.ok) {
+                let errorMessage = "Terjadi kesalahan saat menghapus anggota";
+                console.log(errorMessage)
+                
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorMessage;
+                } catch (e) {
+                    // Jika tidak bisa parse JSON, gunakan pesan default
+                }
+                
+                return fail(response.status, {
+                    errors: { api: [`Error: ${response.status} - ${errorMessage}`] },
+                    success: false
+                });
+            }
+            console.log("berhasil")
+            
+            return { success: true, message: "Anggota berhasil dihapus" };
+        } catch (error) {
+            console.error("API Error:", error);
+            return fail(500, {
+                errors: { api: ["Terjadi kesalahan saat menghubungi server"] },
+                success: false
+            });
+        }
     }
 };

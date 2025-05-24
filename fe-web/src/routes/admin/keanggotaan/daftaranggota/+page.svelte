@@ -19,6 +19,7 @@
 	console.log(data.dataKerajaan);
 	console.log('GELAR : ', data.gelar);
 	let dataanggota = $state(data.anggotaKerajaan);
+	let datagelar = $state(data.gelar);
 
 	console.log('Anggota : ', data.anggotaKerajaan);
 	// import {dropId} from './DropDown.svelte'
@@ -179,8 +180,8 @@
 				>
 					{#snippet children({ header, data, index })}
 						{#if header === 'Aksi'}
-							<CustomBtn data={dataanggota?.find((item: any) => item.id_kerajaan === data.id_kerajaan)
-								?.anggota || []} tipe="anggota" id={data.id_kerajaan}></CustomBtn>
+							<CustomBtn dataGelar={datagelar} {data} tipe="anggota" id={data.id_kerajaan}
+							></CustomBtn>
 						{/if}
 					{/snippet}
 				</Table>
@@ -208,12 +209,13 @@
 				if (result.type === 'success') {
 					success = true;
 					let timer: number;
-					invalidateAll();
-					timer = setTimeout(() => {
-						edit = false;
-						success = false;
-						goto('/admin/keanggotaan/daftaranggota');
-					}, 3000);
+					await invalidateAll().then(() => {
+						timer = setTimeout(() => {
+							edit = false;
+							success = false;
+							goto('/admin/keanggotaan/daftaranggota');
+						}, 3000);
+					});
 				}
 				if (result.type === 'failure') {
 					errors = result.data?.errors;
@@ -235,12 +237,12 @@
 				if (result.type === 'success') {
 					success = true;
 					let timer: number;
-					timer = setTimeout(() => {
-						invalidateAll();
-
-						resetFormState();
-						success = false;
-					}, 3000);
+					await invalidateAll().then(() => {
+						setTimeout(() => {
+							resetFormState();
+							success = false;
+						}, 3000);
+					});
 				}
 				if (result.type === 'failure') {
 					errors = result.data?.errors;
