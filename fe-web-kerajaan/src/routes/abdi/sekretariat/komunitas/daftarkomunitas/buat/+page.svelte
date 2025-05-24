@@ -6,10 +6,50 @@
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
 
+	let { data } = $props();
+	let users = data?.data || [];
 	let open = $state(false);
 	let timer: number;
 	let errors = $state();
 	let loading = $state(false);
+	let user = data?.user || [];
+
+	let pbKeyword = $state('');
+	let selectedPb = $state(null);
+	let showPbDropdown = $state(false);
+	let filteredPbUsers = $derived(filterUser(pbKeyword));
+
+	let pjKeyword = $state('');
+	let selectedPj = $state(null);
+	let showPjDropdown = $state(false);
+	let filteredPjUsers = $derived(filterUser(pjKeyword));
+
+	let plKeyword = $state('');
+	let selectedPl = $state(null);
+	let showPldropdown = $state(false);
+	let filteredPlUsers = $derived(filterUser(plKeyword));
+
+	function filterUser(searchTerm: string) {
+		return users.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+	}
+
+	function selectPb(user: any) {
+		selectedPb = user;
+		pbKeyword = user.name;
+		showPbDropdown = false;
+	}
+
+	function selectPj(user: any) {
+		selectedPj = user;
+		pjKeyword = user.name;
+		showPjDropdown = false;
+	}
+
+	function selectPl(user: any) {
+		selectedPl = user;
+		plKeyword = user.name;
+		showPldropdown = false;
+	}
 
 	// Tambahkan state untuk gambar
 	let selectedImage = $state(null);
@@ -53,7 +93,9 @@
 				}
 				if (result.type === 'failure') {
 					errors = result.data?.errors;
-					{console.log(errors)}
+					{
+						console.log(errors);
+					}
 				}
 			};
 		}}
@@ -88,15 +130,15 @@
 		</div>
 		{#if namaimage === 'exist'}
 			<input type="hidden" name="image_name" value={namaimage} />
-		{:else }
-			<input type="hidden" name="image_name" value="">	
+		{:else}
+			<input type="hidden" name="image_name" value="" />
 		{/if}
 
 		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<!-- 1 -->
 			<div>
 				<div>
-					<p>Nama Situs:</p>
+					<p>Nama Situs</p>
 					<div class="relative">
 						<input
 							type="text"
@@ -114,7 +156,7 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Alamat:</p>
+					<p class="mt-5">Alamat</p>
 					<div class="relative">
 						<input
 							type="text"
@@ -132,7 +174,7 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Email:</p>
+					<p class="mt-5">Email</p>
 					<div class="relative">
 						<input
 							type="text"
@@ -150,7 +192,7 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Deskripsi Situs:</p>
+					<p class="mt-5">Deskripsi Komunitas</p>
 					<div class="relative w-full">
 						<textarea
 							placeholder="Masukkan Deskripsi Situs"
@@ -172,17 +214,49 @@
 			<!-- 2 -->
 			<div>
 				<div>
-					<p>Penanggung Jawab:</p>
+					<p>Penanggung Jawab</p>
 					<div class="relative">
 						<input
 							type="text"
-							name="penanggungjawab"
+							name="penanggungjawab_nama"
+							bind:value={pjKeyword}
+							onfocus={() => (showPjDropdown = true)}
+							onblur={() => {
+								// Delay hiding dropdown to allow for click
+								setTimeout(() => {
+									showPjDropdown = false;
+								}, 200);
+							}}
 							placeholder="Masukkan Penanggung Jawab"
 							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 						/>
+						<input type="hidden" name="penanggungjawab_id" value={selectedPj?.id || ''} />
+
+						{#if showPjDropdown && filteredPjUsers.length > 0}
+							<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
+								<ul class="max-h-60 overflow-y-auto">
+									{#each filteredPjUsers as user}
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+										<li
+											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+											onclick={() => selectPj(user)}
+										>
+											<div class="flex flex-col">
+												<span class="font-medium">{user.name}</span>
+												<span class="text-sm text-gray-500">{user.email}</span>
+											</div>
+										</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
 					</div>
 					{#if errors}
 						{#each errors.penanggungjawab as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+						{#each errors.penanggungjawab_id as e}
 							<p class="text-left text-red-500">- {e}</p>
 						{/each}
 					{/if}
@@ -190,17 +264,49 @@
 
 				<div class="mt-5 flex items-center gap-3">
 					<div class="w-full">
-						<p>Pembina:</p>
+						<p>Pembina</p>
 						<div class="relative">
 							<input
 								type="text"
-								name="pembina"
+								name="pembina_nama"
+								bind:value={pbKeyword}
+								onfocus={() => (showPbDropdown = true)}
+								onblur={() => {
+									// Delay hiding dropdown to allow for click
+									setTimeout(() => {
+										showPbDropdown = false;
+									}, 200);
+								}}
 								placeholder="Masukkan Pembina"
 								class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 							/>
 						</div>
+						<input type="hidden" name="pembina_id" value={selectedPb?.id || ''} />
+						{#if showPbDropdown && filteredPbUsers.length > 0}
+							<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
+								<ul class="max-h-60 overflow-y-auto">
+									{#each filteredPbUsers as user}
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+										<li
+											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+											onclick={() => selectPb(user)}
+										>
+											<div class="flex flex-col">
+												<span class="font-medium">{user.name}</span>
+												<span class="text-sm text-gray-500">{user.email}</span>
+											</div>
+										</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
+
 						{#if errors}
 							{#each errors.pembina as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+							{#each errors.pembina_id as e}
 								<p class="text-left text-red-500">- {e}</p>
 							{/each}
 						{/if}
@@ -212,11 +318,19 @@
 
 				<div class="mt-5 flex items-center gap-3">
 					<div class="w-full">
-						<p>Pelindung:</p>
+						<p>Pelindung</p>
 						<div class="relative">
 							<input
 								type="text"
-								name="pelindung"
+								name="pelindung_nama"
+								bind:value={plKeyword}
+								onfocus={() => (showPldropdown = true)}
+								onblur={() => {
+									// Delay hiding dropdown to allow for click
+									setTimeout(() => {
+										showPldropdown = false;
+									}, 200);
+								}}
 								placeholder="Masukkan Pelindung"
 								class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 							/>
@@ -226,16 +340,71 @@
 						Permohonan
 					</button>
 				</div>
+				<input type="hidden" name="pelindung_id" value={selectedPl?.id || ''} />
+				{#if showPldropdown && filteredPlUsers.length > 0}
+					<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
+						<ul class="max-h-60 overflow-y-auto">
+							{#each filteredPlUsers as user}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								<li
+									class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+									onclick={() => selectPl(user)}
+								>
+									<div class="flex flex-col">
+										<span class="font-medium">{user.name}</span>
+										<span class="text-sm text-gray-500">{user.email}</span>
+									</div>
+								</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
+
 				{#if errors}
 					{#each errors.pelindung as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
+					{#each errors.pelindung_id as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
 				{/if}
-
-				<div class="mt-5 gap-8 flex lg:flex-row flex-col">
+				<div class="mt-2">
+					<p>Tempat Operasional</p>
+					<div class="relative">
+						<input
+							type="text"
+							name="tempat_operasional"
+							placeholder="Masukkan Tempat Operasional"
+							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
+						/>
+					</div>
+					{#if errors}
+						{#each errors.tempat_operasional as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
+				</div>
+				<div class="mt-2">
+					<p>Tanggal Berdiri</p>
+					<div class="relative">
+						<input
+							type="date"
+							name="tanggal_berdiri"
+							placeholder="Masukkan Tanggal Berdiri"
+							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
+						/>
+					</div>
+					{#if errors}
+						{#each errors.tangal_berdiri as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
+				</div>
+				<div class="mt-5 flex flex-col gap-8 lg:flex-row">
 					<div class="flex-col lg:w-[50%]">
 						<div class="w-full">
-							<p>No telepon :</p>
+							<p>No telepon</p>
 							<input
 								type="text"
 								name="phone"
@@ -251,7 +420,7 @@
 					</div>
 					<div class="flex-col lg:w-[50%]">
 						<div class="w-full">
-							<p>Jumlah Anggota :</p>
+							<p>Jumlah Anggota</p>
 							<input
 								type="text"
 								name="jumlah_anggota"
@@ -275,11 +444,14 @@
 				type="submit">Simpan Data</button
 			>
 		</div>
+		<input type="text" hidden name="id_pemohon" value={data?.user.id_user} id="" />
 	</form>
+	{#if errors?.server}
+		<p class="text-red-500">{errors?.server}</p>
+	{/if}
 </div>
-
 {#if open}
-	<SuccessModal text="Situs Berhasil Dibuat"></SuccessModal>
+	<SuccessModal text="Komunitas Berhasil Dibuat"></SuccessModal>
 {/if}
 
 <style>

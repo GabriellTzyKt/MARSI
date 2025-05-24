@@ -1,13 +1,28 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { enhance } from '$app/forms';
+	import { goto, invalidateAll } from '$app/navigation';
+	import { navigating } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
+	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
 	import { dummyAnggota, dummyOrganisasi } from '$lib/dummy';
+	import Loader from '$lib/loader/Loader.svelte';
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
+	let { data } = $props();
 	let keyword = $state('');
 	let entries = $state(10);
 	let currPage = $state(1);
+	let idNonAktif = $state();
+	let deleteModal = $state(false);
+	let loading = $state(false);
+	let success = $state(false);
+	function nonAktifkan(id: number) {
+		console.log('Non Aktifkan : ', id);
+		idNonAktif = id;
+		deleteModal = true;
+	}
 	function filterD(data: any[]) {
 		return data.filter(
 			(item) =>
@@ -26,7 +41,7 @@
 		console.log(d);
 		return d.slice(start, end);
 	}
-	let resData = $derived(pagination(dummyOrganisasi));
+	let resData = $derived(pagination(data.finalwithuser || []));
 	$effect(() => {
 		if (keyword || entries) {
 			currPage = 1;
@@ -37,12 +52,18 @@
 	});
 </script>
 
+{#if loading}
+	<Loader></Loader>
+{/if}
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col lg:flex-row lg:justify-between">
 		<button
 			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
 			onclick={() => {
-				goto('/abdi/sekretariat/organisasi/daftarOrganisasi/buat');
+				goto('/abdi/sekretariat/organisasi/daftarorganisasi/buat');
 			}}>+Tambah Data</button
 		>
 		<div
@@ -106,30 +127,34 @@
 	<div class="flex w-full flex-col">
 		<Table
 			table_header={[
-				['id_organisasi', 'Id Organisasi'],
 				['nama_organisasi', 'Nama Organisasi'],
 				['tanggal_berdiri', 'Tanggal Berdiri'],
 				['lokasi', 'Lokasi'],
-				['penanggungjawab', 'Penanggung Jawab'],
-				['pelindung', 'Pelindung'],
-				['pembina', 'Pembina'],
+				['penanggung_jawab_nama', 'Penanggung Jawab'],
+				['pelindung_nama', 'Pelindung'],
+				['pembina_nama', 'Pembina'],
 				['children', 'Aksi']
 			]}
 			table_data={resData}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
-					<DropDown
+					<DropDownNew
 						text={`apakah anda yakin ingin mengarsip anggota ${data.nama_organisasi}?`}
-						link="/abdi/sekretariat/organisasi/daftarorganisasi"
-						successText={`berhasil mengarship organisai ${data.nama_organisasi}`}
 						items={[
-							['Ubah', '/abdi/sekretariat/organisasi/daftarOrganisasi/edit    '],
-							['children', 'non-aktifkan']
+							{
+								label: 'Edit',
+								action: () =>
+									goto(`/abdi/sekretariat/organisasi/daftarorganisasi/edit/${data.id_organisasi}`)
+							},
+							{
+								label: 'Non Aktifkan',
+								action: () => nonAktifkan(data.id_organisasi)
+							}
 						]}
 						id={`id-${index}`}
 						{data}
-					></DropDown>
+					></DropDownNew>
 				{/if}
 			{/snippet}
 		</Table>
@@ -137,3 +162,36 @@
 		></Pagination>
 	</div>
 </div>
+{#if deleteModal}
+	<form
+		action="?/deleteOrganisasi"
+		method="post"
+		use:enhance={() => {
+			loading = true;
+			return async ({ result }) => {
+				loading = false;
+				if (result.type === 'success') {
+					success = true;
+					deleteModal = false;
+					await invalidateAll().then(() => {
+						setTimeout(() => {
+							deleteModal = false;
+							success = false;
+						}, 3000);
+					});
+				}
+				if (result.type === 'failure') {
+					console.log(result.data?.errors);
+				}
+			};
+		}}
+	>
+		<DeleteModal
+			bind:value={deleteModal}
+			text="Apakah yakin ingin menghapus organisasi ini?"
+			successText="Organisasi berhasil dihapus!"
+			choose="delete"
+		></DeleteModal>
+		<input type="text" name="id_organisasi" value={idNonAktif} hidden />
+	</form>
+{/if}

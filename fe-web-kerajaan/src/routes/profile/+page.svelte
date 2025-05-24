@@ -180,7 +180,7 @@
 					<p class="text-lg">Wongso</p>
 				</div>
 				<div class=" mt-2">
-					<Input value={accounts[0].wongso} type="text"></Input>
+					<Input value={data.data.keturunan || '-'} type="text"></Input>
 				</div>
 			</div>
 		</div>
@@ -241,7 +241,7 @@
 				<p class="text-lg">Asma Dalem</p>
 			</div>
 			<div class="mt-2">
-				<Input value={data.data.asma_dalem ? data.data.asma_dalem : '-'} type="text"></Input>
+				<Input value={data.data.panggilan ? data.data.panggilan : '-'} type="text"></Input>
 			</div>
 		</div>
 		<!-- Ayah $ Ibu -->

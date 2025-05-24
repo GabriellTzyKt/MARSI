@@ -2,23 +2,26 @@ import { env } from "$env/dynamic/private";
 import { formatDate, formatDatetoUI } from "$lib";
 import pLimit from "p-limit";
 import type { Actions, PageServerLoad } from "./$types";
+import { fail } from "@sveltejs/kit";
 
 
 export const load: PageServerLoad = async () => {
     try {
         let limit = pLimit(5)
         // Fetch komunitas data
-        const res = await fetch(`${env.URL_KERAJAAN}/komunitas`);
+        let res = await fetch(`${env.URL_KERAJAAN}/komunitas`);
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }
-        const data = await res.json();
+        let data = await res.json();
         console.log("Raw komunitas data:", data);
-        
+        data = data.filter((item: any) => {
+            return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
+        });
         // Process each komunitas item with user details
-        const processedData = await Promise.all(data.map(async (item) => {
+        let processedData = await Promise.all(data.map(async (item) => {
             // Format date
-            const formattedItem = {
+            let formattedItem = {
                 ...item,
                 tanggal_berdiri: formatDatetoUI(item.tanggal_berdiri)
             };
@@ -29,14 +32,14 @@ export const load: PageServerLoad = async () => {
             console.log(`- pelindung: ${item.pelindung}`);
             
             // Process user IDs for each role
-            const roles = {
+            let roles = {
                 penanggung_jawab: item.penanggung_jawab ? [item.penanggung_jawab] : [],
                 pembina: item.pembina ? item.pembina.split(',').filter(id => id && id !== "") : [],
                 pelindung: item.pelindung ? item.pelindung.split(',').filter(id => id && id !== "") : []
             };
             
             // Create a unique set of all user IDs to fetch
-            const allUserIds = new Set([
+            let allUserIds = new Set([
                 ...roles.penanggung_jawab,
                 ...roles.pembina,
                 ...roles.pelindung
@@ -45,18 +48,18 @@ export const load: PageServerLoad = async () => {
             console.log(`Unique user IDs to fetch:`, Array.from(allUserIds));
             
             // Fetch all unique user details in parallel using port 8888
-            const userDetailsMap = new Map();
+            let userDetailsMap = new Map();
             
                 if (allUserIds.size > 0) {
-                const userResults = await Promise.all(
+                let userResults = await Promise.all(
                     Array.from(allUserIds).map(id =>
                         limit(async () => {
                             if (!id || id === "" || isNaN(Number(id))) return { id, userData: null };
                             try {
                                 console.log(`Fetching user ${id}...`);
-                                const userRes = await fetch(`${env.PUB_PORT}/user/${id}`);
+                                let userRes = await fetch(`${env.PUB_PORT}/user/${id}`);
                                 if (userRes.ok) {
-                                    const userData = await userRes.json();
+                                    let userData = await userRes.json();
                                      console.log(`Found User ${id} : ${userData.nama_lengkap}...`);
                                     return { id, userData };
                                 }
@@ -74,11 +77,11 @@ export const load: PageServerLoad = async () => {
             }
             
             // Get user names directly - extract nama_lengkap
-            const penanggungJawabId = roles.penanggung_jawab.length > 0 ? roles.penanggung_jawab[0] : null;
+            let penanggungJawabId = roles.penanggung_jawab.length > 0 ? roles.penanggung_jawab[0] : null;
             let penanggungJawabName = "-";
             
             if (penanggungJawabId && userDetailsMap.has(penanggungJawabId)) {
-                const userData = userDetailsMap.get(penanggungJawabId);
+                let userData = userDetailsMap.get(penanggungJawabId);
                 // Extract nama_lengkap
                 penanggungJawabName = userData.nama_lengkap || `User ${penanggungJawabId}`;
                 console.log(`Penanggung jawab (${penanggungJawabId}) name:`, penanggungJawabName);
@@ -90,10 +93,10 @@ export const load: PageServerLoad = async () => {
                 }
             }
                 
-            const pembinaNames = roles.pembina
+            let pembinaNames = roles.pembina
                 .map(id => {
                     if (userDetailsMap.has(id)) {
-                        const userData = userDetailsMap.get(id);
+                        let userData = userDetailsMap.get(id);
                         return userData.nama_lengkap || `User ${id}`;
                     }
                     // If it's not a number, it might already be a name
@@ -101,10 +104,10 @@ export const load: PageServerLoad = async () => {
                 })
                 .join(", ") || "-";
                 
-            const pelindungNames = roles.pelindung
+            let pelindungNames = roles.pelindung
                 .map(id => {
                     if (userDetailsMap.has(id)) {
-                        const userData = userDetailsMap.get(id);
+                        let userData = userDetailsMap.get(id);
                         return userData.nama_lengkap || `User ${id}`;
                     }
                     // If it's not a number, it might already be a name
@@ -130,5 +133,31 @@ export const load: PageServerLoad = async () => {
     }
 };
 export const actions: Actions = {
-    
+    deleteKomunitas: async ({ request }) => {
+        const data = await request.formData();
+        const id = data.get("id_komunitas");
+        try {
+            const delres = await fetch(`${env.URL_KERAJAAN}/komunitas/${id}`, {
+                method: "DELETE"
+            });
+            if (!delres.ok) {
+                const errorData = await delres.json().catch(() => ({}));
+                console.error("Delete failed:", delres.status, errorData);
+                return fail(delres.status, { 
+                    error: errorData.message || `Gagal menghapus komunitas (${delres.status})` 
+                });
+            }
+            const successData = await delres.json().catch(() => ({ message: "Success" }));
+            console.log("Delete successful:", successData);
+            return {
+                success: true,
+                message: "Komunitas berhasil dihapus"
+            };
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+
 };

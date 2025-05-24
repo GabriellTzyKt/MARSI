@@ -118,6 +118,9 @@
 {#if loading}
 	<Loader></Loader>
 {/if}
+{#if success}
+	<SuccessModal text="Berhasil Dirubah"></SuccessModal>
+{/if}
 <form
 	action="?/ubah"
 	method="post"

@@ -1,46 +1,109 @@
 import { env } from "$env/dynamic/private";
+import { formatDate, formatDatetoUI } from "$lib";
+import type { PageServerLoad } from "./$types";
 import { fail, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
-import type { PageServerLoad } from "../$types";
-import pLimit from "p-limit";
-export const load: PageServerLoad = async ({ cookies,locals }) => {
-    let limit = pLimit(5)
-    let dataCookies = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
-    let token = dataCookies.token
+export const load: PageServerLoad = async ({params, cookies}) => {
+    let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
     try {
-        let res = await fetch(`${env.PUB_PORT}/users`, {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        });
-        
+        let res = await fetch(`${env.URL_KERAJAAN}/organisasi/${params.id}`);
 
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }
         let data = await res.json();
-        data = data.filter((item: any) => {
-            return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
-        }).map((item: any) => {
-            return {
-                id: item.id_user,
-                name: item.nama_lengkap,
-                email: item.email
+        console.log("API response data:", data);
+        console.log("Data type:", typeof data);
+        // Check if data is an array, if not, wrap it in an array
+        let dataArray = Array.isArray(data) ? data : [data];
+        
+        let finalData = await Promise.all(dataArray.map(async (item: any) => {
+            try {
+                let resPj = await fetch(`${env.PUB_PORT}/user/${item.penanggung_jawab}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token?.token}`
+                    }
+               });
+                let resPl = await fetch(`${env.PUB_PORT}/user/${item.pelindung}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token?.token}`
+                    }
+               });
+                let resPb = await fetch(`${env.PUB_PORT}/user/${item.pembina}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token?.token}`
+                    }
+               });
+                if (resPj.ok && resPl.ok && resPb.ok) {
+                    let pjData = await resPj.json();
+                    let plData = await resPl.json();
+                    let pbData = await resPb.json();
+                    return {
+                        ...item,
+                        penanggung_jawab_nama: pjData.nama_lengkap || pjData.nama || `User ${item.penanggung_jawab}`,
+                        pelindung_nama: plData.nama_lengkap || plData.nama || `User ${item.pelindung}`,
+                        pembina_nama: pbData.nama_lengkap || pbData.nama || `User ${item.pembina}`,
+                        tanggal_berdiri: formatDate(item.tanggal_berdiri),
+                    };
+                }
+                else {
+                    return {
+                        ...item,
+                        penanggung_jawab_nama: `User ${item.penanggung_jawab}`,
+                        pelindung_nama: `User ${item.pelindung}`,
+                        pembina_nama: `User ${item.pembina}`,
+                        tanggal_berdiri: formatDate(item.tanggal_berdiri),
+                    };
+      
+                }
+            } catch (error) {
+                console.log(error);
+                // Return the item with default values when there's an error
+                return {
+                    ...item,
+                    penanggung_jawab_nama: `User ${item.penanggung_jawab}`,
+                    pelindung_nama: `User ${item.pelindung}`,
+                    pembina_nama: `User ${item.pembina}`,
+                    tanggal_berdiri: formatDatetoUI(item.tanggal_berdiri),
+                };
+            }
+        }));
+        
+        // Filter out any undefined values that might have occurred during mapping
+        finalData = finalData.filter(item => item !== undefined);
+        
+        console.log("finalData:", finalData);
+        
+        // Fetch all users for dropdown selection
+        const usersResponse = await fetch(`${env.PUB_PORT}/users`, {
+            headers: {
+                "Authorization": `Bearer ${token?.token}`
             }
         });
-        console.log("Raw admin data:", data);
-        return { data, user: dataCookies.user_data };
-    }
-    catch (error) {
-        console.log(error);
-        return { data: "Failed" };
+
+        let allUsers = [];
+        if (usersResponse.ok) {
+            const userData = await usersResponse.json();
+            allUsers = userData.filter((user: any) => 
+                user.deleted_at === '0001-01-01T00:00:00Z' || !user.deleted_at
+            ).map((user: any) => ({
+                id: user.id_user,
+                name: user.nama_lengkap || 'Nama tidak tersedia',
+                email: user.email || 'Email tidak tersedia'
+            }));
+        }
+        
+        return { data: finalData[0], allUsers };
+    } catch (error) {
+        console.error("Error in load function:", error);
+        return { data: [], allUsers: [] };
     }
 };
 export const actions: Actions = {
-    tambahSitus: async ({ request }) => {
+    ubahOrganisasi: async ({request}) => {
         const data = await request.formData()
-        console.log("komunitas : ", data)
-        const ver = z.object({
+        console.log(data)
+       const ver = z.object({
             nama_situs:
                 z.string({ message: "Field Nama Situs Harus diisi" })
                     .nonempty("Field ini tidak boleh kosong"),
@@ -57,7 +120,7 @@ export const actions: Actions = {
                 z.string({ message: "Field Email Harus diisi" })
                     .nonempty("Field ini tidak boleh kosong")
                     .email("Email Invalid"),
-            deskripsi_komunitas:
+            deskripsi_organisasi:
                 z.string({ message: "Field Deskripsi Situs Harus diisi" })
                     .nonempty("Field ini tidak boleh kosong"),
             tanggal_berdiri:
@@ -106,7 +169,7 @@ export const actions: Actions = {
             nama_situs: String(data.get("nama_situs")),
             alamat: String(data.get("alamat")),
             email: String(data.get("email")),
-            deskripsi_komunitas: String(data.get("deskripsi_situs")),
+            deskripsi_organisasi: String(data.get("deskripsi_situs")),
             penanggungjawab: String(data.get("penanggungjawab_nama")),
             penanggungjawab_id: String(data.get("penanggungjawab_id")),
             tanggal_berdiri: String(data.get("tanggal_berdiri")),
@@ -133,17 +196,17 @@ export const actions: Actions = {
             const formDataToSend = new FormData();
             formDataToSend.append("id_pemohon", data.get("id_pemohon") as string);
             formDataToSend.append("penanggung_jawab", formData.penanggungjawab_id);
-            formDataToSend.append("nama_komunitas", formData.nama_situs);
-            formDataToSend.append("deskripsi", formData.deskripsi_komunitas);
-            formDataToSend.append("lokasi", '2');
-            formDataToSend.append("pelindung", formData.pelindung_id);
-            formDataToSend.append("pembina", formData.pembina_id);
-            formDataToSend.append("alamat", formData.alamat);
-            formDataToSend.append("tanggal_berdiri", formData.tanggal_berdiri);
-            formDataToSend.append("foto_komunitas", data.get("profile_image") as File);
-            formDataToSend.append("foto_profile", data.get("profile_image") as File);
+            formDataToSend.append("nama_organisasi", formData.nama_situs);
+            formDataToSend.append("deskripsi", formData.deskripsi_organisasi);
             formDataToSend.append("email", formData.email);
             formDataToSend.append("no_telp", formData.phone);
+            formDataToSend.append("alamat", formData.alamat);
+            formDataToSend.append("pelindung", formData.pelindung_id);
+            formDataToSend.append("pembina", formData.pembina_id);
+            formDataToSend.append("tanggal_berdiri", formData.tanggal_berdiri);
+            formDataToSend.append("foto_organisasi", data.get("profile_image") as File);
+            formDataToSend.append("foto_profile", data.get("profile_image") as File);
+            // formDataToSend.append("lokasi", '2');
             // formDataToSend.append("tempat_operasional", formData.tempat_operasional);
             // formDataToSend.append("jumlah_anggota", formData.jumlahanggota);
             // formDataToSend.append("jenis_komunitas", "Public")
@@ -158,7 +221,7 @@ export const actions: Actions = {
 
             console.log("form data to send : " , formDataToSend)
 
-            const response = await fetch(`${env.URL_KERAJAAN}/komunitas`, {
+            const response = await fetch(`${env.URL_KERAJAAN}/organisasi`, {
                 method: "POST",
                 body: formDataToSend
             });

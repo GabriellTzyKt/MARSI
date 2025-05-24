@@ -216,11 +216,11 @@
 			return 'Edit Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/manajemenadmin') {
 			return 'Manajemen Role Administrasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi') {
 			return 'Daftar Organisasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/edit') {
 			return 'Ubah Organisasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/buat') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/buat') {
 			return 'Buat Organisasi';
 		} else if (page.route.id?.startsWith('/abdi/sekretariat/komunitas/daftarkomunitas/edit')) {
 			return 'Edit Komunitas';
@@ -683,10 +683,10 @@
 				</SidebarMenu>
 				<SidebarMenu href="" icon="mdi:people" anchor="Organisasi" hasChildren={true}>
 					<SidebarMenu
-						href="/abdi/sekretariat/organisasi/daftarOrganisasi"
+						href="/abdi/sekretariat/organisasi/daftarorganisasi"
 						icon="mdi:book"
 						anchor="Daftar Organisasi"
-						active={page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi'}
+						active={page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi'}
 					/>
 					<SidebarMenu
 						href="/abdi/sekretariat/organisasi/daftaranggota"

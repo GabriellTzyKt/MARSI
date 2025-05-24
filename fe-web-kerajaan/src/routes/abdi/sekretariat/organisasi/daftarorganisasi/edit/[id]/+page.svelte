@@ -6,43 +6,39 @@
 	import { enhance } from '$app/forms';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
-
+	import { onMount } from 'svelte';
 	let { data } = $props();
-	let users = data.allUsers || [];
-
-	console.log('data dari server.ts : ', data);
-	let dataisi = data.komunitas;
-	let datafile = data.fileDetails?.url ? data.fileDetails.url : 'gada';
-	let jumlahanggota = $state(data.jumlahAnggotaData.length);
 
 	let open = $state(false);
 	let timer: number;
-	let loading = $state(false);
 	let errors = $state();
+	let loading = $state(false);
 
-	let pbKeyword = $state('');
-	let selectedPb = $state(null);
-	let showPbDropdown = $state(false);
-	let filteredPbUsers = $derived(filterUser(pbKeyword));
-
-	let pjKeyword = $state('');
-	let selectedPj = $state(null);
+	let pjKeyword = $state(
+		data.allUsers.find((user) => user.id == data.data.penanggung_jawab)?.name || ''
+	);
+	let selectedPj = $state(
+		data.allUsers.find((user) => user.id == data.data.penanggung_jawab) || null
+	);
 	let showPjDropdown = $state(false);
 	let filteredPjUsers = $derived(filterUser(pjKeyword));
 
-	let plKeyword = $state('');
-	let selectedPl = $state(null);
-	let showPldropdown = $state(false);
+	let plKeyword = $state(
+		data.allUsers.find((user) => user.id == data.data.pelindung_nama)?.name || ''
+	);
+	let selectedPl = $state(data.allUsers.find((user) => user.id == data.data.pelindung) || null);
+	let showPlDropdown = $state(false);
 	let filteredPlUsers = $derived(filterUser(plKeyword));
 
-	function filterUser(searchTerm: string) {
-		return users.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
-	}
+	let pbKeyword = $state(data.allUsers.find((user) => user.id == data.data.pembina)?.name || '');
+	let selectedPb = $state(data.allUsers.find((user) => user.id == data.data.pembina) || null);
+	let showPbDropdown = $state(false);
+	let filteredPbUsers = $derived(filterUser(pbKeyword));
 
-	function selectPb(user: any) {
-		selectedPb = user;
-		pbKeyword = user.name;
-		showPbDropdown = false;
+	function filterUser(searchTerm: string) {
+		return data.allUsers.filter((item) =>
+			item.name.toLowerCase().includes(searchTerm.toLowerCase())
+		);
 	}
 
 	function selectPj(user: any) {
@@ -54,9 +50,14 @@
 	function selectPl(user: any) {
 		selectedPl = user;
 		plKeyword = user.name;
-		showPldropdown = false;
+		showPlDropdown = false;
 	}
 
+	function selectPb(user: any) {
+		selectedPb = user;
+		pbKeyword = user.name;
+		showPbDropdown = false;
+	}
 	// Tambahkan state untuk gambar
 	let selectedImage = $state(null);
 	let imagePreview = $state(gambardefault);
@@ -81,101 +82,78 @@
 	<Loader></Loader>
 {/if}
 <div class="h-full w-full">
+	<div class="relative mx-auto flex w-full items-center justify-center">
+		<div class="group relative h-[100px] w-[100px]">
+			<img src={imagePreview} class="h-full w-full rounded-full" alt="" />
+
+			<div
+				class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+			>
+				<label for="profileImage" class="cursor-pointer">
+					<p class="font-semibold text-white">Ganti Foto</p>
+				</label>
+				<input
+					type="file"
+					id="profileImage"
+					name="profile_image"
+					accept="image/*"
+					onchange={handleImageUpload}
+					class="hidden"
+				/>
+			</div>
+		</div>
+	</div>
 	<form
-		action="?/ubahKomunitas"
+		action="?/ubahOrganisasi"
 		method="post"
-		enctype="multipart/form-data"
 		use:enhance={() => {
 			loading = true;
 			return async ({ result, update }) => {
 				loading = false;
 				if (result.type === 'success') {
 					open = true;
-					// clearTimeout(timer);
-					// timer = setTimeout(() => {
-					// 	open = false;
-					// 	goto('/abdi/sekretariat/komunitas/daftarkomunitas');
-					// }, 3000);
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						open = false;
+						// goto('/abdi/sekretariat/organisasi/daftarorganisasi');
+					}, 3000);
 				}
 				if (result.type === 'failure') {
 					errors = result.data?.errors;
-					console.log(errors);
 				}
 			};
 		}}
 	>
-		<div class="relative mx-auto flex w-full items-center justify-center">
-			<div class="group relative h-[100px] w-[100px]">
-				{#if datafile !== 'gada' && namaimage !== 'exist'}
-					<img src={datafile} class="h-full w-full rounded-full object-cover" alt="Foto Profil" />
-				{:else}
-					<img
-						src={imagePreview}
-						class="h-full w-full rounded-full object-cover"
-						alt="Foto Profil"
-					/>
-				{/if}
-
-				<div
-					class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-				>
-					<label for="profileImage" class="cursor-pointer">
-						<p class="font-semibold text-white">Ganti Foto</p>
-					</label>
-					<input
-						type="file"
-						id="profileImage"
-						name="profile_image"
-						accept="image/*"
-						onchange={handleImageUpload}
-						class="hidden"
-					/>
-				</div>
-			</div>
-		</div>
-		<div class="w-full items-center text-center">
-			{#if errors}
-				{#each errors.image_name as e}
-					<p class="text-red-500">- {e}</p>
-				{/each}
-			{/if}
-		</div>
-		{#if namaimage === 'exist'}
-			<input type="hidden" name="image_name" value={namaimage} />
-		{:else}
-			<input type="hidden" name="image_name" value="" />
-		{/if}
-
 		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<!-- 1 -->
 			<div>
 				<div>
-					<p>Nama Komunitas:</p>
+					<p>Nama Organisasi</p>
 					<div class="relative">
 						<input
 							type="text"
-							name="nama_situs"
-							value={dataisi?.nama_komunitas || ''}
-							placeholder="Masukkan Nama Situs"
+							name="nama_organisasi"
+							value={data?.data.nama_organisasi || ''}
+							placeholder="Masukkan Nama Organisasi"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 pr-10"
 						/>
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 					</div>
 					{#if errors}
-						{#each errors.nama_situs as e}
+						{#each errors.nama_organisasi as e}
 							<p class="text-left text-red-500">- {e}</p>
 						{/each}
 					{/if}
 				</div>
 
 				<div>
-					<p class="mt-5">Alamat:</p>
+					<p class="mt-5">Alamat</p>
 					<div class="relative">
 						<input
 							type="text"
 							placeholder="Masukkan Alamat"
-							value={dataisi?.alamat || ''}
 							name="alamat"
+							value={data?.data.alamat || ''}
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 pr-10"
 						/>
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
@@ -188,13 +166,13 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Email:</p>
+					<p class="mt-5">Email</p>
 					<div class="relative">
 						<input
 							type="text"
-							value={dataisi?.email || ''}
 							placeholder="Masukkan Email"
 							name="email"
+							value={data?.data.email || ''}
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 pr-10"
 						/>
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
@@ -207,12 +185,12 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Deskripsi Komunitas:</p>
+					<p class="mt-5">Deskripsi Organisasi</p>
 					<div class="relative w-full">
 						<textarea
-							placeholder="Masukkan Deskripsi Situs"
-							name="deskripsi_situs"
-							value={dataisi?.deskripsi_komunitas || ''}
+							placeholder="Masukkan Deskripsi Organisasi"
+							name="deskripsi_organisasi"
+							value={data?.data.deskripsi_organisasi || ''}
 							class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 pr-10 text-lg"
 						></textarea>
 						<div class="h-full">
@@ -220,7 +198,7 @@
 						</div>
 					</div>
 					{#if errors}
-						{#each errors.deskripsi_situs as e}
+						{#each errors.deskripsi_organisasi as e}
 							<p class="text-left text-red-500">- {e}</p>
 						{/each}
 					{/if}
@@ -247,37 +225,35 @@
 							placeholder="Masukkan Penanggung Jawab"
 							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 						/>
-						<input type="hidden" name="penanggungjawab_id" value={selectedPj?.id || ''} />
-
-						{#if showPjDropdown && filteredPjUsers.length > 0}
-							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
-								<ul class="max-h-60 overflow-y-auto">
-									{#each filteredPjUsers as user}
-										<!-- svelte-ignore a11y_click_events_have_key_events -->
-										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-										<li
-											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
-											onclick={() => selectPj(user)}
-										>
-											<div class="flex flex-col">
-												<span class="font-medium">{user.name}</span>
-												<span class="text-sm text-gray-500">{user.email}</span>
-											</div>
-										</li>
-									{/each}
-								</ul>
-							</div>
-						{/if}
 					</div>
+					<input type="hidden" name="penanggungjawab_id" value={selectedPj?.id || ''} />
+					{#if showPjDropdown && filteredPjUsers.length > 0}
+						<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+							<ul class="max-h-60 overflow-y-auto">
+								{#each filteredPjUsers as user}
+									<!-- svelte-ignore a11y_click_events_have_key_events -->
+									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+									<li
+										class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+										onclick={() => selectPj(user)}
+									>
+										<div class="flex flex-col">
+											<span class="font-medium">{user.name}</span>
+											<span class="text-sm text-gray-500">{user.email}</span>
+										</div>
+									</li>
+								{/each}
+							</ul>
+						</div>
+					{/if}
+
 					{#if errors}
 						{#each errors.penanggungjawab as e}
 							<p class="text-left text-red-500">- {e}</p>
 						{/each}
-						{#each errors.penanggungjawab_id as e}
-							<p class="text-left text-red-500">- {e}</p>
-						{/each}
 					{/if}
 				</div>
+
 				<div class="mt-5 flex items-center gap-3">
 					<div class="w-full">
 						<p>Pembina</p>
@@ -323,9 +299,6 @@
 							{#each errors.pembina as e}
 								<p class="text-left text-red-500">- {e}</p>
 							{/each}
-							{#each errors.pembina_id as e}
-								<p class="text-left text-red-500">- {e}</p>
-							{/each}
 						{/if}
 					</div>
 					<button class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white">
@@ -342,75 +315,54 @@
 								name="pelindung_nama"
 								bind:value={plKeyword}
 								autocomplete="off"
-								onfocus={() => (showPldropdown = true)}
+								onfocus={() => (showPlDropdown = true)}
 								onblur={() => {
 									// Delay hiding dropdown to allow for click
 									setTimeout(() => {
-										showPldropdown = false;
+										showPlDropdown = false;
 									}, 200);
 								}}
 								placeholder="Masukkan Pelindung"
 								class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 							/>
 						</div>
+						<input type="hidden" name="pelindung_id" value={selectedPl?.id || ''} />
+						{#if showPlDropdown && filteredPlUsers.length > 0}
+							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+								<ul class="max-h-60 overflow-y-auto">
+									{#each filteredPlUsers as user}
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+										<li
+											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+											onclick={() => selectPl(user)}
+										>
+											<div class="flex flex-col">
+												<span class="font-medium">{user.name}</span>
+												<span class="text-sm text-gray-500">{user.email}</span>
+											</div>
+										</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
 					</div>
 					<button class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white">
 						Permohonan
 					</button>
 				</div>
-				<input type="hidden" name="pelindung_id" value={selectedPl?.id || ''} />
-				{#if showPldropdown && filteredPlUsers.length > 0}
-					<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
-						<ul class="max-h-60 overflow-y-auto">
-							{#each filteredPlUsers as user}
-								<!-- svelte-ignore a11y_click_events_have_key_events -->
-								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-								<li
-									class="cursor-pointer px-3 py-2 hover:bg-gray-100"
-									onclick={() => selectPl(user)}
-								>
-									<div class="flex flex-col">
-										<span class="font-medium">{user.name}</span>
-										<span class="text-sm text-gray-500">{user.email}</span>
-									</div>
-								</li>
-							{/each}
-						</ul>
-					</div>
-				{/if}
-
 				{#if errors}
 					{#each errors.pelindung as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
-					{#each errors.pelindung_id as e}
-						<p class="text-left text-red-500">- {e}</p>
-					{/each}
 				{/if}
-				<div class="mt-2">
-					<p>Tempat Operasional</p>
-					<div class="relative">
-						<input
-							type="text"
-							name="tempat_operasional"
-							value={dataisi?.tempat_operasional || ''}
-							placeholder="Masukkan Tempat Operasional"
-							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
-						/>
-					</div>
-					{#if errors}
-						{#each errors.tempat_operasional as e}
-							<p class="text-left text-red-500">- {e}</p>
-						{/each}
-					{/if}
-				</div>
 				<div class="mt-2">
 					<p>Tanggal Berdiri</p>
 					<div class="relative">
 						<input
 							type="date"
 							name="tanggal_berdiri"
-							value={dataisi?.tanggal_berdiri || ''}
+							value={data.data?.tanggal_berdiri || ''}
 							placeholder="Masukkan Tanggal Berdiri"
 							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 						/>
@@ -421,43 +373,24 @@
 						{/each}
 					{/if}
 				</div>
-				<div class="mt-5 flex flex-col gap-8 lg:flex-row">
-					<div class="flex-col lg:w-[50%]">
-						<div class="w-full">
-							<p>No telepon :</p>
-							<input
-								type="text"
-								name="phone"
-								value={dataisi?.no_telp || ''}
-								placeholder="Masukkan No Telp"
-								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-							/>
-						</div>
-						{#if errors}
-							{#each errors.phone as e}
-								<p class="text-left text-red-500">- {e}</p>
-							{/each}
-						{/if}
+				<div class="mt-5 flex gap-12">
+					<div class="w-full lg:w-[50%]">
+						<p>No telepon :</p>
+						<input
+							type="text"
+							name="phone"
+							value={data.data?.no_telp || ''}
+							placeholder="Masukkan No Telp"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						/>
 					</div>
-					<div class="flex-col lg:w-[50%]">
-						<div class="w-full">
-							<p>Jumlah Anggota :</p>
-							<input
-								type="text"
-								name="jumlah_anggota"
-								readonly
-								bind:value={jumlahanggota}
-								placeholder="Masukkan Jumlah Anggota"
-								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-							/>
-						</div>
-						{#if errors}
-							{#each errors.jumlah_anggota as e}
-								<p class="text-left text-red-500">- {e}</p>
-							{/each}
-						{/if}
-					</div>
+					<div class="hidden w-[50%]"></div>
 				</div>
+				{#if errors}
+					{#each errors.phone as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+				{/if}
 			</div>
 		</div>
 
@@ -471,7 +404,7 @@
 </div>
 
 {#if open}
-	<SuccessModal text="Situs Berhasil Diubah"></SuccessModal>
+	<SuccessModal text="Organisasi Berhasil Diubah"></SuccessModal>
 {/if}
 
 <style>

@@ -4,13 +4,69 @@
 	import { goto } from '$app/navigation';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import { enhance } from '$app/forms';
-	import Loader from '$lib/loader/Loader.svelte';
 	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
+	import { onMount } from 'svelte';
+	let { data } = $props();
 
 	let open = $state(false);
 	let timer: number;
 	let errors = $state();
 	let loading = $state(false);
+
+	let pjKeyword = $state('');
+	let selectedPj = $state(null);
+	let showPjDropdown = $state(false);
+	let filteredPjUsers = $derived(filterUser(pjKeyword));
+
+	let plKeyword = $state('');
+	let selectedPl = $state(null);
+	let showPlDropdown = $state(false);
+	let filteredPlUsers = $derived(filterUser(plKeyword));
+
+	let pbKeyword = $state('');
+	let selectedPb = $state(null);
+	let showPbDropdown = $state(false);
+	let filteredPbUsers = $derived(filterUser(pbKeyword));
+
+	function filterUser(searchTerm: string) {
+		return data.allUsers.filter((item) =>
+			item.name.toLowerCase().includes(searchTerm.toLowerCase())
+		);
+	}
+
+	function selectPj(user: any) {
+		selectedPj = user;
+		pjKeyword = user.name;
+		showPjDropdown = false;
+	}
+
+	function selectPl(user: any) {
+		selectedPl = user;
+		plKeyword = user.name;
+		showPlDropdown = false;
+	}
+
+	function selectPb(user: any) {
+		selectedPb = user;
+		pbKeyword = user.name;
+		showPbDropdown = false;
+	}
+	// Tambahkan state untuk gambar
+	let selectedImage = $state(null);
+	let imagePreview = $state(gambardefault);
+	let namaimage = $state('');
+
+	// Fungsi untuk menangani upload gambar
+	function handleImageUpload(event: any) {
+		const file = event.target.files[0];
+		if (file) {
+			selectedImage = file;
+			// Buat URL untuk preview gambar
+			imagePreview = URL.createObjectURL(file);
+			namaimage = 'exist';
+		}
+	}
 </script>
 
 {#if navigating.to}
@@ -20,20 +76,10 @@
 	<Loader></Loader>
 {/if}
 <div class="h-full w-full">
-	<div class="relative mx-auto flex w-full items-center justify-center">
-		<div class="group relative h-[100px] w-[100px]">
-			<img src={gambardefault} class="h-full w-full rounded-full" alt="" />
-
-			<div
-				class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-			>
-				<p class="font-semibold text-white">Ganti Foto</p>
-			</div>
-		</div>
-	</div>
 	<form
-		action="?/tambahSitus"
+		action="?/tambahOrganisasi"
 		method="post"
+		enctype="multipart/form-data"
 		use:enhance={() => {
 			loading = true;
 			return async ({ result, update }) => {
@@ -43,38 +89,67 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						goto('/abdi/sekretariat/situs');
+						// goto('/abdi/sekretariat/organisasi/daftarorganisasi');
 					}, 3000);
 				}
 				if (result.type === 'failure') {
 					errors = result.data?.errors;
+					console.log(errors);
 				}
 			};
 		}}
 	>
+		<div class="relative mx-auto flex w-full items-center justify-center">
+			<div class="group relative h-[100px] w-[100px]">
+				<img src={imagePreview} class="h-full w-full rounded-full" alt="" />
+
+				<div
+					class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+				>
+					<label for="profileImage" class="cursor-pointer">
+						<p class="font-semibold text-white">Ganti Foto</p>
+					</label>
+					<input
+						type="file"
+						id="profileImage"
+						name="profile_image"
+						accept="image/*"
+						onchange={handleImageUpload}
+						class="hidden"
+					/>
+				</div>
+				<input type="hidden" name="image_name" value={namaimage} />
+			</div>
+		</div>
+		{#if errors}
+			{#each errors.image_name as e}
+				<p class=" text-center text-red-500">- {e}</p>
+			{/each}
+		{/if}
+
 		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<!-- 1 -->
 			<div>
 				<div>
-					<p>Nama Situs:</p>
+					<p>Nama Organisasi</p>
 					<div class="relative">
 						<input
 							type="text"
-							name="nama_situs"
-							placeholder="Masukkan Nama Situs"
+							name="nama_organisasi"
+							placeholder="Masukkan Nama Organisasi"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 pr-10"
 						/>
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 					</div>
 					{#if errors}
-						{#each errors.nama_situs as e}
+						{#each errors.nama_organisasi as e}
 							<p class="text-left text-red-500">- {e}</p>
 						{/each}
 					{/if}
 				</div>
 
 				<div>
-					<p class="mt-5">Alamat:</p>
+					<p class="mt-5">Alamat</p>
 					<div class="relative">
 						<input
 							type="text"
@@ -92,7 +167,7 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Email:</p>
+					<p class="mt-5">Email</p>
 					<div class="relative">
 						<input
 							type="text"
@@ -110,11 +185,11 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Deskripsi Situs:</p>
+					<p class="mt-5">Deskripsi Organisasi</p>
 					<div class="relative w-full">
 						<textarea
-							placeholder="Masukkan Deskripsi Situs"
-							name="deskripsi_situs"
+							placeholder="Masukkan Deskripsi Organisasi"
+							name="deskripsi_organisasi"
 							class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 pr-10 text-lg"
 						></textarea>
 						<div class="h-full">
@@ -122,7 +197,7 @@
 						</div>
 					</div>
 					{#if errors}
-						{#each errors.deskripsi_situs as e}
+						{#each errors.deskripsi_organisasi as e}
 							<p class="text-left text-red-500">- {e}</p>
 						{/each}
 					{/if}
@@ -132,17 +207,52 @@
 			<!-- 2 -->
 			<div>
 				<div>
-					<p>Penanggung Jawab:</p>
+					<p>Penanggung Jawab</p>
 					<div class="relative">
 						<input
 							type="text"
-							name="penanggungjawab"
+							name="penanggungjawab_nama"
+							bind:value={pjKeyword}
+							autocomplete="off"
+							onfocus={() => (showPjDropdown = true)}
+							onblur={() => {
+								// Delay hiding dropdown to allow for click
+								setTimeout(() => {
+									showPjDropdown = false;
+								}, 200);
+							}}
 							placeholder="Masukkan Penanggung Jawab"
 							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 						/>
 					</div>
+					<input type="hidden" name="penanggungjawab_id" value={selectedPj?.id || ''} />
+					{#if showPjDropdown && filteredPjUsers.length > 0}
+						<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+							<ul class="max-h-60 overflow-y-auto">
+								{#each filteredPjUsers as user}
+									<!-- svelte-ignore a11y_click_events_have_key_events -->
+									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+									<li
+										class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+										onclick={() => selectPj(user)}
+									>
+										<div class="flex flex-col">
+											<span class="font-medium">{user.name}</span>
+											<span class="text-sm text-gray-500">{user.email}</span>
+										</div>
+									</li>
+								{/each}
+							</ul>
+						</div>
+					{/if}
+
 					{#if errors}
 						{#each errors.penanggungjawab as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
+					{#if errors}
+						{#each errors.penanggungjawab_id as e}
 							<p class="text-left text-red-500">- {e}</p>
 						{/each}
 					{/if}
@@ -150,17 +260,52 @@
 
 				<div class="mt-5 flex items-center gap-3">
 					<div class="w-full">
-						<p>Pembina:</p>
+						<p>Pembina</p>
 						<div class="relative">
 							<input
 								type="text"
-								name="pembina"
+								name="pembina_nama"
+								bind:value={pbKeyword}
+								autocomplete="off"
+								onfocus={() => (showPbDropdown = true)}
+								onblur={() => {
+									// Delay hiding dropdown to allow for click
+									setTimeout(() => {
+										showPbDropdown = false;
+									}, 200);
+								}}
 								placeholder="Masukkan Pembina"
 								class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 							/>
 						</div>
+						<input type="hidden" name="pembina_id" value={selectedPb?.id || ''} />
+						{#if showPbDropdown && filteredPbUsers.length > 0}
+							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+								<ul class="max-h-60 overflow-y-auto">
+									{#each filteredPbUsers as user}
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+										<li
+											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+											onclick={() => selectPb(user)}
+										>
+											<div class="flex flex-col">
+												<span class="font-medium">{user.name}</span>
+												<span class="text-sm text-gray-500">{user.email}</span>
+											</div>
+										</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
+
 						{#if errors}
 							{#each errors.pembina as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+						{#if errors}
+							{#each errors.pembina_id as e}
 								<p class="text-left text-red-500">- {e}</p>
 							{/each}
 						{/if}
@@ -172,15 +317,44 @@
 
 				<div class="mt-5 flex items-center gap-3">
 					<div class="w-full">
-						<p>Pelindung:</p>
+						<p>Pelindung</p>
 						<div class="relative">
 							<input
 								type="text"
-								name="pelindung"
+								name="pelindung_nama"
+								bind:value={plKeyword}
+								autocomplete="off"
+								onfocus={() => (showPlDropdown = true)}
+								onblur={() => {
+									// Delay hiding dropdown to allow for click
+									setTimeout(() => {
+										showPlDropdown = false;
+									}, 200);
+								}}
 								placeholder="Masukkan Pelindung"
 								class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 							/>
 						</div>
+						<input type="hidden" name="pelindung_id" value={selectedPl?.id || ''} />
+						{#if showPlDropdown && filteredPlUsers.length > 0}
+							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+								<ul class="max-h-60 overflow-y-auto">
+									{#each filteredPlUsers as user}
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+										<li
+											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+											onclick={() => selectPl(user)}
+										>
+											<div class="flex flex-col">
+												<span class="font-medium">{user.name}</span>
+												<span class="text-sm text-gray-500">{user.email}</span>
+											</div>
+										</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
 					</div>
 					<button class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white">
 						Permohonan
@@ -191,7 +365,27 @@
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
-
+				{#if errors}
+					{#each errors.pelindung_id as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+				{/if}
+				<div class="mt-2">
+					<p>Tanggal Berdiri</p>
+					<div class="relative">
+						<input
+							type="date"
+							name="tanggal_berdiri"
+							placeholder="Masukkan Tanggal Berdiri"
+							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
+						/>
+					</div>
+					{#if errors}
+						{#each errors.tanggal_berdiri as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
+				</div>
 				<div class="mt-5 flex gap-12">
 					<div class="w-full lg:w-[50%]">
 						<p>No telepon :</p>
@@ -219,10 +413,13 @@
 			>
 		</div>
 	</form>
+	{#if errors?.server}
+		<p class="text-red-500">{errors?.server}</p>
+	{/if}
 </div>
 
 {#if open}
-	<SuccessModal text="Situs Berhasil Dibuat"></SuccessModal>
+	<SuccessModal text="Organisasi Berhasil Diubah"></SuccessModal>
 {/if}
 
 <style>
