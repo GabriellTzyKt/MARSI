@@ -216,11 +216,12 @@
 				if (result.type === 'success') {
 					valo = true;
 					clearTimeout(timer);
-					invalidateAll();
-					timer = setTimeout(() => {
-						valo = false;
-						open = false;
-					}, 3000);
+					await invalidateAll().then(() => {
+						setTimeout(() => {
+							valo = false;
+							open = false;
+						}, 3000);
+					});
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
 				}

@@ -12,6 +12,7 @@
 
 	console.log('data dari server.ts : ', data);
 	let dataisi = data.komunitas;
+	let situs = data.allSitus || [];
 	let datafile = data.fileDetails?.url ? data.fileDetails.url : 'gada';
 	let jumlahanggota = $state(data.jumlahAnggotaData.length);
 
@@ -20,18 +21,27 @@
 	let loading = $state(false);
 	let errors = $state();
 
-	let pbKeyword = $state('');
-	let selectedPb = $state(null);
+	let situsKeyword = $state(situs.find((item) => item.id == dataisi.lokasi)?.name || '');
+	let selectedSitus = $state(situs.find((item) => item.id == dataisi.lokasi) || null);
+	let showSitusDropdown = $state(false);
+	let filteredSitus = $derived(filterSitus(situsKeyword));
+
+	function filterSitus(searchTerm: string) {
+		return situs.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+	}
+
+	let pbKeyword = $state(users.find((user) => user.id == dataisi.pembina)?.name || '');
+	let selectedPb = $state(users.find((user) => user.id == dataisi.pembina) || null);
 	let showPbDropdown = $state(false);
 	let filteredPbUsers = $derived(filterUser(pbKeyword));
 
-	let pjKeyword = $state('');
-	let selectedPj = $state(null);
+	let pjKeyword = $state(users.find((user) => user.id == dataisi.penanggung_jawab)?.name || '');
+	let selectedPj = $state(users.find((user) => user.id == dataisi.penanggung_jawab) || null);
 	let showPjDropdown = $state(false);
 	let filteredPjUsers = $derived(filterUser(pjKeyword));
 
-	let plKeyword = $state('');
-	let selectedPl = $state(null);
+	let plKeyword = $state(users.find((user) => user.id == dataisi.pelindung)?.name || '');
+	let selectedPl = $state(users.find((user) => user.id == dataisi.pelindung) || null);
 	let showPldropdown = $state(false);
 	let filteredPlUsers = $derived(filterUser(plKeyword));
 
@@ -49,6 +59,11 @@
 		selectedPj = user;
 		pjKeyword = user.name;
 		showPjDropdown = false;
+	}
+	function selectSitus(situs: any) {
+		selectedSitus = situs;
+		situsKeyword = situs.name;
+		showSitusDropdown = false;
 	}
 
 	function selectPl(user: any) {
@@ -91,11 +106,11 @@
 				loading = false;
 				if (result.type === 'success') {
 					open = true;
-					// clearTimeout(timer);
-					// timer = setTimeout(() => {
-					// 	open = false;
-					// 	goto('/abdi/sekretariat/komunitas/daftarkomunitas');
-					// }, 3000);
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						open = false;
+						// goto('/abdi/sekretariat/komunitas/daftarkomunitas');
+					}, 3000);
 				}
 				if (result.type === 'failure') {
 					errors = result.data?.errors;
@@ -104,6 +119,8 @@
 			};
 		}}
 	>
+		<input type="hidden" name="id_komunitas" value={dataisi?.id_komunitas || ''} />
+		<input type="hidden" name="id_pengajuan" value={data?.user.id_user || ''} />
 		<div class="relative mx-auto flex w-full items-center justify-center">
 			<div class="group relative h-[100px] w-[100px]">
 				{#if datafile !== 'gada' && namaimage !== 'exist'}
@@ -393,10 +410,38 @@
 						<input
 							type="text"
 							name="tempat_operasional"
-							value={dataisi?.tempat_operasional || ''}
+							bind:value={situsKeyword}
+							autocomplete="off"
+							onfocus={() => (showSitusDropdown = true)}
+							onblur={() => {
+								// Delay hiding dropdown to allow for click
+								setTimeout(() => {
+									showSitusDropdown = false;
+								}, 200);
+							}}
 							placeholder="Masukkan Tempat Operasional"
 							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 						/>
+						<input type="hidden" name="situs_id" value={selectedSitus?.id || ''} />
+						{#if showSitusDropdown && filteredSitus.length > 0}
+							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+								<ul class="max-h-60 overflow-y-auto">
+									{#each filteredSitus as situs}
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+										<li
+											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+											onclick={() => selectSitus(situs)}
+										>
+											<div class="flex flex-col">
+												<span class="font-medium">{situs.name}</span>
+												<span class="text-sm text-gray-500">{situs.email}</span>
+											</div>
+										</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
 					</div>
 					{#if errors}
 						{#each errors.tempat_operasional as e}
@@ -445,7 +490,6 @@
 							<input
 								type="text"
 								name="jumlah_anggota"
-								readonly
 								bind:value={jumlahanggota}
 								placeholder="Masukkan Jumlah Anggota"
 								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"

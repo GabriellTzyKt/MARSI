@@ -7,41 +7,46 @@ import { formatDate } from "$lib";
 export const load: PageServerLoad = async ({ params, cookies }) => {
     try {
         const id = params.id;
-        let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
+        let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): '';
         
-        // 1. Fetch data komunitas berdasarkan ID
-        const komunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas/${id}`);
+        // Fetch all data in parallel for better performance
+        const [komunitasResponse, jumlahAnggota, usersResponse, situsResponse] = await Promise.all([
+            fetch(`${env.URL_KERAJAAN}/komunitas/${id}`),
+            fetch(`${env.URL_KERAJAAN}/komunitas/anggota/${id}`),
+            fetch(`${env.PUB_PORT}/users`, {
+                headers: {
+                    "Authorization": `Bearer ${token?.token}`
+                }
+            }),
+            fetch(`${env.URL_KERAJAAN}/situs`)
+        ]);
+        
+        // Check responses and process data
         if (!komunitasResponse.ok) {
             throw error(komunitasResponse.status, `Failed to fetch komunitas: ${komunitasResponse.statusText}`);
         }
         
-        let komunitas = await komunitasResponse.json();
-        console.log("komunitas : ", komunitas)
-        komunitas = {
+        if (!jumlahAnggota.ok) {
+            throw error(jumlahAnggota.status, `Failed to fetch anggota: ${jumlahAnggota.statusText}`);
+        }
+        
+        // Process data in parallel
+        const [komunitas, jumlahAnggotaData, userData, situsData] = await Promise.all([
+            komunitasResponse.json(),
+            jumlahAnggota.json(),
+            usersResponse.ok ? usersResponse.json() : [],
+            situsResponse.ok ? situsResponse.json() : []
+        ]);
+        
+        // Format komunitas data
+        const formattedKomunitas = {
             ...komunitas,
             tanggal_berdiri: formatDate(komunitas.tanggal_berdiri)
-        }
-        // const komunitas = komunitasList.find((item: any) => item.id_komunitas == id);
+        };
         
-
-        // jumlah anggota ambil
-        const jumlahAnggota = await fetch(`${env.URL_KERAJAAN}/komunitas/anggota/${id}`);
-        if (!jumlahAnggota.ok) {
-            throw error(jumlahAnggota.status, `Failed to fetch komunitas: ${jumlahAnggota.statusText}`);
-        }
-
-        const jumlahAnggotaData = await jumlahAnggota.json();
-        
-        // Fetch all users
-        const usersResponse = await fetch(`${env.PUB_PORT}/users`, {
-            headers: {
-                "Authorization": `Bearer ${token?.token}`
-            }
-        });
-
+        // Process users data
         let allUsers = [];
         if (usersResponse.ok) {
-            const userData = await usersResponse.json();
             allUsers = userData.filter((user: any) => 
                 user.deleted_at === '0001-01-01T00:00:00Z' || !user.deleted_at
             ).map((user: any) => ({
@@ -51,6 +56,19 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
             }));
         } else {
             console.error(`Failed to fetch users: ${usersResponse.statusText}`);
+        }
+        
+        // Process situs data
+        let allSitus = [];
+        if (situsResponse.ok) {
+            allSitus = situsData.filter((situs: any) => 
+                situs.deleted_at === '0001-01-01T00:00:00Z' || !situs.deleted_at
+            ).map((situs: any) => ({
+                id: situs.id_situs,
+                name: situs.nama_situs || 'Nama tidak tersedia'
+            }));
+        } else {
+            console.error(`Failed to fetch situs: ${situsResponse.statusText}`);
         }
 
         // 2. Jika ada ID foto profil, ambil file path
@@ -99,14 +117,17 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
             }
         }
         console.log("file : " , fileDetails)
-        console.log("komunitas lengkap : ", komunitas)
+        console.log("komunitas lengkap : ", formattedKomunitas)
+        console.log("token : ", token)
         // 5. Return data komunitas dan file details
         return {
-            komunitas,
+            komunitas: formattedKomunitas,
             fileDetails,
             foto_komunitas_url,
             jumlahAnggotaData,
-            allUsers
+            allUsers,
+            allSitus,
+            user: token.user_data
         };
     } catch (error) {
         console.error("Error in load function:", error);
@@ -124,7 +145,7 @@ export const actions: Actions = {
                     .nonempty("Field ini tidak boleh kosong"),
 
             image_name:
-                z.string({ message: "Minimal 1 foto!" }).min(1, "Field ini tidak boleh kosong"),
+                z.string({ message: "Minimal 1 foto!" }).optional(),
 
 
             alamat:
@@ -168,6 +189,9 @@ export const actions: Actions = {
             tempat_operasional:
                 z.string({ message: "Field Tempat Operasional Harus dipilih" })
                     .nonempty("Field ini tidak boleh kosong"),
+            situs_id:
+                z.string({ message: "Field Tempat Operasional Harus dipilih" })
+                    .nonempty("Field harap dipilih"),
 
             jumlahanggota:
                 z.string({ message: "Field harus diisi!" }).regex(/^\d+$/, "Harus berupa digit").nonempty("Field ini tidak boleh kosong"),
@@ -192,6 +216,7 @@ export const actions: Actions = {
             pembina_id: String(data.get("pembina_id")),
             image_name: String(data.get("image_name")),
             tempat_operasional: String(data.get("tempat_operasional")),
+            situs_id: String(data.get("situs_id")),
             pelindung: String(data.get("pelindung_nama")),
             pelindung_id: String(data.get("pelindung_id")),
             jumlahanggota: String(data.get("jumlah_anggota")),
@@ -208,20 +233,36 @@ export const actions: Actions = {
         // return { success: true, formData }
 
         try {
-            const formDataToSend = new FormData();
-            formDataToSend.append("id_pemohon", data.get("id_pemohon") as string);
-            formDataToSend.append("penanggung_jawab", formData.penanggungjawab_id);
-            formDataToSend.append("nama_komunitas", formData.nama_situs);
-            formDataToSend.append("deskripsi", formData.deskripsi_komunitas);
-            formDataToSend.append("lokasi", '2');
-            formDataToSend.append("pelindung", formData.pelindung_id);
-            formDataToSend.append("pembina", formData.pembina_id);
-            formDataToSend.append("alamat", formData.alamat);
-            formDataToSend.append("tanggal_berdiri", formData.tanggal_berdiri);
-            formDataToSend.append("foto_komunitas", data.get("profile_image") as File);
-            formDataToSend.append("foto_profile", data.get("profile_image") as File);
-            formDataToSend.append("email", formData.email);
-            formDataToSend.append("no_telp", formData.phone);
+            const formDataToSend = {
+                id_komunitas: parseInt(String(data.get("id_komunitas"))),
+                penanggung_jawab: parseInt(formData.penanggungjawab_id),
+                // id_pengajuan: parseInt(String(data.get("id_pengajuan"))),
+                foto_komunitas: '2',
+                foto_profile: '2',
+                lokasi: formData.situs_id,
+                nama_komunitas: formData.nama_situs,
+                deskripsi_komunitas: formData.deskripsi_komunitas,
+                pelindung: formData.pelindung_id,
+                pembina: formData.pembina_id,
+                alamat: formData.alamat,    
+                email: formData.email,
+                no_telp: formData.phone,
+                // jumlah_anggota: formData.jumlahanggota,
+
+            }
+            // formDataToSend.append("id_pemohon", data.get("id_pemohon") as string);
+            // formDataToSend.append("penanggung_jawab", formData.penanggungjawab_id);
+            // formDataToSend.append("nama_komunitas", formData.nama_situs);
+            // formDataToSend.append("foto_komunitas", data.get("profile_image") as File);
+            // formDataToSend.append("foto_profile", data.get("profile_image") as File);
+            // formDataToSend.append("lokasi", '2');
+            // formDataToSend.append("deskripsi", formData.deskripsi_komunitas);
+            // formDataToSend.append("pelindung", formData.pelindung);
+            // formDataToSend.append("pembina", formData.pembina);
+            // formDataToSend.append("alamat", formData.alamat);
+            // formDataToSend.append("email", formData.email);
+            // formDataToSend.append("tanggal_berdiri", formData.tanggal_berdiri);
+            // formDataToSend.append("nomor_telepon", formData.phone);
             // formDataToSend.append("tempat_operasional", formData.tempat_operasional);
             // formDataToSend.append("jumlah_anggota", formData.jumlahanggota);
             // formDataToSend.append("jenis_komunitas", "Public")
@@ -238,7 +279,7 @@ export const actions: Actions = {
 
             const response = await fetch(`${env.URL_KERAJAAN}/komunitas`, {
                 method: "PUT",
-                body: formDataToSend
+                body: JSON.stringify(formDataToSend)
             });
 
             const result = await response.json();

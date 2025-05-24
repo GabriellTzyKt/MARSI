@@ -19,7 +19,7 @@
 	console.log('data Acara: ', dataAcara);
 	console.log('USer Daat', userData);
 	let open = $state(false);
-	let findNamaSitus = data.filter((item: any) => item?.id_situs === Number(dataEdit?.lokasi_tugas));
+	let findNamaSitus = data.filter((item: any) => item?.id_situs == Number(dataEdit?.lokasi_tugas));
 	console.log('Fiound,', findNamaSitus);
 	let namaSitus = $state<any>(findNamaSitus?.length > 0 ? findNamaSitus[0]?.nama_situs : '');
 	console.log(namaSitus);
@@ -44,20 +44,28 @@
 	let selectedKeterkaitan = $state<any>(null);
 	// console.log('selectedKeterkaitan', selectedKeterkaitan);
 	let selectedUserKeyword = $state(dataEdit ? dataEdit.pemberi_tugas : '');
-	let selecteduser: any = $state(null);
+	let selecteduser: any = $state(
+		dataEdit ? userData.find((user) => user.id == dataEdit.id_pemberi_tugas) : null
+	);
 	let dropDownPemberiTugas = $state(false);
 	let filteredPemberitugas = $derived(filterUser(selectedUserKeyword));
 
 	let selectedAnggotaDitugaskanKeyWord = $state(dataEdit ? dataEdit.penerima_tugas : '');
 	let filteredAnggotaDitugaskan = $derived(filterUser(selectedAnggotaDitugaskanKeyWord));
 	let dropDownAnggotaDitugaskan = $state(false);
-	let selectedAnggotaDitugaskan = $state('');
+	let selectedAnggotaDitugaskan = $state(
+		dataEdit ? userData.find((user) => user.id == dataEdit.id_penerima_tugas) : null
+	);
 
-	let selectedAcara = $state('');
+	let selectedAcara = $state(
+		dataEdit?.id_acara ? dataAcara.find((acara) => acara.id == dataEdit.id_acara)?.name : ''
+	);
 	// console.log('selectedAcara', selectedAcara);
 	let filteredAcara = $derived(filterAcara(selectedAcara));
 	let dropDownAcara = $state(false);
-	let selectedAcaraData = $state(null);
+	let selectedAcaraData = $state(
+		dataEdit?.id_acara ? dataAcara.find((acara) => acara.id == dataEdit.id_acara) : null
+	);
 
 	function filterAcara(acara: any) {
 		return dataAcara.filter((item: any) => item.name.toLowerCase().includes(acara.toLowerCase()));

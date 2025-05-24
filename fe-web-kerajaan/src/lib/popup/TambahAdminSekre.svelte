@@ -359,10 +359,10 @@
 						id=""
 					>
 						<option value="" selected disabled>Pilih Role</option>
-						<option value="super_admin">Super Admin</option>
-						<option value="admin_situs">Admin Situs</option>
-						<option value="admin_komunitas">Admin Komunitas</option>
-						<option value="admin_organisasi">Admin Organisasi</option>
+						<option value="Super Admin">Super Admin</option>
+						<option value="Admin Situs">Admin Situs</option>
+						<option value="Admin Komunitas">Admin Komunitas</option>
+						<option value="Admin Organisasi">Admin Organisasi</option>
 					</select>
 					{#if errors}
 						{#each errors.admin_role as a}

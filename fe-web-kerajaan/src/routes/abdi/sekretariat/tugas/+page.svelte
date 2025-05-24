@@ -215,12 +215,13 @@
 				if (result.type === 'success') {
 					let timer: number;
 					success = true;
-					invalidateAll();
-					setTimeout(() => {
-						open = false;
-						success = false;
-						errors = null;
-					}, 3000);
+					await invalidateAll().then(() => {
+						setTimeout(() => {
+							open = false;
+							success = false;
+							errors = null;
+						}, 3000);
+					});
 				}
 				if (result.type === 'failure') {
 					errors = result.data?.errors;
@@ -274,7 +275,7 @@
 	<SuccessModal text="Tugas Berhasil Ditambah"></SuccessModal>
 {/if}
 {#if modalDetail}
-	<BuktiLaporan bind:value={modalDetail} text="Detail Tugas"></BuktiLaporan>
+	<BuktiLaporan bind:value={modalDetail} data={detailData} text="Detail Tugas"></BuktiLaporan>
 {/if}
 {#if editModal}
 	<form
@@ -287,10 +288,13 @@
 				if (result.type === 'success') {
 					success = true;
 					editModal = false;
-					await invalidateAll();
-					setTimeout(() => {
-						success = false;
-					}, 3000);
+					await invalidateAll().then(() => {
+						setTimeout(() => {
+							editModal = false;
+							success = false;
+							errors = null;
+						}, 3000);
+					});
 				}
 				if (result.type === 'failure') {
 					errors = result.data?.errors;
@@ -310,5 +314,6 @@
 			dataEdit={editData}
 			successText="Tugas Berhasil Ditambah"
 		></TambahTugas>
+		<input type="text" name="id_tugas" value={editData?.id_tugas} hidden />
 	</form>
 {/if}

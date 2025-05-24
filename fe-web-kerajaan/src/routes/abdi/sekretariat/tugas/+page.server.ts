@@ -216,9 +216,7 @@ export const actions: Actions = {
             tanggal_penugasan:
                 z.string({ message: "Field Pemberi Tugas harus diisi" })
                     .nonempty("Minimal 1 huruf / tidak boleh kosong")
-                    .refine(() => {
-                        return formDate >= today
-                    }, { message: "Tanggal penugasan tidak boleh kurang dari hari ini" }),
+                    ,
 
             anggota_yg_ditugaskan:
                 z.string({ message: "Field Pemberi Tugas harus diisi" })
@@ -259,15 +257,16 @@ export const actions: Actions = {
         try {
             // Membuat objek JSON untuk dikirim ke API
             const tugasData = {
+                id_tugas: Number(data.get("id_tugas")),
                 pemberi_tugas: Number(data.get("id_pemberi")),
                 penerima_tugas: Number(data.get("id_ditugaskan")),
                 id_acara: formData.jenis_tugas === "acara" ? Number(data.get("id_acara")) : null,
                 nama_tugas: formData.nama_tugas,
                 deskripsi_tugas: formData.deskripsi_tugas,
                 lokasi_tugas: formData.jenis_tugas === "pribadi" ? data.get("id_situs") : null,
+                jenis_tugas: formData.jenis_tugas,
                 tanggal_mulai: formatDatetoUI(formData.tanggal_penugasan),
-                nama_situs: formData.nama_situs,
-                nama_acara: formData.nama_acara
+                status: "Selesai"
                 // lokasi
                 // id_acara ?
             };

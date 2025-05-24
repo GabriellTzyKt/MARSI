@@ -140,7 +140,7 @@ export const actions: Actions = {
             formDataToSend.append("pembina", formData.pembina_id);
             formDataToSend.append("alamat", formData.alamat);
             formDataToSend.append("tanggal_berdiri", formData.tanggal_berdiri);
-            formDataToSend.append("foto_komunitas", data.get("profile_image") as File);
+            // formDataToSend.append("foto_komunitas", data.get("profile_image") as File);
             formDataToSend.append("foto_profile", data.get("profile_image") as File);
             formDataToSend.append("email", formData.email);
             formDataToSend.append("no_telp", formData.phone);

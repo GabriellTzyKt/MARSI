@@ -2,6 +2,7 @@ import { fail, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
 import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
+import { formatDatetoUI } from "$lib";
 export const load: PageServerLoad = async () => {
     try {
         let res = await fetch(`${env.URL_KERAJAAN}/admin?limit=100000000000000000`)
@@ -133,7 +134,7 @@ export const actions: Actions = {
             const no_telp = data.get("no_telp")
             const tgl_lahir = data.get("tgl_lahir")
             const kota_lahir = data.get("kota_lahir")
-            const afiliasi = data.getAll("afiliasi").filter((item) => item !== "");
+            const afiliasi = data.getAll("afiliasi");
             const afiliasiSingle = data.get("afiliasi");
             const admin_role = data.get("admin_role")
             const formData = {
@@ -164,23 +165,28 @@ export const actions: Actions = {
                 });
     
             }
+
             try {
+                let role = ''
+             
                 let sendData = {
                     nama_lengkap,
                     jenis_kelamin,
                     tempat_lahir: kota_lahir,
-                    tanggal_lahir: tgl_lahir,
+                    tanggal_lahir: formatDatetoUI(tgl_lahir),
                     username,
                     password,
                     email,
                     no_telp,
-                    afiliasi : afiliasiSingle,
+                    afiliasi : "Tes Afiliasi",
                     jenis_admin: admin_role
                 }
                 console.log(sendData)
                 const res = await fetch(`${env.URL_KERAJAAN}/admin`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
                     body: JSON.stringify(sendData)
                 })
                 if (!res.ok) {
