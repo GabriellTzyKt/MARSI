@@ -17,6 +17,10 @@
 
 	let { data } = $props();
 	console.log(data.dataKerajaan);
+	console.log('GELAR : ', data.gelar);
+	let dataanggota = data.anggotaKerajaan;
+
+	console.log('Anggota : ', data.anggotaKerajaan);
 	// import {dropId} from './DropDown.svelte'
 	let success = $state(false);
 
@@ -28,6 +32,8 @@
 	let edit = $state(false);
 	let dt = $state(data.dataKerajaan);
 	let tambah = $state(false);
+	let selectedKerajaanId = $state(null);
+	let loading = $state(false);
 
 	$effect(() => {
 		if (!edit || !tambah) {
@@ -66,10 +72,20 @@
 			entries = 1;
 		}
 	});
+
+	// Function to reset form state
+	function resetFormState() {
+		tambah = false;
+		selectedKerajaanId = null;
+		errors = null;
+	}
 </script>
 
 {#if navigating.to}
 	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader text="Processing..."></Loader>
 {/if}
 <div class="mt-20 flex w-full flex-col xl:mt-0">
 	<div class=" flex flex-col justify-center xl:mt-0 xl:flex-row xl:justify-between">
@@ -135,7 +151,7 @@
 				></DropDown>
 			{/if}
 		{/snippet}
-		{#snippet details({})}
+		{#snippet details({ data })}
 			<div class=" me-4 ms-4 mt-4 flex flex-col" transition:slide={{ duration: 300 }}>
 				<div class="flex justify-between">
 					<div>
@@ -144,7 +160,14 @@
 					<div>
 						<button
 							class="rounded-xl bg-orange-500 px-6 py-2 text-white"
-							onclick={() => (tambah = true)}
+							onclick={() => {
+								selectedKerajaanId = data.id_kerajaan;
+								console.log(
+									dataanggota?.find((item: any) => item.id_kerajaan === selectedKerajaanId)
+										?.anggota || []
+								);
+								tambah = true;
+							}}
 						>
 							+Tambah data
 						</button>
@@ -152,14 +175,15 @@
 				</div>
 				<Table
 					table_header={[
-						['nama', 'Nama Dokumen', 'justify-start flex grow'],
+						['id_gelar', 'Nama Anggota', 'justify-start flex grow'],
 						['children', 'Aksi', 'text-right pe-48']
 					]}
-					table_data={dummyDokumen}
+					table_data={dataanggota?.find((item: any) => item.id_kerajaan === selectedKerajaanId)
+						?.anggota || []}	
 				>
 					{#snippet children({ header, data, index })}
 						{#if header === 'Aksi'}
-							<CustomBtn bind:del bind:edit></CustomBtn>
+							<CustomBtn tipe="anggota"></CustomBtn>
 						{/if}
 					{/snippet}
 				</Table>
@@ -207,12 +231,14 @@
 		action="?/tambahKerajaan"
 		method="post"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result }) => {
+				loading = false;
 				if (result.type === 'success') {
 					success = true;
 					let timer: number;
 					timer = setTimeout(() => {
-						tambah = false;
+						resetFormState();
 						success = false;
 						goto('/admin/keanggotaan/daftaranggota');
 					}, 3000);
@@ -223,7 +249,14 @@
 			};
 		}}
 	>
-		<KerajaanPopup bind:value={tambah} bind:errors type="Tambah"></KerajaanPopup>
+		<input type="hidden" name="id_kerajaan" value={selectedKerajaanId} />
+		<KerajaanPopup
+			bind:value={tambah}
+			bind:errors
+			type="Tambah"
+			dataGelar={data.gelar}
+			on:close={() => resetFormState()}
+		></KerajaanPopup>
 	</form>
 {/if}
 {#if success}

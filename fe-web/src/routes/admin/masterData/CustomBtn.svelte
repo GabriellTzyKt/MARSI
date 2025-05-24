@@ -12,10 +12,10 @@
 	let success = $state(false);
 	let timer: number;
 	let error = $state();
-	let { data = null, name = '', tipe = '' } = $props();
+	let { data = null, name = '', tipe = '', del = false, edit = false} = $props();
 	console.log('Tipe : ', tipe);
-	let edit = $state(false);
-	let del = $state(false);
+	// let edit = $state(false);
+	// let del = $state(false);
 </script>
 
 <div class=" me-4 flex justify-end gap-2">
@@ -278,6 +278,43 @@
 				bind:input={edit}
 				header="Jenis Kerajaan"
 				tipe="gelar"
+			></Input>
+		</form>
+	{/if}
+
+	
+	{#if tipe === 'anggota'}
+		<form
+			action="?/ubahKerajaan"
+			method="post"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					if (result.type === 'success') {
+						success = true;
+						invalidateAll();
+						clearTimeout(timer);
+						timer = setTimeout(() => {
+							success = false;
+							edit = false;
+							invalidateAll();
+						}, 3000);
+					}
+					if (result.type === 'failure') {
+						error = result.data?.error;
+						console.log(error);
+					}
+				};
+			}}
+		>
+			<Input
+				bind:value={data}
+				name="nama_jenis_kerajaan"
+				{error}
+				bind:input={edit}
+				header="Jenis Kerajaan"
+				tipe="jenis_kerajaan"
 			></Input>
 		</form>
 	{/if}

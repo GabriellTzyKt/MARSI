@@ -1,8 +1,16 @@
 <script lang="ts">
 	import { easeBack } from 'd3';
 	import { fade } from 'svelte/transition';
+	import { createEventDispatcher } from 'svelte';
 
-	let { value = $bindable(), data = null, errors = $bindable(), type = '' } = $props();
+	const dispatch = createEventDispatcher();
+	
+	let { value = $bindable(), data = null, errors = $bindable(), type = '', dataGelar = [] } = $props();
+	
+	function handleClose() {
+		value = false;
+		dispatch('close');
+	}
 </script>
 
 <div
@@ -19,7 +27,7 @@
 			<!-- svelte-ignore a11y_click_events_have_key_events -->
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<div
-				onclick={() => (value = false)}
+				onclick={handleClose}
 				class="cursor-pointer rounded-full p-1 hover:bg-gray-200"
 			>
 				<svg
@@ -58,13 +66,17 @@
 				<div>
 					<p>Gelar Anggota</p>
 				</div>
-				<div class=" w-full">
-					<input
-						type="text"
+				<div class="w-full">
+					<select
 						class="flex w-full rounded-lg border border-gray-500 px-3 py-2 focus:outline-none"
 						name="gelar_anggota"
 						id=""
-					/>
+					>
+						<option value="" selected disabled>Pilih Gelar Anggota</option>
+						{#each dataGelar || [] as gelar}
+							<option value={gelar.id_gelar}>{gelar.nama_gelar || gelar.gelar}</option>
+						{/each}
+					</select>
 					{#if errors}
 						{#each errors.gelar_anggota as e}
 							<p class="text-red-500">{e}</p>

@@ -30,7 +30,7 @@ export const load: PageServerLoad = async () => {
             adminMarsiData = adminData.filter((admin: any) => 
                 admin.deleted_at === "0001-01-01T00:00:00Z" || !admin.deleted_at
             );
-            console.log("Filtered admin data:", adminMarsiData);
+            // console.log("Filtered admin data:", adminMarsiData);
         } else {
             console.error(`Error fetching from BASE_URL: ${adminBaseResponse.status}`);
         }
@@ -40,7 +40,7 @@ export const load: PageServerLoad = async () => {
             kerajaanData = allKerajaanData.filter((kerajaan: any) => 
                 kerajaan.deleted_at === "0001-01-01T00:00:00Z" || !kerajaan.deleted_at
             );
-            console.log("Filtered kerajaan data:", kerajaanData);
+            // console.log("Filtered kerajaan data:", kerajaanData);
         } else {
             console.error(`Error fetching from BASE_URL: ${allKerajaan.status}`);
         }
@@ -62,7 +62,7 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
     tambah: async ({ request }) => {
         const data = await request.formData()
-        console.log(data)
+        console.log("Data tamba : " , data)
 
         const ver = z.object({
             nama_lengkap:
@@ -137,8 +137,17 @@ export const actions: Actions = {
         const no_telp = data.get("no_telp")
         const tgl_lahir = data.get("tgl_lahir")
         const kota_lahir = data.get("kota_lahir")
-        const afiliasi = data.get("afiliasi")
-        const admin_role = data.get("admin_role")
+        
+        // Handle afiliasi as an array and get the first value
+        const afiliasi_values = data.getAll("afiliasi")
+        const afiliasi = afiliasi_values.length > 0 ? afiliasi_values[0] : ""
+        
+        // Handle admin_role as an array and get the first value
+        const admin_role_values = data.getAll("admin_role")
+        const admin_role = admin_role_values.length > 0 ? admin_role_values[0] : ""
+        
+        // Get id_kerajaan directly
+        const id_kerajaan = data.get("id_kerajaan")
 
         const formData = {
             nama_lengkap,
@@ -170,8 +179,10 @@ export const actions: Actions = {
                 ? tgl_lahir.toISOString().split('T')[0] 
                 : new Date(String(tgl_lahir)).toISOString().split('T')[0];
             
-            const id_kerajaan = afiliasi === "marsi" || afiliasi === "marsi2" ? 0 : 
-                0;
+            // Use the id_kerajaan from the form data directly if available
+            // Otherwise, determine it based on afiliasi
+            const kerajaanId = id_kerajaan ? Number(id_kerajaan) : 
+                (afiliasi === "marsi" || afiliasi === "marsi2" ? 0 : Number(afiliasi));
             
             // Prepare payload for API
             const adminPayload = {
@@ -183,7 +194,7 @@ export const actions: Actions = {
                 password: String(password),
                 email: String(email),
                 no_telp: String(no_telp),
-                id_kerajaan: id_kerajaan,
+                id_kerajaan: kerajaanId,
                 jenis_admin: String(admin_role)
             };
             

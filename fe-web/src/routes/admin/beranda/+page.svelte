@@ -41,7 +41,7 @@
 		</div>
 		<div class="flex-shrink-1 h-[380px] flex-grow rounded-md border border-gray-500 bg-white p-5">
 			<p class="mb-3 text-center text-xl font-bold">Persentase Anggota MARSI Berdasarkan Pulau</p>
-			<PieChart />
+			<PieChart data = {datadetail} />
 		</div>
 	</div>
 
