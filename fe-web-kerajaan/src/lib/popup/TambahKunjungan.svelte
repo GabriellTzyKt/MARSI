@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { page } from "$app/state";
+	import { page } from '$app/state';
 
-	let { id = 0, errors = null, data2} = $props();
+	let { id = 0, errors = null, data2 } = $props();
 	let namapengunjung = $state(data2 ? data2.namapengunjung : '');
-	let radioinput = $state(data2 ? data2.radioinput : 'tidak');
+	// let radioinput = $state(data2 ? data2.radioinput : 'tidak');
+	let radioinput = $state('tidak');
 	let keterangankunjungan = $state(data2 ? data2.keterangankunjungan : '');
 	let notelp = $state(data2 ? data2.notelp : '');
 	let kotaasal = $state(data2 ? data2.kotaasal : '');
@@ -11,11 +12,11 @@
 	let tujuankunjungan = $state(data2 ? data2.tujuankunjungan : '');
 	console.log('ini data2 : ', data2);
 	console.log('ini error : ', errors);
-	let idAktif = $state(page.params.id)
+	let idAktif = $state(page.params.id);
 	$effect(() => {
 		idAktif = page.params.id;
-		console.log("ID kunjungan  : ", id)
-	});	
+		console.log('ID kunjungan  : ', id);
+	});
 </script>
 
 <div
@@ -23,32 +24,32 @@
 >
 	<div class="col-span-7 mt-5 lg:col-span-5 lg:mb-5">
 		<div class="flex flex-col">
-			<input type="hidden" bind:value={idAktif} name="ID" >
+			<input type="hidden" bind:value={idAktif} name="ID" />
 			<div class="relative flex items-center">
 				<input
 					type="text"
-					name="namapengunjung-{id}"
+					name={`namapengunjung-${id}`}
 					bind:value={namapengunjung}
 					class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
 					placeholder="Nama Pengunjung"
 				/>
 				<span class="line-md--pencil absolute right-2"></span>
 			</div>
-			{#if errors && namapengunjung === ''}
-				<p class="ml-5 text-left text-red-500">{errors.namapengunjung[0]}</p>
+			{#if errors && errors[`namapengunjung.${id}`]}
+				<p class="ml-5 text-left text-red-500">{errors[`namapengunjung.${id}`]}</p>
 			{/if}
 			<div class="relative mt-5 flex items-center">
 				<input
 					type="text"
-					name="keterangankunjungan-{id}"
+					name={`keterangankunjungan-${id}`}
 					bind:value={keterangankunjungan}
 					class="py-8.5 lg:py-9.5 h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
 					placeholder="Keterangan kunjungan"
 				/>
 				<span class="line-md--pencil absolute right-2"></span>
 			</div>
-			{#if errors && keterangankunjungan === ''}
-				<p class="ml-5 text-left text-red-500">{errors.keterangankunjungan[0]}</p>
+			{#if errors && errors[`keterangankunjungan.${id}`]}
+				<p class="ml-5 text-left text-red-500">{errors[`keterangankunjungan.${id}`]}</p>
 			{/if}
 		</div>
 	</div>
@@ -63,29 +64,29 @@
 							class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
 							placeholder="No Telepon"
 							bind:value={notelp}
-							name="notelp-{id}"
+							name={`notelp-${id}`}
 							pattern="[0-9]*"
 							minlength="10"
 						/>
 						<span class="line-md--pencil absolute right-2"></span>
 					</div>
 
-					{#if errors && notelp === ''}
-						<p class="ml-1 mt-1 text-left text-red-500">{errors.notelp[0]}</p>
+					{#if errors && errors[`notelp.${id}`]}
+						<p class="ml-1 mt-1 text-left text-red-500">{errors[`notelp.${id}`]}</p>
 					{/if}
 				</div>
 
 				<div class="relative col-span-3 flex flex-col">
 					<input
 						type="text"
-						name="kotaasal-{id}"
+						name={`kotaasal-${id}`}
 						bind:value={kotaasal}
 						class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
 						placeholder="Kota asal"
 					/>
 					<span class="line-md--pencil absolute right-2 top-2.5"></span>
-					{#if errors && kotaasal === ''}
-						<p class="ml-5 text-left text-red-500">{errors.kotaasal[0]}</p>
+					{#if errors && errors[`kotaasal.${id}`]}
+						<p class="ml-5 text-left text-red-500">{errors[`kotaasal.${id}`]}</p>
 					{/if}
 				</div>
 			</div>
@@ -100,7 +101,7 @@
 							type="radio"
 							value="ya"
 							bind:group={radioinput}
-							name="default-radio-{id}"
+							name={`menemui_seseorang-${id}`}
 							class="h-3 w-3 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
 						/>
 						<label for="default-radio-1-{id}" class="ms-2 text-sm font-medium text-gray-900"
@@ -113,7 +114,7 @@
 							type="radio"
 							value="tidak"
 							bind:group={radioinput}
-							name="default-radio-{id}"
+							name={`menemui_seseorang-${id}`}
 							class="h-3 w-3 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
 						/>
 						<label for="default-radio-2-{id}" class="ms-2 text-sm font-medium text-black"
@@ -121,8 +122,8 @@
 						>
 					</div>
 				</div>
-				{#if errors && radioinput === ''}
-					<p class="ml-5 text-left text-red-500">{errors.radioinput}</p>
+				{#if errors && errors[`radioinput.${id}`]}
+					<p class="ml-5 text-left text-red-500">{errors[`radioinput.${id}`]}</p>
 				{/if}
 			</div>
 
@@ -134,7 +135,7 @@
 							type="text"
 							bind:value={orangyangditemui}
 							class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
-							name="orangyangditemui-{id}"
+							name={`orangyangditemui-${id}`}
 							placeholder="Orang Yang Ingin Ditemui"
 						/>
 						<span class="line-md--pencil absolute right-2"></span>
@@ -145,8 +146,8 @@
 							type="text"
 							class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
 							bind:value={tujuankunjungan}
-							name="tujuankunjungan-{id}"
-							placeholder="Tujuan Kunjungan"
+							name={`tujuankunjungan-${id}`}
+							placeholder={`tujuankunjungan-${id}`}
 						/>
 						<span class="line-md--pencil absolute right-2"></span>
 					</div>

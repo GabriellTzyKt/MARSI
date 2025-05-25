@@ -80,8 +80,11 @@ export const load: PageServerLoad = async ({params, cookies}) => {
                 "Authorization": `Bearer ${token?.token}`
             }
         });
-
+        
         let allUsers = [];
+       
+       
+
         if (usersResponse.ok) {
             const userData = await usersResponse.json();
             allUsers = userData.filter((user: any) => 
@@ -104,7 +107,7 @@ export const actions: Actions = {
         const data = await request.formData()
         console.log(data)
        const ver = z.object({
-            nama_situs:
+            nama_organisasi:
                 z.string({ message: "Field Nama Situs Harus diisi" })
                     .nonempty("Field ini tidak boleh kosong"),
 
@@ -154,9 +157,7 @@ export const actions: Actions = {
                 z.string({ message: "Field Tempat Operasional Harus dipilih" })
                     .nonempty("Field ini tidak boleh kosong"),
 
-            jumlahanggota:
-                z.string({ message: "Field harus diisi!" }).regex(/^\d+$/, "Harus berupa digit").nonempty("Field ini tidak boleh kosong"),
-
+          
             phone:
                 z.string({ message: "Field Nomer Telepon Harus diisi" })
                     .min(10, "Nomer telpon minimal 10 digit")
@@ -166,10 +167,11 @@ export const actions: Actions = {
 
         })
         const formData = {
-            nama_situs: String(data.get("nama_situs")),
+            nama_organisasi: String(data.get("nama_organisasi")),
             alamat: String(data.get("alamat")),
             email: String(data.get("email")),
-            deskripsi_organisasi: String(data.get("deskripsi_situs")),
+            // nama_organisasi: String(data.get("nama_organisasi")),
+            deskripsi_organisasi: String(data.get("deskripsi_organisasi")),
             penanggungjawab: String(data.get("penanggungjawab_nama")),
             penanggungjawab_id: String(data.get("penanggungjawab_id")),
             tanggal_berdiri: String(data.get("tanggal_berdiri")),
@@ -179,7 +181,7 @@ export const actions: Actions = {
             tempat_operasional: String(data.get("tempat_operasional")),
             pelindung: String(data.get("pelindung_nama")),
             pelindung_id: String(data.get("pelindung_id")),
-            jumlahanggota: String(data.get("jumlah_anggota")),
+            // jumlahanggota: String(data.get("jumlah_anggota")),
             phone: String(data.get("phone")),
         }
         const verification = ver.safeParse({ ...formData })
@@ -193,37 +195,26 @@ export const actions: Actions = {
         // return { success: true, formData }
 
         try {
-            const formDataToSend = new FormData();
-            formDataToSend.append("id_pemohon", data.get("id_pemohon") as string);
-            formDataToSend.append("penanggung_jawab", formData.penanggungjawab_id);
-            formDataToSend.append("nama_organisasi", formData.nama_situs);
-            formDataToSend.append("deskripsi", formData.deskripsi_organisasi);
-            formDataToSend.append("email", formData.email);
-            formDataToSend.append("no_telp", formData.phone);
-            formDataToSend.append("alamat", formData.alamat);
-            formDataToSend.append("pelindung", formData.pelindung_id);
-            formDataToSend.append("pembina", formData.pembina_id);
-            formDataToSend.append("tanggal_berdiri", formData.tanggal_berdiri);
-            formDataToSend.append("foto_organisasi", data.get("profile_image") as File);
-            formDataToSend.append("foto_profile", data.get("profile_image") as File);
-            // formDataToSend.append("lokasi", '2');
-            // formDataToSend.append("tempat_operasional", formData.tempat_operasional);
-            // formDataToSend.append("jumlah_anggota", formData.jumlahanggota);
-            // formDataToSend.append("jenis_komunitas", "Public")
-            // Tanggal berdiri? jenis komunitas?
+            let senData = {
+                id_organisasi: parseInt(String(data.get("id_organisasi"))),
+                penanggung_jawab: parseInt(formData.penanggungjawab_id),
+                foto_organisasi: '2',
+                email: formData.email,
+                no_telp: formData.phone,
+                nama_organisasi: formData.nama_organisasi,
+                deskripsi_organisasi: formData.deskripsi_organisasi,
+                alamat: formData.alamat,
+                tanggal_berdiri: data.get("tanggal_berdiri"),
+                pembina: formData.pembina_id,
+                pelindung: formData.pelindung_id,
+            }
+           
 
-            
-            // Tambahkan file gambar jika ada
-            // const profileImage = data.get("profile_image");
-            // if (profileImage) {
-            //     formDataToSend.append("foto_profile", profileImage);
-            // }
-
-            console.log("form data to send : " , formDataToSend)
+            console.log("form data to send : " , senData)
 
             const response = await fetch(`${env.URL_KERAJAAN}/organisasi`, {
                 method: "POST",
-                body: formDataToSend
+                body: JSON.stringify(senData)
             });
 
             const result = await response.json();

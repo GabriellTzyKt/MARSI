@@ -129,7 +129,7 @@
 			table_header={[
 				['nama_organisasi', 'Nama Organisasi'],
 				['tanggal_berdiri', 'Tanggal Berdiri'],
-				['lokasi', 'Lokasi'],
+				['alamat', 'Lokasi'],
 				['penanggung_jawab_nama', 'Penanggung Jawab'],
 				['pelindung_nama', 'Pelindung'],
 				['pembina_nama', 'Pembina'],

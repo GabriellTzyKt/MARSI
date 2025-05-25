@@ -1,17 +1,20 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import { navigating } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
 	import { dummyAcara, dummyAnggota, dummyBukuTamu } from '$lib/dummy';
 	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
-	import TambahKunjungan from '$lib/popup/TambahKunjungan.svelte';
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
+	import TambahPengunjung from '$lib/popup/TambahPengunjung.svelte';
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
-	// import { load } from '../../../komunitas/detail/daftaranggota/proxy+page.server.js';
 
+	let { data } = $props();
+	console.log('data kunjungan : ', data.kunjungan);
 	let count = $state(1);
 	let id = $state(1);
 	let showModal = $state(false);
@@ -19,9 +22,8 @@
 	let valo = $state(false);
 	let error = $state();
 	let data2 = $state();
-	let { form } = $props();
-	console.log('form data', form?.formData);
-
+	let deleteModal = $state(false);
+	let deleteID = $state();
 	let timer: any;
 
 	function increment() {
@@ -40,22 +42,34 @@
 	}
 
 	function hapus() {
-		count -= 1;
+		if (count > 1) {
+			count -= 1;
+		}
 	}
 	let entries = $state(10);
 	let currPage = $state(1);
 	let keyword = $state('');
+
 	function filterD(data: any) {
 		return data.filter(
 			(item) =>
-				item?.nama_pengunjung.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.tanggal.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.no_telepon.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.keterangan.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.status.toLowerCase().includes(keyword.toLowerCase())
+				item?.nama_pengunjung?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.tanggal_kunjungan?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.no_telp?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.kota_asal?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.keterangan?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.status?.toLowerCase().includes(keyword.toLowerCase())
 		);
 	}
 	let loading = $state(false);
+	function handleEdit(id: string) {
+		console.log('Anda Mengedit Kunjungan : ', id);
+	}
+	function handleDelete(id: string) {
+		console.log('Anda Menghapus Kunjungan : ', id);
+		deleteID = id;
+		deleteModal = true;
+	}
 
 	$effect(() => {
 		if (keyword || entries) {
@@ -69,7 +83,7 @@
 		console.log(d);
 		return d.slice(start, end);
 	}
-	let dataambil = $derived(pagination(dummyBukuTamu));
+	let dataambil = $derived(pagination(data?.kunjungan || []));
 </script>
 
 {#if navigating.to}
@@ -145,8 +159,9 @@
 		<Table
 			table_header={[
 				['nama_pengunjung', 'Nama Pengunjung'],
-				['tanggal', 'Tanggal'],
-				['no_telepon', 'Nomer Telepon'],
+				['tanggal_kunjungan', 'Tanggal'],
+				['no_telp', 'Nomer Telepon'],
+				['kota_asal', 'Kota Asal'],
 				['keterangan', 'Keterangan'],
 				['children', 'Status'],
 				['children', 'Aksi']
@@ -156,26 +171,22 @@
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
 					<DropDownNew
-						text={`Apakah yakin ingin mengarsipkan ${data.nama_anggota}?`}
+						text={`Apakah yakin ingin mengarsipkan ${data.nama_pengunjung}?`}
 						items={[
 							{
-								label: 'Edit',
-								action: () => handleEdit(data.id_user)
-							},
-							{
 								label: 'Hapus',
-								action: () => handleDelete(data.id_user)
+								action: () => handleDelete(data.id_kunjungan)
 							}
 						]}
 						id={`id-${index}`}
-						data={resdata}
 					></DropDownNew>
 				{:else if header === 'Status'}
 					<Status status={data.status}></Status>
 				{/if}
 			{/snippet}
 		</Table>
-		<Pagination bind:currPage bind:entries totalItems={filterD(dummyBukuTamu).length}></Pagination>
+		<Pagination bind:currPage bind:entries totalItems={filterD(data?.kunjungan || []).length}
+		></Pagination>
 	</div>
 </div>
 
@@ -190,11 +201,12 @@
 				console.log('INI Result : ', result);
 				if (result.type === 'success') {
 					valo = true;
-					clearTimeout(timer);
-					timer = setTimeout(() => {
-						valo = false;
-					}, 3000);
-					showModal = false;
+					await invalidateAll().then(() => {
+						setTimeout(() => {
+							valo = false;
+							showModal = false;
+						}, 1000);
+					});
 				} else if (result.type === 'failure') {
 					error = result.data?.errors || '';
 					console.log('ini ERROR : ', error);
@@ -207,7 +219,7 @@
 				<div class="flex justify-between">
 					<h2 class="text-xl font-bold">Tambah Kunjungan</h2>
 					<!-- svelte-ignore a11y_consider_explicit_label -->
-					<button onclick={closeModal}>
+					<button type="button" onclick={closeModal}>
 						<span class="carbon--close-outline"></span>
 					</button>
 				</div>
@@ -219,19 +231,21 @@
 					Tambah Kunjungan
 				</button>
 
-				{#each Array(count) as _, id}
+				{#each Array(count) as _, i}
 					<div class="relative flex h-full flex-col justify-between lg:h-fit">
-						<TambahKunjungan id={id + 1} errors={error} {data2}></TambahKunjungan>
-						<div class="mx-auto mb-5 flex h-full items-center">
-							<!-- svelte-ignore a11y_consider_explicit_label -->
-							<button onclick={hapus}>
-								<span
-									class="absolute bottom-8 right-2 flex h-10 w-10 items-center justify-center rounded-lg bg-red-400 p-2 lg:right-12 lg:top-1/2"
-								>
-									<i class="gg--trash z-10 items-center text-2xl text-white"></i>
-								</span>
-							</button>
-						</div>
+						<TambahPengunjung id={i + 1} errors={error} {data2}></TambahPengunjung>
+						{#if i > 0}
+							<div class="mx-auto mb-5 flex h-full items-center">
+								<!-- svelte-ignore a11y_consider_explicit_label -->
+								<button type="button" onclick={hapus}>
+									<span
+										class="absolute bottom-8 right-2 flex h-10 w-10 items-center justify-center rounded-lg bg-red-400 p-2 lg:right-12 lg:top-1/2"
+									>
+										<i class="gg--trash z-10 items-center text-2xl text-white"></i>
+									</span>
+								</button>
+							</div>
+						{/if}
 					</div>
 				{/each}
 
@@ -247,7 +261,41 @@
 {/if}
 
 {#if valo}
-	<SuccessModal text="Anggota berhasil Ditambah!"></SuccessModal>
+	<SuccessModal text="berhasil"></SuccessModal>
+{/if}
+{#if deleteModal}
+	<form
+		action="?/hapusPengunjung"
+		method="post"
+		use:enhance={() => {
+			loading = true;
+			return async ({ result }) => {
+				loading = false;
+				if (result.type === 'success') {
+					valo = true;
+					await invalidateAll().then(() => {
+						setTimeout(() => {
+							valo = false;
+						}, 1000);
+					});
+					deleteModal = false;
+				} else if (result.type === 'failure') {
+					error = result.data?.errors || '';
+				}
+			};
+		}}
+	>
+		<DeleteModal
+			bind:value={deleteModal}
+			text={`Apakah yakin ingin menghapus pengunjung ini?`}
+			successText="Kunjungan berhasil diubah!"
+			choose="arsip"
+		></DeleteModal>
+		<input type="text" hidden name="id_kunjungan" value={deleteID} />
+	</form>
+{/if}
+{#if valo}
+	<SuccessModal text=" Berhasil "></SuccessModal>
 {/if}
 
 <style>

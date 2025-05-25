@@ -1,91 +1,241 @@
 import { fail, type Actions } from "@sveltejs/kit";
-import { string, z } from "zod";
+import { z } from "zod";
+import type { PageServerLoad } from "../$types";
+import { env } from "$env/dynamic/private";
+import { formatDatetoUI } from "$lib";
 
+export const load: PageServerLoad = async () => {
+    try {
+        let res = await fetch(`${env.URL_KERAJAAN}/situs/kunjungan`);
+        if (!res.ok) {
+            throw new Error(`HTTP Error! Status: ${res.status}`)
+        }
+        let kunjungan = await res.json();
+        kunjungan = kunjungan.filter((kunjungan: any) => {
+            return kunjungan.deleted_at == '0001-01-01T00:00:00Z' && kunjungan.deleted_at !== null;
+        }).map((kunjungan: any) => ({
+            ...kunjungan,
+            tanggal_kunjungan: kunjungan.tanggal_kunjungan.split("T")[0]
+        }));
+        return { kunjungan };
+    } catch (error) {
+        console.error("Error fetching kunjungan:", error);
+        return { kunjungan: [] };
+    }
+};
 
 export const actions: Actions = {
     tambah: async ({ request }) => {
         const data = await request.formData();
-
-        const formDataEntries = Array.from(data.entries()); // Konversi FormData ke array
-
-        console.log("data entries : ", formDataEntries)
-
-        let form: any = {
-            namapengunjung: "",
-            keterangankunjungan: "",
-            notelp: "",
-            kotaasal: "",
-            orangyangditemui: "",
-            tujuankunjungan: "",
-            radioinput: "",
+        console.log("data entries : ", data);
+        
+        // Get all unique IDs from form data
+        const entryIds = new Set<string>();
+        for (const [key] of data.entries()) {
+            if (key.includes('-')) {
+                const id = key.split('-')[1];
+                entryIds.add(id);
+            }
         }
-
-
-        const ver = z.object({
-            namapengunjung: z.record(
-                z.string().trim().min(1, "Masukkan nama 1 anggota!")
-            ),
-            keterangankunjungan: z.record(z.string().trim().min(1, "Keterangan harus diisi!")),
-            kotaasal: z.record(z.string().trim().min(1, "Isi Kota!")),
-            orangyangditemui: z.record(z.string().optional()),
-            tujuankunjungan: z.record(z.string().optional()),
-            radioinput: z.record(z.string().trim().min(1, "Pilih salah satu!")),
-            notelp:
-                z.record(
-                    z.string()
-                        .min(10, "Nomor telepon harus diisi!")
-                        .regex(/^\d+$/, "Nomor telepon hanya boleh angka!")
-                ),
-        });
-
-        form = {
-            namapengunjung: {},
-            keterangankunjungan: {},
-            kotaasal: {},
-            orangyangditemui: {},
-            tujuankunjungan: {},
-            radioinput: {},
-            notelp: {},
+        
+        // Create form object and validation errors
+        let form = {
+            id_user: {} as Record<string, string>,
+            nama_pengunjung: {} as Record<string, string>,
+            tanggal_kunjungan: {} as Record<string, string>,
+            no_telp: {} as Record<string, string>,
+            kota_asal: {} as Record<string, string>,
+            keterangan: {} as Record<string, string>,
         };
-
-        for (const [key, value] of formDataEntries) {
-            if (key.startsWith("namapengunjung-")) {
-                form.namapengunjung[key] = String(value).trim();
+        
+        let errors = {} as Record<string, string>;
+        
+        // Define validation schema for a single entry
+        const entrySchema = z.object({
+            id_user: z.number().int().positive(),
+            nama_pengunjung: z.string().min(1, "Masukkan nama pengunjung!"),
+            tanggal_kunjungan: z.string().min(1, "Tanggal kunjungan harus diisi!"),
+            no_telp: z.string()
+                .min(1, "Nomor telepon harus diisi!")
+                .regex(/^\d+$/, "Nomor telepon hanya boleh angka!")
+                .refine(val => val.length >= 10, "Nomor telepon minimal 10 digit!"),
+            kota_asal: z.string().min(1, "Kota asal harus diisi!"),
+            keterangan: z.string().optional(),
+        });
+        
+        // Process each entry with individual validation
+        const entryPromises = Array.from(entryIds).map(async id => {
+            const id_user = parseInt(data.get(`id_user-${id}`)?.toString() || '3'); // Default to 3 as specified
+            const nama_pengunjung = data.get(`nama_pengunjung-${id}`)?.toString() || '';
+            const tanggal_kunjungan = data.get(`tanggal_kunjungan-${id}`)?.toString() || '';
+            const no_telp = data.get(`no_telp-${id}`)?.toString() || '';
+            const kota_asal = data.get(`kota_asal-${id}`)?.toString() || '';
+            const keterangan = data.get(`keterangan-${id}`)?.toString() || '';
+            
+            // Skip empty entries (except the first one)
+            if (id !== '1' && !nama_pengunjung && !tanggal_kunjungan && !no_telp && !kota_asal) {
+                return null;
             }
-            else if (key.startsWith("keterangankunjungan-")) {
-                form.keterangankunjungan[key] = String(value).trim();
+            
+            // Add to form object
+            form.id_user[id] = id_user.toString();
+            form.nama_pengunjung[id] = nama_pengunjung;
+            form.tanggal_kunjungan[id] = tanggal_kunjungan;
+            form.no_telp[id] = no_telp;
+            form.kota_asal[id] = kota_asal;
+            form.keterangan[id] = keterangan;
+            
+            // Validate this entry
+            const validation = entrySchema.safeParse({
+                id_user,
+                nama_pengunjung,
+                tanggal_kunjungan,
+                no_telp,
+                kota_asal,
+                keterangan
+            });
+            
+            if (!validation.success) {
+                // Add field errors with the entry ID
+                const fieldErrors = validation.error.flatten().fieldErrors;
+                Object.entries(fieldErrors).forEach(([field, messages]) => {
+                    if (messages && messages.length > 0) {
+                        errors[`${field}.${id}`] = messages[0];
+                    }
+                });
+                return null;
             }
-            else if (key.startsWith("notelp-")) {
-                form.notelp[key] = String(value).trim();
-            }
-            else if (key.startsWith("kotaasal-")) {
-                form.kotaasal[key] = String(value).trim();
-            }
-            else if (key.startsWith("default-radio-")) {
-                form.radioinput[key] = String(value).trim();
-            }
-            else if (key.startsWith("orangyangditemui-")) {
-                form.orangyangditemui[key] = String(value).trim();
-            }
-            else if (key.startsWith("tujuankunjungan-")) {
-                form.tujuankunjungan[key] = String(value).trim();
-            }
-        }
-
-
-        console.log("Extracted Form:", form);
-
-
-        const validation = ver.safeParse({ ...form });
-
-        if (!validation.success) {
-            console.log(validation.error.flatten().fieldErrors)
+            
+            // Format date for API
+            const formattedDate = formatDatetoUI(tanggal_kunjungan);
+            
+            // Return the validated and formatted entry
+            return {
+                id_user,
+                nama_pengunjung,
+                tanggal_kunjungan: formattedDate,
+                no_telp,
+                kota_asal,
+                keterangan
+            };
+        });
+        
+        // Wait for all entry validations to complete
+        const processedEntries = (await Promise.all(entryPromises)).filter(entry => entry !== null);
+        
+        console.log("Form data:", form);
+        
+        // Return errors if any
+        if (Object.keys(errors).length > 0) {
+            console.log("Validation errors:", errors);
             return fail(406, {
-                errors: validation.error.flatten().fieldErrors, success: false,
-                formData: form, type: "add"
+                errors,
+                success: false,
+                formData: form,
+                type: "add"
             });
         }
-
-        return { errors: "Success", success: true, formData: form, type: "add" };
+        
+        // Send the data to the API
+        try {
+            // Upload each entry individually
+            const uploadPromises = processedEntries.map(async entry => {
+                if (!entry) return null;
+                
+                try {
+                    console.log(entry)
+                    const response = await fetch(`${env.URL_KERAJAAN}/situs/kunjungan`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(entry), // API expects an array
+                    });
+                    
+                    if (!response.ok) {
+                        console.error(`Error submitting entry for ${entry.nama_pengunjung}:`, await response.text());
+                        return null;
+                    }
+                    
+                    const result = await response.json();
+                    console.log(`Entry for ${entry.nama_pengunjung} submitted successfully:`, result);
+                    return result;
+                } catch (error) {
+                    console.error(`Error submitting entry for ${entry.nama_pengunjung}:`, error);
+                    return null;
+                }
+            });
+            
+            // Wait for all uploads to complete
+            const results = await Promise.all(uploadPromises);
+            const successfulUploads = results.filter(Boolean);
+            
+            if (successfulUploads.length === 0 && processedEntries.length > 0) {
+                // All uploads failed
+                return fail(500, { 
+                    errors: "Gagal menambahkan data pengunjung", 
+                    success: false, 
+                    formData: form, 
+                    type: "add" 
+                });
+            } else if (successfulUploads.length < processedEntries.length) {
+                // Some uploads failed
+                return { 
+                    errors: "Beberapa data berhasil ditambahkan", 
+                    success: true, 
+                    formData: form, 
+                    type: "add",
+                    partialSuccess: true
+                };
+            } else {
+                // All uploads succeeded
+                return { 
+                    errors: "Success", 
+                    success: true, 
+                    formData: form, 
+                    type: "add" 
+                };
+            }
+        } catch (error) {
+            console.error("Error submitting data:", error);
+            return fail(500, { 
+                errors: "Error submitting data", 
+                success: false, 
+                formData: form, 
+                type: "add" 
+            });
+        }
+    },
+    hapusPengunjung: async ({ request }) => {
+        const data = await request.formData();
+        const id = data.get("id_kunjungan");
+        try {
+            const res = await fetch(`${env.URL_KERAJAAN}/situs/kunjungan/${id}`, {
+                method: "DELETE"
+            });
+            if (!res.ok) {
+                throw new Error(`HTTP Error! Status: ${res.status}`);
+            }
+            const data = await res.json();
+            console.log(data);
+            return { success: true };
+        }
+        catch (error) {
+            console.error("Error deleting record:", error);
+            return fail(500, { error: "Server error when deleting record" });
+        }
     }
+
 };
+
+function formatDateForAPI(dateString: string): string {
+    if (!dateString) return '';
+    
+    try {
+        const [year, month, day] = dateString.split('-');
+        return `${year}-${month}-${day}`;
+    } catch (e) {
+        console.error("Error formatting date:", e);
+        return dateString;
+    }
+}

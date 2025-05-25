@@ -8,7 +8,7 @@
 	import Loader from '$lib/loader/Loader.svelte';
 	import { onMount } from 'svelte';
 	let { data } = $props();
-
+	console.log(data);
 	let open = $state(false);
 	let timer: number;
 	let errors = $state();
@@ -34,6 +34,10 @@
 	let selectedPb = $state(data.allUsers.find((user) => user.id == data.data.pembina) || null);
 	let showPbDropdown = $state(false);
 	let filteredPbUsers = $derived(filterUser(pbKeyword));
+
+	// let situsKeyword = $state(
+	// 	data.allSitus.find((situs) => situs.id == data.data.lokasi)?.name || ''
+	// );
 
 	function filterUser(searchTerm: string) {
 		return data.allUsers.filter((item) =>
@@ -120,10 +124,12 @@
 				}
 				if (result.type === 'failure') {
 					errors = result.data?.errors;
+					console.log(errors);
 				}
 			};
 		}}
 	>
+		<input type="text" name="id_organisasi" value={data?.data.id_organisasi} hidden />
 		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<!-- 1 -->
 			<div>

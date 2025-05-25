@@ -11,6 +11,18 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
                 "Authorization": `Bearer ${token?.token}`
             }
         })
+        let resSitus = await fetch(`${env.URL_KERAJAAN}/situs`);
+        if (!resSitus.ok) {
+            throw new Error(`HTTP Error! Status: ${resSitus.status}`)
+        }
+        let situsData = await resSitus.json();
+        let allSitus = situsData.filter((situs: any) => 
+            situs.deleted_at === '0001-01-01T00:00:00Z' || !situs.deleted_at
+        ).map((situs: any) => ({
+            id: situs.id_situs,
+            name: situs.nama_situs || 'Nama tidak tersedia'
+        }));
+
         if (!resuser.ok) {
             throw new Error(`HTTP Error! Status: ${resuser.status}`)
         }
@@ -25,7 +37,7 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
                 email: item.email
             }
         });
-        return {allUsers: data}
+        return {allUsers: data, allSitus}
     } catch (error) {
         
     }

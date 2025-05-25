@@ -26,7 +26,7 @@
 					</button>
 				</div>
 				{#each Array(count) as _, id}
-					<TambahKunjungan id={id + 1}></TambahKunjungan>
+					<TambahKunjungan id={id + 1} {errors} {data2}></TambahKunjungan>
 				{/each}
 			</div>
 		</div>

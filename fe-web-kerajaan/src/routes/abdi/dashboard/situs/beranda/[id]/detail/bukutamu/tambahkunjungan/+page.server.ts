@@ -5,101 +5,89 @@ import { any, z } from "zod";
 export const actions: Actions = {
     tambah: async ({ request }) => {
         const data = await request.formData();
-
-        const ids = data.getAll("id").map(String);
-
-
-        console.log(ids)
-
-        let form: any = {
-            namaacara: "",
-            lokasiacara: "",
-            tujuanacara: "",
-            deskripsiacara: "",
-            penanggungjawab: "",
-            kapasitasacara: "",
-            tanggalmulai: "",
-            tanggalselesai: "",
-            waktumulai: "",
-            waktuselesai: "",
-            buttonselect: "",
-            inputradio: "",
-            namabawah: {},
-            notelpbawah: {},
-            panggilan: {},
+        console.log("data entries : ", data);
+        
+        // Get all unique IDs from form data
+        const entryIds = new Set();
+        for (const [key] of data.entries()) {
+            if (key.includes('-')) {
+                const id = key.split('-')[1];
+                entryIds.add(id);
+            }
         }
-
-        const ver = z.object({
-            buttonselect: z.string().trim().min(1, "Minimal 1!"),
-            inputradio: z.string().trim().min(1, "Minimal 1!"),
-            namaacara: z.string().trim().min(1, "Isi Nama acara"),
-            lokasiacara: z.string().trim().min(1, "Alamat harus diisi!"),
-            tujuanacara: z.string().trim().min(1, "Tujuan harus diisi!"),
-            deskripsiacara: z.string().trim().min(1, "Deskripsi harus terisi!"),
-            penanggungjawab: z.string().trim().min(1, "Isi penanggungjawab!"),
-            kapasitasacara: z.string()
-                .trim()
-                .min(1, "Kapasitas harus terisi!")
-                .regex(/^\d+$/, "Jumlah anggota harus angka"),
-            tanggalmulai: z.coerce.date({ message: "Tanggal Tidak valid (YYYY-MM-DD)" }),
-            tanggalselesai: z.coerce.date({ message: "Tanggal Tidak valid (YYYY-MM-DD)" }),
-            waktumulai: z.string().regex(/^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/, {
-                message: "pakai format : HH(jam):mm(menit).",
-            }),
-            waktuselesai: z.string().regex(/^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/, {
-                message: "pakai format : HH(jam):mm(menit).",
-            }),
-            panggilan: z.record(z.string().min(1, "Panggilan gaboleh kosong!")),
-            namabawah: z.record(z.string().min(1, "Masih ada input field yg kosong!")),
-            notelpbawah: z.record(
-                z.string()
-                    .min(10, "Nomor telepon harus diisi!")
-                    .regex(/^\d+$/, "Nomor telepon hanya boleh angka!")
-            ),
-        });
-
-        form = {
-            buttonselect: data.get("buttonselect") ?? "",
-            inputradio: data.get("default-radio") ?? "",
-            namaacara: data.get("namaacara") ?? "",
-            lokasiacara: data.get("lokasiacara") ?? "",
-            tujuanacara: data.get("tujuanacara") ?? "",
-            deskripsiacara: data.get("deskripsiacara") ?? "",
-            penanggungjawab: data.get("penanggungjawab") ?? "",
-            kapasitasacara: data.get("kapasitasacara") ?? "",
-            tanggalmulai: data.get("tanggalmulai") ?? "",
-            tanggalselesai: data.get("tanggalselesai") ?? "",
-            waktumulai: data.get("waktumulai") ?? "",
-            waktuselesai: data.get("waktuselesai") ?? "",
-            panggilan: {},
-            namabawah: {},
-            notelpbawah: {},
+        
+        // Create form object and validation errors
+        let form = {
+            namapengunjung: {},
+            keterangankunjungan: {},
+            kotaasal: {},
+            orangyangditemui: {},
+            tujuankunjungan: {},
+            radioinput: {},
+            notelp: {},
         };
-
-        for (const id of ids) {
-            form.namabawah[id] = data.get(`namabawah_${id}`) ?? "";
-            form.notelpbawah[id] = data.get(`notelpbawah_${id}`) ?? "";
-            form.panggilan[id] = data.get(`panggilan_${id}`) ?? "";
-        }
-
-
-        console.log(form)
-
-        const validation = ver.safeParse({ ...form });
-
-        if (!validation.success) {
-            const fieldErrors = validation.error.flatten().fieldErrors;
-
-            console.log("errors : " , fieldErrors)
+        
+        let errors = {};
+        
+        // Process each entry
+        entryIds.forEach(id => {
+            const namapengunjung = data.get(`namapengunjung-${id}`)?.toString() || '';
+            const keterangankunjungan = data.get(`keterangankunjungan-${id}`)?.toString() || '';
+            const notelp = data.get(`notelp-${id}`)?.toString() || '';
+            const kotaasal = data.get(`kotaasal-${id}`)?.toString() || '';
+            const radioinput = data.get(`menemui_seseorang-${id}`)?.toString() || '';
+            const orangyangditemui = data.get(`orangyangditemui-${id}`)?.toString() || '';
+            const tujuankunjungan = data.get(`tujuankunjungan-${id}`)?.toString() || '';
             
+            // Skip empty entries (except the first one)
+            if (id !== '1' && !namapengunjung && !keterangankunjungan && !notelp && !kotaasal) {
+                return;
+            }
+            
+            // Add to form object
+            form.namapengunjung[id] = namapengunjung;
+            form.keterangankunjungan[id] = keterangankunjungan;
+            form.notelp[id] = notelp;
+            form.kotaasal[id] = kotaasal;
+            form.radioinput[id] = radioinput;
+            form.orangyangditemui[id] = orangyangditemui;
+            form.tujuankunjungan[id] = tujuankunjungan;
+            
+            // Validate required fields
+            if (!namapengunjung.trim()) {
+                errors[`namapengunjung.${id}`] = "Masukkan nama pengunjung!";
+            }
+            if (!keterangankunjungan.trim()) {
+                errors[`keterangankunjungan.${id}`] = "Keterangan harus diisi!";
+            }
+            if (!kotaasal.trim()) {
+                errors[`kotaasal.${id}`] = "Isi Kota!";
+            }
+            if (!radioinput) {
+                errors[`radioinput.${id}`] = "Pilih salah satu!";
+            }
+            if (!notelp.trim()) {
+                errors[`notelp.${id}`] = "Nomor telepon harus diisi!";
+            } else if (!/^\d+$/.test(notelp)) {
+                errors[`notelp.${id}`] = "Nomor telepon hanya boleh angka!";
+            } else if (notelp.length < 10) {
+                errors[`notelp.${id}`] = "Nomor telepon minimal 10 digit!";
+            }
+        });
+        
+        console.log("Form data:", form);
+        
+        // Return errors if any
+        if (Object.keys(errors).length > 0) {
+            console.log("Validation errors:", errors);
             return fail(406, {
-                errors: fieldErrors,
+                errors,
                 success: false,
                 formData: form,
                 type: "add"
             });
         }
-
+        
         return { errors: "Success", success: true, formData: form, type: "add" };
     }
 };

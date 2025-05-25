@@ -233,7 +233,7 @@ export const actions: Actions = {
         // return { success: true, formData }
 
         try {
-            const formDataToSend = {
+            let formDataToSend = {
                 id_komunitas: parseInt(String(data.get("id_komunitas"))),
                 penanggung_jawab: parseInt(formData.penanggungjawab_id),
                 // id_pengajuan: parseInt(String(data.get("id_pengajuan"))),
@@ -246,7 +246,7 @@ export const actions: Actions = {
                 pembina: formData.pembina_id,
                 alamat: formData.alamat,    
                 email: formData.email,
-                no_telp: formData.phone,
+                nomor_telepon: formData.phone,
                 // jumlah_anggota: formData.jumlahanggota,
 
             }
@@ -279,6 +279,9 @@ export const actions: Actions = {
 
             const response = await fetch(`${env.URL_KERAJAAN}/komunitas`, {
                 method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify(formDataToSend)
             });
 

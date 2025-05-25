@@ -28,7 +28,7 @@
 <div class="relative">
 	<button onclick={toggle} class="rounded bg-gray-200 px-2 py-1 text-sm">⋮</button>
 
-	{#if isOpen}
+	{#if $openDropdown === id}
 		<ul
 			class="absolute right-0 z-10 mt-2 w-48 rounded-md border bg-white shadow-lg"
 			in:fade={{ duration: 100 }}
