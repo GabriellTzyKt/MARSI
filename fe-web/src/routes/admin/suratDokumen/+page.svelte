@@ -9,6 +9,8 @@
 	import { page } from '$app/state';
 	import SModal from '$lib/popup/SModal.svelte';
 	import { onMount } from 'svelte';
+	import logolagu from '../../../asset/logolagu.jpg';
+	import logovidio from '../../../asset/video-player-line-black-icon-vector.jpg'
 
 	let currPage = $state(1);
 	let entries = $state(10);
@@ -18,7 +20,7 @@
 
 	let { data } = $props();
 	const dataArsip = data.dataArsip;
-	console.log(dataArsip);
+	console.log("data arsip : ", dataArsip);
 
 	function filterData(data: any[]) {
 		return data.filter((item) => item?.nama_arsip?.toLowerCase().includes(keyword.toLowerCase()));
@@ -159,13 +161,31 @@
 					<div class="flex flex-row gap-2">
 						{#each data.files as file}
 							{#if file && typeof file === 'object' && file.url}
-								<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
-									<img
-										src={file.url}
-										alt={file.name || 'Document'}
-										class="h-10 w-10 rounded object-cover"
-									/>
-								</a>
+								{#if file.url.toLowerCase().endsWith('.mp3') || file.url.toLowerCase().endsWith('.wav')}
+									<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
+										<img
+											src={logolagu}
+											alt={file.name || 'Audio File'}
+											class="h-10 w-10 rounded object-cover"
+										/>
+									</a>
+								{:else if file.url.toLowerCase().endsWith('.mp4') || file.url.toLowerCase().endsWith('.webm')}
+									<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
+										<img
+											src={logovidio}
+											alt={file.name || 'Video File'}
+											class="h-10 w-10 rounded object-cover"
+										/>
+									</a>
+								{:else}
+									<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
+										<img
+											src={file.url}
+											alt={file.name || 'Document'}
+											class="h-10 w-10 rounded object-cover"
+										/>
+									</a>
+								{/if}
 							{/if}
 						{/each}
 					</div>

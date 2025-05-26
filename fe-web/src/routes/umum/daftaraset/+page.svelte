@@ -85,12 +85,12 @@
 
 	function updateFilteredData() {
 		const filteredData = dataGet.filter((v) => {
-			const isDaerahMatch = selectedDaerah
-				? v.lokasi.toLowerCase().includes(selectedDaerah.toLowerCase())
-				: true;
-			const isKeywordMatch = v.nama.toLowerCase().includes(keyword.toLowerCase());
+			// const isDaerahMatch = selectedDaerah
+			// 	? v.lokasi?.toLowerCase().includes(selectedDaerah.toLowerCase())
+			// 	: true;
+			const isKeywordMatch = v.nama_aset?.toLowerCase().includes(keyword.toLowerCase());
 
-			return isDaerahMatch && isKeywordMatch;
+			return isKeywordMatch;
 		});
 
 		if (sortOrder === 'asc') {
@@ -242,10 +242,10 @@
 	<div class="relative mb-20 ml-10 mr-10 mt-10 grid grid-cols-1 gap-x-4 gap-y-10 md:grid-cols-2">
 		{#each updateFilteredData().slice(0, displayedCount) as situs}
 			<Cardshow
-				judul={situs.nama}
+				judul={situs.nama_aset}
 				lokasi={situs.kepemilikan}
-				gambar={situs.gambar1}
-				id={situs.id}
+				gambar={situs.imageUrls}
+				id={situs.id_aset}
 				tahun={situs.tahun}
 			/>
 		{/each}

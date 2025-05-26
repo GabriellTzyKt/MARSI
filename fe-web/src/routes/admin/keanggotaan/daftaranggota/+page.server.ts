@@ -1,6 +1,6 @@
 import { env } from "$env/dynamic/private";
 import Table from "$lib/table/Table.svelte";
-import {  z } from "zod";
+import { z } from "zod";
 import type { Actions, PageServerLoad } from "./$types";
 import { schema } from "./schema";
 import { fail } from "@sveltejs/kit";
@@ -32,17 +32,17 @@ export const load: PageServerLoad = async ({ fetch }) => {
                 }
             })
         ]);
-        
+
         // Check if both requests were successful
         if (!kerajaanResponse.ok || !jenisKerajaanResponse.ok) {
             throw new Error("Failed to fetch data");
         }
-        
+
         // Parse the JSON responses
         const kerajaanData = await kerajaanResponse.json();
         const jenisKerajaanData = await jenisKerajaanResponse.json();
         const gelarData = await gelarResponse.json();
-        
+
         const formatDate = (iso: string) => {
             const date = new Date(iso);
             const day = String(date.getDate()).padStart(2, '0');
@@ -56,11 +56,11 @@ export const load: PageServerLoad = async ({ fetch }) => {
         jenisKerajaanData.forEach((jenis: any) => {
             jenisKerajaanMap.set(jenis.id_jenis_kerajaan, jenis);
         });
-        
+
         // Format kerajaan data and add jenis_kerajaan name directly
         const kerajaanFormatted = kerajaanData.map((item: any) => {
             const jenisDetail = jenisKerajaanMap.get(item.jenis_kerajaan);
-            
+
             return {
                 ...item,
                 tanggal_berdiri: formatDate(item.tanggal_berdiri),
@@ -71,10 +71,10 @@ export const load: PageServerLoad = async ({ fetch }) => {
                 jenis_kerajaan_nama: jenisDetail ? jenisDetail.nama_jenis_kerajaan : '-'
             };
         });
-        
-        const limit = pLimit(5); // Only 5 concurrent requests at a time
 
-        const anggotaPromises = kerajaanFormatted.map((kerajaan : any) => 
+        const limit = pLimit(5);
+
+        const anggotaPromises = kerajaanFormatted.map((kerajaan: any) =>
             limit(() => {
                 return fetch(env.PUB_PORT + `/kerajaan/anggota/${kerajaan.id_kerajaan}`, {
                     method: "GET",
@@ -82,27 +82,35 @@ export const load: PageServerLoad = async ({ fetch }) => {
                         "Accept": "application/json"
                     }
                 })
-                .then((response : any) => {
-                    if (!response.ok) {
-                        console.error(`Failed to fetch anggota for kerajaan ${kerajaan.id_kerajaan}`);
+                    .then((response: any) => {
+                        if (!response.ok) {
+                            console.error(`Failed to fetch anggota for kerajaan ${kerajaan.id_kerajaan}`);
+                            return { id_kerajaan: kerajaan.id_kerajaan, anggota: [] };
+                        }
+                        return response.json().then((anggotaData: any) => {
+                            // Filter out deleted anggota
+                            const filteredAnggota = Array.isArray(anggotaData)
+                                ? anggotaData.filter((anggota: any) =>
+                                    anggota.deleted_at === '0001-01-01T00:00:00Z' || !anggota.deleted_at)
+                                : [];
+
+                            return {
+                                id_kerajaan: kerajaan.id_kerajaan,
+                                nama_kerajaan: kerajaan.nama_kerajaan,
+                                anggota: filteredAnggota
+                            };
+                        });
+                    })
+                    .catch(error => {
+                        console.error(`Error fetching anggota for kerajaan ${kerajaan.id_kerajaan}:`, error);
                         return { id_kerajaan: kerajaan.id_kerajaan, anggota: [] };
-                    }
-                    return response.json().then((anggotaData : any) => ({
-                        id_kerajaan: kerajaan.id_kerajaan,
-                        nama_kerajaan: kerajaan.nama_kerajaan,
-                        anggota: anggotaData
-                    }));
-                })
-                .catch(error => {
-                    console.error(`Error fetching anggota for kerajaan ${kerajaan.id_kerajaan}:`, error);
-                    return { id_kerajaan: kerajaan.id_kerajaan, anggota: [] };
-                });
+                    });
             })
         );
-        
+
         // Wait for all anggota fetches to complete
         const anggotaResults = await Promise.all(anggotaPromises);
-        
+
         return {
             dataKerajaan: kerajaanFormatted,
             jenisKerajaan: jenisKerajaanData,
@@ -121,16 +129,16 @@ export const load: PageServerLoad = async ({ fetch }) => {
 };
 
 export const actions: Actions = {
-    tambahKerajaan: async ({request}) => {
+    tambahKerajaan: async ({ request }) => {
         const data = await request.formData()
         const entry = Object.fromEntries(data)
         console.log("DATA ANGGOTA : ", data)
         const verif = schema.safeParse(entry)
         if (!verif.success) {
             console.log(verif.error.flatten().fieldErrors)
-            return fail(418, {errors: verif.error.flatten().fieldErrors, success: false, entry})
+            return fail(418, { errors: verif.error.flatten().fieldErrors, success: false, entry })
         }
-        
+
         try {
             const response = await fetch(env.PUB_PORT + "/kerajaan/anggota", {
                 method: "POST",
@@ -144,10 +152,10 @@ export const actions: Actions = {
                     posisi: entry.posisi_anggota
                 })
             });
-            
+
             const result = await response.json();
             console.log("API Response:", result);
-            
+
             if (!response.ok) {
                 return fail(response.status, {
                     errors: { api: [`Error: ${response.status} - ${result.message || "Terjadi kesalahan"}`] },
@@ -155,8 +163,8 @@ export const actions: Actions = {
                     entry
                 });
             }
-            
-            return {errors: "No Error", success: true}
+
+            return { errors: "No Error", success: true }
         } catch (error) {
             console.error("API Error:", error);
             return fail(500, {
@@ -166,16 +174,16 @@ export const actions: Actions = {
             });
         }
     },
-    ubahAnggota: async ({request}) => {
-        const data = await request.formData().then((v)=> Object.fromEntries(v))
+    ubahAnggota: async ({ request }) => {
+        const data = await request.formData().then((v) => Object.fromEntries(v))
         console.log("Data anggota : ", data)
-        
+
         const verif = schema.safeParse(data)
         if (!verif.success) {
             console.log(verif.error.flatten().fieldErrors)
-            return fail(418, {errors: verif.error.flatten().fieldErrors, success: false, data})
+            return fail(418, { errors: verif.error.flatten().fieldErrors, success: false, data })
         }
-        
+
         try {
             // Membuat request ke API untuk mengubah data anggota
             const response = await fetch(env.PUB_PORT + "/kerajaan/anggota", {
@@ -191,10 +199,10 @@ export const actions: Actions = {
                     posisi: data.posisi_anggota
                 })
             });
-            
+
             const result = await response.json();
             console.log("API Response:", result);
-            
+
             if (!response.ok) {
                 return fail(response.status, {
                     errors: { api: [`Error: ${response.status} - ${result.message || "Terjadi kesalahan"}`] },
@@ -202,8 +210,8 @@ export const actions: Actions = {
                     data
                 });
             }
-            
-            return {errors: "No Error", success: true}
+
+            return { errors: "No Error", success: true }
         } catch (error) {
             console.error("API Error:", error);
             return fail(500, {
@@ -214,19 +222,19 @@ export const actions: Actions = {
         }
     },
 
-    hapusAnggota: async ({request}) => {
+    hapusAnggota: async ({ request }) => {
         const data = await request.formData();
         const id_keanggotaan = Number(data.get("id_keanggotaan"));
-        
+
         console.log("Menghapus anggota dengan ID:", id_keanggotaan);
-        
+
         if (!id_keanggotaan) {
             return fail(400, {
                 errors: { api: ["ID keanggotaan tidak ditemukan"] },
                 success: false
             });
         }
-        
+
         try {
             // Membuat request ke API untuk menghapus data anggota
             const response = await fetch(`${env.PUB_PORT}/kerajaan/anggota/${id_keanggotaan}`, {
@@ -237,26 +245,26 @@ export const actions: Actions = {
             });
 
             console.log("Ay")
-            
+
             // Jika response tidak OK, kembalikan error
             if (!response.ok) {
                 let errorMessage = "Terjadi kesalahan saat menghapus anggota";
                 console.log(errorMessage)
-                
+
                 try {
                     const errorData = await response.json();
                     errorMessage = errorData.message || errorMessage;
                 } catch (e) {
                     // Jika tidak bisa parse JSON, gunakan pesan default
                 }
-                
+
                 return fail(response.status, {
                     errors: { api: [`Error: ${response.status} - ${errorMessage}`] },
                     success: false
                 });
             }
             console.log("berhasil")
-            
+
             return { success: true, message: "Anggota berhasil dihapus" };
         } catch (error) {
             console.error("API Error:", error);

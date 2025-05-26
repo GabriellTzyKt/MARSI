@@ -85,118 +85,130 @@ export const load: PageServerLoad = async ({ fetch }) => {
                     };
 
                     const docId = doc.dokumentasi;
-                    const filePathsRequest = await fetch(`${env.PUB_PORT}/doc/${docId}`, {
-                        method: "GET",
-                        headers: {
-                            "Accept": "application/json"
-                        }
-                    });
+                    // Handle multiple document IDs separated by commas
+                    const docIds = typeof docId === 'string' 
+                        ? docId.split(',').map(id => id.trim()).filter(id => id)
+                        : [docId].filter(id => id);
 
-                    if (!filePathsRequest.ok) {
-                        console.error(`Failed to fetch file paths for doc ${docId}:`, filePathsRequest.status);
-                        return {
-                            ...docWithJenisArsip,
-                            files: []
-                        };
-                    }
-
-                    // dijadiin json, karena habis di fetch
-                    const filePathsData = await filePathsRequest.json();
-                    // console.log(`File paths data for doc ${docId}:`, filePathsData, typeof filePathsData);
-
-                    // mastiin array soalnya bakal di proses kedalam function map()
-                    let pathsArray = [];
-                    if (Array.isArray(filePathsData)) {
-                        pathsArray = filePathsData;
-                    } else if (filePathsData) {
-                        pathsArray = [filePathsData];
-                    }
-                    // console.log("Paths array:", pathsArray);
-
-                    const filesWithData = await Promise.all(
-                        pathsArray.map(async (filePath: any, index: number) => {
-                            console.log(`[${index}] Processing file path:`, filePath);
+                    // Process each document ID
+                    const allFilesWithData = await Promise.all(
+                        docIds.map(async (singleDocId) => {
                             try {
-                                let actualPath;
-                                if (typeof filePath === 'string') {
-                                    actualPath = filePath;
-                                    console.log(`[${index}] Path is string:`, actualPath);
-                                } else if (filePath && filePath.file_dokumentasi) {
-                                    actualPath = filePath.file_dokumentasi;
-                                    console.log(`[${index}] Path from file_dokumentasi:`, actualPath);
-                                } else {
-                                    try {
-                                        const parsedPath = typeof filePath === 'string' ? JSON.parse(filePath) : filePath;
-                                        actualPath = parsedPath.file_dokumentasi || JSON.stringify(filePath);
-                                        console.log(`[${index}] Path from parsed object:`, actualPath);
-                                    } catch (e) {
-                                        actualPath = JSON.stringify(filePath);
-                                        console.log(`[${index}] Path from stringified object:`, actualPath);
+                                const filePathsRequest = await fetch(`${env.BASE_URL}/doc/${singleDocId}`, {
+                                    method: "GET",
+                                    headers: {
+                                        "Accept": "application/json"
                                     }
-                                }
-
-                                // Log all versions of the URL for testing
-                                const encodedPath = encodeURIComponent(actualPath);
-                                const rawUrl = `${env.PUB_PORT}/file?file_path=${actualPath}`;
-                                const encodedUrl = `${env.BASE_URL}/file?file_path=${encodedPath}`;
-                                
-                                console.log(`[${index}] Raw URL (for manual testing): ${rawUrl}`);
-                                console.log(`[${index}] Encoded URL (used in fetch): ${encodedUrl}`);
-
-                                // Buat FormData untuk request
-                                const formData = new FormData();
-                                formData.append("file_path", actualPath);
-                                
-                                // First try with encoded URL and FormData
-                                let fileDataRequest = await fetch(encodedUrl, {
-                                    method: "GET"
                                 });
-                                
-                                // If encoded URL fails, try with raw URL
-                                if (!fileDataRequest.ok) {
-                                    console.log(`[${index}] Encoded URL failed, trying raw URL...`);
-                                    const rawFormData = new FormData();
-                                    rawFormData.append("file_path", actualPath);
-                                    
-                                    fileDataRequest = await fetch(rawUrl, {
-                                        method: "POST",
-                                        body: rawFormData
-                                    });
-                                    console.log(`[${index}] Raw URL response status: ${fileDataRequest.status} ${fileDataRequest.statusText}`);
-                                }
-                                
-                                if (!fileDataRequest.ok) {
-                                    console.error(`[${index}] Both URLs failed for path ${actualPath}:`, fileDataRequest.status);
-                                    return {
-                                        path: actualPath,
-                                        rawUrl: rawUrl,  // Include raw URL for testing
-                                        encodedUrl: encodedUrl,  // Include encoded URL for testing
-                                        url: null,
-                                        error: `Failed to load file: ${fileDataRequest.status}`
-                                    };
+
+                                if (!filePathsRequest.ok) {
+                                    console.error(`Failed to fetch file paths for doc ${singleDocId}:`, filePathsRequest.status);
+                                    return [];
                                 }
 
-                                // Use whichever URL worked
-                                const workingUrl = fileDataRequest.url || (fileDataRequest.ok ? (fileDataRequest === await fetch(encodedUrl) ? encodedUrl : rawUrl) : null);
-                                console.log(`[${index}] Successfully fetched file using URL: ${workingUrl}`);
-                                
-                                return {
-                                    path: actualPath,
-                                    url: workingUrl,
-                                    type: fileDataRequest.headers.get("content-type") || "unknown",
-                                    name: actualPath.split('/').pop(),
-                                    size: fileDataRequest.headers.get("content-length") || "unknown"
-                                };
-                            } catch (error: unknown) {
-                                console.error(`[${index}] Error processing file path:`, error);
-                                return {
-                                    path: typeof filePath === 'string' ? filePath : JSON.stringify(filePath),
-                                    url: null,
-                                    error: error instanceof Error ? error.message : "Unknown error occurred"
-                                };
+                                // Process file paths for this document ID
+                                const filePathsData = await filePathsRequest.json();
+                                let pathsArray = [];
+                                if (Array.isArray(filePathsData)) {
+                                    pathsArray = filePathsData;
+                                } else if (filePathsData) {
+                                    pathsArray = [filePathsData];
+                                }
+
+                                // Process each file path
+                                return await Promise.all(
+                                    pathsArray.map(async (filePath: any, index: number) => {
+                                        console.log(`[${index}] Processing file path:`, filePath);
+                                        try {
+                                            let actualPath;
+                                            if (typeof filePath === 'string') {
+                                                actualPath = filePath;
+                                                console.log(`[${index}] Path is string:`, actualPath);
+                                            } else if (filePath && filePath.file_dokumentasi) {
+                                                actualPath = filePath.file_dokumentasi;
+                                                console.log(`[${index}] Path from file_dokumentasi:`, actualPath);
+                                            } else {
+                                                try {
+                                                    const parsedPath = typeof filePath === 'string' ? JSON.parse(filePath) : filePath;
+                                                    actualPath = parsedPath.file_dokumentasi || JSON.stringify(filePath);
+                                                    console.log(`[${index}] Path from parsed object:`, actualPath);
+                                                } catch (e) {
+                                                    actualPath = JSON.stringify(filePath);
+                                                    console.log(`[${index}] Path from stringified object:`, actualPath);
+                                                }
+                                            }
+
+                                            // Log all versions of the URL for testing
+                                            const encodedPath = encodeURIComponent(actualPath);
+                                            const rawUrl = `${env.BASE_URL}/file?file_path=${actualPath}`;
+                                            const encodedUrl = `${env.BASE_URL}/file?file_path=${encodedPath}`;
+                                            
+                                            console.log(`[${index}] Raw URL (for manual testing): ${rawUrl}`);
+                                            console.log(`[${index}] Encoded URL (used in fetch): ${encodedUrl}`);
+
+                                            // Buat FormData untuk request
+                                            const formData = new FormData();
+                                            formData.append("file_path", actualPath);
+                                            
+                                            // First try with encoded URL and FormData
+                                            let fileDataRequest = await fetch(encodedUrl, {
+                                                method: "GET"
+                                            });
+                                            
+                                            // If encoded URL fails, try with raw URL
+                                            if (!fileDataRequest.ok) {
+                                                console.log(`[${index}] Encoded URL failed, trying raw URL...`);
+                                                const rawFormData = new FormData();
+                                                rawFormData.append("file_path", actualPath);
+                                                
+                                                fileDataRequest = await fetch(rawUrl, {
+                                                    method: "POST",
+                                                    body: rawFormData
+                                                });
+                                                console.log(`[${index}] Raw URL response status: ${fileDataRequest.status} ${fileDataRequest.statusText}`);
+                                            }
+                                            
+                                            if (!fileDataRequest.ok) {
+                                                console.error(`[${index}] Both URLs failed for path ${actualPath}:`, fileDataRequest.status);
+                                                return {
+                                                    path: actualPath,
+                                                    rawUrl: rawUrl,  // Include raw URL for testing
+                                                    encodedUrl: encodedUrl,  // Include encoded URL for testing
+                                                    url: null,
+                                                    error: `Failed to load file: ${fileDataRequest.status}`
+                                                };
+                                            }
+
+                                            // Use whichever URL worked
+                                            const workingUrl = fileDataRequest.url || (fileDataRequest.ok ? (fileDataRequest === await fetch(encodedUrl) ? encodedUrl : rawUrl) : null);
+                                            console.log(`[${index}] Successfully fetched file using URL: ${workingUrl}`);
+                                            
+                                            return {
+                                                path: actualPath,
+                                                url: workingUrl,
+                                                type: fileDataRequest.headers.get("content-type") || "unknown",
+                                                name: actualPath.split('/').pop(),
+                                                size: fileDataRequest.headers.get("content-length") || "unknown"
+                                            };
+                                        } catch (error: unknown) {
+                                            console.error(`[${index}] Error processing file path:`, error);
+                                            return {
+                                                path: typeof filePath === 'string' ? filePath : JSON.stringify(filePath),
+                                                url: null,
+                                                error: error instanceof Error ? error.message : "Unknown error occurred"
+                                            };
+                                        }
+                                    })
+                                );
+                            } catch (error) {
+                                console.error(`Error processing document ID ${singleDocId}:`, error);
+                                return [];
                             }
                         })
                     );
+
+                    // Flatten the array of arrays into a single array of files
+                    const filesWithData = allFilesWithData.flat();
 
                     // console.log("Files with data:", filesWithData);
                     return {
@@ -214,6 +226,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
                 }
             })
         );
+
+        console.log("Documents : ", documentsWithFiles)
 
         return {
             dataArsip: documentsWithFiles,

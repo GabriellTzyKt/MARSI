@@ -22,88 +22,90 @@ export const load: PageServerLoad = async () => {
 };
 export const actions: Actions = {
     submit: async ({ request }) => {
-        const data = await request.formData();
-        const res = Object.fromEntries(data)
-        console.log("RES: ", res)
-
-        const ver = z.object({
-            namaDokumen: z.string({ message: "Input Tidak Boleh Kosong" }).max(255).nonempty("Isi Nama"),
-            jenisDokumen: z.string({ message: "Pilih 1 pilihan!" }).nonempty(),
-            kategori: z.string({ message: "Pilih 1 pilihan!" }).nonempty(),
-            // keterkaitan: z.string({ message: "Harus diisi!" }).nonempty("Isi Keterkaitan"),
-            // subkategori: z.string({ message: "Harus diisi!" }).nonempty("Isi Sub Kategori"),
-            urlfoto: z.array(z.string().min(1, { message: "Nama file tidak boleh kosong" })).min(1, { message: "Minimal 1 Foto!" }),
-        });
-
-        const namaDokumen = data.get("nama");
-        const kategori = data.get("kategori");
-        const jenisDokumen = data.get("jenisDokumen");
-        const keterkaitan = data.get("keterkaitan");
-        const subkategori = data.get("subkategori");
-        const urlFoto = data.getAll("uploadfile")
-            .filter((item) => item instanceof File && item.name !== "")
-            .map((file) => file as File);
-
-
-        const fileNames = urlFoto.map((file) => file.name); // ngambil nama file
-
-
-        const validation = ver.safeParse({
-            namaDokumen,
-            kategori,
-            // subkategori,
-            jenisDokumen,
-            // keterkaitan,
-            urlfoto: fileNames,
-        });
-
-        if (!validation.success) {
-            const fieldErrors = validation.error.flatten().fieldErrors;
-            // console.log("Form Data:", { namaDokumen, kategori, jenisDokumen, subkategori, keterkaitan, urlFoto: fileNames });
-
-            // console.log("Field Errors:", fieldErrors); // Debugging untuk memastikan error dikembalikan
-
-            return fail(406, {
-                errors: fieldErrors,
-                success: false,
-                formData: { namaDokumen, kategori, jenisDokumen, subkategori, keterkaitan, urlFoto: fileNames },
-                type: "add"
-            });
-        }
-
         try {
+            const data = await request.formData();
+            console.log('Form data received:', Object.fromEntries(data.entries()));
+            
+            // Get form fields
+            const namaDokumen = data.get('nama')?.toString();
+            const kategori = data.get('kategori')?.toString();
+            const jenisDokumen = data.get('jenisDokumen')?.toString();
+            const subkategori = data.get('subkategori')?.toString();
+            const keterkaitan = data.get('keterkaitan')?.toString();
+            
+            // Get all uploaded files
+            const uploadedFiles = data.getAll('uploadfile')
+                .filter(item => item instanceof File && item.size > 0) as File[];
+            
+            console.log('Files received:', uploadedFiles.map(f => `${f.name} (${f.size} bytes)`));
+            
+            // Validate the form data
+            const ver = z.object({
+                namaDokumen: z.string({ message: "Input Tidak Boleh Kosong" }).max(255).nonempty("Isi Nama"),
+                jenisDokumen: z.string({ message: "Pilih 1 pilihan!" }).nonempty(),
+                kategori: z.string({ message: "Pilih 1 pilihan!" }).nonempty(),
+                urlfoto: z.array(z.any()).min(1, { message: "Minimal 1 File!" }),
+            });
+            
+            const validation = ver.safeParse({
+                namaDokumen,
+                kategori,
+                jenisDokumen,
+                urlfoto: uploadedFiles,
+            });
+            
+            if (!validation.success) {
+                const fieldErrors = validation.error.flatten().fieldErrors;
+                console.log("Validation errors:", fieldErrors);
+                
+                return fail(406, {
+                    errors: fieldErrors,
+                    success: false,
+                    formData: { namaDokumen, kategori, jenisDokumen, subkategori, keterkaitan },
+                    type: "add"
+                });
+            }
+            
+            // Prepare form data for API request
             const formData = new FormData();
-            formData.append("nama_arsip", namaDokumen || "");
-            // formData.append("keterkaitan", keterkaitan || "");
-            formData.append("kategori_arsip", kategori || "");
-            formData.append("jenis_arsip", jenisDokumen || "");
-            formData.append("sub_kategori_arsip", subkategori || "");
-
-            // Tambahkan file ke FormData
-            urlFoto.forEach((file) => {
+            formData.append("nama_arsip", namaDokumen || '');
+            formData.append("kategori_arsip", kategori || '');
+            formData.append("jenis_arsip", jenisDokumen || '');
+            formData.append("sub_kategori_arsip", subkategori || '');
+            
+            if (keterkaitan) {
+                formData.append("keterkaitan", keterkaitan);
+            }
+            
+            // Add all files to the form data
+            uploadedFiles.forEach((file, index) => {
+                console.log(`Adding file ${index + 1}/${uploadedFiles.length} to API request: ${file.name}`);
                 formData.append("dokumentasi", file);
             });
-
-            // console.log("FormData:", formData); 
-
-            const send = await fetch(env.PUB_PORT + "/arsip", {
-                method: "POST",
-                body: formData,
+            
+            // Send the data to the API
+            const response = await fetch(`${env.PUB_PORT}/arsip`, {
+                method: 'POST',
+                body: formData
             });
-
-            const r = await send.json();
-            console.log(r);
-
-            if (send.ok) {
-                console.log("Form Data:", res);
-                return { errors: "no Error", success: true };
+            
+            const result = await response.json();
+            console.log('API response:', result);
+            
+            if (response.ok) {
+                return { success: true };
+            } else {
+                return fail(400, { 
+                    errors: { general: [`Error: ${response.status} - ${result.message || 'Unknown error'}`] },
+                    success: false 
+                });
             }
-            return fail(400, { request: `Error Code : ${send.status} ${r.message}` });
-        } catch (e) {
-            console.error("Fetch Error", e);
+        } catch (error) {
+            console.error('Error processing request:', error);
+            return fail(500, { 
+                errors: { general: ['Terjadi kesalahan saat memproses permintaan'] },
+                success: false 
+            });
         }
     }
-    
-
-    // return { errors: "Success", success: true };
 };
