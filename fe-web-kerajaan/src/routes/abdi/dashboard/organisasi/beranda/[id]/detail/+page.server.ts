@@ -2,9 +2,10 @@ import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types"; 
 import { env } from "$env/dynamic/private";
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, cookies }) => {
     try {
         const id = params.id;
+        const token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
 
         // Fetch komunitas data
         const organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi/${id}`);
@@ -13,6 +14,59 @@ export const load: PageServerLoad = async ({ params }) => {
         }
         const organisasiData = await organisasiResponse.json();
         console.log("organisasi data:", organisasiData);
+
+        // Fetch user data for penanggung_jawab, pembina, and pelindung
+        let penanggungJawab = null;
+        let pembina = null;
+        let pelindung = null;
+
+        // Fetch penanggung_jawab data
+        if (organisasiData.penanggung_jawab && organisasiData.penanggung_jawab !== '0') {
+            try {
+                const userRes = await fetch(`${env.PUB_PORT}/user/${organisasiData.penanggung_jawab}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token?.token}`
+                    }
+                });
+                if (userRes.ok) {
+                    penanggungJawab = await userRes.json();
+                }
+            } catch (err) {
+                console.error("Error fetching penanggung_jawab:", err);
+            }
+        }
+        
+        // Fetch pembina data
+        if (organisasiData.pembina && organisasiData.pembina !== '0') {
+            try {
+                const userRes = await fetch(`${env.PUB_PORT}/user/${organisasiData.pembina}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token?.token}`
+                    }
+                });
+                if (userRes.ok) {
+                    pembina = await userRes.json();
+                }
+            } catch (err) {
+                console.error("Error fetching pembina:", err);
+            }
+        }
+        
+        // Fetch pelindung data
+        if (organisasiData.pelindung && organisasiData.pelindung !== '0') {
+            try {
+                const userRes = await fetch(`${env.PUB_PORT}/user/${organisasiData.pelindung}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token?.token}`
+                    }
+                });
+                if (userRes.ok) {
+                    pelindung = await userRes.json();
+                }
+            } catch (err) {
+                console.error("Error fetching pelindung:", err);
+            }
+        }
 
         // Fetch anggota data
         const dataanggota = await fetch(`${env.URL_KERAJAAN}/organisasi/anggota/${id}`);
@@ -87,7 +141,10 @@ export const load: PageServerLoad = async ({ params }) => {
             organisasi: organisasiData,
             fileDetails,
             dataanggota: dataanggotajson,
-            fotoOrganisasiDetails
+            fotoOrganisasiDetails,
+            penanggungJawab,
+            pembina,
+            pelindung
         };
     } catch (err) {
         console.error("Error in load function:", err); 

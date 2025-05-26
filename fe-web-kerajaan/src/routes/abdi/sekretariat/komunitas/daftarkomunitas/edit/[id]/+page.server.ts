@@ -238,15 +238,15 @@ export const actions: Actions = {
                 penanggung_jawab: parseInt(formData.penanggungjawab_id),
                 // id_pengajuan: parseInt(String(data.get("id_pengajuan"))),
                 foto_komunitas: '2',
-                foto_profile: '2',
+                profile: '2',
                 lokasi: formData.situs_id,
                 nama_komunitas: formData.nama_situs,
-                deskripsi_komunitas: formData.deskripsi_komunitas,
+                deskripsi: formData.deskripsi_komunitas,
                 pelindung: formData.pelindung_id,
                 pembina: formData.pembina_id,
                 alamat: formData.alamat,    
                 email: formData.email,
-                nomor_telepon: formData.phone,
+                no_telp: formData.phone,
                 // jumlah_anggota: formData.jumlahanggota,
 
             }

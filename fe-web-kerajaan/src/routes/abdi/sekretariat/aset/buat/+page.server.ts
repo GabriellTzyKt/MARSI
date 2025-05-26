@@ -25,8 +25,23 @@ export const actions: Actions = {
         const nama_aset = data.get("nama_aset")
         const jenis_aset = data.get("jenis_aset")
         const deskripsi_aset = data.get("deskripsi_aset")
-         const dokumentasiFiles = data.getAll("dokumentasi")
+        
+        // Get all dokumentasi files, including videos and audios
+        const dokumentasiFiles = data.getAll("dokumentasi")
             .filter(item => item instanceof File && item.size > 0) as File[];
+        
+        // Validate file types
+        const validFileTypes = ['image/', 'video/', 'audio/'];
+        const invalidFiles = dokumentasiFiles.filter(file => 
+            !validFileTypes.some(type => file.type.startsWith(type)));
+        
+        if (invalidFiles.length > 0) {
+            return fail(400, {
+                errors: {
+                    dokumentasi: ["File yang diunggah harus berupa gambar, video, atau audio"]
+                }
+            });
+        }
         
         const jenisres = await fetch(`${env.URL_KERAJAAN}/aset/jenis`)
          if (!jenisres.ok) {

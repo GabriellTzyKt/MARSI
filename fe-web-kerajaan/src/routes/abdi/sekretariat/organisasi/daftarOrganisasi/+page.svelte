@@ -24,7 +24,7 @@
 		deleteModal = true;
 	}
 	function filterD(data: any[]) {
-		return data.filter(
+		return data?.filter(
 			(item) =>
 				item?.nama_organisasi?.toLowerCase().includes(keyword.toLowerCase()) ||
 				item?.tanggal_berdiri?.toLowerCase().includes(keyword.toLowerCase()) ||
@@ -41,7 +41,7 @@
 		console.log(d);
 		return d.slice(start, end);
 	}
-	let resData = $derived(pagination(data.finalwithuser || []));
+	let resData = $derived(pagination(data?.finalwithuser || []));
 	$effect(() => {
 		if (keyword || entries) {
 			currPage = 1;

@@ -8,12 +8,12 @@ import {
 
 export const load: PageServerLoad = async () => {
     try {
-        let res = await fetch(`${env.URL_KERAJAAN}/acara?limit=1000`);
+        let res = await fetch(`${env.URL_KERAJAAN}/acara?limit=100`);
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }
         let data = await res.json();
-        console.log(data)
+        console.log("acara",data)
 
         let formatDateTime = (isoString) => {
     if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
@@ -49,27 +49,27 @@ export const load: PageServerLoad = async () => {
             // lokasi_detail: locationMap.get(event.lokasi_acara) || { nama_lokasi: 'Lokasi tidak ditemukan' },
             // penanggungjawab_detail: personMap.get(event.penanggung_jawab) || { nama: 'PJ tidak ditemukan' }
         }));
-        let finalData = await Promise.all(mergedData.map(async (item) => {
-            let resLoc = await fetch(`${env.URL_KERAJAAN}/lokasi/${item.id_lokasi}`);
-            if (!resLoc.ok) {
-            }
-            let locData = await resLoc.json();
-            console.log("Found Lokasi : ", locData)
+        // let finalData = await Promise.all(mergedData.map(async (item) => {
+        //     let resLoc = await fetch(`${env.URL_KERAJAAN}/situs/${item.id_lokasi}`);
+        //     if (!resLoc.ok) {
+        //     }
+        //     let locData = await resLoc.json();
+        //     // console.log("Found Lokasi : ", locData)
               
 
-            const formattedItem = {
-                ...item,
-                tanggal_mulai: formatDate(item.waktu_mulai),
-                tanggal_selesai: formatDate(item.waktu_selesai),
-                waktu_mulai: formatTime(item.waktu_mulai),
-                waktu_selesai: formatTime(item.waktu_selesai),
-                waktu_mulai_full: formatDateTime(item.waktu_mulai),
-                waktu_selesai_full: formatDateTime(item.waktu_selesai),
-                waktu_mulai_original: item.waktu_mulai,
-                waktu_selesai_original: item.waktu_selesai,
-            };
-            return formattedItem;
-        }));
+        //     const formattedItem = {
+        //         ...item,
+        //         tanggal_mulai: formatDate(item.waktu_mulai),
+        //         tanggal_selesai: formatDate(item.waktu_selesai),
+        //         waktu_mulai: formatTime(item.waktu_mulai),
+        //         waktu_selesai: formatTime(item.waktu_selesai),
+        //         waktu_mulai_full: formatDateTime(item.waktu_mulai),
+        //         waktu_selesai_full: formatDateTime(item.waktu_selesai),
+        //         waktu_mulai_original: item.waktu_mulai,
+        //         waktu_selesai_original: item.waktu_selesai,
+        //     };
+        //     return formattedItem;
+        // }));
 
         console.log("Merged Data:",mergedData)
         return { data: mergedData };

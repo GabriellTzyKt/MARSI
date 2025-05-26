@@ -9,7 +9,7 @@ export const load: PageServerLoad = async () => {
     try {
         let limit = pLimit(5)
         // Fetch komunitas data
-        let res = await fetch(`${env.URL_KERAJAAN}/komunitas`);
+        let res = await fetch(`${env.URL_KERAJAAN}/komunitas?limit=200`);
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }

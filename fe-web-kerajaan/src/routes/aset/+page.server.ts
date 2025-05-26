@@ -19,20 +19,20 @@ export const load: PageServerLoad = async () => {
         const final = await Promise.all(formattedData.map(async (item) => {
             const formattedItem = {
                 ...item,
-                imageUrls: []
+                imageUrls: [],
+                videoUrls: [],
+                audioUrls: []
             };
-    
+
             try {
                 // Check if dokumentasi exists and is not empty
                 if (item.dokumentasi && item.dokumentasi.trim() !== '') {
                     // Split the comma-separated IDs
                     const docIds = item.dokumentasi.split(',').map(id => id.trim());
-                    console.log(`Processing dokumentasi for asset ${item.id_aset}:`, docIds);
                     
                     // Process each document ID
                     for (const docId of docIds) {
                         try {
-                            console.log(`Fetching document ID: ${docId}`);
                             const res = await fetch(`${env.URL_KERAJAAN}/doc/${docId}`);
                             
                             if (!res.ok) {
@@ -41,23 +41,34 @@ export const load: PageServerLoad = async () => {
                             }
                             
                             const docData = await res.json();
-                            console.log(`Document data for ID ${docId}:`, docData);
-                            
                             let filePath = docData.file_dokumentasi || docData;
-                            console.log(`File path for ID ${docId}:`, filePath);
                             
                             if (typeof filePath === 'string') {
-                                const imageUrl = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`;
-                                console.log(`Adding image URL: ${imageUrl}`);
-                                formattedItem.imageUrls.push(imageUrl);
+                                const fileUrl = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`;
+                                
+                                // Determine file type based on extension
+                                if (filePath.match(/\.(mp4|webm|mov|avi)$/i)) {
+                                    formattedItem.videoUrls.push(fileUrl);
+                                } else if (filePath.match(/\.(mp3|wav|ogg|m4a)$/i)) {
+                                    formattedItem.audioUrls.push(fileUrl);
+                                } else {
+                                    formattedItem.imageUrls.push(fileUrl);
+                                }
                             } else if (Array.isArray(filePath)) {
                                 for (const path of filePath) {
-                                    const imagePath = typeof path === 'string' ? path : path.file_dokumentasi;
+                                    const mediaPath = typeof path === 'string' ? path : path.file_dokumentasi;
                                     
-                                    if (imagePath) {
-                                        const imageUrl = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(imagePath)}`;
-                                        console.log(`Adding image URL from array: ${imageUrl}`);
-                                        formattedItem.imageUrls.push(imageUrl);
+                                    if (mediaPath) {
+                                        const fileUrl = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(mediaPath)}`;
+                                        
+                                        // Determine file type based on extension
+                                        if (mediaPath.match(/\.(mp4|webm|mov|avi)$/i)) {
+                                            formattedItem.videoUrls.push(fileUrl);
+                                        } else if (mediaPath.match(/\.(mp3|wav|ogg|m4a)$/i)) {
+                                            formattedItem.audioUrls.push(fileUrl);
+                                        } else {
+                                            formattedItem.imageUrls.push(fileUrl);
+                                        }
                                     }
                                 }
                             }
@@ -65,13 +76,11 @@ export const load: PageServerLoad = async () => {
                             console.error(`Error processing document ID ${docId}:`, docError);
                         }
                     }
-                } else {
-                    console.log(`No dokumentasi found for asset ${item.id_aset}`);
                 }
             } catch (error) {
-                console.error(`Error processing images for aset ${item.id_aset}:`, error);
+                console.error(`Error processing media for aset ${item.id_aset}:`, error);
             }
-    
+
             return formattedItem;
         }));
        console.log(final)

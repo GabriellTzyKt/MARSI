@@ -1,50 +1,242 @@
-import { env } from "$env/dynamic/private";
+import { fail, type Actions } from "@sveltejs/kit";
+import { z } from "zod";
 import type { PageServerLoad } from "./$types";
-import { error } from "@sveltejs/kit";
+import { env } from "$env/dynamic/private";
+import { formatDatetoUI } from "$lib";
+import pLimit from "p-limit";
 
-export const load: PageServerLoad = async ({ }) => {
+export const load: PageServerLoad = async ({fetch, cookies}) => {
     try {
-        const komunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas`);
-        if (!komunitasResponse.ok) {
-            throw error(komunitasResponse.status, `Failed to fetch komunitas: ${komunitasResponse.statusText}`);
-        }
-        
-        const komunitasList = await komunitasResponse.json();
-        console.log("komunitas : ", komunitasList);
-        
-        // Array untuk menyimpan semua data anggota dari semua komunitas
-        let allAnggota : any= [];
-        
-        // Iterasi melalui setiap komunitas untuk mengambil anggotanya
-        for (const komunitas of komunitasList) {
-            try {
-                const anggotaResponse = await fetch(`${env.URL_KERAJAAN}/komunitas/anggota/${komunitas.id_komunitas}`);
-                if (anggotaResponse.ok) {
-                    const anggotaList = await anggotaResponse.json();
-                    console.log(`Anggota komunitas ${komunitas.id_komunitas}:`, anggotaList);
-                    
-                    // Tambahkan informasi komunitas ke setiap anggota
-                    const anggotaWithKomunitas = anggotaList.map((anggota : any) => ({
-                        ...anggota,
-                        nama_komunitas: komunitas.nama_komunitas,
-                        id_komunitas: komunitas.id_komunitas
-                    }));
-                    
-                    // Gabungkan dengan array utama
-                    allAnggota = [...allAnggota, ...anggotaWithKomunitas];
-                }
-            } catch (anggotaError) {
-                console.error(`Error fetching anggota for komunitas ${komunitas.id_komunitas}:`, anggotaError);
-                // Lanjutkan ke komunitas berikutnya meskipun ada error
-            }
-        }
+           let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
+           let userRes = await fetch(`${env.PUB_PORT}/users`, {
+               headers: {
+                   "Authorization": `Bearer ${token?.token}`
+               }
+           });
+           if (!userRes.ok) {
+               throw new Error(`HTTP Error! Status: ${userRes.status}`)
+           }
+           let userData = await userRes.json();
+           userData = userData.filter((item: any) => {
+               return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
+           }).map((item: any) => {
+               return {
+                   id: item.id_user,
+                   nama_lengkap: item.nama_lengkap,
+                   email: item.email
+               }
+           });
+   
+           let res = await fetch(`${env.URL_KERAJAAN}/komunitas?limit=300`)
+           if (!res.ok) {
+               throw new Error(`HTTP Error! Status: ${res.status}`)
+           }
+           let data = await res.json()
+           let finalData = data.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at).map((item: any) => ({
+               id_komunitas: item.id_komunitas,
+               nama_komunitas: item.nama_komunitas,
+               tanggal_berdiri: item.tanggal_berdiri ? formatDatetoUI(item.tanggal_berdiri) : item.tanggal_berdiri
+           }));
+           return { data: finalData, userData };
+       } catch (error) {
+           
+       }
+};
 
-        return {
-            komunitasList,
-            allAnggota
+export const actions: Actions = {
+    tambah: async ({request}) => {
+        const data = await request.formData();
+        console.log(data)
+        const ver = z.object({
+            namaanggota: z.string().trim().min(1, "Minimal 1 anggota!"),
+            id_anggota: z.string().trim().min(1, "silahkan pilih dari dropdown!"),
+            deskripsi: z.string().trim().min(1, "Deskripsi harus diisi!"),
+            jabatan: z.string().trim().min(1, "Jabatan harus diisi!"),
+        });
+
+        let form = {
+            namaanggota: String(data.get("namaanggota") || "").trim(),
+            id_anggota: String(data.get("id_anggota") || "").trim(),
+            deskripsi: String(data.get("deskripsitugas") || "").trim(),
+            jabatan: String(data.get("jabatan") || "").trim(),
         };
-    } catch (error) {
-        console.error("Error in load function:", error);
-        throw error;
+
+        const validation = ver.safeParse({ ...form });
+
+        if (!validation.success) {
+            return fail(406, {
+                errors: validation.error.flatten().fieldErrors, 
+                success: false,
+                formData: form, 
+                type: "add"
+            });
+        }
+        
+        try {
+            let today = new Date().toISOString().split("T")[0]
+            const response = await fetch(`${env.URL_KERAJAAN}/komunitas/anggota`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id_komunitas: Number(data.get("id_komunitas")),
+                    id_user: Number(form.id_anggota),
+                    jabatan_anggota: String(form.jabatan),
+                    tanggal_bergabung: today,
+                    deskripsi_tugas: String(form.deskripsi),
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("API error:", errorText);
+                return fail(response.status, {
+                    errors: { api: ["Failed to add member to komunitas"] },
+                    success: false,
+                    formData: form,
+                    type: "add"
+                });
+            }
+
+            return { 
+                success: true, 
+                formData: form, 
+                type: "add",
+                message: "Anggota berhasil ditambahkan"
+            };
+        } catch (error) {
+            console.error("Error adding member:", error);
+            return fail(500, {
+                errors: { api: ["An unexpected error occurred"] },
+                success: false,
+                formData: form,
+                type: "add"
+            });
+        }
+    },
+    
+    editAnggota: async ({ request }) => {
+        const data = await request.formData();
+        
+        const komunitasId = data.get("id_komunitas");
+        const userId = data.get("id_anggota");
+        
+        if (!komunitasId || !userId) {
+            return fail(400, {
+                errors: { api: ["Missing required parameters"] },
+                success: false,
+                type: "edit"
+            });
+        }
+        
+        const ver = z.object({
+            namaanggota: z.string().trim().min(1, "Minimal 1 anggota!"),
+            id_user: z.string().trim().min(1, "Pilih dari DropDown!"),
+            deskripsi: z.string().trim().min(1, "Deskripsi harus diisi!"),
+            jabatan: z.string().trim().min(1, "Jabatan harus diisi!"),
+        });
+
+        let form = {
+            namaanggota: String(data.get("namaanggota") || "").trim(),
+            id_user: String(data.get("id_anggota") || "").trim(),
+            deskripsi: String(data.get("deskripsitugas") || "").trim(),
+            jabatan: String(data.get("jabatan") || "").trim(),
+        };
+
+        const validation = ver.safeParse({ ...form });
+
+        if (!validation.success) {
+            return fail(406, {
+                errors: validation.error.flatten().fieldErrors, 
+                success: false,
+                formData: form, 
+                type: "edit"
+            });
+        }
+        
+        try {
+            const response = await fetch(`${env.URL_KERAJAAN}/komunitas/anggota`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id_komunitas: Number(komunitasId),
+                    id_user: Number(userId),
+                    deskripsi_tugas: String(form.deskripsi),
+                    jabatan_anggota: String(form.jabatan),
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("API error:", errorText);
+                return fail(response.status, {
+                    errors: { api: ["Failed to update member in komunitas"] },
+                    success: false,
+                    formData: form,
+                    type: "edit"
+                });
+            }
+
+            return { 
+                success: true, 
+                formData: form, 
+                type: "edit",
+                message: "Anggota berhasil diubah"
+            };
+        } catch (error) {
+            console.error("Error updating member:", error);
+            return fail(500, {
+                errors: { api: ["An unexpected error occurred"] },
+                success: false,
+                formData: form,
+                type: "edit"
+            });
+        }
+    },
+
+    hapusAnggota: async ({ request }) => {
+        const data = await request.formData();
+        const id = data.get("id_anggota");
+        const komunitasId = data.get("id_komunitas");
+        
+        if (!komunitasId || !id) {
+            return fail(400, {
+                errors: { api: ["Missing required parameters"] },
+                success: false,
+                type: "delete"
+            });
+        }
+        
+        try {
+            const response = await fetch(`${env.URL_KERAJAAN}/komunitas/anggota/${komunitasId}/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("API error:", errorText);
+                return fail(response.status, {
+                    errors: { api: ["Failed to delete member from komunitas"] },
+                    success: false,
+                    type: "delete"
+                });
+            }
+            
+            return {
+                success: true,
+                type: "delete",
+                message: "Anggota berhasil dihapus"
+            };
+        } catch (error) {
+            console.error("Error deleting member:", error);
+            return fail(500, {
+                errors: { api: ["An unexpected error occurred"] },
+                success: false,
+                type: "delete"
+            });
+        }
     }
 };

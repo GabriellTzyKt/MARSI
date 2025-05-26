@@ -5,7 +5,7 @@ import { filterArsip } from "$lib";
 
 export const load: PageServerLoad = async () => {
     try {
-        const res = await fetch(`${env.URL_KERAJAAN}/aset`, {
+        const res = await fetch(`${env.URL_KERAJAAN}/aset?limit=300`, {
             method:"GET"
         });
        
