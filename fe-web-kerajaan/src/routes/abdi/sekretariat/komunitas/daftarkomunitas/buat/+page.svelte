@@ -444,7 +444,7 @@
 				type="submit">Simpan Data</button
 			>
 		</div>
-		<input type="text" hidden name="id_pemohon" value={data?.user.id_user} id="" />
+		<input type="text" hidden name="id_pemohon" value={data?.user?.id_user} id="" />
 	</form>
 	{#if errors?.server}
 		<p class="text-red-500">{errors?.server}</p>

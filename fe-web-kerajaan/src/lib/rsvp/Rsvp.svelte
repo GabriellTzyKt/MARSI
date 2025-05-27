@@ -2,6 +2,8 @@
     import { onMount } from 'svelte';
 
     const { index = 0, errors = {}, datauser = [] } = $props();
+
+    console.log("datauser: ", datauser);
     
     let selectedUser: any = $state(null);
 
@@ -74,6 +76,6 @@
     </div>
 
     {#if selectedUser}
-        <input type="hidden" name={`tamu_id_${index}`} value={selectedUser.id} />
+        <input type="hidden" name={`tamu_id_${index}`} value={selectedUser.id_user} />
     {/if}
 </div>

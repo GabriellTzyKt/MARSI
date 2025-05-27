@@ -38,8 +38,23 @@ export const actions: Actions = {
         const data = await request.formData();
         const id = params.id;
         console.log("Form data received:", data);
-        console.log("ID : ", id)
+        console.log("ID : ", id);
 
+        // Get the main attendee data
+        const id_user = data.get("id_user");
+        const nama_lengkap = data.get("nama_lengkap") || ""; // Get the name from the form
+        const no_telp = data.get("nomortelepon") || "";
+        const jenis_kelamin = data.get("jenis_kelamin") || "";
+        
+        // Create the main attendee object
+        const mainAttendee = {
+            id_user: Number(id_user),
+            id_acara: Number(id),
+            nama: String(nama_lengkap), // Use the name from the form
+            no_telp: String(no_telp),
+            jenis_kelamin: String(jenis_kelamin)
+        };
+        
         // mendefinisikan data yg diterima utk tamu
         interface TamuItem {
             id_user: Number;
@@ -61,9 +76,10 @@ export const actions: Actions = {
         let allErrors: { [key: string]: string } = {};
 
         // Extract main attendee data
-        const mainGender = String(data.get("jeniskelamin") || "null").trim();
-        const mainPhone = String(data.get("nomortelepon") || "null").trim();
-        const idUser = String(data.get("id_user") || "null").trim();
+        const mainGender = String(data.get("jenis_kelamin") || "").trim();
+        const mainPhone = String(data.get("nomortelepon") || "").trim();
+        const idUser = String(data.get("id_user") || "").trim();
+        const namaLengkap = String(data.get("nama_lengkap") || "").trim();
 
         // Validate main attendee data
         const mainValidation = attendeeSchema.safeParse({
@@ -92,7 +108,7 @@ export const actions: Actions = {
             allAttendees.push({
                 id_user: Number(idUser),
                 id_acara: Number(id),
-                nama: "null",
+                nama: namaLengkap,
                 no_telp: mainPhone,
                 jenis_kelamin: mainGender || "None"
             });

@@ -145,7 +145,7 @@
 							{
 								label: 'Edit',
 								action: () =>
-									goto(`/abdi/sekretariat/organisasi/daftarorganisasi/edit/${data.id_organisasi}`)
+									goto(`/abdi/sekretariat/organisasi/daftarOrganisasi/edit/${data.id_organisasi}`)
 							},
 							{
 								label: 'Non Aktifkan',

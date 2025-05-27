@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
 	import { navigating, page } from '$app/state';
 	import Footer from '$lib/footer/Footer.svelte';
 	import Loader from '$lib/loader/Loader.svelte';
@@ -10,15 +11,26 @@
 	let selectedUserId = $state('');
 	let selectedPhone = $state('');
 	let jenis_kelamin = $state('');
+	let selectedUserName = $state('');
 
 	function handleUserSelect(e: any) {
 		const selectedName = e.target.value;
-		const user = datauser.find((u: any) => u.nama_lengkap === selectedName);
-		if (user) {
-			selectedUserId = user.id_user;
-			selectedPhone = user.no_telp;
-			jenis_kelamin = user.jenis_kelamin.toLowerCase(); // ubah ke lowercase
-			console.log('jenis kelamin : ', jenis_kelamin);
+		const selectedUser = datauser.find((user: any) => user.nama_lengkap === selectedName);
+		console.log('Selected user : ', selectedUser);
+
+		if (selectedUser) {
+			selectedUserId = selectedUser.id_user || selectedUser.id;
+			selectedUserName = selectedUser.nama_lengkap;
+			// Fix the case sensitivity issue - use the exact property name from the API
+			jenis_kelamin = selectedUser.jenis_kelamin || '';
+			selectedPhone = selectedUser.no_telp || '';
+			console.log('Selected user:', selectedUser);
+			console.log('Jenis kelamin set to:', jenis_kelamin);
+		} else {
+			selectedUserId = '';
+			selectedUserName = '';
+			jenis_kelamin = '';
+			selectedPhone = '';
 		}
 	}
 
@@ -121,6 +133,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						valo = false;
+						goto('/acara');
 					}, 3000);
 					error = {};
 					open = false;
@@ -145,10 +158,19 @@
 							name="jeniskelamin"
 							class="border-full block w-full rounded border border-gray-300 bg-white px-5 py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 							disabled={true}
+							required
 						>
 							<option value="" disabled selected>Jenis Kelamin</option>
-							<option value="laki-laki" selected={jenis_kelamin === 'laki-laki'}>Laki-Laki</option>
-							<option value="perempuan" selected={jenis_kelamin === 'perempuan'}>Perempuan</option>
+							<option
+								value="Laki-laki"
+								selected={jenis_kelamin === 'Laki-laki' || jenis_kelamin === 'laki-laki'}
+								>Laki-Laki</option
+							>
+							<option
+								value="Perempuan"
+								selected={jenis_kelamin === 'Perempuan' || jenis_kelamin === 'perempuan'}
+								>Perempuan</option
+							>
 						</select>
 					</div>
 					{#if error?.jeniskelamin}
@@ -165,6 +187,7 @@
 					<select
 						class="rounded-lg border-2 px-2 py-2"
 						placeholder="Pilih nama"
+						bind:value={selectedUserName}
 						onchange={handleUserSelect}
 					>
 						<option value="">-- Pilih Nama --</option>
@@ -175,6 +198,9 @@
 				</div>
 
 				<input type="hidden" name="id_user" bind:value={selectedUserId} />
+				<input type="hidden" name="nama_lengkap" bind:value={selectedUserName} />
+				<input type="hidden" name="jenis_kelamin" bind:value={jenis_kelamin} />
+				{console.log('Jenis : ', jenis_kelamin)}
 
 				<div class="mt-4 flex flex-col">
 					<p>Nomor telepon</p>

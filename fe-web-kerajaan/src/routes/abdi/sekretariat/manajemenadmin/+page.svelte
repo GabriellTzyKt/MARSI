@@ -208,6 +208,7 @@
 	<form
 		action="?/tambah"
 		method="post"
+		autocomplete="off"
 		use:enhance={() => {
 			loading = true;
 			return async ({ result }) => {
