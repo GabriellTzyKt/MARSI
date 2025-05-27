@@ -275,7 +275,7 @@
 	<Footer></Footer>
 </section>
 {#if navigating.to}
-	<Loader></Loader>
+	<Loader text="Navigating..."></Loader>
 {/if}
 
 <style>

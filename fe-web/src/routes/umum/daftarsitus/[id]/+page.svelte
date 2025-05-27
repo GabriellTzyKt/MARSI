@@ -93,7 +93,7 @@
 				</div>
 				<div>
 					<p class="mt-10 text-start text-xl font-semibold">{nama}</p>
-					
+
 					<div class="mt-5 flex items-center">
 						<div
 							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"

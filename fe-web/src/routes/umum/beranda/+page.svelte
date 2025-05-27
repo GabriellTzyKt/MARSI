@@ -100,7 +100,8 @@
 </script>
 
 {#if navigating.to}
-	<LoaderUmum></LoaderUmum>
+	<Loader text="Navigating..."></Loader>
+	<!-- <LoaderUmum></LoaderUmum> -->
 	<!-- <Loader2></Loader2> -->
 	<!-- <Loader1></Loader1> -->
 {/if}

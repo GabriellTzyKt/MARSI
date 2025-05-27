@@ -66,6 +66,7 @@ export const actions: Actions = {
                 type: "email",
                 user_input : obj.input
             }
+            console.log("Data to Send", content)
             const res = await fetch(`${env.PUB_PORT}/verify-otp`, {
                 method: "POST",
                 headers: {

@@ -161,12 +161,12 @@
 					anchor="Managemen Admin"
 					active={isActive('/admin/managemen')}
 				/>
-				<SidebarMenu
+				<!-- <SidebarMenu
 					href="/admin/pendaftaranKerajaan"
 					icon="mdi:home"
 					anchor="Pendaftaran Kerajaan"
 					active={page.route.id?.startsWith('/admin/pendaftaranKerajaan')}
-				/>
+				/> -->
 			</Sidebar>
 		</div>
 	{/if}
@@ -292,12 +292,12 @@
 				anchor="Managemen Admin"
 				active={isActive('/admin/managemen')}
 			/>
-			<SidebarMenu
+			<!-- <SidebarMenu
 				href="/admin/pendaftaranKerajaan"
 				icon="mdi:home"
 				anchor="Pendaftaran Kerajaan"
 				active={page.route.id?.startsWith('/admin/pendaftaranKerajaan')}
-			/>
+			/> -->
 		</Sidebar>
 	</div>
 

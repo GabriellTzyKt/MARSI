@@ -230,6 +230,9 @@
 {#if loading}
 	<Loader text="Processing..."></Loader>
 {/if}
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 
 <section class="relative">
 	<div class="relative h-screen w-full">
@@ -391,10 +394,6 @@
 		</div>
 	{/if}
 </section>
-
-{#if navigating.to}
-	<Loader></Loader>
-{/if}
 
 <section class="h-full w-full overflow-hidden">
 	<Footer></Footer>

@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({cookies}) => {
 export const actions: Actions = {
     changePassword: async ({ request, cookies }) => {
         const data = await request.formData()
-        const cook = cookies.get("otpVerified")as string;        
+        const cook = JSON.parse(cookies.get("otpVerified")as string);        
         const obj = Object.fromEntries(data)
         const check = z.object({
             password: z.string({ message: "Password tidak valid" })
@@ -44,6 +44,7 @@ export const actions: Actions = {
                 id_user : cook.id_user,
                 password: obj.password
             }
+            console.log("Data to Send", content)
             const res = await fetch(`${env.PUB_PORT}/edit-password`, {
                 method: "PUT",
                 headers: {

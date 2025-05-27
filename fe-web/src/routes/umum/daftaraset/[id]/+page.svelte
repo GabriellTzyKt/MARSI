@@ -2,6 +2,8 @@
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '../../nav/Navbar.svelte';
 	import keris from '../../../../asset/umum/keris.png';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	const { data } = $props();
 	console.log('Data yang diterima:', data);
@@ -93,7 +95,9 @@
 </script>
 
 <Navbar></Navbar>
-
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
 
 <section class="relative w-full">

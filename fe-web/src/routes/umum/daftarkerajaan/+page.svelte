@@ -24,7 +24,6 @@
 	const { data } = $props();
 	console.log('Data yang diterima ( Umum Kerajaan ):', data);
 	const dataGet = data.detil_kerajaan;
-	
 
 	function handleSortChange(event: Event) {
 		const target = event.target as HTMLSelectElement;
@@ -34,10 +33,10 @@
 			// Reset nilai sebelum mencoba mendapatkan lokasi baru
 			userLocation = ' ';
 			selectedDaerah = '';
-			
+
 			// Tampilkan pesan loading
 			// alert("Mencari lokasi Anda... Mohon izinkan akses lokasi jika diminta.");
-			
+
 			getLocation();
 		} else if (selectedLokasi === ' ') {
 			selectedDaerah = '';
@@ -58,10 +57,10 @@
 			// Tampilkan pesan loading
 			// alert("Mencari lokasi Anda... Mohon izinkan akses lokasi jika diminta.");
 			loading = true;
-			
+
 			navigator.geolocation.getCurrentPosition(
 				(position) => {
-					console.log("Posisi ditemukan:", position.coords);
+					console.log('Posisi ditemukan:', position.coords);
 					latitude = position.coords.latitude;
 					longitude = position.coords.longitude;
 					getCity(latitude, longitude);
@@ -70,33 +69,35 @@
 				(error) => {
 					// Log error lengkap untuk debugging
 					console.error('Error getting location:', error);
-					
+
 					// Tampilkan pesan error yang sesuai
-					let errorMessage = "Tidak dapat mengakses lokasi Anda.";
-					
+					let errorMessage = 'Tidak dapat mengakses lokasi Anda.';
+
 					if (error.code === 1) {
-						errorMessage = "Akses lokasi ditolak. Mohon izinkan akses lokasi di browser Anda.";
+						errorMessage = 'Akses lokasi ditolak. Mohon izinkan akses lokasi di browser Anda.';
 					} else if (error.code === 2) {
-						errorMessage = "Lokasi tidak tersedia. Coba lagi nanti.";
+						errorMessage = 'Lokasi tidak tersedia. Coba lagi nanti.';
 					} else if (error.code === 3) {
-						errorMessage = "Waktu permintaan lokasi habis. Coba lagi.";
+						errorMessage = 'Waktu permintaan lokasi habis. Coba lagi.';
 					}
-					
+
 					alert(errorMessage);
-					
+
 					// Reset nilai lokasi
 					selectedLokasi = ' ';
 					userLocation = ' ';
 				},
 				{
-					timeout: 15000,         // Tambah timeout menjadi 15 detik
+					timeout: 15000, // Tambah timeout menjadi 15 detik
 					enableHighAccuracy: false, // Coba dengan akurasi rendah dulu
-					maximumAge: 60000       // Izinkan cache lokasi selama 1 menit
+					maximumAge: 60000 // Izinkan cache lokasi selama 1 menit
 				}
 			);
 		} else {
 			console.error('Geolocation is not supported by this browser.');
-			alert('Browser Anda tidak mendukung fitur lokasi. Gunakan browser lain atau pilih lokasi secara manual.');
+			alert(
+				'Browser Anda tidak mendukung fitur lokasi. Gunakan browser lain atau pilih lokasi secara manual.'
+			);
 			selectedLokasi = ' ';
 		}
 	}
@@ -104,33 +105,33 @@
 	async function getCity(lat: number, lon: number) {
 		try {
 			console.log(`Mencoba mendapatkan lokasi dengan koordinat: ${lat}, ${lon}`);
-			
+
 			// pakai bantuan API dari openstreetmap untuk mendapat lokasi
 			const response = await fetch(
 				`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&zoom=10&accept-language=id`
 			);
-			
+
 			if (!response.ok) {
 				console.error(`HTTP error! Status: ${response.status}, Text: ${await response.text()}`);
 				throw new Error(`HTTP error! Status: ${response.status}`);
 			}
-			
-			loading = false
+
+			loading = false;
 			const data = await response.json();
 			console.log('Data lokasi yang diterima:', data);
-			
+
 			if (data && data.address) {
 				// Coba dapatkan lokasi dengan prioritas yang lebih luas
 				userLocation =
-					data.address.city || 
-					data.address.town || 
-					data.address.village || 
+					data.address.city ||
+					data.address.town ||
+					data.address.village ||
 					data.address.county ||
-					data.address.state || 
+					data.address.state ||
 					data.address.region ||
-					data.address.country || 
+					data.address.country ||
 					'Tidak diketahui';
-				
+
 				console.log(`Lokasi ditemukan: ${userLocation}`);
 				alert(`Mencari kerajaan di daerah: ${userLocation}`);
 				selectedDaerah = userLocation || '';
@@ -140,34 +141,34 @@
 			}
 		} catch (error) {
 			console.error('Error lengkap saat fetching city data:', error);
-			
+
 			// Coba gunakan API alternatif jika OpenStreetMap gagal
 			try {
-				console.log("Mencoba API alternatif...");
+				console.log('Mencoba API alternatif...');
 				const backupResponse = await fetch(
 					`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=id`
 				);
-				
+
 				if (backupResponse.ok) {
 					const backupData = await backupResponse.json();
-					console.log("Data dari API backup:", backupData);
-					
-					userLocation = 
-						backupData.city || 
-						backupData.locality || 
-						backupData.principalSubdivision || 
+					console.log('Data dari API backup:', backupData);
+
+					userLocation =
+						backupData.city ||
+						backupData.locality ||
+						backupData.principalSubdivision ||
 						'Tidak diketahui';
-					
+
 					alert(`Mencari kerajaan di daerah: ${userLocation}`);
 					selectedDaerah = userLocation || '';
 					return;
 				}
 			} catch (backupError) {
-				console.error("API backup juga gagal:", backupError);
+				console.error('API backup juga gagal:', backupError);
 			}
-			
+
 			alert('Gagal mendapatkan informasi lokasi. Silakan pilih lokasi secara manual.');
-			
+
 			// Reset nilai lokasi jika gagal
 			selectedLokasi = ' ';
 			userLocation = ' ';
@@ -196,7 +197,7 @@
 				const yearB = b.tanggal_berdiri ? new Date(b.tanggal_berdiri).getFullYear() : 0;
 				return yearA - yearB;
 			});
-		// kalau hasilnya < 0 maka swap
+			// kalau hasilnya < 0 maka swap
 		} else if (sortOrder === 'desc') {
 			filteredData.sort((a: any, b: any) => {
 				const yearA = a.tanggal_berdiri ? new Date(a.tanggal_berdiri).getFullYear() : 0;
@@ -217,6 +218,9 @@
 
 {#if loading}
 	<Loader text="Processing..."></Loader>
+{/if}
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
 {/if}
 
 <Navbar></Navbar>
@@ -306,7 +310,7 @@
 		</div>
 		<div class="relative mr-11 flex items-center gap-x-2">
 			<p>Daerah :</p>
-			{#if (selectedDaerah === ' ' && userLocation === ' ') || (selectedDaerah !== ' ' && userLocation === ' ') || (selectedDaerah === ' ')}
+			{#if (selectedDaerah === ' ' && userLocation === ' ') || (selectedDaerah !== ' ' && userLocation === ' ') || selectedDaerah === ' '}
 				<select
 					bind:value={selectedDaerah}
 					class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -367,9 +371,6 @@
 <section class="h-full w-full overflow-hidden">
 	<Footer></Footer>
 </section>
-{#if navigating.to}
-	<Loader></Loader>
-{/if}
 
 <style>
 	@media (max-width: 820px) {
