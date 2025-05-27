@@ -102,13 +102,16 @@
 					if (result.type === 'success') {
 						del = false;
 						success = true;
-						invalidateAll();
-						clearTimeout(timer);
-						timer = setTimeout(() => {
-							success = false;
-							del = false;
-							invalidateAll();
-						}, 3000);
+						loading = true;
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							loading = false;
+							setTimeout(() => {
+								success = false;
+								del = false;
+								invalidateAll();
+							}, 3000);
+						});
 					}
 					if (result.type === 'failure') {
 						console.log(result.data?.error);
@@ -134,13 +137,16 @@
 					if (result.type === 'success') {
 						del = false;
 						success = true;
-						invalidateAll();
-						clearTimeout(timer);
-						timer = setTimeout(() => {
-							success = false;
-							del = false;
-							invalidateAll();
-						}, 3000);
+						loading = true;
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							loading = false;
+							setTimeout(() => {
+								success = false;
+								del = false;
+								invalidateAll();
+							}, 3000);
+						});
 					}
 					if (result.type === 'failure') {
 						console.log(result.data?.error);
@@ -169,13 +175,16 @@
 					if (result.type === 'success') {
 						del = false;
 						success = true;
-						invalidateAll();
-						clearTimeout(timer);
-						timer = setTimeout(() => {
-							success = false;
-							del = false;
-							invalidateAll();
-						}, 3000);
+						loading = true;
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							loading = false;
+							setTimeout(() => {
+								success = false;
+								del = false;
+								invalidateAll();
+							}, 3000);
+						});
 					}
 					if (result.type === 'failure') {
 						console.log(result.data?.error);
@@ -201,13 +210,16 @@
 					if (result.type === 'success') {
 						del = false;
 						success = true;
-						invalidateAll();
-						clearTimeout(timer);
-						timer = setTimeout(() => {
-							success = false;
-							del = false;
-							invalidateAll();
-						}, 3000);
+						loading = true;
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							loading = false;
+							setTimeout(() => {
+								success = false;
+								del = false;
+								invalidateAll();
+							}, 3000);
+						});
 					}
 					if (result.type === 'failure') {
 						console.log(result.data?.error);
@@ -240,13 +252,15 @@
 					loading = false;
 					if (result.type === 'success') {
 						success = true;
-						invalidateAll();
-						clearTimeout(timer);
-						timer = setTimeout(() => {
-							success = false;
-							edit = false;
-							invalidateAll();
-						}, 3000);
+						loading = true;
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							loading = false;
+							setTimeout(() => {
+								success = false;
+								edit = false;
+							}, 3000);
+						});
 					}
 					if (result.type === 'failure') {
 						error = result.data?.error;
@@ -276,13 +290,15 @@
 					loading = false;
 					if (result.type === 'success') {
 						success = true;
-						invalidateAll();
-						clearTimeout(timer);
-						timer = setTimeout(() => {
-							success = false;
-							edit = false;
-							invalidateAll();
-						}, 3000);
+						loading = true;
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							loading = false;
+							setTimeout(() => {
+								success = false;
+								edit = false;
+							}, 3000);
+						});
 					}
 					if (result.type === 'failure') {
 						error = result.data?.error;
@@ -312,13 +328,15 @@
 					loading = false;
 					if (result.type === 'success') {
 						success = true;
-						invalidateAll();
-						clearTimeout(timer);
-						timer = setTimeout(() => {
-							success = false;
-							edit = false;
-							invalidateAll();
-						}, 3000);
+						loading = true;
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							loading = false;
+							setTimeout(() => {
+								success = false;
+								edit = false;
+							}, 3000);
+						});
 					}
 					if (result.type === 'failure') {
 						error = result.data?.error;
@@ -348,8 +366,10 @@
 					loading = false;
 					if (result.type === 'success') {
 						success = true;
-						clearTimeout(timer);
+						loading = true;
 						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							loading = false;
 							setTimeout(() => {
 								success = false;
 								edit = false;

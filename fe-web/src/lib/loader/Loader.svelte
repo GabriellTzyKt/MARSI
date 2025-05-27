@@ -5,7 +5,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
-	class="fixed left-0 top-0 z-[150] flex h-full w-full cursor-wait flex-col items-center justify-center bg-black/60"
+	class="fixed left-0 top-0 z-[200] flex h-full w-full cursor-wait flex-col items-center justify-center bg-black/60"
 	onclick={(e) => e.stopPropagation()}
 >
 	<div class="loader"></div>

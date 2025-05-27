@@ -22,7 +22,7 @@
 	let input = $state(false);
 	let entries = $state(10);
 
-	let currPage = $state(1);  // Untuk Arsip
+	let currPage = $state(1); // Untuk Arsip
 	let currPage2 = $state(1); // Untuk Jenis Kerajaan
 	let currPage3 = $state(1); // Untuk Gelar
 
@@ -59,13 +59,13 @@
 	function paginate(data: any[], tipe: any) {
 		const filter = filteredData(data, tipe);
 		console.log('filter:', filter);
-		
+
 		let currentPage;
 		if (tipe === 'arsip') currentPage = currPage;
 		else if (tipe === 'jenis_kerajaan') currentPage = currPage2;
 		else if (tipe === 'gelar') currentPage = currPage3;
 		else currentPage = 1;
-		
+
 		const start = (currentPage - 1) * entries;
 		console.log('start:', start);
 		const end = start + entries;
@@ -280,7 +280,8 @@
 										class="rounded-lg p-4"
 										class:bg-[#F9D48B]={currPage3 === total_pages_3 - 3 + i}
 										class:text-white={currPage3 === total_pages_3 - 3 + i}
-										onclick={() => (currPage3 = total_pages_3 - 3 + i)}>{total_pages_3 - 3 + i}</button
+										onclick={() => (currPage3 = total_pages_3 - 3 + i)}
+										>{total_pages_3 - 3 + i}</button
 									>
 								{/if}
 							{/if}
@@ -578,13 +579,14 @@
 					if (result.type === 'success') {
 						success = true;
 						clearTimeout(timer);
-						invalidateAll();
-						timer = setTimeout(() => {
-							success = false;
-							openmodaltambah = false;
-
-							invalidateAll();
-						}, 3000);
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							setTimeout(() => {
+								success = false;
+								openmodaltambah = false;
+								invalidateAll();
+							}, 3000);
+						});
 					} else if (result.type === 'failure') {
 						error = result?.data?.errors;
 					}
@@ -613,12 +615,14 @@
 					if (result.type === 'success') {
 						success = true;
 						clearTimeout(timer);
-						invalidateAll();
-						timer = setTimeout(() => {
-							success = false;
-							openmodaltambah = false;
-							invalidateAll();
-						}, 3000);
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							setTimeout(() => {
+								success = false;
+								openmodaltambah = false;
+								invalidateAll();
+							}, 3000);
+						});
 					} else if (result.type === 'failure') {
 						error = result?.data?.errors;
 					}
@@ -646,13 +650,14 @@
 					if (result.type === 'success') {
 						success = true;
 						clearTimeout(timer);
-						invalidateAll();
-						timer = setTimeout(() => {
-							success = false;
-							openmodaltambah = false;
-
-							invalidateAll();
-						}, 3000);
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							setTimeout(() => {
+								success = false;
+								openmodaltambah = false;
+								invalidateAll();
+							}, 3000);
+						});
 					} else if (result.type === 'failure') {
 						error = result?.data?.errors;
 					}
@@ -678,13 +683,14 @@
 						if (result.type === 'success') {
 							success = true;
 							clearTimeout(timer);
-							invalidateAll();
-
-							timer = setTimeout(() => {
-								success = false;
-								openmodaltambah = false;
-								invalidateAll();
-							}, 3000);
+							await invalidateAll().then(() => {
+								console.log('Data invalidated');
+								setTimeout(() => {
+									success = false;
+									openmodaltambah = false;
+									invalidateAll();
+								}, 3000);
+							});
 						} else if (result.type === 'failure') {
 							error = result?.data?.errors;
 						}
