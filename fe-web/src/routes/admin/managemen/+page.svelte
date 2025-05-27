@@ -25,7 +25,7 @@
 	let error = $state();
 	let timer: number;
 	let loading = $state(false);
-	let dataEdit : any = null;
+	let dataEdit: any = null;
 
 	function handleEdit(admin: any) {
 		console.log('ADMIN EDIT : ', admin);
@@ -69,18 +69,12 @@
 		<!-- container -->
 		{#if selected === 'Super Admin'}
 			{#each data.adminMarsiData?.filter((admin: any) => admin.jenis_admin?.toLowerCase() === 'super admin') || [] as admin}
-				<DropDownAdmin
-					{error}
-					data={admin}
-					actions={[{ action: () => handleEdit(admin) }]}
+				<DropDownAdmin {error} data={admin} actions={[{ action: () => handleEdit(admin) }]}
 				></DropDownAdmin>
 			{/each}
 		{:else if selected === 'Admin Kerajaan'}
 			{#each data.adminMarsiData?.filter((admin: any) => admin.jenis_admin?.toLowerCase() === 'admin kerajaan') || [] as admin}
-				<DropDownAdmin
-					{error}
-					data={admin}
-					actions={[{ action: () => handleEdit(admin) }]}
+				<DropDownAdmin {error} data={admin} actions={[{ action: () => handleEdit(admin) }]}
 				></DropDownAdmin>
 			{/each}
 		{/if}
@@ -110,21 +104,22 @@
 		method="post"
 		autocomplete="off"
 		use:enhance={() => {
-			loading = true
+			loading = true;
 			return async ({ result }) => {
 				console.log(result);
 				loading = false;
 				if (result.type === 'success') {
 					valo = true;
 					clearTimeout(timer);
-					invalidateAll();
-					timer = setTimeout(() => {
-						valo = false;
-						open = false;
-					}, 3000);
+					await invalidateAll().then(() => {
+						setTimeout(() => {
+							valo = false;
+							open = false;
+						}, 3000);
+					});
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
-					console.log("Errors : ", error)
+					console.log('Errors : ', error);
 				}
 			};
 		}}
@@ -159,12 +154,13 @@
 				console.log(result);
 				if (result.type === 'success') {
 					valo2 = true;
-					clearTimeout(timer);
-					invalidateAll();
-					timer = setTimeout(() => {
-						valo2 = false;
-						edit = false;
-					}, 3000);
+					// clearTimeout(timer);
+					await invalidateAll().then(() => {
+						setTimeout(() => {
+							valo2 = false;
+							edit = false;
+						}, 3000);
+					});
 				} else if (result.type === 'failure') {
 					loading = false;
 					error = result?.data?.errors;

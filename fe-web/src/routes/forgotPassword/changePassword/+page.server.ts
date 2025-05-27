@@ -5,7 +5,7 @@ import { env } from "$env/dynamic/private";
 
 
 export const load: PageServerLoad = async ({cookies}) => {
-    const cook = cookies.get("otpVerified")
+    const cook = cookies.get("otpVerified")as string;
     if (!cook) {
         redirect(302, '/forgotPassword')
         
@@ -15,8 +15,9 @@ export const load: PageServerLoad = async ({cookies}) => {
     }
 };
 export const actions: Actions = {
-    changePassword: async ({ request }) => {
+    changePassword: async ({ request, cookies }) => {
         const data = await request.formData()
+        const cook = cookies.get("otpVerified")as string;        
         const obj = Object.fromEntries(data)
         const check = z.object({
             password: z.string({ message: "Password tidak valid" })
@@ -38,32 +39,32 @@ export const actions: Actions = {
 
           
         }
-        // try {
-        //     const content = {
-        //         content : email,
-        //         type: "email",
-        //         user_input : obj.password
-        //     }
-        //     const res = await fetch(`${env.PUB_PORT}/forgot-password`, {
-        //         method: "POST",
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             "Accept": "*/*"
-        //         },
-        //         body: JSON.stringify(content)
-        //     })
-        //     if (!res.ok) {
-        //         console.log(res)
-        //         return fail(418, { errors: "Terjadi kesalahan pada server"})
-        //     }
-        //     console.log("Success", res)
-        //     const returnData = await res.json()
-        //     console.log(returnData)
-        //     return {errors: "no error"}
-        // }
-        // catch (errors) {
-        //     return fail(418, { errors: "Terjadi kesalahan pada server"})
-        // }
+        try {
+            const content = {
+                id_user : cook.id_user,
+                password: obj.password
+            }
+            const res = await fetch(`${env.PUB_PORT}/edit-password`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "*/*"
+                },
+                body: JSON.stringify(content)
+            })
+            if (!res.ok) {
+                console.log(res)
+                return fail(418, { errors: "Terjadi kesalahan pada server"})
+            }
+            console.log("Success", res)
+            const returnData = await res.json()
+            console.log(returnData)
+            cookies.delete('otpVerified', {path: '/'});     
+            return {errors: "no error"}
+        }
+        catch (errors) {
+            return fail(418, { errors: "Terjadi kesalahan pada server"})
+        }
 
     }
 }

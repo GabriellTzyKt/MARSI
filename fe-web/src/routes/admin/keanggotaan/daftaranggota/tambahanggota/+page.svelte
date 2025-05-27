@@ -8,9 +8,9 @@
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import { writable } from 'svelte/store';
 
-	let { data } = $props()
-	let dataambil = data.jenisKerajaan
-	console.log("Data ambil : ", dataambil)
+	let { data } = $props();
+	let dataambil = data.jenisKerajaan;
+	console.log('Data ambil : ', dataambil);
 	let results = writable<string[]>([]);
 	let showDropdown = writable(false);
 	let lokasi = $state(' ');

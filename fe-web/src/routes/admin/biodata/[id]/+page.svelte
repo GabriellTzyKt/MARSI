@@ -9,11 +9,9 @@
 	import { onMount } from 'svelte';
 	import Loader from '$lib/loader/Loader.svelte';
 
-
-
 	const { data } = $props();
 	let datagelar = data.gelar;
-	console.log("data gelar : ", datagelar)
+	console.log('data gelar : ', datagelar);
 	let dataGet = data.detil_kerajaan;
 	let datajenis = data.jenisKerajaan;
 	let loading = $state(false);
@@ -198,7 +196,9 @@
 		}
 	}
 
-	let uploadedFileIds = $state(dataubah.foto_umum ? dataubah.foto_umum.split(',').map((id : any) => id.trim()) : []);
+	let uploadedFileIds = $state(
+		dataubah.foto_umum ? dataubah.foto_umum.split(',').map((id: any) => id.trim()) : []
+	);
 
 	// Fungsi untuk menghapus gambar
 	function removeImage(index: number) {
@@ -222,7 +222,7 @@
 
 		// Update namafoto untuk form submission
 		namafoto = uploadedFiles.map((file) => file.name).join(',');
-		
+
 		// Update existing_foto_umum_ids untuk form submission
 		const updatedIds = uploadedFileIds.join(',');
 		console.log('Updated foto_umum IDs after removal:', updatedIds);
@@ -1369,7 +1369,7 @@
 				action="?/tambah"
 				enctype="multipart/form-data"
 				use:enhance={() => {
-					loading=true
+					loading = true;
 					return async ({ result }) => {
 						loading = false;
 
@@ -1407,12 +1407,13 @@
 
 							// Set success state dan timer
 							success = true;
-							clearTimeout(timer);
-							timer = setTimeout(() => {
-								success = false;
-								showModal = false;
-								invalidateAll();
-							}, 3000);
+							await invalidateAll().then(() => {
+								setTimeout(() => {
+									success = false;
+									showModal = false;
+									invalidateAll();
+								}, 3000);
+							});
 						} else if (result.type === 'failure') {
 							console.error('Form submission failed:', result?.data?.errors);
 							error = result?.data?.errors;
@@ -1482,7 +1483,7 @@
 					<label class="text-md mt-2 self-start text-left" for="nama">Gelar Raja</label>
 					<div class="relative">
 						<select
-							class="input-field rounded-lg border p-2 pr-8 w-full"
+							class="input-field w-full rounded-lg border p-2 pr-8"
 							id="gelarraja"
 							name="gelarraja"
 							bind:value={gelarraja}
@@ -1725,14 +1726,13 @@
 							if (fileInput) fileInput.value = '';
 
 							// Invalidate data untuk memastikan data terbaru dimuat
-							invalidateAll();
-							success = true;
-							clearTimeout(timer);
-							timer = setTimeout(() => {
-								success = false;
-								showModal2 = false;
-								invalidateAll();
-							}, 3000);
+							await invalidateAll().then(() => {
+								setTimeout(() => {
+									success = false;
+									showModal2 = false;
+									invalidateAll();
+								}, 3000);
+							});
 						} else if (result.type === 'failure') {
 							console.error('Form submission failed:', result?.data?.errors);
 							error = result?.data?.errors;
@@ -1807,12 +1807,12 @@
 					<label class="text-md mt-2 self-start text-left" for="nama">Gelar Raja</label>
 					<div class="relative">
 						<select
-							class="input-field rounded-lg border p-2 pr-8 w-full"
+							class="input-field w-full rounded-lg border p-2 pr-8"
 							id="gelarraja"
 							name="gelarraja"
 							bind:value={gelarraja}
 						>
-						{console.log("Gelar raja : ", gelarraja)}
+							{console.log('Gelar raja : ', gelarraja)}
 							<option value="" selected disabled>Pilih Gelar Raja</option>
 							{#each datagelar as gelar}
 								<option value={gelar.id_gelar}>{gelar.nama_gelar || gelar.gelar}</option>
@@ -2047,12 +2047,11 @@
 
 					// Tampilkan pesan sukses
 					success2 = true;
-					clearTimeout(timer);
-					timer = setTimeout(() => {
-						success2 = false;
-						// Refresh data
-						invalidateAll();
-					}, 3000);
+					await invalidateAll().then(() => {
+						setTimeout(() => {
+							success2 = false;
+						}, 3000);
+					});
 				} else if (result.type === 'failure') {
 					console.error('Failed to delete history raja:', result?.data?.errors);
 					error = result?.data?.errors;

@@ -12,7 +12,7 @@
 		datakerajaan = null
 	} = $props();
 
-	console.log('Errors : ', errors)
+	console.log('Errors : ', errors);
 
 	console.log('Modal received data:', data);
 
@@ -37,7 +37,9 @@
 	});
 
 	// Inisialisasi variabel lain berdasarkan data
-	let radioValue = $state(formValues.admin_role === 'admin kerajaan' && formValues.afiliasi === 'marsi' ? 'ya' : 'tidak');
+	let radioValue = $state(
+		formValues.admin_role === 'admin kerajaan' && formValues.afiliasi === 'marsi' ? 'ya' : 'tidak'
+	);
 	let newafiliasi = $state(formValues.afiliasi);
 	let newroleadmin = $state(formValues.admin_role);
 
@@ -127,7 +129,7 @@
 
 		// Update display name
 		displayKerajaanName = getKerajaanName(selectedValue);
-		console.log("afiliasi : ", newafiliasi)
+		console.log('afiliasi : ', newafiliasi);
 		console.log('Display name updated to:', displayKerajaanName);
 
 		// Only update admin_role if radio is not "Ya"
@@ -298,6 +300,7 @@
 					{#each errors.username as a}
 						<p class="text-left text-red-500">{a}</p>
 					{/each}
+					<p class="text-left text-red-500">{errors?.api}</p>
 				{/if}
 			</div>
 			<!-- Email -->
@@ -482,7 +485,7 @@
 						onclick={(e) => handleAfiliasiChange(e)}
 						disabled={radioValue === 'ya'}
 					>
-						{console.log("ayayay:", newafiliasi)}
+						{console.log('ayayay:', newafiliasi)}
 						<option value="marsi">MARSI</option>
 						{#if datakerajaan && Array.isArray(datakerajaan)}
 							{#each datakerajaan as kerajaan}

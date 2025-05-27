@@ -208,12 +208,10 @@
 			return async ({ result }) => {
 				if (result.type === 'success') {
 					success = true;
-					let timer: number;
 					await invalidateAll().then(() => {
-						timer = setTimeout(() => {
+						setTimeout(() => {
 							edit = false;
 							success = false;
-							goto('/admin/keanggotaan/daftaranggota');
 						}, 3000);
 					});
 				}
@@ -236,7 +234,6 @@
 				loading = false;
 				if (result.type === 'success') {
 					success = true;
-					let timer: number;
 					await invalidateAll().then(() => {
 						setTimeout(() => {
 							resetFormState();

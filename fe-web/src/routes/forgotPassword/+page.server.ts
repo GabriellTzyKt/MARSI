@@ -82,7 +82,7 @@ export const actions: Actions = {
             const returnData = await res.json()
             console.log(returnData)
               // Set a cookie to indicate OTP verification was successful
-            cookies.set('otpVerified', 'true', {
+            cookies.set('otpVerified', JSON.stringify({id_user: returnData.id_user}), {
             path: '/',
             maxAge: 60 * 10, // 10 minutes
             httpOnly: true,

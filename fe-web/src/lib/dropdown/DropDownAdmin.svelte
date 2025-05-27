@@ -176,10 +176,10 @@
 					<p class="font-[500]">Afiliasi</p>
 				</div>
 				<div>
-					{#if data.jenis_admin === "super admin"}
+					{#if data.jenis_admin === 'super admin'}
 						<p class="text-sm text-[#5B5B5B]">MARSI</p>
 					{/if}
-					{#if data.jenis_admin === "admin kerajaan"}
+					{#if data.jenis_admin === 'admin kerajaan'}
 						<p class="text-sm text-[#5B5B5B]">Kerajaan</p>
 					{/if}
 				</div>
@@ -249,13 +249,12 @@
 					value = false;
 					// Show success message
 					statusUpdated2 = true;
-					clearTimeout(timer);
-					invalidateAll();
-					timer = setTimeout(() => {
-						statusUpdated2 = false;
-						invalidateAll();
-					}, 3000);
-					await invalidateAll();
+					// clearTimeout(timer);
+					await invalidateAll().then(() => {
+						setTimeout(() => {
+							statusUpdated2 = false;
+						}, 3000);
+					});
 				}
 			};
 		}}
