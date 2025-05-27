@@ -2,10 +2,13 @@
 	import { enhance } from '$app/forms';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { navigating, page } from '$app/state';
+	import { env } from '$env/dynamic/public';
+	import { formatDatetoUI } from '$lib';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
 	import { dummyAnggota } from '$lib/dummy';
 	import Loader from '$lib/loader/Loader.svelte';
+	import SimpleLoader from '$lib/loader/SimpleLoader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import TambahAnggota from '$lib/popup/TambahAnggota.svelte';
@@ -13,16 +16,14 @@
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
 	import { use } from 'react';
-	import { tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { string } from 'zod';
 
 	let { data } = $props();
-	let dataambil = data.organisasiList;
-	let dataanggota = $state(data.allAnggota);
-	let allanggota = data.allUsers;
-	console.log('Data ambil : ', dataambil);
-	console.log('Data anggota : ', dataanggota);
+	console.log(data);
+	let allUser = data.userData;
+
 	let idAktif = $state(page.params.id);
 
 	let open = $state(false);
@@ -39,31 +40,78 @@
 	let deleteId = $state();
 	let loading = $state(false);
 	let success = $state(false);
-	async function refreshData() {
+	let loadUser = $state(false);
+	let organizationMembers = $state([]);
+
+	async function fetchOrganizationMembers(organizationId) {
+		if (!organizationId) return;
+
+		loadUser = true;
+		organizationMembers = [];
 		try {
-			// Force a complete data reload
-			await invalidateAll();
-
-			// Add a small delay to ensure the invalidation has completed
-			await new Promise((resolve) => setTimeout(resolve, 100));
-
-			// Force browser to refetch from server, not cache
-			const response = await fetch(window.location.pathname, {
-				method: 'GET',
-				headers: {
-					'Cache-Control': 'no-cache',
-					Pragma: 'no-cache'
-				}
-			});
-
-			if (response.ok) {
-				// Reload the page to ensure fresh data
-				window.location.href = window.location.pathname + '?t=' + Date.now();
+			console.log('Fetching members for organization:', organizationId);
+			// Fetch members for the selected organization
+			let anggotaResponse = await fetch(
+				`${env.PUBLIC_URL_KERAJAAN}/organisasi/anggota/${organizationId}?limit=200`
+			);
+			if (!anggotaResponse.ok) {
 			}
+			let anggotaList = await anggotaResponse.json();
+			console.log('anggota list: ', anggotaList);
+			anggotaList = anggotaList.filter((item: any) => {
+				return item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at;
+			});
+			let finalData = await Promise.all(
+				anggotaList.map(async (item: any) => {
+					let memberInfo = {
+						...item,
+						nama_anggota: 'Unknown User',
+						email: 'No Email',
+						nomor_telepon: 'No Phone',
+						tanggal_bergabung: formatDatetoUI(item.tanggal_bergabung)
+					};
+
+					// Fetch user details if id_user exists
+					if (item.id_user) {
+						try {
+							const userResponse = await fetch(`${env.PUBLIC_PUB_PORT}/user/${item.id_user}`);
+							if (userResponse.ok) {
+								const userData = await userResponse.json();
+								memberInfo = {
+									...memberInfo,
+									nama_anggota: userData.nama_lengkap || userData.nama || 'Unknown User',
+									email: userData.email || 'No Email',
+									nomor_telepon: userData.no_telp || 'No Phone'
+								};
+							}
+						} catch (error) {
+							console.error(`Error fetching user ${item.id_user}:`, error);
+						}
+					}
+
+					return memberInfo;
+				})
+			);
+			console.log('Final data: ', finalData);
+			organizationMembers = finalData;
+			console.log('Organization Members:', organizationMembers);
 		} catch (error) {
-			console.error('Error refreshing data:', error);
+			console.error('Error fetching organization members:', error);
+		} finally {
+			loadUser = false;
 		}
 	}
+	onMount(async () => {
+		try {
+			loadUser = true;
+			await fetchOrganizationMembers(data?.id_organisasi);
+		} catch (error) {
+			console.error('Error fetching members:', error);
+		} finally {
+			loadUser = false;
+		}
+	});
+
 	function filterD(data: any[]) {
 		// console.log(data);
 		return data.filter((item) => {
@@ -97,23 +145,23 @@
 		console.log(d);
 		return d.slice(start, end);
 	}
-	let resdata = $derived(pagination(dataanggota));
+	let resdata = $derived(pagination(organizationMembers));
 
 	let timer: any;
 	function handleEdit(userId: string) {
 		console.log('USER EDIT : ', userId);
-		const userData = dataanggota.find((item) => item.id_user.toString() == userId);
+		// const userData = organizationMembers.find((item) => item.id_user.toString() == userId);
 		// const datauser = data.allUsers.find((item) => item.id_user.toString() == userId);
 
-		console.log('User data:', userData);
+		console.log('User data:', userId);
 		// console.log('User data:', datauser);
 		dataEdit = {
 			organisasi_id: idAktif,
-			id_user: userData.id_user,
-			nama_anggota: userData.user_name,
-			deskripsi_tugas: userData.deskripsi_tugas,
-			tanggal_bergabung: userData.tanggal_bergabung,
-			jabatan_anggota: userData.jabatan_anggota
+			id_user: userId?.id_user,
+			nama_anggota: userId?.nama_anggota,
+			deskripsi_tugas: userId?.deskripsi_tugas,
+			tanggal_bergabung: userId?.tanggal_bergabung,
+			jabatan_anggota: userId?.jabatan_anggota
 		};
 		console.log('Data Edit : ', dataEdit);
 		editId = true;
@@ -217,11 +265,11 @@
 	<div class="flex w-full">
 		<Table
 			table_header={[
-				['user_name', 'Nama Anggota'],
+				['nama_anggota', 'Nama Anggota'],
 				['tanggal_bergabung', 'Tanggal Bergabung'],
 				['jabatan_anggota', 'Jabatan Anggota'],
-				['user_notelp', 'Nomer Telpon'],
-				['user_email', 'Email'],
+				['nomor_telepon', 'Nomer Telpon'],
+				['email', 'Email'],
 				['children', 'Aksi']
 			]}
 			table_data={resdata}
@@ -233,7 +281,7 @@
 						items={[
 							{
 								label: 'Edit',
-								action: () => handleEdit(data.id_user)
+								action: () => handleEdit(data)
 							},
 							{
 								label: 'Hapus',
@@ -247,7 +295,13 @@
 			{/snippet}
 		</Table>
 	</div>
-	<Pagination bind:currPage bind:entries totalItems={filterD(dataanggota).length}></Pagination>
+	{#if loadUser}
+		<div class="mt-2 flex justify-center">
+			<SimpleLoader></SimpleLoader>
+		</div>
+	{/if}
+	<Pagination bind:currPage bind:entries totalItems={filterD(organizationMembers).length}
+	></Pagination>
 </div>
 {#if open}
 	<form
@@ -261,12 +315,12 @@
 				if (result.type === 'success') {
 					try {
 						success = true;
-						clearTimeout(timer);
-						await refreshData();
-						timer = setTimeout(() => {
-							success = false;
-							open = false;
-						}, 3000);
+						await fetchOrganizationMembers(data?.id_organisasi).then(() => {
+							setTimeout(() => {
+								success = false;
+								open = false;
+							}, 3000);
+						});
 					} catch (error) {}
 				} else if (result.type === 'failure') {
 					error = result.data?.errors || '';
@@ -275,7 +329,7 @@
 		}}
 	>
 		<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
-			<TambahAnggota bind:value={open} bind:open={valo} errors={error} {data2} {allanggota}
+			<TambahAnggota bind:value={open} errors={error} {data2} allanggota={data?.userData}
 			></TambahAnggota>
 		</div>
 	</form>
@@ -295,13 +349,13 @@
 						success = true;
 
 						// Force a complete data reload with the new approach
-						await refreshData();
 
-						clearTimeout(timer);
-						timer = setTimeout(() => {
-							success = false;
-							editId = false;
-						}, 3000);
+						await fetchOrganizationMembers(data?.id_organisasi).then(() => {
+							setTimeout(() => {
+								success = false;
+								editId = false;
+							}, 3000);
+						});
 					} catch (error) {
 						console.error('Error refreshing data:', error);
 					}
@@ -315,10 +369,9 @@
 			<TambahAnggota
 				bind:value={editId}
 				{dataEdit}
-				bind:open={editId}
 				errors={error}
 				{data2}
-				{allanggota}
+				allanggota={data?.userData}
 			></TambahAnggota>
 			<input type="text" hidden name="id_organisasi" value={idAktif} id="" />
 		</div>
@@ -335,12 +388,12 @@
 				if (result.type === 'success') {
 					try {
 						success = true;
-						clearTimeout(timer);
-						await refreshData();
-						timer = setTimeout(() => {
-							success = false;
-							modaldelete = false;
-						}, 3000);
+						await fetchOrganizationMembers(data?.id_organisasi).then(() => {
+							setTimeout(() => {
+								success = false;
+								modaldelete = false;
+							}, 3000);
+						});
 					} catch (error) {
 						console.error('Error refreshing data:', error);
 					}

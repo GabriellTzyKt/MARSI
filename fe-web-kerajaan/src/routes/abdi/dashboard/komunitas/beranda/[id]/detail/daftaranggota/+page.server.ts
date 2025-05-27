@@ -16,7 +16,6 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         
         let komunitasList = await komunitasResponse.json();
         let filteredData = komunitasList.filter(item => item && (item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at));
-        console.log("komunitas : ", komunitasList);
         // let finalData = await Promise.all(filteredData.map(async (data: any) => {
         //     if (!data) return null;
         //     let res = await fetch(`${env.PUB_PORT}/user/${data.id_user}`,{

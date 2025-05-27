@@ -130,6 +130,7 @@
 		console.log('datakirim', dataEdit);
 	}
 	function handleDelete(id: string) {
+		console.log('Anda Menghapus user : ', id);
 		deleteModal = true;
 		deleteId = id;
 	}
@@ -315,21 +316,19 @@
 		</div>
 	</form>
 {/if}
-{#if deleteD && selectedItemId}
+{#if deleteModal}
 	<form
 		action="?/hapus"
 		method="post"
 		use:enhance={() => {
-			const idToDelete = selectedItemId;
-			console.log('Form submitted with ID from URL:', idToDelete);
 			loading = true;
 			return async ({ result }) => {
 				loading = false;
 				if (result.type === 'success') {
-					console.log('Success deleting ID:', idToDelete);
+					// console.log('Success deleting ID:', idToDelete);
 					success = true;
-					deleteD = false;
-					selectedItemId = null;
+					deleteModal = false;
+					// selectedItemId = null;
 					await fetchKomunitasMember(data?.komunitas_id).then(() => {
 						setTimeout(() => {
 							success = false;
@@ -337,19 +336,19 @@
 					});
 				}
 				if (result.type === 'failure') {
-					console.error('Failed to delete ID:', idToDelete, result);
+					// console.error('Failed to delete ID:', idToDelete, result);
 				}
 			};
 		}}
 	>
-		<input type="hidden" name="id_user" value={selectedItemId} />
+		<input type="hidden" name="id_user" value={deleteId} />
 		<input type="hidden" name="id_komunitas" value={data.komunitas_id} />
 
 		<DeleteModal
 			text="Apakah yakin ingin menghapus anggota ini?"
 			successText="Anggota berhasil dihapus!"
 			choose="delete"
-			bind:value={deleteD}
+			bind:value={deleteModal}
 		/>
 	</form>
 {/if}
