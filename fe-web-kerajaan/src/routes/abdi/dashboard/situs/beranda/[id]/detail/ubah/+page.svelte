@@ -23,6 +23,7 @@
 	let jambuka = $state('');
 	let jamtutup = $state('');
 	let wisata = $state('');
+	let showEditIcon = $state(true);
 
 	let { form } = $props();
 	console.log('form data', form?.formData);
@@ -48,13 +49,22 @@
 
 	$effect(() => {
 		currentID = $page.params.id;
-		console.log("ID: ",currentID)
+		console.log('ID: ', currentID);
 	});
 
 	let open = $state(false);
 	let timer: any;
 	let loading = $state(false);
 	let error: any = $state('');
+
+	function previewImage(event: any) {
+		const file = event.target.files[0];
+		const preview = document.getElementById('preview-image') as HTMLImageElement;
+		if (file && preview) {
+			preview.src = URL.createObjectURL(file);
+			showEditIcon = false; // Sembunyikan icon edit setelah file dipilih
+		}
+	}
 </script>
 
 {#if navigating.to}
@@ -89,8 +99,27 @@
 			<!-- 1 -->
 			<div>
 				<div class="relative mx-auto mb-9 flex w-full items-center justify-center">
-					<img src={gambardefault} class="relative ml-5 mr-5 h-20 w-20 rounded-full" alt="" />
-					<span class="mdi--edit absolute"></span>
+					<!-- Image yang bisa diklik -->
+					<label for="upload-photo" class="relative ml-5 mr-5 cursor-pointer hover:opacity-25">
+						<img
+							id="preview-image"
+							src={gambardefault}
+							class="h-20 w-20 rounded-full object-cover"
+							alt="Profile"
+						/>
+						{#if showEditIcon}
+							<span class="mdi--edit absolute"></span>
+						{/if}
+					</label>
+
+					<!-- Input file yang disembunyikan -->
+					<input
+						type="file"
+						id="upload-photo"
+						accept="image/*"
+						class="hidden"
+						onchange={previewImage}
+					/>
 				</div>
 				<div>
 					<p>Nama Situs:</p>
@@ -388,6 +417,10 @@
 	}
 
 	.mdi--edit {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 		display: inline-block;
 		width: 32px;
 		height: 32px;

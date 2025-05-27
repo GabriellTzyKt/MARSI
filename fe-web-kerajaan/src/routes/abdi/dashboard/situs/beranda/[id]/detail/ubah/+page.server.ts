@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export const actions: Actions = {
     edit: async ({ request }) => {
-        const data = await request.formData();
+        const data : any = await request.formData();
 
         let form = {
             namasitus: "",
