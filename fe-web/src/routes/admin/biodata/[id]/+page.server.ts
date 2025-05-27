@@ -533,62 +533,28 @@ export const actions: Actions = {
         console.log("Foto umum files count:", dokumenFiles.length);
         console.log("Foto umum files details:", dokumenFiles.map(f => f instanceof File ? `${f.name} (${f.size} bytes)` : 'Not a file'));
 
-        // Fungsi untuk mengecek apakah file adalah hasil konversi dari URL yang sudah ada
-        // Perbaikan: Buat fungsi ini SELALU mengembalikan true kecuali ada bukti kuat sebaliknya
-        const isExistingConvertedFile = (file: File): boolean => {
-            // Asumsi default: semua file adalah hasil konversi kecuali terbukti sebaliknya
-            
-            // Pola nama file yang jelas menunjukkan file baru (bukan hasil konversi)
-            const clearlyNewFilePatterns = [
-                /^IMG_\d{8}_\d{6}\.(jpg|jpeg|png)$/i,  // Format kamera iPhone: IMG_20230101_123456.jpg
-                /^DSC_\d{4}\.(jpg|jpeg|png)$/i,         // Format kamera Nikon: DSC_1234.jpg
-                /^P_\d{8}_\d{6}\.(jpg|jpeg|png)$/i,     // Format kamera Samsung: P_20230101_123456.jpg
-                /^DCIM_\d{4}\.(jpg|jpeg|png)$/i,        // Format umum kamera digital: DCIM_1234.jpg
-                /^Screenshot.*\.(jpg|jpeg|png)$/i,      // Format screenshot: Screenshot 2025-05-05 235913.png
-                /^screen.*\.(jpg|jpeg|png)$/i,          // Format screenshot alternatif: screen_20230101.png
-                /^capture.*\.(jpg|jpeg|png)$/i,         // Format capture screen
-                /^image.*\.(jpg|jpeg|png)$/i            // Format umum image
-            ];
-            
-            // Cek apakah nama file cocok dengan salah satu pola file baru
-            const isDefinitelyNewFile = clearlyNewFilePatterns.some(pattern => 
-                pattern.test(file.name)
-            );
-            
-            // Jika file jelas-jelas baru, kembalikan false (bukan hasil konversi)
-            if (isDefinitelyNewFile) {
-                console.log(`File ${file.name} clearly matches pattern of a new file`);
-                return false;
-            }
-            
-            // Dalam semua kasus lain, anggap file adalah hasil konversi
-            return true;
-        };
+        // PENTING: Jika ada existing_foto_umum_ids, gunakan nilai tersebut sebagai basis
+        if (existingFotoUmumIds && existingFotoUmumIds.trim() !== '') {
+            console.log("Using existing foto umum IDs as base:", existingFotoUmumIds);
+            fotoUmumIds = existingFotoUmumIds.split(',').map(id => id.trim()).filter(id => id);
+        }
 
-        // Filter untuk mendapatkan file yang benar-benar baru (bukan hasil konversi)
-        const genuineNewFiles : any = dokumenFiles.filter(file => 
+        // Cek apakah ada file baru (yang tidak memiliki prefix "image_")
+        const newFiles = dokumenFiles.filter(file => 
             file instanceof File && 
             file.size > 0 && 
-            !isExistingConvertedFile(file as File)
+            !file.name.startsWith('image_')
         );
 
-        console.log("Genuine new foto umum files:", genuineNewFiles.length);
-
-        // PENTING: Jika tidak ada file baru yang valid DAN ada ID yang sudah ada, LANGSUNG gunakan ID yang sudah ada
-        if ((genuineNewFiles.length === 0 || dokumenFiles.length === 0) && existingFotoUmumIds && existingFotoUmumIds.trim() !== '') {
-            console.log("NO GENUINE NEW FILES DETECTED. Using existing foto_umum IDs:", existingFotoUmumIds);
-            fotoUmumIds = existingFotoUmumIds.split(',').map(id => id.trim()).filter(id => id);
-            
-            // Langsung lompat ke bagian berikutnya, TIDAK melakukan upload apapun
-        } 
-        // Hanya jika ada file baru yang valid, lakukan upload
-        else if (genuineNewFiles.length > 0) {
-            console.log("GENUINE NEW FILES DETECTED. Will upload and replace existing IDs.");
-            fotoUmumIds = []; // Reset array
+        // Jika ada file baru, upload dan tambahkan ID-nya ke fotoUmumIds
+        if (newFiles.length > 0) {
+            console.log(`Found ${newFiles.length} new files to upload`);
             
             // Upload setiap file baru
-            for (const file of genuineNewFiles) {
-                console.log(`Uploading genuine new foto umum: ${file.name} (${file.size} bytes)`);
+            for (const file of newFiles) {
+                if (!(file instanceof File)) continue;
+                
+                console.log(`Uploading new file: ${file.name} (${file.size} bytes)`);
                 
                 const formData = new FormData();
                 formData.append("nama_kerajaan", res.nama || "Unknown");
@@ -620,33 +586,19 @@ export const actions: Actions = {
                     console.error("Upload exception:", error);
                 }
             }
-            
-            // Fallback: Jika upload gagal dan tidak ada ID baru, gunakan ID lama
-            if (fotoUmumIds.length === 0 && existingFotoUmumIds && existingFotoUmumIds.trim() !== '') {
-                console.log("UPLOAD FAILED. Falling back to existing IDs:", existingFotoUmumIds);
-                fotoUmumIds = existingFotoUmumIds.split(',').map(id => id.trim()).filter(id => id);
-            }
         } else {
-            // Tidak ada file baru dan tidak ada ID yang sudah ada
-            console.log("No new files and no existing IDs. Setting empty array.");
-            fotoUmumIds = [];
+            console.log("No new files to upload");
         }
 
         console.log("FINAL foto_umum IDs:", fotoUmumIds);
 
         // 2. Process bendera file
         const bendera = data.get("inputbendera");
+        console.log("Bendera file details:", bendera instanceof File ? `${bendera.name} (${bendera.size} bytes)` : 'Not a file or empty');
 
-        // PENTING: Jika ada ID yang sudah ada, LANGSUNG gunakan ID tersebut tanpa pengecualian
-        if (existingBenderaId && existingBenderaId.trim() !== '' && existingBenderaId !== ' ') {
-            // SELALU gunakan ID yang sudah ada, tidak peduli apakah ada file baru atau tidak
-            benderaId = existingBenderaId;
-            console.log("NO NEW FILE DETECTION NEEDED. Using existing bendera ID:", benderaId);
-            
-            // Langsung lompat ke bagian berikutnya, TIDAK melakukan upload apapun
-        } else if (bendera instanceof File && bendera.size > 0) {
-            // Hanya upload jika tidak ada ID yang sudah ada sama sekali
-            console.log("No existing bendera ID found, uploading new file");
+        // Check if there's a new bendera file (not starting with "image_")
+        if (bendera instanceof File && bendera.size > 0 && !bendera.name.startsWith('image_')) {
+            console.log("New bendera file detected, will upload:", bendera.name);
             try {
                 const formData = new FormData();
                 formData.append("nama_kerajaan", res.nama || "Unknown");
@@ -664,32 +616,30 @@ export const actions: Actions = {
                         console.log("New bendera uploaded with ID:", benderaId);
                     }
                 } else {
-                    console.error("Upload failed and no existing ID to fall back to");
+                    console.error("Upload failed:", await response.text());
                 }
             } catch (error) {
-                console.error("Upload exception and no existing ID to fall back to:", error);
+                console.error("Upload exception:", error);
             }
+        } else if (existingBenderaId && existingBenderaId.trim() !== '' && existingBenderaId !== ' ') {
+            // Use existing ID if no new file
+            benderaId = existingBenderaId;
+            console.log("Using existing bendera ID:", benderaId);
         } else {
-            // Tidak ada ID yang sudah ada dan tidak ada file baru
-            console.log("No existing bendera ID and no new file");
+            console.log("No bendera file to upload and no existing ID");
             benderaId = "";
         }
 
-        console.log("FINAL bendera ID:", benderaId);
+        // Add this line to verify the final ID being used
+        console.log("FINAL bendera ID being used:", benderaId);
 
         // 3. Process lambang file
         const lambang = data.get("inputlambang");
+        console.log("Lambang file details:", lambang instanceof File ? `${lambang.name} (${lambang.size} bytes)` : 'Not a file or empty');
 
-        // PENTING: Jika ada ID yang sudah ada, LANGSUNG gunakan ID tersebut tanpa pengecualian
-        if (existingLambangId && existingLambangId.trim() !== '' && existingLambangId !== ' ') {
-            // SELALU gunakan ID yang sudah ada, tidak peduli apakah ada file baru atau tidak
-            lambangId = existingLambangId;
-            console.log("NO NEW FILE DETECTION NEEDED. Using existing lambang ID:", lambangId);
-            
-            // Langsung lompat ke bagian berikutnya, TIDAK melakukan upload apapun
-        } else if (lambang instanceof File && lambang.size > 0) {
-            // Hanya upload jika tidak ada ID yang sudah ada sama sekali
-            console.log("No existing lambang ID found, uploading new file");
+        // Check if there's a new lambang file (not starting with "image_")
+        if (lambang instanceof File && lambang.size > 0 && !lambang.name.startsWith('image_')) {
+            console.log("New lambang file detected, will upload:", lambang.name);
             try {
                 const formData = new FormData();
                 formData.append("nama_kerajaan", res.nama || "Unknown");
@@ -707,32 +657,27 @@ export const actions: Actions = {
                         console.log("New lambang uploaded with ID:", lambangId);
                     }
                 } else {
-                    console.error("Upload failed and no existing ID to fall back to");
+                    console.error("Upload failed:", await response.text());
                 }
             } catch (error) {
-                console.error("Upload exception and no existing ID to fall back to:", error);
+                console.error("Upload exception:", error);
             }
+        } else if (existingLambangId && existingLambangId.trim() !== '' && existingLambangId !== ' ') {
+            // Use existing ID if no new file
+            lambangId = existingLambangId;
+            console.log("Using existing lambang ID:", lambangId);
         } else {
-            // Tidak ada ID yang sudah ada dan tidak ada file baru
-            console.log("No existing lambang ID and no new file");
+            console.log("No lambang file to upload and no existing ID");
             lambangId = "";
         }
 
-        console.log("FINAL lambang ID:", lambangId);
-
         // 4. Process video file
         const video = data.get("inputvideo");
+        console.log("Video file details:", video instanceof File ? `${video.name} (${video.size} bytes)` : 'Not a file or empty');
 
-        // PENTING: Jika ada ID yang sudah ada, LANGSUNG gunakan ID tersebut tanpa pengecualian
-        if (existingVideoId && existingVideoId.trim() !== '' && existingVideoId !== ' ') {
-            // SELALU gunakan ID yang sudah ada, tidak peduli apakah ada file baru atau tidak
-            videoId = existingVideoId;
-            console.log("NO NEW FILE DETECTION NEEDED. Using existing video ID:", videoId);
-            
-            // Langsung lompat ke bagian berikutnya, TIDAK melakukan upload apapun
-        } else if (video instanceof File && video.size > 0) {
-            // Hanya upload jika tidak ada ID yang sudah ada sama sekali
-            console.log("No existing video ID found, uploading new file");
+        // Check if there's a new video file (not starting with "image_")
+        if (video instanceof File && video.size > 0 && !video.name.startsWith('image_')) {
+            console.log("New video file detected, will upload:", video.name);
             try {
                 const formData = new FormData();
                 formData.append("nama_kerajaan", res.nama || "Unknown");
@@ -750,14 +695,17 @@ export const actions: Actions = {
                         console.log("New video uploaded with ID:", videoId);
                     }
                 } else {
-                    console.error("Upload failed and no existing ID to fall back to");
+                    console.error("Upload failed:", await response.text());
                 }
             } catch (error) {
-                console.error("Upload exception and no existing ID to fall back to:", error);
+                console.error("Upload exception:", error);
             }
+        } else if (existingVideoId && existingVideoId.trim() !== '' && existingVideoId !== ' ') {
+            // Use existing ID if no new file
+            videoId = existingVideoId;
+            console.log("Using existing video ID:", videoId);
         } else {
-            // Tidak ada ID yang sudah ada dan tidak ada file baru
-            console.log("No existing video ID and no new file");
+            console.log("No video file to upload and no existing ID");
             videoId = "";
         }
 
@@ -863,122 +811,6 @@ export const actions: Actions = {
         }
 
         try {
-            // Get files from form data - FIXED: use getAll instead of get
-            const bendera = data.get("inputbendera");
-            const lambang = data.get("inputlambang");
-            const fotoUmumFiles = data.getAll("dokumen"); // Changed from get to getAll
-            console.log("Foto umum : ", fotoUmumFiles)
-            const video = data.get("inputvideo");
-
-            console.log("Bendera : ", bendera)
-            console.log("Lambang : ", lambang)
-
-            console.log("Number of dokumen files received:", fotoUmumFiles.length);
-
-            let benderaId = "";
-            let lambangId = "";
-            let videoId = "";
-
-            // Upload bendera if provided
-            if (bendera instanceof File && bendera.size > 0 && !existingBenderaId) {
-                const benderaFormData = new FormData();
-                benderaFormData.append("nama_kerajaan", res.nama);
-                benderaFormData.append("bendera_kerajaan", bendera);
-
-                const benderaResponse = await fetch(env.BASE_URL + "/file/bendera", {
-                    method: 'POST',
-                    body: benderaFormData,
-                });
-
-                if (benderaResponse.ok) {
-                    const benderaResult = await benderaResponse.json();
-                    benderaId = benderaResult.id_path || "";
-                    console.log("Bendera uploaded, ID:", benderaId);
-                } else {
-                    console.error("Failed to upload bendera");
-                }
-            } else {
-                // Gunakan ID yang sudah ada
-                benderaId = existingBenderaId || "";
-                console.log("Using existing bendera ID:", benderaId);
-            }
-
-            // Upload lambang if provided
-            if (lambang instanceof File && lambang.size > 0 && !existingLambangId) {
-                const lambangFormData = new FormData();
-                lambangFormData.append("nama_kerajaan", res.nama);
-                lambangFormData.append("lambang_kerajaan", lambang);
-
-                const lambangResponse = await fetch(env.BASE_URL + "/file/lambang", {
-                    method: 'POST',
-                    body: lambangFormData,
-                });
-
-                if (lambangResponse.ok) {
-                    const lambangResult = await lambangResponse.json();
-                    lambangId = lambangResult.id_path || "";
-                    console.log("Lambang uploaded, ID:", lambangId);
-                } else {
-                    console.error("Failed to upload lambang");
-                }
-            } else {
-                // Gunakan ID yang sudah ada
-                lambangId = existingLambangId || "";
-                console.log("Using existing lambang ID:", lambangId);
-            }
-
-            // We already processed the foto umum files above, so we don't need to do it again
-            // Just use the fotoUmumIds and fotoUmumIdsString we already have
-
-            // Upload video if provided
-            if (video instanceof File && video.size > 0 && !existingVideoId) {
-                const videoFormData = new FormData();
-                videoFormData.append("nama_kerajaan", res.nama);
-                videoFormData.append("video_kerajaan", video);
-
-                const videoResponse = await fetch(env.BASE_URL + "/file/video", {
-                    method: 'POST',
-                    body: videoFormData,
-                });
-
-                if (videoResponse.ok) {
-                    const videoResult = await videoResponse.json();
-                    videoId = videoResult.id_path || "";
-                    console.log("Video uploaded, ID:", videoId);
-                } else {
-                    console.error("Failed to upload video");
-                }
-            } else {
-                // Gunakan ID yang sudah ada
-                videoId = existingVideoId || "";
-                console.log("Using existing video ID:", videoId);
-            }
-
-            // Now send the main kerajaan data with file IDs as JSON
-            const kerajaanData = {
-                id_kerajaan: Number(params.id),
-                longitude: Number(res.long),
-                latitude: Number(res.lat),
-                nama_kerajaan: res.nama,
-                raja_sekarang: res.rajasekarang || " ",
-                jenis_kerajaan: Number(res.jenis),
-                deskripsi_kerajaan: res.deskripsi,
-                alamat_kerajaan: res.lokasi,
-                bendera_kerajaan: benderaId,
-                lambang_kerajaan: lambangId,
-                foto_umum: fotoUmumIdsString,
-                video_kerajaan: videoId,
-                tahun_berdiri: res.tahun_berdiri || "1900",
-                tahun_berakhir: res.tahunberakhir || "1980",
-                era: res.era,
-                rumpun: res.rumpun,
-                email: res.email || "email",
-                url_website: res.linkkerajaan || "url1@marsi.com",
-                url_acara_1: res.linkacara1 || "url2@marsi.com",
-                url_acara_2: res.linkacara2 || "url3@marsi.com",
-                url_acara_3: res.linkacara3 || "url@marsi.com",
-            };
-
             console.log("Final kerajaan data:", kerajaanData);
 
             const result = await fetch(env.BASE_URL + "/kerajaan", {

@@ -2,23 +2,39 @@
 	import Footer from '$lib/footer/Footer.svelte';
 	import Navbar from '../../nav/Navbar.svelte';
 	import bangunan from '../../../../asset/umum/2.png';
+	import Loader from '$lib/loader/Loader.svelte';
+	import { navigating } from '$app/state';
 
 	const { data } = $props();
 	console.log('Data yang diterima:', data);
 	const situs = data.detil;
-	let gambar = situs.gambartop;
-	let nama = situs.nama_tempat;
+	let gambar = situs.imageUrls[0];
+	let nama = situs.nama_situs;
 	let gambar1 = situs.gambar1;
 	let gambar2 = situs.gambar2;
 	let gambar3 = situs.gambar3;
 	let gambar4 = situs.gambar4;
 	let nomorcagarbudaya = situs.nomor_cagarbudaya;
 	let kepemilikan = situs.kepemilikan;
-	let pendiri = situs.pendiri;
-	let tahun_berdiri = situs.tahun;
+	let pendiri = situs.nama_pendiri;
+	let tahun_berdiri = situs.tahun_berdiri;
 	let jenis_situs = situs.jenis_situs;
-	let isi = situs.isi;
-	let lokasi = situs.lokasi;
+	let isi = situs.deskripsi_situs;
+	let lokasi = situs.alamat;
+
+	let currentImageIndex = $state(0);
+
+	function nextImages() {
+		if (currentImageIndex < situs.imageUrls.length - 3) {
+			currentImageIndex++;
+		}
+	}
+
+	function prevImages() {
+		if (currentImageIndex > 0) {
+			currentImageIndex--;
+		}
+	}
 </script>
 
 <Navbar></Navbar>
@@ -26,10 +42,10 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
 
 <section class="relative w-full">
-	<div class="relative">
-		<img src={gambar} alt="" class="min-w-full min-h-screen object-cover" />
+	<div class="relative h-screen w-full overflow-hidden">
+		<img src={gambar} alt="" class="min-h-screen min-w-full object-cover" />
 		<div class="absolute inset-0 flex items-center justify-center">
-			<p class="absolute left-10 top-[15%]">
+			<p class="absolute left-10 top-[15%] text-white">
 				<a href="/umum/daftarsitus">
 					<span class="ph--arrow-bend-up-left-bold mt-3"></span>
 					Kembali Ke Daftar Situs
@@ -50,32 +66,41 @@
 		<div class="form-container absolute mx-auto px-4 lg:mb-20">
 			<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 				<div>
-					<img src={gambar1} class="mt-10 h-auto w-full rounded-lg object-cover" alt="" />
+					<img src={gambar} class="mt-10 h-[400px] w-full rounded-lg object-cover" alt="" />
 					<div class="mt-4 flex justify-center gap-1 lg:gap-4">
-						<span class="material-symbols--arrow-circle-left-rounded self-center"></span>
-						<img src={gambar2} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
-						<img src={gambar3} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
-						<img src={gambar4} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
-						<span class="material-symbols--arrow-circle-right self-center"></span>
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<span
+							class="material-symbols--arrow-circle-left-rounded cursor-pointer self-center"
+							onclick={prevImages}
+							class:opacity-50={currentImageIndex === 0}
+						></span>
+
+						<div class="flex gap-1 overflow-hidden lg:gap-4">
+							{#each situs.imageUrls.slice(currentImageIndex, currentImageIndex + 3) as imageUrl}
+								<img src={imageUrl} class="h-16 w-[200px] rounded-lg object-cover lg:h-24" alt="" />
+							{/each}
+						</div>
+
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<span
+							class="material-symbols--arrow-circle-right cursor-pointer self-center"
+							onclick={nextImages}
+							class:opacity-50={currentImageIndex >= situs.imageUrls.length - 3}
+						></span>
 					</div>
 				</div>
 				<div>
 					<p class="mt-10 text-start text-xl font-semibold">{nama}</p>
-					<div class="mt-5 flex items-center">
-						<div
-							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
-						>
-							<img src={bangunan} alt="" />
-						</div>
-						<p class="ml-2 items-center text-start">Nomor Cagar Budaya : {nomorcagarbudaya}</p>
-					</div>
+					
 					<div class="mt-5 flex items-center">
 						<div
 							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
 						>
 							<span class="bxs--castle"></span>
 						</div>
-						<p class="ml-2 items-center text-start">Kepemilikan : {kepemilikan}</p>
+						<p class="ml-2 items-center text-start">Keterikatan : {kepemilikan}</p>
 					</div>
 
 					<div class="mt-5 flex items-center">
@@ -109,9 +134,27 @@
 						<div
 							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
 						>
+							<span class="mdi--run"></span>
+						</div>
+						<p class="ml-2 items-center text-start">Aktivitas : {kepemilikan}</p>
+					</div>
+
+					<div class="mt-5 flex items-center">
+						<div
+							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
+						>
 							<span class="bx--map text-xl"></span>
 						</div>
 						<p class="ml-2 items-center text-start">Lokasi : {lokasi}</p>
+					</div>
+
+					<div class="mt-5 flex items-center">
+						<div
+							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
+						>
+							<img src={bangunan} alt="" />
+						</div>
+						<p class="ml-2 items-center text-start">Nomor Cagar Budaya : {nomorcagarbudaya}</p>
 					</div>
 
 					<p class="mb-5 mt-3 text-start text-sm">{isi}</p>
@@ -121,11 +164,23 @@
 	</div>
 </section>
 
+{#if navigating.to}
+	<Loader></Loader>
+{/if}
+
 <section class="h-full w-full overflow-hidden">
 	<Footer></Footer>
 </section>
 
 <style>
+	.mdi--run {
+		display: inline-block;
+		width: 18px;
+		height: 18px;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23161616' d='M13.5 5.5c1.09 0 2-.92 2-2a2 2 0 0 0-2-2c-1.11 0-2 .88-2 2c0 1.08.89 2 2 2M9.89 19.38l1-4.38L13 17v6h2v-7.5l-2.11-2l.61-3A7.3 7.3 0 0 0 19 13v-2c-1.91 0-3.5-1-4.31-2.42l-1-1.58c-.4-.62-1-1-1.69-1c-.31 0-.5.08-.81.08L6 8.28V13h2V9.58l1.79-.7L8.19 17l-4.9-1l-.4 2z'/%3E%3C/svg%3E");
+	}
 	@media (max-width: 768px) {
 		.edit {
 			margin-top: 50%;

@@ -9,22 +9,39 @@
 	import type { Snippet } from 'svelte';
 	import { any } from 'zod';
 	import Input from './Input.svelte';
+
+	console.log('CustomBtn component initialized');
+
 	let loading = $state(false);
 	let success = $state(false);
 	let timer: number;
-	let error : any = $state();
-	let { data = null, name = '', tipe = '', del = false, edit = false, id = null } = $props();
+	let error: any = $state();
+	let {
+		dataGelar = null,
+		data = null,
+		name = '',
+		tipe = '',
+		del = false,
+		edit = false,
+		id = null
+	} = $props();
+
 	console.log('Tipe : ', tipe);
-	console.log('Data : ', data);
-	console.log('ID : ', id);
-	// let edit = $state(false);
-	// let del = $state(false);
+	console.log('Data saat ini : ', data);
+	console.log('ID saat ini : ', id);
+	console.log('Data gelar : ', dataGelar);
+	// Variabel untuk menyimpan ID anggota yang dipilih
+	let selectedAnggotaId = $state(null);
 </script>
 
 <div class=" me-4 flex justify-end gap-2">
 	<button
 		class="flex gap-2 rounded-lg bg-[#FFA600] px-4 py-2 text-white"
 		onclick={() => {
+			console.log('Edit button clicked');
+			// Gunakan id_keanggotaan alih-alih id_anggota
+			selectedAnggotaId = data.id_keanggotaan;
+			console.log('Selected anggota ID:', selectedAnggotaId);
 			edit = true;
 		}}
 	>
@@ -48,6 +65,10 @@
 	<button
 		class="flex gap-2 rounded-lg bg-[#FF5E5E] px-4 py-2 text-white"
 		onclick={() => {
+			console.log('Delete button clicked');
+			// Gunakan id_keanggotaan alih-alih id_anggota
+			selectedAnggotaId = data.id_keanggotaan;
+			console.log('Selected anggota ID for delete:', selectedAnggotaId);
 			del = true;
 		}}
 	>
@@ -168,6 +189,41 @@
 			></DeleteModal>
 		</form>
 	{/if}
+
+	{#if tipe === 'anggota'}
+		<form
+			action="?/hapusAnggota"
+			method="post"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					if (result.type === 'success') {
+						del = false;
+						success = true;
+						invalidateAll();
+						clearTimeout(timer);
+						timer = setTimeout(() => {
+							success = false;
+							del = false;
+							invalidateAll();
+						}, 3000);
+					}
+					if (result.type === 'failure') {
+						console.log(result.data?.error);
+					}
+				};
+			}}
+		>
+			<input type="hidden" name="id_keanggotaan" value={selectedAnggotaId} />
+
+			<DeleteModal
+				bind:value={del}
+				text="Apakah Yakin ingin menghapus anggota ini?"
+				data={selectedAnggotaId}
+			></DeleteModal>
+		</form>
+	{/if}
 {/if}
 
 {#if loading}
@@ -284,7 +340,7 @@
 
 	{#if tipe === 'anggota'}
 		<form
-			action="?/ubahKerajaan"
+			action="?/ubahAnggota"
 			method="post"
 			use:enhance={() => {
 				loading = true;
@@ -292,13 +348,13 @@
 					loading = false;
 					if (result.type === 'success') {
 						success = true;
-						invalidateAll();
 						clearTimeout(timer);
-						timer = setTimeout(() => {
-							success = false;
-							edit = false;
-							invalidateAll();
-						}, 3000);
+						await invalidateAll().then(() => {
+							setTimeout(() => {
+								success = false;
+								edit = false;
+							}, 3000);
+						});
 					}
 					if (result.type === 'failure') {
 						error = result.data?.error;
@@ -307,13 +363,9 @@
 				};
 			}}
 		>
-			<KerajaanPopup
-				{data}
-				bind:value={edit}
-				bind:error
-				type="Ubah"
-				dataGelar={data.gelar}
-			></KerajaanPopup>
+			<input type="hidden" name="id_keanggotaan" value={selectedAnggotaId} />
+
+			<KerajaanPopup {data} bind:value={edit} bind:error type="Ubah" {dataGelar}></KerajaanPopup>
 		</form>
 	{/if}
 {/if}

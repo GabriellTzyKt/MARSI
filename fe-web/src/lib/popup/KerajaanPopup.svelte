@@ -5,13 +5,56 @@
 
 	const dispatch = createEventDispatcher();
 	
-	let { value = $bindable(), data = null, errors = $bindable(), error = $bindable(), type = '', dataGelar = [] } = $props();
+	let { 
+		value = $bindable(), 
+		data = $bindable({}), 
+		errors = $bindable(), 
+		error = $bindable(), 
+		type = '', 
+		dataGelar = [] 
+	} = $props();
 	
-	console.log("data popup : ", data)
+	console.log("data popup : ", data);
+	console.log("dataGelar : ", dataGelar);
+
+	// Gunakan $state untuk datagelar agar reaktif
+	let datagelar = $state(data?.id_gelar ? String(data.id_gelar) : "");
+	
+	// Log setiap perubahan pada datagelar
+	$effect(() => {
+		console.log("datagelar changed to:", datagelar);
+		// Update data.id_gelar saat datagelar berubah
+		if (data && datagelar) {
+			data.id_gelar = datagelar;
+			console.log("Updated data.id_gelar to:", data.id_gelar);
+		}
+	});
+	
+	// Debugging untuk memeriksa apakah ada nilai yang cocok
+	$effect(() => {
+		if (dataGelar && dataGelar.length > 0) {
+			console.log("Available gelar options:");
+			dataGelar.forEach(gelar => {
+				console.log(`Option: ${gelar.id_gelar} (${typeof gelar.id_gelar}) - ${gelar.nama_gelar || gelar.gelar}`);
+				console.log(`Match with datagelar: ${String(gelar.id_gelar) === datagelar}`);
+			});
+		}
+	});
 
 	function handleClose() {
 		value = false;
 		dispatch('close');
+	}
+	
+	// Fungsi untuk menangani perubahan pada select
+	function handleGelarChange(event : any) {
+		const selectedValue = event.target.value;
+		console.log("Select changed to:", selectedValue);
+		datagelar = selectedValue;
+		// Pastikan data.id_gelar juga diupdate
+		if (data) {
+			data.id_gelar = selectedValue;
+		}
 	}
 </script>
 
@@ -28,10 +71,7 @@
 			</div>
 			<!-- svelte-ignore a11y_click_events_have_key_events -->
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div
-				onclick={handleClose}
-				class="cursor-pointer rounded-full p-1 hover:bg-gray-200"
-			>
+			<div onclick={handleClose} class="cursor-pointer rounded-full p-1 hover:bg-gray-200">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
@@ -55,10 +95,11 @@
 						type="text"
 						class="flex w-full rounded-lg border border-gray-500 px-3 py-2 focus:outline-none"
 						name="nama_lengkap_anggota"
+						bind:value={data.nama_anggota}
 						id=""
 					/>
 					{#if errors}
-						{#each errors.nama_lengkap_anggota as e}
+						{#each errors.nama_lengkap_anggota || [] as e}
 							<p class="text-red-500">{e}</p>
 						{/each}
 					{/if}
@@ -72,20 +113,26 @@
 					<select
 						class="flex w-full rounded-lg border border-gray-500 px-3 py-2 focus:outline-none"
 						name="gelar_anggota"
+						bind:value={datagelar}
+						onchange={handleGelarChange}
 						id=""
 					>
 						<option value="" selected disabled>Pilih Gelar Anggota</option>
 						{#each dataGelar || [] as gelar}
-							<option value={gelar.id_gelar}>{gelar.nama_gelar || gelar.gelar}</option>
+							<option value={String(gelar.id_gelar)}>{gelar.nama_gelar || gelar.gelar}</option>
 						{/each}
 					</select>
 					{#if errors}
-						{#each errors.gelar_anggota as e}
+						{#each errors.gelar_anggota || [] as e}
 							<p class="text-red-500">{e}</p>
 						{/each}
 					{/if}
 				</div>
 			</div>
+			<!-- Tambahkan hidden input untuk memastikan nilai gelar_anggota terkirim -->
+			<input type="hidden" name="gelar_anggota" value={datagelar} />
+			<input type="hidden" name="id_kerajaan2" value={data.id_kerajaan} />
+			
 			<div class=" w-full flex-col gap-1">
 				<div>
 					<p>Posisi Anggota</p>
@@ -95,10 +142,11 @@
 						type="text"
 						class="flex w-full rounded-lg border border-gray-500 px-3 py-2 focus:outline-none"
 						name="posisi_anggota"
+						bind:value={data.posisi}
 						id=""
 					/>
 					{#if errors}
-						{#each errors.posisi_anggota as e}
+						{#each errors.posisi_anggota || [] as e}
 							<p class="text-red-500">{e}</p>
 						{/each}
 					{/if}

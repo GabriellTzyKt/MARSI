@@ -5,11 +5,25 @@
 	import rumah from '../../../../asset/umum/rumah.png';
 	import Flipcard2 from '../../Flipcard2.svelte';
 	import gambartemp from '../../../../asset/gambarsementara.jpg';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	const currentDate = new Date();
 	let showModal = $state(false);
 	let showModalVideo = $state(false);
+	let currentImageIndex = $state(0);
 
+	function nextImages() {
+		if (currentImageIndex < anggota.imageUrls.length - 4) {
+			currentImageIndex++;
+		}
+	}
+
+	function prevImages() {
+		if (currentImageIndex > 0) {
+			currentImageIndex--;
+		}
+	}
 
 	let isExpand: boolean[] = $state([]);
 
@@ -49,16 +63,18 @@
 	const { data } = $props();
 	console.log('Data yang diterima:', data);
 	const anggota = data.detil_kerajaan;
-	let gambar = anggota.gambartop;
+	let gambar = anggota.imageUrls[0];
 	let nama = anggota.nama_kerajaan;
-	let tahun = anggota.tahun;
-	let lambang_kerajaan = anggota.lambang_kerajaan;
+	let tahun = anggota.tanggal_berdiri
+		? new Date(anggota.tanggal_berdiri).getFullYear().toString()
+		: ' ';
+	let lambang_kerajaan = anggota.lambangUrl;
 	let nama_kasunanan = anggota.nama_kasunanan;
-	let isi = anggota.isi_singkat;
-	let lokasi = anggota.lokasi;
+	let isi = anggota.deskripsi_kerajaan;
+	let lokasi = anggota.alamat_kerajaan;
 	let alamat = anggota.alamat;
-	let vidio = anggota.vidio;
-	let bendera = anggota.bendera;
+	let vidio = anggota.videoUrl || ' ';
+	let bendera = anggota.benderaUrl;
 	let gambar1 = anggota.gambar1;
 	let gambar2 = anggota.gambar2;
 	let gambar3 = anggota.gambar3;
@@ -78,18 +94,18 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
 
 <section class="relative w-full">
-	<div class="relative">
-		<img src={gambar} alt="" class="min-h-screen min-w-full object-cover" />
+	<div class="relative h-screen w-full overflow-hidden">
+		<img src={gambar} alt="" class="absolute inset-0 h-full w-full object-cover" />
 		<div class="absolute inset-0 flex items-center justify-center">
-			<p class="absolute left-10 top-[15%]">
-				<a href="/umum/daftarkerajaan">
+			<p class="absolute left-10 top-[15%] z-10">
+				<a href="/umum/daftarkerajaan" class="flex items-center text-white">
 					<span class="ph--arrow-bend-up-left-bold mt-3"></span>
 					Kembali Ke Daftar Kerajaan
 				</a>
 			</p>
 			<p
-				class="mb-10 text-center text-6xl font-bold text-black"
-				style="text-shadow: 2px 2px 4px #fff;"
+				class="z-10 mb-10 text-center text-xl font-bold text-white"
+				style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);"
 			>
 				{nama}
 			</p>
@@ -102,14 +118,36 @@
 		<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 			<div>
 				<!-- svelte-ignore a11y_media_has_caption -->
-				<video bind:this={videoRef} src={vidio} class="h-auto w-full rounded-lg object-cover"
-				></video>
+				{#if vidio && vidio !== ' ' && !vidio.endsWith('.gif')}
+					<video bind:this={videoRef} src={vidio} class="h-auto w-full rounded-lg object-cover"
+					></video>
+				{:else if vidio && vidio !== ' ' && vidio.endsWith('.gif')}
+					<img src={vidio} class="h-auto w-full rounded-lg object-cover" alt="Animated GIF" />
+				{:else if anggota.imageUrls[0]}
+					<img src={anggota.imageUrls[0]} class="h-auto w-full rounded-lg object-cover" alt="" />
+				{/if}
 				<div class="mt-4 flex justify-center gap-1 lg:gap-4">
-					<span class="material-symbols--arrow-circle-left-rounded self-center"></span>
-					<img src={gambar2} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
-					<img src={gambar3} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
-					<img src={gambar4} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
-					<span class="material-symbols--arrow-circle-right self-center"></span>
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<span
+						class="material-symbols--arrow-circle-left-rounded cursor-pointer self-center"
+						onclick={prevImages}
+						class:opacity-50={currentImageIndex === 0}
+					></span>
+
+					<div class="flex gap-1 overflow-hidden lg:gap-4">
+						{#each anggota.imageUrls.slice(currentImageIndex + 1, currentImageIndex + 4) as imageUrl}
+							<img src={imageUrl} class="h-16 w-auto rounded-lg object-cover lg:h-24" alt="" />
+						{/each}
+					</div>
+
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<span
+						class="material-symbols--arrow-circle-right cursor-pointer self-center"
+						onclick={nextImages}
+						class:opacity-50={currentImageIndex >= anggota.imageUrls.length - 4}
+					></span>
 				</div>
 			</div>
 			<div>
@@ -119,18 +157,20 @@
 					<!-- svelte-ignore a11y_invalid_attribute -->
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
-					<a onclick={OpenModalVideo}>
-						<span
-							class="bg-customKrem relative ml-5 flex h-10 w-10 items-center justify-center rounded-full border-2 p-2 transition-all duration-500 ease-in-out group-hover:w-[150px]"
-						>
-							<p
-								class="text-xs opacity-0 transition-opacity delay-200 duration-300 ease-in-out group-hover:opacity-100"
+					{#if vidio.endsWith('.mp4')}
+						<a onclick={OpenModalVideo}>
+							<span
+								class="bg-customKrem relative ml-5 flex h-10 w-10 items-center justify-center rounded-full border-2 p-2 transition-all duration-500 ease-in-out group-hover:w-[150px]"
 							>
-								Putar Video
-							</p>
-							<i class="iconoir--play absolute left-2 text-2xl text-white"></i>
-						</span>
-					</a>
+								<p
+									class="text-xs opacity-0 transition-opacity delay-200 duration-300 ease-in-out group-hover:opacity-100"
+								>
+									Putar Video
+								</p>
+								<i class="iconoir--play absolute left-2 text-2xl text-white"></i>
+							</span>
+						</a>
+					{/if}
 				</div>
 				<div class="mt-5 flex items-center">
 					<div class="flex h-10 w-10 items-center justify-center rounded-full border bg-yellow-600">
@@ -160,19 +200,20 @@
 					>
 						<span class="bx--map text-xl"></span>
 					</div>
-					<p class="ml-3 items-center text-start">Lokasi : {alamat} , {lokasi}</p>
+					<p class="ml-3 items-center text-start">Lokasi : {lokasi}</p>
 				</div>
 				<p class="mt-3 text-start">{nama_kasunanan}</p>
 				<p class="mt-3 text-start text-sm">{isi}</p>
 				<p class="mt-3 text-center lg:text-start">Navigasi</p>
 				<div class="duar mt-3 flex flex-col gap-4 lg:flex-row">
-					<!-- svelte-ignore a11y_consider_explicit_label -->
-					<button class="group relative flex items-center justify-center">
-						<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<!-- Button 1 -->
+					<button
+						class="group relative flex items-center justify-center"
+						onmouseenter={() => (hover1 = true)}
+						onmouseleave={() => (hover1 = false)}
+					>
 						<span
 							class="relative flex h-12 w-12 items-center justify-center rounded-full border-2 bg-blue-600 p-2 transition-all duration-500 ease-in-out group-hover:w-[250px]"
-							onmouseenter={() => (hover1 = true)}
-							onmouseleave={() => (hover1 = false)}
 						>
 							<p
 								class="text-md ml-7 text-white opacity-0 transition-opacity delay-300 duration-300 ease-in-out group-hover:opacity-100"
@@ -183,12 +224,14 @@
 						</span>
 					</button>
 
-					<button class="group relative flex items-center justify-center">
-						<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<!-- Button 2 -->
+					<button
+						class="group relative flex items-center justify-center"
+						onmouseenter={() => (hover2 = true)}
+						onmouseleave={() => (hover2 = false)}
+					>
 						<span
 							class="relative flex h-12 w-12 items-center justify-center rounded-full border-2 bg-red-600 p-2 transition-all duration-500 ease-in-out group-hover:w-[250px]"
-							onmouseenter={() => (hover2 = true)}
-							onmouseleave={() => (hover2 = false)}
 						>
 							<p
 								class="text-md ml-7 text-white opacity-0 transition-opacity delay-300 duration-300 ease-in-out group-hover:opacity-100"
@@ -203,12 +246,14 @@
 						</span>
 					</button>
 
-					<button class="group relative flex items-center justify-center">
-						<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<!-- Button 3 -->
+					<button
+						class="group relative flex items-center justify-center"
+						onmouseenter={() => (hover3 = true)}
+						onmouseleave={() => (hover3 = false)}
+					>
 						<span
 							class="relative flex h-12 w-12 items-center justify-center rounded-full border-2 bg-yellow-600 p-2 transition-all duration-500 ease-in-out group-hover:w-[250px]"
-							onmouseenter={() => (hover3 = true)}
-							onmouseleave={() => (hover3 = false)}
 						>
 							<p
 								class="text-md ml-7 text-white opacity-0 transition-opacity delay-300 duration-300 ease-in-out group-hover:opacity-100"
@@ -223,14 +268,15 @@
 						</span>
 					</button>
 
-					<button class="group relative flex items-center justify-center">
-						<!-- svelte-ignore a11y_no_static_element_interactions -->
-						<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- Button 4 -->
+					<button
+						class="group relative flex items-center justify-center"
+						onmouseenter={() => (hover4 = true)}
+						onmouseleave={() => (hover4 = false)}
+						onclick={OpenModal}
+					>
 						<span
 							class="relative flex h-12 w-12 items-center justify-center rounded-full border-2 bg-gray-600 p-2 transition-all duration-500 ease-in-out hover:w-[250px]"
-							onmouseenter={() => (hover4 = true)}
-							onmouseleave={() => (hover4 = false)}
-							onclick={OpenModal}
 						>
 							<p
 								class="text-md ml-7 text-white opacity-0 transition-opacity delay-300 duration-300 ease-in-out group-hover:opacity-100"
@@ -313,7 +359,7 @@
 {#if showModal}
 	<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
 		<div class="max-h-[90vh] w-[70%] overflow-y-auto rounded-lg bg-white p-5 shadow-lg">
-			<div class="flex justify-between mb-5">
+			<div class="mb-5 flex justify-between">
 				<h2 class="font-bold lg:text-xl">List Raja Keraton Kasunanan Sarukarta</h2>
 				<!-- svelte-ignore a11y_consider_explicit_label -->
 				<button onclick={closeModal}>
@@ -321,71 +367,73 @@
 				</button>
 			</div>
 			{#each showRaja as raja, index}
-					<!-- svelte-ignore a11y_no_static_element_interactions -->
-					<!-- svelte-ignore a11y_click_events_have_key_events -->
-					<div
-						class="flex mb-5 cursor-pointer flex-col overflow-hidden rounded-lg border-2 bg-yellow-300 transition-all duration-300"
-						onclick={() => toggleExpand(index)}
-					>
-						<div class="mr-5 flex h-[50px] w-full items-center justify-between gap-2 px-3">
-							<p class="text-xs lg:text-lg">
-								{raja.nama_lenkgap} ({raja.tahun_awal_jabatan} - {raja.tahun_akhir_jabatan})
-							</p>
-							<div
-								class="flex h-[24px] w-[24px] items-center justify-center rounded-full border bg-red-500"
-							>
-								<span
-									class="formkit--arrowdown transition-transform duration-300"
-									class:rotate-180={isExpand[index]}
-								></span>
-							</div>
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<div
+					class="mb-5 flex cursor-pointer flex-col overflow-hidden rounded-lg border-2 bg-yellow-300 transition-all duration-300"
+					onclick={() => toggleExpand(index)}
+				>
+					<div class="mr-5 flex h-[50px] w-full items-center justify-between gap-2 px-3">
+						<p class="text-xs lg:text-lg">
+							{raja.nama_raja} ({raja.periodeMenjabat})
+						</p>
+						<div
+							class="flex h-[24px] w-[24px] items-center justify-center rounded-full border bg-red-500"
+						>
+							<span
+								class="formkit--arrowdown transition-transform duration-300"
+								class:rotate-180={isExpand[index]}
+							></span>
 						</div>
-						{#if isExpand[index]}
-							<div class="border-t-2 border-black bg-white p-4">
-								<div class="flex w-full gap-8">
-									<img src={gambartemp} class="h-[25%] w-[25%]" alt="" />
-									<div class="w-full flex-col">
-										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
-											<p class="text-md px-2 py-2">
-												Nama Lengkap Raja : <span class="font-bold">{raja.nama_lenkgap}</span>
-											</p>
-										</div>
-										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
-											<p class="text-md px-2 py-2">
-												Tanggal Lahir : <span class="font-bold">{raja.tanggal}</span>
-											</p>
-										</div>
-										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
-											<p class="text-md px-2 py-2">
-												Kota Kelahiran : <span class="font-bold">{raja.kota_kelahiran}</span>
-											</p>
-										</div>
-										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
-											<p class="text-md px-2 py-2">
-												Wangsa : <span class="font-bold">{raja.wangsa}</span>
-											</p>
-										</div>
-										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
-											<p class="text-md px-2 py-2">
-												Nama Ayah : <span class="font-bold">{raja.nama_ayah}</span>
-											</p>
-										</div>
-										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
-											<p class="text-md px-2 py-2">
-												Nama Ibu : <span class="font-bold">{raja.nama_ibu}</span>
-											</p>
-										</div>
-										<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
-											<p class="text-md px-2 py-2">
-												Agama : <span class="font-bold">{raja.agama}</span>
-											</p>
-										</div>
+					</div>
+					{#if isExpand[index]}
+						<div class="border-t-2 border-black bg-white p-4">
+							<div class="flex w-full gap-8">
+								<img src={raja.imageUrl} class="h-[25%] w-[25%]" alt="" />
+								<div class="w-full flex-col">
+									<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+										<p class="text-md px-2 py-2">
+											Nama Lengkap Raja : <span class="font-bold">{raja.nama_raja}</span>
+										</p>
+									</div>
+									<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+										<p class="text-md px-2 py-2">
+											Tanggal Lahir : <span class="font-bold"
+												>{raja.tanggal_lahir.split('T')[0]}</span
+											>
+										</p>
+									</div>
+									<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+										<p class="text-md px-2 py-2">
+											Kota Kelahiran : <span class="font-bold">{raja.tempat_lahir}</span>
+										</p>
+									</div>
+									<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+										<p class="text-md px-2 py-2">
+											Wangsa : <span class="font-bold">{raja.wangsa}</span>
+										</p>
+									</div>
+									<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+										<p class="text-md px-2 py-2">
+											Nama Ayah : <span class="font-bold">{raja.nama_ayah}</span>
+										</p>
+									</div>
+									<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+										<p class="text-md px-2 py-2">
+											Nama Ibu : <span class="font-bold">{raja.nama_ibu}</span>
+										</p>
+									</div>
+									<div class="mt-2 h-fit w-full rounded-lg border bg-gray-300">
+										<p class="text-md px-2 py-2">
+											Agama : <span class="font-bold">{raja.agama}</span>
+										</p>
 									</div>
 								</div>
 							</div>
-						{/if}
-					</div>
-				{/each}
+						</div>
+					{/if}
+				</div>
+			{/each}
 		</div>
 	</div>
 {/if}
@@ -393,6 +441,10 @@
 <section class="h-full w-full overflow-hidden">
 	<Footer></Footer>
 </section>
+
+{#if navigating.to}
+	<Loader></Loader>
+{/if}
 
 <style>
 	.formkit--arrowdown {

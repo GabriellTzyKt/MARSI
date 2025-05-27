@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	// import { env } from '$env/dynamic/private';
+	import { env } from '$env/dynamic/public';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import { fade } from 'svelte/transition';
@@ -19,35 +19,16 @@
 	let subkategori = $state('');
 
 	let loading = $state(false);
-
-	let urlFoto = $state('');
-
 	let error: any = $state('');
-
 	let success = $state(false);
 	let showModal = $state(false);
+	let timer: any;
+
+	// File handling variables
 	let uploadedFiles: File[] = [];
 	let uploadedFileUrls: string[] = $state([]);
-	let timer: Number;
+	let uploadedFileIds: (number | null)[] = $state([]);
 
-	let toggle = () => {
-		if (!success) {
-			success = true;
-		} else success = false;
-	};
-
-	function handleFileChange(event: Event) {
-		const target = event.target as HTMLInputElement;
-		if (target.files && target.files.length > 0) {
-			const newFiles = Array.from(target.files);
-			uploadedFiles = [...uploadedFiles, ...newFiles]; // Tambahkan file baru ke daftar lama
-			uploadedFileUrls = [
-				...uploadedFileUrls,
-				...newFiles.map((file) => URL.createObjectURL(file))
-			];
-			console.log('Updated file list:', uploadedFiles);
-		}
-	}
 	$effect(() => {
 		if (keterkaitan === '') {
 			showDropdown = false;
@@ -61,30 +42,104 @@
 		showDropdown = false;
 	}
 
-	function removeImage(index: number) {
-		uploadedFiles = uploadedFiles.slice(0, index).concat(uploadedFiles.slice(index + 1));
-		uploadedFileUrls = uploadedFileUrls.slice(0, index).concat(uploadedFileUrls.slice(index + 1));
-
-		const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-		if (fileInput) {
-			fileInput.value = '';
-		}
-
-		const dataTransfer = new DataTransfer();
-		for (const file of uploadedFiles) {
-			dataTransfer.items.add(file);
-		}
-		if (fileInput) {
-			fileInput.files = dataTransfer.files;
-		}
-	}
 	function filter(data: any[]) {
 		return data.filter((item) =>
 			item?.nama_kerajaan?.toLowerCase().includes(keterkaitan.toLowerCase())
 		);
 	}
 	let searchRes = $derived(filter(data.data));
-	console.log(searchRes)
+
+	// Handle file selection
+	function handleFileChange(event: Event) {
+		const target = event.target as HTMLInputElement;
+		if (target.files && target.files.length > 0) {
+			const newFiles = Array.from(target.files);
+			
+			// Add new files to our arrays
+			uploadedFiles = [...uploadedFiles, ...newFiles];
+			
+			// Create URLs for preview
+			const newUrls = newFiles.map(file => URL.createObjectURL(file));
+			uploadedFileUrls = [...uploadedFileUrls, ...newUrls];
+			
+			// Add null IDs for new files (they don't have IDs yet)
+			uploadedFileIds = [...uploadedFileIds, ...newFiles.map(() => null)];
+			
+			console.log('Updated files:', uploadedFiles.map(f => f.name));
+			
+			// Reset input to allow selecting the same file again
+			target.value = '';
+		}
+	}
+
+	// Remove a file from the list
+	function removeImage(index: number) {
+		// Release object URL to prevent memory leaks
+		URL.revokeObjectURL(uploadedFileUrls[index]);
+		
+		// Remove file from all arrays
+		uploadedFiles = uploadedFiles.filter((_, i) => i !== index);
+		uploadedFileUrls = uploadedFileUrls.filter((_, i) => i !== index);
+		uploadedFileIds = uploadedFileIds.filter((_, i) => i !== index);
+	}
+
+	// Handle form submission
+	async function handleSubmit(event: SubmitEvent) {
+		event.preventDefault();
+		loading = true;
+		
+		try {
+			const form = event.target as HTMLFormElement;
+			const formData = new FormData(form);
+			
+			// Remove any existing file inputs
+			formData.delete('uploadfile');
+			
+			// Add each file to the form data
+			uploadedFiles.forEach((file, index) => {
+				if (file) {
+					console.log(`Adding file: ${file.name} (${file.size} bytes)`);
+					formData.append('uploadfile', file);
+				}
+			});
+			
+			// Log all form data for debugging
+			console.log('Form data to be submitted:');
+			for (const [key, value] of formData.entries()) {
+				if (value instanceof File) {
+					console.log(`${key}: File - ${value.name} (${value.size} bytes)`);
+				} else {
+					console.log(`${key}: ${value}`);
+				}
+			}
+			
+			// Send the form data
+			const response = await fetch(form.action, {
+				method: 'POST',
+				body: formData
+			});
+			
+			const result = await response.json();
+			console.log('Response:', result);
+			
+			if (response.ok) {
+				loading = false;
+				success = true;
+				clearTimeout(timer);
+				timer = setTimeout(() => {
+					success = false;
+					showModal = false;
+				}, 3000);
+			} else {
+				error = result.errors || { general: ['Terjadi kesalahan saat mengirim data'] };
+				loading = false;
+			}
+		} catch (err) {
+			console.error('Error submitting form:', err);
+			error = { general: ['Terjadi kesalahan saat mengirim data'] };
+			loading = false;
+		}
+	}
 </script>
 
 {#if navigating.to}
@@ -102,24 +157,7 @@
 			method="post"
 			action="?/submit"
 			enctype="multipart/form-data"
-			use:enhance={() => {
-				loading = true;
-				return async ({ result }) => {
-					console.log(result);
-					if (result.type === 'success') {
-						loading = false;
-						success = true;
-						clearTimeout(timer);
-						timer = setTimeout(() => {
-							success = false;
-							showModal = false;
-						}, 3000);
-					} else if (result.type === 'failure') {
-						error = result?.data?.errors;
-						loading = false;
-					}
-				};
-			}}
+			onsubmit={handleSubmit}
 		>
 			<div class="flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Nama Dokumen</label>
@@ -129,11 +167,11 @@
 					id="nama"
 					name="nama"
 					bind:value={nama}
-					placeholder="John Doe"
+					placeholder="Nama Dokumen"
 				/>
-				{#if error}
-					{#each error.namaDokumen as error1}
-						<p class="text-left text-red-500">{error1}</p>
+				{#if error && error.namaDokumen}
+					{#each error.namaDokumen as errorMsg}
+						<p class="text-left text-red-500">{errorMsg}</p>
 					{/each}
 				{/if}
 			</div>
@@ -162,16 +200,16 @@
 							{/each}
 						</ul>
 					{/if}
-					{#if error}
-						{#each error.keterkaitan as error1}
-							<p class="text-left text-red-500">{error1}</p>
+					{#if error && error.keterkaitan}
+						{#each error.keterkaitan as errorMsg}
+							<p class="text-left text-red-500">{errorMsg}</p>
 						{/each}
 					{/if}
 				</div>
 			</div>
 
 			<div class="mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nomor_telepon">Jenis Dokumen</label>
+				<label class="text-md self-start text-left" for="jenisDokumen">Jenis Dokumen</label>
 				<select
 					bind:value={jenisDokumen}
 					name="jenisDokumen"
@@ -181,15 +219,15 @@
 					<option value="1">1 </option>
 					<option value="2">2</option>
 				</select>
-				{#if error}
-					{#each error.jenisDokumen as error3}
-						<p class="text-left text-red-500">{error3}</p>
+				{#if error && error.jenisDokumen}
+					{#each error.jenisDokumen as errorMsg}
+						<p class="text-left text-red-500">{errorMsg}</p>
 					{/each}
 				{/if}
 			</div>
 
-			<div class=" mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nomor_telepon">Kategori</label>
+			<div class="mt-2 flex flex-col gap-1">
+				<label class="text-md self-start text-left" for="kategori">Kategori</label>
 				<select
 					bind:value={kategori}
 					name="kategori"
@@ -199,23 +237,27 @@
 					<option value="masuk">Masuk </option>
 					<option value="keluar">Keluar</option>
 				</select>
-				{#if error}
-					{#each error.kategori as error4}
-						<p class="text-left text-red-500">{error4}</p>
+				{#if error && error.kategori}
+					{#each error.kategori as errorMsg}
+						<p class="text-left text-red-500">{errorMsg}</p>
 					{/each}
 				{/if}
 			</div>
 
 			<div class="text-md mt-2 text-start">
-				<label for="keterkaitan">Sub Kategori</label>
+				<label for="subkategori">Sub Kategori</label>
 				<div class="relative flex flex-col gap-1">
-					<input class="input-field rounded-lg border p-2 pr-10" name="subkategori" />
+					<input 
+						class="input-field rounded-lg border p-2 pr-10" 
+						name="subkategori"
+						bind:value={subkategori}
+					/>
 
 					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
 
-					{#if error}
-						{#each error.subkategori as error1}
-							<p class="text-left text-red-500">{error1}</p>
+					{#if error && error.subkategori}
+						{#each error.subkategori as errorMsg}
+							<p class="text-left text-red-500">{errorMsg}</p>
 						{/each}
 					{/if}
 				</div>
@@ -226,17 +268,16 @@
 				<div class="h-full w-full overflow-x-auto rounded-lg border-2 border-black px-2 py-2">
 					<div class="flex flex-row gap-x-5">
 						<div
-							class="upload-container relative h-[200px] w-[270px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-black"
+							class="upload-container relative h-[200px] w-[270px] flex-shrink-0 rounded-lg border bg-gray-200 hover:bg-gray-300"
 						>
 							<input
 								type="file"
 								id="fileInput"
 								class="hidden"
-								bind:value={urlFoto}
 								name="uploadfile"
 								onchange={handleFileChange}
 								multiple
-								accept="image/*"
+								accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.mp3,.mp4,.wav,.txt,.zip,.rar"
 							/>
 							<label
 								for="fileInput"
@@ -249,19 +290,47 @@
 
 						{#each uploadedFileUrls as url, index}
 							<div class="relative flex-shrink-0">
-								<img
-									src={url}
-									alt="Uploaded file"
-									class="h-[200px] w-[270px] rounded-lg border object-cover"
-								/>
-								<button class="remove-btn" onclick={() => removeImage(index)}>✕</button>
+								{#if uploadedFiles[index]?.type.startsWith('image/')}
+									<!-- Display image preview for image files -->
+									<img
+										src={url}
+										alt="Uploaded file"
+										class="h-[200px] w-[270px] rounded-lg border object-cover"
+									/>
+								{:else}
+									<!-- Display file icon for non-image files -->
+									<div class="flex h-[200px] w-[270px] flex-col items-center justify-center rounded-lg border bg-gray-100">
+										<div class="text-4xl mb-2">
+											{#if uploadedFiles[index]?.type.includes('pdf')}
+												📄
+											{:else if uploadedFiles[index]?.type.includes('word') || uploadedFiles[index]?.type.includes('doc')}
+												📝
+											{:else if uploadedFiles[index]?.type.includes('sheet') || uploadedFiles[index]?.type.includes('excel') || uploadedFiles[index]?.type.includes('xls')}
+												📊
+											{:else}
+												📁
+											{/if}
+										</div>
+										<p class="text-sm px-2 truncate w-full text-center">
+											{uploadedFiles[index]?.name || 'File'}
+										</p>
+										<div class="mt-2 rounded-full bg-blue-100 px-3 py-1 text-xs text-blue-800">
+											{uploadedFiles[index]?.type.split('/')[1] || 'File'}
+										</div>
+									</div>
+								{/if}
+								<button 
+									type="button"
+									class="remove-btn" 
+									onclick={() => removeImage(index)}
+								>✕</button>
 							</div>
 						{/each}
 					</div>
 				</div>
-				{#if error}
-					{#each error.urlfoto as error5}
-						<p class="text-left text-red-500">{error5}</p>
+				{#if error && error.urlfoto}
+					{#each error.urlfoto as errorMsg}
+						<p class="text-left text-red-500">{errorMsg}</p>
 					{/each}
 				{/if}
 			</div>
@@ -270,7 +339,6 @@
 				<button
 					class="bg-customGold mt-2 rounded-lg border px-6 py-2 text-white"
 					type="submit"
-					formaction="?/submit"
 				>
 					Tambah
 				</button>
