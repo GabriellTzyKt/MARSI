@@ -6,13 +6,44 @@
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import { fade } from 'svelte/transition';
 	// import { load } from '../../../../dashboard/organisasi/daftarorganisasi/proxy+page.server';
-
+	let { data } = $props();
+	console.log(data);
 	let open = $state(false);
 	let timer: number;
-	let rAyah = $state('');
-	let rIbu = $state('');
+	let rAyah = $state('ayah_tidak');
+	let rIbu = $state('ibu_tidak');
 	let errors = $state();
 	let loading = $state(false);
+
+	let selectedAyah = $state('');
+	let ayahKeyword = $state('');
+	let showAyahDropdown = $state(false);
+	let filteredAyahUsers = $derived(filterUser(ayahKeyword));
+
+	function selectAyah(user: any) {
+		selectedAyah = user;
+		ayahKeyword = user.nama_lengkap;
+		showAyahDropdown = false;
+	}
+
+	let selectedIbu = $state('');
+	let ibuKeyword = $state('');
+	let showIbuDropdown = $state(false);
+	let filteredIbuUsers = $derived(filterUser(ibuKeyword));
+	let type = $state('password');
+
+	function selectIbu(user: any) {
+		selectedIbu = user;
+		ibuKeyword = user.nama_lengkap;
+		showIbuDropdown = false;
+	}
+
+	function filterUser(searchTerm: string) {
+		return data.userData.filter((item) =>
+			item.nama_lengkap.toLowerCase().includes(searchTerm.toLowerCase())
+		);
+	}
+
 	function setTimer() {
 		open = true;
 		if (timer) {
@@ -132,6 +163,93 @@
 						{/if}
 					</div>
 				</div>
+				<div>
+					<p class="mt-5">Username:</p>
+					<div class="relative">
+						<input
+							type="text"
+							name="username"
+							placeholder="Masukkan Nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						/>
+						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+					</div>
+					<div>
+						{#if errors}
+							{#each errors.username as e}
+								<p class="text-left text-red-500">-{e}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
+				<div>
+					<p class="mt-5">Password:</p>
+					<div class="relative">
+						<input
+							{type}
+							name="password"
+							placeholder="Masukkan Nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						/>
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<div
+							class="absolute right-2 top-1 mt-3 opacity-45"
+							onclick={() => {
+								if (type === 'password') {
+									type = 'text';
+								} else type = 'password';
+							}}
+						>
+							{#if type === 'password'}
+								<span
+									><svg
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke-width="1.5"
+										stroke="currentColor"
+										class="size-6"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+										/>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+										/>
+									</svg></span
+								>
+							{/if}
+							{#if type === 'text'}
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									class="size-6"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
+									/>
+								</svg>
+							{/if}
+						</div>
+					</div>
+					<div>
+						{#if errors}
+							{#each errors.password as e}
+								<p class="text-left text-red-500">-{e}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
 
 				<div class="mt-5 flex gap-12">
 					<div class="w-full">
@@ -214,7 +332,7 @@
 									id="radio_ayah-tidak"
 									type="radio"
 									bind:group={rAyah}
-									value="ayah_ba"
+									value="ayah_tidak"
 									name="radioayah"
 									class="h-4 w-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
 								/>
@@ -222,24 +340,54 @@
 									>Tidak</label
 								>
 							</div>
-							<div>
-								{#if errors}
-									{#each errors.radio_ayah as e}
-										<p class="text-left text-red-500">-{e}</p>
-									{/each}
-								{/if}
-							</div>
+
+							{#if errors}
+								{#each errors.radio_ayah as e}
+									<p class="text-left text-red-500">-{e}</p>
+								{/each}
+							{/if}
 						</div>
 					</div>
+
 					<div class="relative">
 						<input
 							type="text"
 							placeholder="Masukkan Nama"
+							bind:value={ayahKeyword}
+							autocomplete="off"
+							onfocus={() => (showAyahDropdown = true)}
+							onblur={() => {
+								// Delay hiding dropdown to allow for click
+								setTimeout(() => {
+									showAyahDropdown = false;
+								}, 200);
+							}}
 							name="nama_ayah"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 						/>
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 					</div>
+					{#if showAyahDropdown && filteredAyahUsers.length > 0 && rAyah === 'ayah_ya'}
+						<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+							<ul class="max-h-60 overflow-y-auto">
+								{#each filteredAyahUsers as user}
+									<!-- svelte-ignore a11y_click_events_have_key_events -->
+									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+									<li
+										class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+										onclick={() => selectAyah(user)}
+									>
+										<div class="flex flex-col">
+											<span class="font-medium">{user.nama_lengkap}</span>
+											<span class="text-sm text-gray-500">{user.email}</span>
+										</div>
+									</li>
+								{/each}
+							</ul>
+						</div>
+					{:else if showAyahDropdown && filteredAyahUsers.length === 0 && rAyah === 'ayah_ya'}
+						<p class="text-left text-red-500">Ayah Tidak Ditemukan</p>
+					{/if}
 					<div>
 						{#if errors}
 							{#each errors.nama_ayah as e}
@@ -269,7 +417,7 @@
 								<input
 									id="radio_ibu-tidak"
 									type="radio"
-									value="ibu_ba"
+									value="ibu_tidak"
 									bind:group={rIbu}
 									name="radioibu"
 									class="h-4 w-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
@@ -292,10 +440,40 @@
 							type="text"
 							name="nama_ibu"
 							placeholder="Masukkan Nama"
+							bind:value={ibuKeyword}
+							autocomplete="off"
+							onfocus={() => (showIbuDropdown = true)}
+							onblur={() => {
+								// Delay hiding dropdown to allow for click
+								setTimeout(() => {
+									showIbuDropdown = false;
+								}, 200);
+							}}
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 						/>
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 					</div>
+					{#if showIbuDropdown && filteredIbuUsers.length > 0 && rIbu === 'ibu_ya'}
+						<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+							<ul class="max-h-60 overflow-y-auto">
+								{#each filteredIbuUsers as user}
+									<!-- svelte-ignore a11y_click_events_have_key_events -->
+									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+									<li
+										class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+										onclick={() => selectIbu(user)}
+									>
+										<div class="flex flex-col">
+											<span class="font-medium">{user.nama_lengkap}</span>
+											<span class="text-sm text-gray-500">{user.email}</span>
+										</div>
+									</li>
+								{/each}
+							</ul>
+						</div>
+					{:else if showIbuDropdown && filteredIbuUsers.length === 0 && rIbu === 'ibu_ya'}
+						<p class="text-left text-red-500">Ibu Tidak Ditemukan</p>
+					{/if}
 					<div>
 						{#if errors}
 							{#each errors.nama_ibu as e}
@@ -306,7 +484,7 @@
 				</div>
 
 				<div class="mt-5">
-					<p>Email(Opsional):</p>
+					<p>Email:</p>
 					<div class="relative">
 						<input
 							type="email"
@@ -366,7 +544,38 @@
 						</div>
 					</div>
 				</div>
-
+				<div class="mt-5">
+					<p>Jabatan:</p>
+					<div class="relative">
+						<select
+							name="jabatan"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+							id=""
+						>
+							<option value="" disabled selected>Silahkan Pilih!</option>
+							<option value="Raja">Raja</option>
+							<option value="Wakil Raja">Wakil Raja</option>
+							<option value="Ratu">Ratu</option>
+							<option value="Hokage">Hokage</option>
+							<option value="Pangeran">Pangeran</option>
+							<option value="Putri">Putri</option>
+							<option value="Bangsawan">Bangsawan</option>
+							<option value="Abdi">Abdi</option>
+							<option value="Anggota">Anggota</option>
+							{#each data.jabatanData as item}
+								<option value={item.id_jabatan}>{item.nama_jabatan}</option>
+							{/each}
+						</select>
+						<!-- <span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span> -->
+					</div>
+					<div>
+						{#if errors}
+							{#each errors.jabatan as e}
+								<p class="text-left text-red-500">-{e}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
 				<div class="mt-5">
 					<p>Agama(Opsional):</p>
 					<div class="relative w-full lg:w-[50%]">
@@ -403,8 +612,12 @@
 				type="submit">{loading ? 'Loading...' : '+Tambah Data'}</button
 			>
 		</div>
+		{#if errors?.api}
+			<p class="text-red-500">{errors?.api}</p>
+		{/if}
 	</form>
 </div>
+
 {#if open}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
 		<SuccessModal text="Berhasil menambah abdi"></SuccessModal>

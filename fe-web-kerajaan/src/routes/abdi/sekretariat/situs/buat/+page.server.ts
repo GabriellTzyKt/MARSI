@@ -185,11 +185,11 @@ export const actions: Actions = {
         try {
             let formDataToSend = new FormData();
             formDataToSend.append("id_jenis_situs", data.get("jenis_situs") as string);
-            formDataToSend.append("foto_situs", data.get("profile_picture") as File);
+            formDataToSend.append("id_wisata", '1');
+            formDataToSend.append("gambar_profile", data.get("profile_picture") as File);
             formDataToSend.append("nama_situs", formData.nama_situs);
             formDataToSend.append("deskripsi_situs", formData.deskripsi_situs);
             formDataToSend.append("alamat", formData.alamat);
-            formDataToSend.append("email", formData.email);
             formDataToSend.append("nama_pendiri", "Pemilik Susuhunan");
             formDataToSend.append("pemilik_situs", "Pemilik Susuhunan");
             formDataToSend.append("tahun_berdiri", "2025");
@@ -201,6 +201,8 @@ export const actions: Actions = {
             formDataToSend.append("longitude", formData.longitude);
             formDataToSend.append("latitude", formData.latitude);
             formDataToSend.append("no_telp", formData.phone);
+            formDataToSend.append("email", formData.email);
+                formDataToSend.append("foto_situs", data.get("profile_picture") as File);
             console.log("Sending data to API:", Object.fromEntries(formDataToSend));
             const res = await fetch(`${env.URL_KERAJAAN}/situs`, {
                 method: "POST",

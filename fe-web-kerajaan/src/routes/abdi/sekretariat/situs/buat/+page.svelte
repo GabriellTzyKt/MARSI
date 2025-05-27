@@ -752,6 +752,9 @@
 {#if success}
 	<SuccessModal text="Situs Berhasil Dibuat"></SuccessModal>
 {/if}
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 
 <style>
 	.raphael--edit {

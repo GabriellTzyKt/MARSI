@@ -1,41 +1,62 @@
 import { env } from "$env/dynamic/private";
 import { fail, redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "../$types";
+import { formatDatetoUI } from "$lib";
 
 export const load: PageServerLoad = async ({cookies}) => {
     const token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
     console.log("Token:", token);
     if(!token) redirect(302, '/login') ;
     try {
-        const res = await fetch(`${env.URL_KERAJAAN}/anggota`, {
-            headers: {
-                'Authorization': `Bearer ${token?.token}`
-            }
-        });
+        // Fetch anggota and gelar data in parallel
+        let [anggotaRes, gelarRes] = await Promise.all([
+            fetch(`${env.URL_KERAJAAN}/anggota`, {
+                headers: {
+                    'Authorization': `Bearer ${token?.token}`
+                }
+            }),
+            fetch(`${env.URL_KERAJAAN}/gelar`)
+        ]);
 
-        if (!res.ok) {
-            throw new Error(`HTTP Error! Status: ${res.status}`);
+        if (!anggotaRes.ok) {
+            throw new Error(`HTTP Error! Status: ${anggotaRes.status}`);
         }
-        let data = await res.json();
+        
+        let data = await anggotaRes.json();
         let finalData = data.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
+        
+        // Create gelar mapping if gelar fetch was successful
+        let gelarMap = new Map();
+        if (gelarRes.ok) {
+            let gelarData = await gelarRes.json();
+            gelarMap = new Map(gelarData.map(item => [item.id_gelar, item.nama_gelar]));
+        }
+        
+        // Map anggota data with gelar information
         finalData = finalData.map((item: any) => ({
             ...item,
-            tanggal_lahir: item.tanggal_lahir ? item.tanggal_lahir.split('T')[0] : item.tanggal_lahir
+            tanggal_lahir: formatDatetoUI(item.tanggal_lahir) || '-',
+            nama_gelar: item.id_gelar ? gelarMap.get(item.id_gelar) || '-' : '-'
         }));
-        console.log("Data",data);
-        return { data: finalData };
+        
+        console.log("Data", finalData);
+        return { 
+            data: finalData,
+            gelarList: Array.from(gelarMap.entries()).map(([id, nama]) => ({ id_gelar: id, nama_gelar: nama }))
+        };
     } catch (error) {
         console.log(error);
+        return { data: [], gelarList: [] };
     }
 };
 export const actions: Actions = {
-    delete: async ({ request, cookies }) => {
+    hapusAnggota: async ({ request, cookies }) => {
         const token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
         const data = await request.formData();
-        const id = data.get("id_user");
+        const id = data.get("id_anggota");
         console.log("Deleting user with ID:", id);
         try {
-            const delres = await fetch(`${env.PUB_PORT}/profile/users/${id}`, {
+            const delres = await fetch(`${env.URL_KERAJAAN}/anggota/${id}`, {
                 method: "DELETE",
                 headers: {
                     'Authorization': `Bearer ${token?.token}`

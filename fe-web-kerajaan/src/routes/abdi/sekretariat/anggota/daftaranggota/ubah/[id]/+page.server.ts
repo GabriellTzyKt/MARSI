@@ -1,19 +1,23 @@
 import SuccessModal from "$lib/modal/SuccessModal.svelte";
 import { fail, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
-import type { PageServerLoad } from "../$types";
+// import type { PageServerLoad } from "../$types";
 import { env } from "$env/dynamic/private";
-export const load: PageServerLoad = async ({cookies}) => {
+import type { PageServerLoad } from "./$types";
+import { formatDate } from "$lib";
+export const load: PageServerLoad = async ({ params, cookies }) => {
+    
     let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
     try {
-        
-        let [resUser, resJabatan] = await Promise.all([
+        let cookie = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
+        let [resUser, resJabatan, detailAbdi] = await Promise.all([
             fetch(`${env.PUB_PORT}/users`, {
                 headers: {
                     "Authorization": `Bearer ${token?.token}`
                 }
             }),
-            fetch(`${env.URL_KERAJAAN}/jabatan`)
+            fetch(`${env.URL_KERAJAAN}/jabatan`),
+            fetch(`${env.URL_KERAJAAN}/anggota/${params.id}`)
         ]);
         if (!resUser.ok) {
             throw new Error(`HTTP Error! Status: ${resUser.status}`)
@@ -30,7 +34,7 @@ export const load: PageServerLoad = async ({cookies}) => {
                 email: item.email
             }
         });
-        
+
         let jabatanData = [];
         if (resJabatan.ok) {
             const jabatan = await resJabatan.json();
@@ -39,9 +43,45 @@ export const load: PageServerLoad = async ({cookies}) => {
             );
         }
         console.log("Jabatan res:", jabatanData);
+        let detailAbdiData = await detailAbdi.json();
+        let userDetailData = await fetch(`${env.PUB_PORT}/user/${detailAbdiData.id_user}`, {
+            headers: {
+                "Authorization": `Bearer ${token?.token}`
+            }
+        });
+        if (!userDetailData.ok) {
+            throw new Error(`HTTP Error! Status: ${userDetailData.status}`)
+        }
+        let userDetail = await userDetailData.json();
+        console.log("Detail Abdi res:", detailAbdiData);
+        let combinedDataUser = {
+            nama_lengkap: userDetail.nama_lengkap,
+            alamat: userDetail.alamat,
+            tempat_lahir: userDetail.tempat_lahir,
+            tanggal_lahir: formatDate(userDetail.tanggal_lahir),
+            nama_ayah: userDetail.nama_ayah,
+            nama_ibu: userDetail.nama_ibu,
+            username: userDetail.username,
+            password: userDetail.password,
+            jenis_kelamin: userDetail.jenis_kelamin,
+            email: userDetail.email,
+            no_telp: userDetail.no_telp,
+            pekerjaan: userDetail.pekerjaan,
+            agama: userDetail.agama,
+            hobi: userDetail.hobi,
+            keturunan: userDetail.keturunan,
+            jabatan: detailAbdiData.jabatan,
+            id_gelar: detailAbdiData.id_gelar,
+            id_user: userDetail.id_user,
+
+
+        }
         return {
             userData,
-            jabatanData
+            jabatanData,
+            detailAbdiData,
+            userDetail,
+            combinedDataUser
         }
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -49,7 +89,8 @@ export const load: PageServerLoad = async ({cookies}) => {
     }
 };
 export const actions: Actions = {
-    tambahAbdi: async ({request}) => {
+    ubahAbdi: async ({ request, params, cookies }) => {
+        let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
         const data = await request.formData();
         const today = String(new Date().toISOString().split("T")[0])
         const input = String(data.get("tanggal_lahir"))
@@ -76,18 +117,7 @@ export const actions: Actions = {
                     .max(13, "Nomer Telpon maximal 13 digit")
                     .regex(/^\d+$/, "Nomer Telpon harus berupa digit")
             ,
-            username:
-                z.string({ message: "Field Username harus diisi" })
-            .nonempty("Field Username Tidak Boleh Kosong!"),
-            password:
-                z.string({ message: "password bukan string" })
-                    .min(8, { message: "Password minimal 8 huruf" })
-                    .max(255, { message: "Password sudah maximal!" })
-                    .nonempty({ message: "Password tidak boleh kosong" })
-                    .regex(/[A-Z]/, { message: "Password Harus ada minimal 1 huruf Kapital" })
-                    .regex(/[0-9]/, { message: "Password Harus ada miniam 1 angka" })
-                    .regex(/[^A-Za-z0-9]/, { message: "Password harus ada simbol" }),
-
+           
             jenis_kelamin:
                 z.string({ message: "Field Jenis Kelamin harus diisi" })
             .nonempty("Field Jenis Kelamin Tidak Boleh Kosong!"),
@@ -125,8 +155,7 @@ export const actions: Actions = {
             tanggal_lahir: String(data.get("tanggal_lahir")||""),
             alamat: String(data.get("alamat")||""),
             no_telp: String(data.get("no_telp")||""),
-            username: String(data.get("username")||""),
-            password: String(data.get("password")||""),
+        
             jenis_kelamin: String(data.get("jenis_kelamin")||""),
             hobi: String(data.get("hobi")||""),    
             nama_ayah: String(data.get("nama_ayah")||""),
@@ -145,15 +174,15 @@ export const actions: Actions = {
 
         try {
             let formSend = {
+                id_anggota: parseInt(params.id as string),
                 nama_lengkap: form.nama_lengkap,
                 alamat: form.alamat,
                 tempat_lahir: form.tempat_lahir,
                 tanggal_lahir: form.tanggal_lahir,
                 nama_ayah: form.nama_ayah,
                 nama_ibu: form.nama_ibu,
-                username: form.username,
-                password: form.password,                
                 jenis_kelamin: form.jenis_kelamin,
+                       
                 email: form.email,
                 no_telp: form.no_telp,  
                 pekerjaan: form.pekerjaan,
@@ -167,8 +196,9 @@ export const actions: Actions = {
             }
             console.log("Form Data to Send",formSend)
             let res = await fetch(`${env.URL_KERAJAAN}/anggota`, {
-                method: "POST",
+                method: "PUT",
                 headers: {
+                    "Authorization": `Bearer ${token?.token}`,
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(formSend)
