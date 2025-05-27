@@ -7,149 +7,47 @@ import { page } from "$app/state";
 import { formatDate } from "$lib";
 
 export const load: PageServerLoad = async ({ fetch, params, cookies }) => {
-    const id_organisasi  = params.id
-    const token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
+    let id_organisasi  = params.id
+    let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
     try {
-        // Fetch all organizations
-        const organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi?limit=20000000`);
-        if (!organisasiResponse.ok) {
-            throw error(organisasiResponse.status, `Failed to fetch organisasi: ${organisasiResponse.statusText}`);
-        }
-        
-        const organisasiList = await organisasiResponse.json();
-        // console.log("organisasi : ", organisasiList);
-
-        // Filter out deleted organizations (keep only non-deleted ones)
-        const filteredList = organisasiList.filter((doc: any) => {
-            return doc.deleted_at === '0001-01-01T00:00:00Z' || doc.deleted_at === null;
-        });
-
-        console.log("Filtered List : ", filteredList)
-        
-        // Fetch all users
-        const usersResponse = await fetch(`${env.PUB_PORT}/users`, {
+     
+        let users = await fetch(`${env.PUB_PORT}/users`, {
             headers: {
                 "Authorization": `Bearer ${token?.token}`
             }
         });
-        let allUsers = [];
-        if (usersResponse.ok) {
-            allUsers = await usersResponse.json();
-            // console.log("All users:", allUsers);
-        } else {
-            console.error(`Failed to fetch users: ${usersResponse.statusText}`);
+        if (!users.ok) {
+            throw error(users.status, `Failed to fetch users: ${users.statusText}`);
         }
-        
-        const organisasiWithUsers = await Promise.all(
-            filteredList.map(async (organisasi: any) => {
-                if (organisasi.id_user) {
-                    try {
-                        const userResponse = await fetch(`${env.PUB_PORT}/user/${organisasi.id_user}`, {
-                            headers: {
-                                "Authorization": `Bearer ${token?.token}`
-                            }
-                        });
-                        if (userResponse.ok) {
-                            const userData = await userResponse.json();
-                            console.log("User data : ", userData);
-                            return {
-                                ...organisasi,
-                                user_name: userData.nama_lengkap || 'Unknown User',
-                                user_notelp: userData.no_telp || "08120219421",
-                                user_email: userData.email || 'No Email'
-                            };
-                        }
-                    } catch (userError) {
-                        console.error(`Error fetching user for organisasi ${organisasi.id_organisasi}:`, userError);
-                    }
-                }
-                return {
-                    ...organisasi,
-                    user_name: 'Unknown User',
-                    user_notelp: "No Notelp!",
-                    user_email: 'No Email'
-                };
-            })
-        );
-        
-        // Array untuk menyimpan semua data anggota dari semua organisasi
-        let allAnggota: any = [];
-        
-        // Iterasi melalui setiap organisasi untuk mengambil anggotanya
-        for (const organisasi of organisasiWithUsers) {
-            try {
-                const anggotaResponse = await fetch(`${env.URL_KERAJAAN}/organisasi/anggota/${organisasi.id_organisasi}?limit=200`);
-                if (anggotaResponse.ok) {
-                    const anggotaList = await anggotaResponse.json();
-                    // console.log(`Anggota organisasi ${organisasi.id_organisasi}:`, anggotaList);
-                    
-                    // Process each member to add user information
-                    const anggotaWithUserInfo = await Promise.all(
-                        anggotaList.map(async (anggota: any) => {
-                            // Skip members with deleted_at not equal to default value
-                            if (anggota.deleted_at && anggota.deleted_at !== '0001-01-01T00:00:00Z') {
-                                return null;
-                            }
-                            
-                            // First add organization info to the member
-                            let memberWithInfo = {
-                                ...anggota,
-                                nama_organisasi: organisasi.nama_organisasi,
-                                id_organisasi: organisasi.id_organisasi,
-                                user_name: 'Unknown User',
-                                user_email: 'No Email',
-                                user_notelp: 'No Phone'
-                            };
-                            
-                            // If the member has an id_user, fetch their user information
-                            if (anggota.id_user) {
-                                try {
-                                    const userResponse = await fetch(`${env.PUB_PORT}/user/${anggota.id_user}`);
-                                    if (userResponse.ok) {
-                                        const userData = await userResponse.json();
-                                        
-                                        // Skip users that have been deleted
-                                        if (userData.deleted_at && userData.deleted_at !== '0001-01-01T00:00:00Z') {
-                                            return null;
-                                        }
-                                        
-                                        memberWithInfo = {
-                                            ...memberWithInfo,
-                                            tanggal_bergabung: formatDate(anggota.tanggal_bergabung || organisasi.tanggal_bergabung),
-                                            user_name: userData.nama_lengkap || userData.nama || 'Unknown User',
-                                            user_email: userData.email || 'No Email',
-                                            user_notelp: userData.no_telp || 'No Phone'
-                                        };
-                                    } else {
-                                        console.error(`Failed to fetch user for anggota ${anggota.id_anggota}: ${userResponse.statusText}`);
-                                    }
-                                } catch (userError) {
-                                    console.error(`Error fetching user for anggota ${anggota.id_anggota}:`, userError);
-                                }
-                            }
-                            
-                            return memberWithInfo;
-                        })
-                    );
-                    
-                    // Filter out null values (deleted members) and add to main array
-                    const filteredAnggota = anggotaWithUserInfo.filter(item => item !== null);
-                    allAnggota = [...allAnggota, ...filteredAnggota];
-                }
-            } catch (anggotaError) {
-                console.error(`Error fetching anggota for organisasi ${organisasi.id_organisasi}:`, anggotaError);
-                // Lanjutkan ke organisasi berikutnya meskipun ada error
+        let userData = await users.json();
+        userData = userData.filter((item: any) => {
+            return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
+        }).map((item: any) => {
+            return {
+                id: item.id_user,
+                nama_lengkap: item.nama_lengkap,
+                email: item.email
             }
-        }
-        // console.log("all anggota with user info: ", allAnggota);
-       
+        });
+
 
         return {
-            organisasiList: organisasiWithUsers.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at),
-            allAnggota,
-            allUsers,
-            organisasi_id: id_organisasi
-        };
+            userData,
+            id_organisasi: id_organisasi
+        }
+  
+        // console.log("organisasi : ", organisasiList);
+
+        // Filter out deleted organizations (keep only non-deleted ones)
+    
+        
+        
+        // Array untuk menyimpan semua data anggota dari semua organisasi
+        
+        
+        // console.log("all anggota with user info: ", allAnggot
+
+       
     } catch (error) {
         console.error("Error in load function:", error);
         throw error;
@@ -297,7 +195,7 @@ export const actions: Actions = {
     },
     ubah: async ({request}) => {
         const data = await request.formData();
-        
+        console.log(data);
         const organisasiId = data.get("id_organisasi");
         const userId = data.get("id_user");
         
@@ -311,20 +209,18 @@ export const actions: Actions = {
             });
         }
         
-        let form = {
-            namaanggota: "",
-            deskripsi: "",
-            jabatan: ""
-        }
+       
 
         const ver = z.object({
             namaanggota: z.string().trim().min(1, "Minimal 1 anggota!"),
+            id_user: z.string().trim().min(1, "Pilih dari DropDown!"),
             deskripsi: z.string().trim().min(1, "Deskripsi harus diisi!"),
             jabatan: z.string().trim().min(1, "Jabatan harus diisi!"),
         });
 
-        form = {
+       let form = {
             namaanggota: String(data.get("namaanggota") || "").trim(),
+            id_user: String(data.get("id_user") || "").trim(),
             deskripsi: String(data.get("deskripsitugas") || "").trim(),
             jabatan: String(data.get("jabatan") || "").trim(),
         };
