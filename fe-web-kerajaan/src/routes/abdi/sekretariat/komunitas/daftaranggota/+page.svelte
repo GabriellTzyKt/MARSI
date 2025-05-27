@@ -226,7 +226,7 @@
 				['nama_anggota', 'Nama Anggota'],
 				['tanggal_bergabung', 'Tanggal Bergabung'],
 				['jabatan_anggota', 'Jabatan Anggota'],
-				['nomer_telepon', 'Nomer Telepon'],
+				['nomor_telepon', 'Nomer Telepon'],
 				['email', 'Email'],
 				['children', 'Aksi']
 			]}
@@ -271,10 +271,12 @@
 				loading = false;
 				if (result.type === 'success') {
 					valo = true;
-					invalidateAll();
-					setTimeout(() => {
-						valo = false;
-					}, 3000);
+					await fetchKomunitasMember(selectedKomunitas).then(() => {
+						setTimeout(() => {
+							valo = false;
+						}, 3000);
+					});
+
 					modalEdit = false;
 				} else if (result.type === 'failure') {
 					error = result.data?.errors || '';

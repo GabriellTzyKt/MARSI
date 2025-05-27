@@ -9,62 +9,34 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
     console.log("id komunitas", params.id)
     const token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
     try {
-        const komunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas/anggota/${params.id}`);
+        let komunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas/anggota/${params.id}`);
         if (!komunitasResponse.ok) {
             throw error(komunitasResponse.status, `Failed to fetch komunitas: ${komunitasResponse.statusText}`);
         }
         
-        const komunitasList = await komunitasResponse.json();
-        const filteredData = komunitasList.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
+        let komunitasList = await komunitasResponse.json();
+        let filteredData = komunitasList.filter(item => item && (item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at));
         console.log("komunitas : ", komunitasList);
-        const finalData = await Promise.all(filteredData.map(async (data: any) => {
-            const res = await fetch(`${env.PUB_PORT}/user/${data.id_user}`)
-            if (res.ok) {
-                let dataAnggota = await res.json()
-                if(dataAnggota.deleted_at !== '0001-01-01T00:00:00Z') return null;
-                return {
-                    ...dataAnggota, 
-                    tanggal_bergabung: formatDate(data.tanggal_bergabung),
-                    jabatan_komunitas: data.jabatan_anggota
-                }
-            }
-            return null
-        }))
-        // const filteredData = finalData.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
-        // console.log("filtered data : ", filteredData)
-        const allKomunitas = await fetch(`${env.URL_KERAJAAN}/komunitas`)
-        if (!allKomunitas.ok) {
-            throw error(allKomunitas.status, `Failed to fetch komunitas: ${komunitasResponse.statusText}`);
-        }
-        const allKomData =await allKomunitas.json()
-        // const allAnggotaNested = await Promise.all(
-        //     allKomData.map(async (item: any) => {
-        //         const id_kom_res = await fetch(`${env.URL_KERAJAAN}/komunitas/anggota/${item.id_komunitas}`);
-        //         if (!id_kom_res.ok) return []; // Jika gagal ambil anggota komunitas, skip
-        
-        //         const data_user_kom = await id_kom_res.json();
-        
-        //         const res_info_user = await Promise.all(
-        //             data_user_kom.map(async (data1: any) => {
-        //                 const res_nama = await fetch(`${env.PUB_PORT}/user/${data1.id_user}`);
-        //                 if (!res_nama.ok) return null;
-        
-        //                 const info_user = await res_nama.json();
-        //                 return {
-        //                     ...info_user,
-        //                     tanggal_bergabung: data1.tanggal_bergabung,
-        //                     deskripsi_tugas: data1.deskripsi_tugas,
-        //                     jabatan_anggota: data1.jabatan_anggota,
-        //                     id_komunitas: item.id_komunitas
-        //                 };
-        //             })
-        //         );
-        
-        //         // Buang null (user fetch gagal)
-        //         return res_info_user.filter(Boolean);
+        // let finalData = await Promise.all(filteredData.map(async (data: any) => {
+        //     if (!data) return null;
+        //     let res = await fetch(`${env.PUB_PORT}/user/${data.id_user}`,{
+        //         headers: {
+        //             "Authorization": `Bearer ${token?.token}`
+        //         }
         //     })
-        // );
-        // const allAnggota = allAnggotaNested.flat();
+        //     if (res.ok) {
+        //         let dataAnggota = await res.json()
+        //         if(!dataAnggota || dataAnggota.deleted_at !== '0001-01-01T00:00:00Z') return null;
+        //         return {
+        //             ...dataAnggota, 
+        //             tanggal_bergabung: formatDate(data.tanggal_bergabung),
+        //             jabatan_komunitas: data.jabatan_anggota
+        //         }
+        //     }
+        //     return null
+        // }))
+        //  filteredData = finalData.filter(item => item && (item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at));
+        console.log("filtered data : ", filteredData)
         const userData = await fetch(`${env.PUB_PORT}/users`, {
             headers: {
                 "Authorization": `Bearer ${token?.token}`
@@ -76,10 +48,10 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         const dataUser = await userData.json()
         // console.log("data user : ", dataUser)
         return {
-            data: finalData.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at),
+            data: filteredData,
             dataUser,
             komunitas_id: params.id,
-            komunitasList: komunitasList.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at)
+            komunitasList: komunitasList.filter(item => item && (item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at))
         }
         
         // Array untuk menyimpan semua data anggota dari semua komunitas
@@ -189,21 +161,19 @@ export const actions: Actions = {
 
         const data = await request.formData();
         console.log(data)
-        let form = {
-            namaanggota: "",
-            deskripsi: "",
-            jabatan: ""
-        }
+       
 
 
         const ver = z.object({
             namaanggota: z.string().trim().min(1, "Minimal 1 anggota!"),
+            id_user: z.string().trim().min(1, "Pilih dari DropDown!"),
             deskripsi: z.string().trim().min(1, "Deskripsi harus diisi!"),
             jabatan: z.string().trim().min(1, "Jabatan harus diisi!"),
         });
 
-        form = {
+        let form = {
             namaanggota: String(data.get("namaanggota") || "").trim(),
+            id_user: String(data.get("id_user") || "").trim(),
             deskripsi: String(data.get("deskripsitugas") || "").trim(),
             jabatan: String(data.get("jabatan") || "").trim(),
         };
@@ -232,13 +202,13 @@ export const actions: Actions = {
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             
-            const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
-            const senddata = {
+            const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}`;
+            let senddata = {
                 id_komunitas: Number(data.get("id_komunitas")),
                 id_user: Number(data.get("id_user")),
                 jabatan_anggota: String(form.jabatan),
                 deskripsi_tugas: String(form.deskripsi),
-                tanggal_bergabung: formattedDate
+                // tanggal_bergabung: formattedDate
             }
             console.log("send data: ", senddata)
             const res = await fetch(`${env.URL_KERAJAAN}/komunitas/anggota`, {

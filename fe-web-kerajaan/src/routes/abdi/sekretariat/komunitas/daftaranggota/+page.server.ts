@@ -15,7 +15,8 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
            });
            if (!userRes.ok) {
                throw new Error(`HTTP Error! Status: ${userRes.status}`)
-           }
+        }
+        console.log("User res:", userRes);
            let userData = await userRes.json();
            userData = userData.filter((item: any) => {
                return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
@@ -31,7 +32,8 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
            if (!res.ok) {
                throw new Error(`HTTP Error! Status: ${res.status}`)
            }
-           let data = await res.json()
+        let data = await res.json()
+        console.log(data)
            let finalData = data.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at).map((item: any) => ({
                id_komunitas: item.id_komunitas,
                nama_komunitas: item.nama_komunitas,
@@ -118,7 +120,7 @@ export const actions: Actions = {
     
     editAnggota: async ({ request }) => {
         const data = await request.formData();
-        
+        console.log(data)
         const komunitasId = data.get("id_komunitas");
         const userId = data.get("id_anggota");
         

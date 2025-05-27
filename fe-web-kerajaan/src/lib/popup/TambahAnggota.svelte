@@ -13,6 +13,7 @@
 	} = $props();
 
 	console.log('ini data2 : ', data2);
+	console.log('ini data edit : ', dataEdit);
 	console.log('Data anggota : ', allanggota);
 
 	let keyword = $state(dataEdit ? dataEdit.nama_anggota : '');
@@ -44,7 +45,7 @@
 	function selectItem(item: any) {
 		if (item && item.nama_lengkap) {
 			keyword = item.nama_lengkap;
-			selectedUserId = item.id || ''; // Store the selected user's ID, default to empty string
+			selectedUserId = item.id || item.id_user || ''; // Store the selected user's ID, default to empty string
 			showDropdown = false;
 			isValidSelection = true; // Mark as valid when selected from dropdown
 		}
@@ -65,7 +66,7 @@
 
 		if (matchedUser) {
 			isValidSelection = true;
-			selectedUserId = matchedUser.id || '';
+			selectedUserId = matchedUser.id || matchedUser.id_user || '';
 		} else {
 			isValidSelection = false;
 			selectedUserId = '';
@@ -137,7 +138,7 @@
 				onblur={() => handleBlur()}
 			/>
 			<!-- Hidden input to store the selected user ID -->
-			<input type="hidden" name="id_anggota" value={selectedUserId || ''} />
+			<input type="hidden" name="id_user" value={selectedUserId || ''} />
 
 			{#if showDropdown && updateFilteredData().length > 0}
 				<ul
