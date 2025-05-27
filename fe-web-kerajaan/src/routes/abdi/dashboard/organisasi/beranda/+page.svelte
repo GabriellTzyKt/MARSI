@@ -5,9 +5,16 @@
 	let { data } = $props();
 	let dataambil = data.filteredList;
 	console.log('data : ', dataambil);
+	import { navigating } from '$app/state';
+	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
+	import Loader from '$lib/loader/Loader.svelte';
+	let { data } = $props();
+	let dataambil = data.filteredList;
+	console.log('data : ', dataambil);
 </script>
 
 {#if navigating.to}
+	<Loader text="Navigating..."></Loader>
 	<Loader text="Navigating..."></Loader>
 {/if}
 <div
@@ -38,6 +45,15 @@
 </div>
 
 <style>
+	a {
+		display: inline-block;
+		max-width: 100%;
+	}
+
+	button {
+		max-width: 100%;
+		overflow: hidden;
+	}
 	a {
 		display: inline-block;
 		max-width: 100%;

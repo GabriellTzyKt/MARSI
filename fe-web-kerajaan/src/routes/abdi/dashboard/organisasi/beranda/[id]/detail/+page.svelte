@@ -84,7 +84,7 @@
 					<p>Penanggung Jawab :</p>
 					<input
 						type="text"
-						bind:value={dataambil.penanggung_jawab}
+						value={data?.penanggungJawab.nama_lengkap}
 						readonly
 						placeholder="Masukkan Penanggung Jawab"
 					/>
@@ -95,7 +95,7 @@
 					<p>Pembina :</p>
 					<input
 						type="text"
-						bind:value={dataambil.pembina}
+						value={data?.pembina.nama_lengkap}
 						readonly
 						placeholder="Masukkan Pembina"
 					/>
@@ -106,7 +106,7 @@
 					<p>Pelindung :</p>
 					<input
 						type="text"
-						bind:value={dataambil.pelindung}
+						value={data?.pelindung?.nama_lengkap || '-'}
 						readonly
 						placeholder="Masukkan Pelindung"
 					/>

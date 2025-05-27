@@ -202,6 +202,7 @@ export const actions: Actions = {
     },
 
     ubahAdmin: async ({ request }) => {
+        let sendData = {};
          const data = await request.formData()
         console.log(data)
         const akun = data.get("superadmin")
@@ -271,7 +272,7 @@ export const actions: Actions = {
                     .trim(),
 
             afiliasi:
-                z.array(z.string().nonempty("Tidak Boleh Kosong"))
+                z.string().nonempty("Tidak Boleh Kosong")
                     .min(1, { message: "Minimal 1 Afiliasi" }),
 
             admin_role:
@@ -282,71 +283,68 @@ export const actions: Actions = {
 
 
         })
-        if (akun === "sekre_ya") {
-            const dt = {
-                nama_lengkap: data.get("nama_lengkap"),
-                admin_role: data.get("admin_role"),
-                afiliasi: data.getAll("afiliasi").filter((item) => item !== "")
-            }
-            const verif = accVer.safeParse({...dt})
-
-            if (!verif.success) {
-
-                const fieldErrors = verif.error.flatten().fieldErrors;
-
-                console.log("errors : ", fieldErrors)
-
-                return fail(406, {
-                    errors: fieldErrors,
-                    success: false,
-                    
-                    type: "add"
-                });
-
-            }
-            return { success: true, type: "add" }
+        
+        let dataVerif = {
+            nama_lengkap: data.get("nama_lengkap"),
+            email: data.get("email"),
+            username: data.get("username"),
+            no_telp: data.get("no_telp"),
+            password: data.get("password"),
+            tgl_lahir: data.get("tgl_lahir"),
+            kota_lahir: data.get("kota_lahir"),
+            jenis_kelamin: data.get("jenis_kelamin"),
+            admin_role: data.get("admin_role"),
+            afiliasi: data.get("afiliasi")
         }
-        else {
+        const verif = ver.safeParse({ ...dataVerif })
+    
+        if (!verif.success) {
+    
+            const fieldErrors = verif.error.flatten().fieldErrors;
+    
+            console.log("errors : ", fieldErrors)
+    
+            return fail(406, {
+                errors: fieldErrors,
+                success: false,
+                formData: data,
+                type: "edit"
+            });
+    
+        }
+      
             
-            const nama_lengkap = data.get("nama_lengkap")
-            const username = data.get("username")
-            const email = data.get("email")
-            const password = data.get("password")
-            const jenis_kelamin = data.get("jenis_kelamin")
-            const no_telp = data.get("no_telp")
-            const tgl_lahir = data.get("tgl_lahir")
-            const kota_lahir = data.get("kota_lahir")
-            const afiliasi = data.getAll("afiliasi").filter((item) => item !== "");
-            const admin_role = data.get("admin_role")
-            const formData = {
-                nama_lengkap,
-                username,
-                email,
-                no_telp,
-                password,
-                tgl_lahir,
-                kota_lahir,
-                jenis_kelamin,
-                afiliasi,
-                admin_role
+         
+        try {
+            let sendData = {
+                id_admin: data.get("id_admin"),
+                nama_lengkap: data.get("nama_lengkap"),
+                email: data.get("email"),
+                no_telp: data.get("no_telp"),
+                tanggal_lahir: data.get("tgl_lahir"),
+                tempat_lahir: data.get("kota_lahir"),
+                jenis_kelamin: data.get("jenis_kelamin"),
+                id_kerajaan: 2,
+                password: data.get("password"),
+                jenis_admin: data.get("admin_role"),
+                // username: data.get("username"),
+                status: 1
             }
-            const verif = ver.safeParse({ ...formData })
-    
-            if (!verif.success) {
-    
-                const fieldErrors = verif.error.flatten().fieldErrors;
-    
-                console.log("errors : ", fieldErrors)
-    
-                return fail(406, {
-                    errors: fieldErrors,
-                    success: false,
-                    formData: formData,
-                    type: "add"
-                });
-    
+            console.log("Form Data: ", sendData)
+            let res = await fetch(`${env.URL_KERAJAAN}/admin`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(sendData)
+            })
+            if (!res.ok) {
+                throw new Error(`HTTP Error! Status: ${res.status} ${res.statusText}`)
             }
-            return { success: true, formData, type: "add" }
+            console.log(res.statusText, res.status)
+            return { success: true }
+        } catch (error) {
+            
         }
     },
     hapusAdmin: async ({ request }) => {

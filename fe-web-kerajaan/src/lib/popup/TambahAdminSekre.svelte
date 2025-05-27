@@ -4,7 +4,7 @@
 	import { formatDate } from '$lib/index';
 
 	let { value = $bindable(), textM, open = $bindable(), errors = null, data = null } = $props();
-
+	console.log('data : ', data);
 	let namagelar = $state(data?.afiliasi || '');
 	let daftarGelar: any = $state([]);
 	function tambahGelar() {
@@ -109,6 +109,7 @@
 		<div class="mb-4 flex h-[2px] w-full bg-[#CFCFCF]"></div>
 		<div class="grid max-h-screen w-full grid-cols-1 gap-4 overflow-auto px-8 md:grid-cols-6">
 			<!-- nama lengkap -->
+			<input type="text" hidden name="id_admin" value={data.id_admin} id="" />
 			<div class="flex w-full flex-col md:col-span-full">
 				<div class="flex justify-between">
 					<p>Nama Lengkap</p>
@@ -329,7 +330,7 @@
 							<select
 								name="jenis_kelamin"
 								class="w-full rounded-lg border border-gray-300 px-2 py-2 pr-10 focus:outline-none"
-								value={data ? data.jenis_kelamin : ''}
+								value={data ? data.jenis_kelamin : '-'}
 								id={data ? data.jenis_kelamin : ''}
 							>
 								<option value="Laki-Laki">Laki-Laki</option>

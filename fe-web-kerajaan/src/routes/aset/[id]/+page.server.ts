@@ -20,7 +20,9 @@ export const load: PageServerLoad = async ({params}) => {
             const formattedItem = {
                 ...item,
                 jenis_aset:'',
-                imageUrls: []
+                imageUrls: [],
+                videoUrls: [],
+                audioUrls: []
             };
             try {
                 const jenis = await fetch(`${env.URL_KERAJAAN}/aset/jenis/${item.id_jenis_aset}`);
@@ -41,33 +43,62 @@ export const load: PageServerLoad = async ({params}) => {
                         : item.dokumentasi.split(',').map(id => id.trim());
                     
                     // Process each document ID
-                    const imageUrls = await Promise.all(docIds.map(async (id) => {
-                        if (!id) return '';
+                    const mediaUrls = await Promise.all(docIds.map(async (id) => {
+                        if (!id) return { type: 'unknown', url: '' };
                         
                         const docRes = await fetch(`${env.URL_KERAJAAN}/doc/${id}`);
-                        if (!docRes.ok) return '';
+                        if (!docRes.ok) return { type: 'unknown', url: '' };
                         
                         const docData = await docRes.json();
                         const filePath = docData.file_dokumentasi || docData;
                         
                         if (typeof filePath === 'string') {
-                            return `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`;
+                            const url = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`;
+                            // Determine file type based on extension
+                            if (filePath.match(/\.(mp4|webm|mov|avi)$/i)) {
+                                return { type: 'video', url };
+                            } else if (filePath.match(/\.(mp3|wav|ogg|m4a)$/i)) {
+                                return { type: 'audio', url };
+                            } else {
+                                return { type: 'image', url };
+                            }
                         } else if (Array.isArray(filePath)) {
                             return filePath.map(path => {
                                 if (typeof path === 'string') {
-                                    return `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(path)}`;
+                                    const url = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(path)}`;
+                                    // Determine file type based on extension
+                                    if (path.match(/\.(mp4|webm|mov|avi)$/i)) {
+                                        return { type: 'video', url };
+                                    } else if (path.match(/\.(mp3|wav|ogg|m4a)$/i)) {
+                                        return { type: 'audio', url };
+                                    } else {
+                                        return { type: 'image', url };
+                                    }
                                 }
-                                return '';
+                                return { type: 'unknown', url: '' };
                             });
                         }
-                        return '';
+                        return { type: 'unknown', url: '' };
                     }));
                     
                     // Flatten the array and filter out empty strings
-                    formattedItem.imageUrls = imageUrls.flat().filter(url => url);
+                    const flattenedMedia = mediaUrls.flat().filter(item => item.url);
+                    
+                    // Separate by media type
+                    formattedItem.imageUrls = flattenedMedia
+                        .filter(item => item.type === 'image')
+                        .map(item => item.url);
+                    
+                    formattedItem.videoUrls = flattenedMedia
+                        .filter(item => item.type === 'video')
+                        .map(item => item.url);
+                    
+                    formattedItem.audioUrls = flattenedMedia
+                        .filter(item => item.type === 'audio')
+                        .map(item => item.url);
                 }
             } catch (error) {
-                console.error(`Error processing images for aset ${item.id_aset}:`, error);
+                console.error(`Error processing media for aset ${item.id_aset}:`, error);
             }
     
             return formattedItem;

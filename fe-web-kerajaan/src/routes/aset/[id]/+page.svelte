@@ -7,7 +7,9 @@
 
 	let { data } = $props();
 	let dataambil = $state(data.data);
-	let imageUrls = $state(dataambil.imageUrls);
+	let imageUrls = $state(dataambil.imageUrls || []);
+	let videoUrls = $state(dataambil.videoUrls || []);
+	let audioUrls = $state(dataambil.audioUrls || []);
 	console.log('Data yang diterima:', data);
 </script>
 
@@ -32,6 +34,34 @@
 						class="mx-auto h-auto w-full max-w-[500px] self-center rounded-lg object-cover"
 						alt="foto 1"
 					/>
+
+					<!-- Video Section -->
+					{#if videoUrls && videoUrls.length > 0}
+						<div class="mt-4">
+							<video
+								src={videoUrls[0]}
+								class="mx-auto h-auto w-full max-w-[500px] rounded-lg"
+								controls
+								preload="metadata"
+							>
+								Your browser does not support the video tag.
+							</video>
+						</div>
+					{/if}
+
+					<!-- Audio Section -->
+					{#if audioUrls && audioUrls.length > 0}
+						<div class="mt-4 rounded-lg bg-white p-3 shadow-sm">
+							<div class="mb-2 flex items-center gap-2">
+								<span class="material-symbols--music-note flex-shrink-0"></span>
+								<p class="text-lg">Audio</p>
+							</div>
+							<audio src={audioUrls[0]} class="w-full" controls>
+								Your browser does not support the audio element.
+							</audio>
+						</div>
+					{/if}
+
 					<div class="mt-5 flex items-center justify-center">
 						<div class="flex items-center justify-center gap-2">
 							<span class="material-symbols--person flex-shrink-0"></span>
@@ -54,6 +84,34 @@
 										/>
 									{/each}
 								{/if}
+
+								{#if videoUrls && videoUrls.length > 0}
+									{#each videoUrls as videoUrl, index (index)}
+										<div
+											class="relative col-span-1 m-1 h-auto w-[200px] overflow-hidden rounded-lg"
+										>
+											<video src={videoUrl} class="h-full w-full object-cover" preload="metadata"
+											></video>
+											<div
+												class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30"
+											>
+												<span class="text-4xl text-white">▶️</span>
+											</div>
+										</div>
+									{/each}
+								{/if}
+
+								{#if audioUrls && audioUrls.length > 0}
+									{#each audioUrls as audioUrl, index (index)}
+										<div
+											class="relative col-span-1 m-1 h-auto w-[200px] rounded-lg bg-gray-100 p-2"
+										>
+											<div class="flex h-full items-center justify-center">
+												<span class="text-4xl">🎵</span>
+											</div>
+										</div>
+									{/each}
+								{/if}
 							</div>
 						</Marquee>
 					</div>
@@ -64,6 +122,47 @@
 					</div>
 				</div>
 			</div>
+
+			<!-- Additional Media Section for multiple videos/audio -->
+			{#if (videoUrls && videoUrls.length > 1) || (audioUrls && audioUrls.length > 1)}
+				<div class="mt-6 px-4 md:px-10">
+					<h3 class="mb-4 text-xl font-semibold">Media Tambahan</h3>
+
+					{#if videoUrls && videoUrls.length > 1}
+						<div class="mb-6">
+							<h4 class="mb-2 text-lg font-medium">Video</h4>
+							<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+								{#each videoUrls.slice(1) as videoUrl, index (index)}
+									<div class="overflow-hidden rounded-lg shadow">
+										<video src={videoUrl} class="h-auto w-full" controls preload="metadata">
+											Your browser does not support the video tag.
+										</video>
+									</div>
+								{/each}
+							</div>
+						</div>
+					{/if}
+
+					{#if audioUrls && audioUrls.length > 1}
+						<div class="mb-6">
+							<h4 class="mb-2 text-lg font-medium">Audio</h4>
+							<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+								{#each audioUrls.slice(1) as audioUrl, index (index)}
+									<div class="rounded-lg bg-white p-3 shadow">
+										<div class="mb-2 flex items-center">
+											<span class="mr-2 text-2xl">🎵</span>
+											<span class="font-medium">Audio {index + 2}</span>
+										</div>
+										<audio src={audioUrl} class="w-full" controls>
+											Your browser does not support the audio element.
+										</audio>
+									</div>
+								{/each}
+							</div>
+						</div>
+					{/if}
+				</div>
+			{/if}
 		</div>
 	</div>
 </section>
@@ -73,6 +172,15 @@
 </section>
 
 <style>
+	.material-symbols--music-note {
+		display: inline-block;
+		width: 42px;
+		height: 42px;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23e04949' d='M12 3v10.55c-.59-.34-1.27-.55-2-.55c-2.21 0-4 1.79-4 4s1.79 4 4 4s4-1.79 4-4V7h4V3z'/%3E%3C/svg%3E");
+	}
+
 	.solar--calendar-linear {
 		display: inline-block;
 		width: 42px;

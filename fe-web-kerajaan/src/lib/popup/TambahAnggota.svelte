@@ -13,15 +13,16 @@
 	} = $props();
 
 	console.log('ini data2 : ', data2);
+	console.log('ini data edit : ', dataEdit);
 	console.log('Data anggota : ', allanggota);
 
 	let keyword = $state(dataEdit ? dataEdit.nama_anggota : '');
 	let showDropdown = $state(false);
-	let selectedUserId = $state(''); // Store the selected user's ID
+	let selectedUserId = $state(dataEdit ? dataEdit.id_user : ''); // Store the selected user's ID
 	let isValidSelection = $state(false); // Track if the current selection is valid
 
 	function handleClose() {
-		console.log("TambahAnggota close button clicked");
+		console.log('TambahAnggota close button clicked');
 		value = false;
 		dispatch('close');
 	}
@@ -44,7 +45,7 @@
 	function selectItem(item: any) {
 		if (item && item.nama_lengkap) {
 			keyword = item.nama_lengkap;
-			selectedUserId = item.id_user || ''; // Store the selected user's ID, default to empty string
+			selectedUserId = item.id || item.id_user || ''; // Store the selected user's ID, default to empty string
 			showDropdown = false;
 			isValidSelection = true; // Mark as valid when selected from dropdown
 		}
@@ -65,7 +66,7 @@
 
 		if (matchedUser) {
 			isValidSelection = true;
-			selectedUserId = matchedUser.id_user || '';
+			selectedUserId = matchedUser.id || matchedUser.id_user || '';
 		} else {
 			isValidSelection = false;
 			selectedUserId = '';
@@ -100,17 +101,25 @@
 	});
 </script>
 
-<div class="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-	<div class="bg-white p-6 rounded-lg max-w-3xl w-full">
-		<div class="flex justify-between items-center mb-4">
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+	<div class="w-full max-w-3xl rounded-lg bg-white p-6">
+		<div class="mb-4 flex items-center justify-between">
 			<h2 class="text-xl font-bold">Tambah Anggota</h2>
-			<button 
-				type="button"
-				class="text-gray-500 hover:text-gray-700"
-				onclick={handleClose}
-			>
-				<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+			<!-- svelte-ignore a11y_consider_explicit_label -->
+			<button type="button" class="text-gray-500 hover:text-gray-700" onclick={handleClose}>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-6 w-6"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M6 18L18 6M6 6l12 12"
+					/>
 				</svg>
 			</button>
 		</div>
@@ -126,10 +135,10 @@
 					? 'border-green-400'
 					: 'border-gray-400'} px-2 py-2 pr-8"
 				onfocus={() => (showDropdown = true)}
-				onblur={handleBlur}
+				onblur={() => handleBlur()}
 			/>
 			<!-- Hidden input to store the selected user ID -->
-			<input type="hidden" name="id_user" value={selectedUserId} />
+			<input type="hidden" name="id_user" value={selectedUserId || ''} />
 
 			{#if showDropdown && updateFilteredData().length > 0}
 				<ul
@@ -137,15 +146,13 @@
 				>
 					{#each updateFilteredData() as item}
 						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-						<li
-							class="cursor-pointer px-4 py-2 hover:bg-gray-200"
-							onclick={() => selectItem(item)}
-						>
+						<li class="cursor-pointer px-4 py-2 hover:bg-gray-200" onclick={() => selectItem(item)}>
 							{item.nama_lengkap}
 						</li>
 					{/each}
 				</ul>
 			{/if}
+			<!-- <input type="hidden" name="id_anggota" value={selectedUserId} /> -->
 			<span class="icon-park-twotone--search absolute right-2 mt-2.5 opacity-55"> </span>
 		</div>
 		{#if !isValidSelection && keyword !== ''}
@@ -153,6 +160,9 @@
 		{/if}
 		{#if errors}
 			{#each errors.namaanggota || [] as a}
+				<p class="ml-5 text-left text-red-500">{a}</p>
+			{/each}
+			{#each errors.id_user || [] as a}
 				<p class="ml-5 text-left text-red-500">{a}</p>
 			{/each}
 		{/if}
@@ -194,15 +204,11 @@
 			{/each}
 		{/if}
 
-		<div class="flex justify-end mt-4">
-			<button 
-				type="button" 
-				class="px-4 py-2 bg-gray-200 rounded-lg mr-2"
-				onclick={handleClose}
-			>
+		<div class="mt-4 flex justify-end">
+			<button type="button" class="mr-2 rounded-lg bg-gray-200 px-4 py-2" onclick={handleClose}>
 				Batal
 			</button>
-			<button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg">
+			<button type="submit" class="rounded-lg bg-blue-500 px-4 py-2 text-white">
 				{dataEdit ? 'Simpan Perubahan' : 'Tambah Anggota'}
 			</button>
 		</div>

@@ -2,18 +2,24 @@
 	import { enhance } from '$app/forms';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { navigating, page } from '$app/state';
+	import { env } from '$env/dynamic/public';
+	import { formatDatetoUI } from '$lib';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
+	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
 	import { dummyAnggota } from '$lib/dummy';
 	import Loader from '$lib/loader/Loader.svelte';
+	import SimpleLoader from '$lib/loader/SimpleLoader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import TambahAnggota from '$lib/popup/TambahAnggota.svelte';
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	let { data } = $props();
 	let dataambil = data.data;
+	console.log(data);
 	let datakomunitas = data.komunitas_id;
 	let dataTugas = data.komunitasList;
 	let entries = $state(10);
@@ -24,46 +30,120 @@
 	let currPage = $state(1);
 	let loading = $state(false);
 	let editModal = $state(false);
-	let editModalId = $state<any>();
+	let editData = $state<any>();
 	let dataEdit = $state<any>();
-	$effect(() => {
-		const deleteId = page.url.searchParams.get('delete');
-		const editId = page.url.searchParams.get('edit');
-		if (deleteId) {
-			console.log('Found delete ID in URL:', deleteId);
-			deleteD = true;
-			// Store the ID for the delete operation
-			selectedItemId = deleteId;
-		}
-		if (editId) {
-			console.log('Found edit ID in URL:', editId);
-			const userData = data.komunitasList.find((item) => item.id_user.toString() === editId);
-			const datakom = data.dataUser.find((item) => item.id_user.toString() === editId);
-
-			console.log('User data:', userData);
-			console.log('User data:', datakom);
-			editModal = true;
-			dataEdit = {
-				komunitas_id: datakomunitas,
-				id_user: userData.id_user,
-				nama_anggota: datakom.nama_lengkap,
-				jabatan: userData.jabatan_anggota,
-				deskripsi_tugas: userData.deskripsi_tugas
-			};
-			// Store the ID for the delete operation
-			editModalId = editId;
+	let deleteModal = $state(false);
+	let deleteId = $state<any>();
+	let loadUser = $state(false);
+	let komunitasMembers = $state([]);
+	onMount(async () => {
+		console.log('data', data);
+		try {
+			loadUser = true;
+			await fetchKomunitasMember(data?.komunitas_id);
+		} catch (error) {
+			console.error('Error fetching members:', error);
+		} finally {
+			loadUser = false;
 		}
 	});
+	async function fetchKomunitasMember(komId) {
+		if (!komId) return;
+
+		loadUser = true;
+		komunitasMembers = [];
+		try {
+			console.log('Fetching members for organization:', komId);
+			// Fetch members for the selected organization
+			const anggotaResponse = await fetch(
+				`${env.PUBLIC_URL_KERAJAAN}/komunitas/anggota/${komId}?limit=200`
+			);
+			if (anggotaResponse.ok) {
+				const anggotaList = await anggotaResponse.json();
+
+				// Process each member to add user information
+				const membersWithUserInfo = await Promise.all(
+					anggotaList
+						.filter(
+							(anggota) => !anggota.deleted_at || anggota.deleted_at === '0001-01-01T00:00:00Z'
+						)
+						.map(async (anggota) => {
+							let memberInfo = {
+								...anggota,
+								nama_anggota: 'Unknown User',
+								email: 'No Email',
+								nomor_telepon: 'No Phone',
+								tanggal_bergabung: formatDatetoUI(anggota.tanggal_bergabung)
+							};
+
+							// Fetch user details if id_user exists
+							if (anggota.id_user) {
+								try {
+									const userResponse = await fetch(
+										`${env.PUBLIC_PUB_PORT}/user/${anggota.id_user}`
+									);
+									if (userResponse.ok) {
+										const userData = await userResponse.json();
+										memberInfo = {
+											...memberInfo,
+											nama_anggota: userData.nama_lengkap || userData.nama || 'Unknown User',
+											email: userData.email || 'No Email',
+											nomor_telepon: userData.no_telp || 'No Phone'
+										};
+									}
+								} catch (error) {
+									console.error(`Error fetching user ${anggota.id_user}:`, error);
+								}
+							}
+
+							return memberInfo;
+						})
+				);
+
+				komunitasMembers = membersWithUserInfo;
+			}
+		} catch (error) {
+			console.error('Error fetching organization members:', error);
+		} finally {
+			loadUser = false;
+		}
+	}
+	function handleEdit(data: any) {
+		editModal = true;
+		editData = data;
+
+		console.log('User data:', editData);
+		console.log(
+			'Data Kom:',
+			komunitasMembers.find((item: any) => item.id_user == editData.id_user)
+		);
+		let dataT = komunitasMembers.find((item: any) => item.id_user == editData.id_user);
+		console.log('dataT', dataT);
+		dataEdit = {
+			komunitas_id: dataT?.id_komunitas,
+			id_user: dataT?.id_user,
+			nama_anggota: dataT?.nama_anggota,
+			deskripsi_tugas: dataT?.deskripsi_tugas,
+			// tanggal_bergabung: dataT.tanggal_bergabung,
+			jabatan_anggota: dataT?.jabatan_anggota
+		};
+		console.log('datakirim', dataEdit);
+	}
+	function handleDelete(id: string) {
+		deleteModal = true;
+		deleteId = id;
+	}
+
 	// console.log(data.allAnggota);
 	console.log('komunitas : ', data.komunitas_id);
 	// let dataanggota = data.allAnggota;
 	function filterD(data: any[]) {
 		return data.filter(
 			(item) =>
-				item?.nama_lengkap?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.nama_anggota?.toLowerCase().includes(keyword.toLowerCase()) ||
 				item?.email?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.notelp?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.jabatan_komunitas?.toLowerCase().includes(keyword.toLowerCase())
+				item?.nomor_telepon?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.jabatan_anggota?.toLowerCase().includes(keyword.toLowerCase())
 		);
 	}
 	function pagination(data: any[]) {
@@ -73,7 +153,7 @@
 		console.log(d);
 		return d.slice(start, end);
 	}
-	let resdata = $derived(pagination(data.data));
+	let resdata = $derived(pagination(komunitasMembers || []));
 
 	let idAktif = $state('');
 	$effect(() => {
@@ -167,10 +247,10 @@
 	<div class="flex w-full flex-col">
 		<Table
 			table_header={[
-				['nama_lengkap', 'Nama Anggota'], // blom
+				['nama_anggota', 'Nama Anggota'], // blom
 				['tanggal_bergabung', 'Tanggal Bergabung'],
-				['jabatan_komunitas', 'Jabatan Organisasi'],
-				['no_telp', 'Nomer Telpon'], // blom
+				['jabatan_anggota', 'Jabatan Organisasi'],
+				['nomor_telepon', 'Nomer Telpon'], // blom
 				['email', 'Email'], // blom
 				['children', 'Aksi']
 			]}
@@ -178,25 +258,28 @@
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
-					<DropDown
-						text="Apakah yakin ingin di arsip?"
-						id={`id-${index}`}
-						{data}
+					<DropDownNew
+						text={`Apakah yakin ingin mengarsipkan ${data.nama_anggota}?`}
 						items={[
-							[
-								'Ubah',
-								`/abdi/dashboard/komunitas/beranda/${datakomunitas}/detail/daftaranggota?edit=${data.id_user}`
-							],
-							[
-								'children',
-								'Arsipkan',
-								`/abdi/dashboard/komunitas/beranda/${datakomunitas}/detail/daftaranggota?delete=${data.id_user}`
-							]
+							{
+								label: 'Edit',
+								action: () => handleEdit(data)
+							},
+							{
+								label: 'Hapus',
+								action: () => handleDelete(data.id_user)
+							}
 						]}
-					></DropDown>
+						id={`id-${index}`}
+					></DropDownNew>
 				{/if}
 			{/snippet}
 		</Table>
+		{#if loadUser}
+			<div class="flex justify-center">
+				<SimpleLoader></SimpleLoader>
+			</div>
+		{/if}
 		<Pagination bind:currPage bind:entries totalItems={filterD(data.data).length}></Pagination>
 	</div>
 </div>
@@ -212,13 +295,12 @@
 				if (result.type === 'success') {
 					valo = true;
 					clearTimeout(timer);
-					goto(`/abdi/dashboard/komunitas/beranda/${page.params.id}/detail/daftaranggota`, {
-						replaceState: true
+					await fetchKomunitasMember(data?.komunitas_id).then(() => {
+						setTimeout(() => {
+							valo = false;
+						}, 3000);
 					});
-					invalidateAll();
-					timer = setTimeout(() => {
-						valo = false;
-					}, 3000);
+
 					open = false;
 				} else if (result.type === 'failure') {
 					error = result.data?.errors || '';
@@ -248,14 +330,11 @@
 					success = true;
 					deleteD = false;
 					selectedItemId = null;
-					goto(`/abdi/dashboard/komunitas/beranda/${datakomunitas}/detail/daftaranggota`, {
-						replaceState: true
+					await fetchKomunitasMember(data?.komunitas_id).then(() => {
+						setTimeout(() => {
+							success = false;
+						}, 3000);
 					});
-					// Remove the delete parameter from URL
-					setTimeout(() => {
-						success = false;
-						invalidateAll();
-					}, 3000);
 				}
 				if (result.type === 'failure') {
 					console.error('Failed to delete ID:', idToDelete, result);
@@ -275,7 +354,7 @@
 	</form>
 {/if}
 
-{#if editModal && editModalId}
+{#if editModal}
 	<form
 		action="?/ubah"
 		method="post"
@@ -287,17 +366,16 @@
 				if (result.type === 'success') {
 					valo = true;
 
-					editModalId = null;
+					editData = null;
 					clearTimeout(timer);
-					goto(`/abdi/dashboard/komunitas/beranda/${datakomunitas}/detail/daftaranggota`, {
-						replaceState: true
-					});
+
 					editModal = false;
-					editModalId = null;
-					timer = setTimeout(() => {
-						valo = false;
-						invalidateAll();
-					}, 3000);
+					editData = null;
+					await fetchKomunitasMember(data?.komunitas_id).then(() => {
+						setTimeout(() => {
+							valo = false;
+						}, 3000);
+					});
 					editModal = false;
 				} else if (result.type === 'failure') {
 					error = result.data?.errors || '';
@@ -309,12 +387,12 @@
 			<TambahAnggota bind:value={editModal} errors={error} {dataEdit} allanggota={data.dataUser}
 			></TambahAnggota>
 			<input type="text" hidden name="id_komunitas" value={data.komunitas_id} />
-			<input type="text" hidden name="id_user" value={editModalId} />
+			<input type="text" hidden name="id_user" value={editData.id_user} />
 		</div>
 	</form>
 {/if}
 {#if valo}
-	<SuccessModal text="Anggota berhasil Ditambah!"></SuccessModal>
+	<SuccessModal text=" berhasil!"></SuccessModal>
 {/if}
 {#if success}
 	<SuccessModal text="Anggota berhasil Dihapus!"></SuccessModal>

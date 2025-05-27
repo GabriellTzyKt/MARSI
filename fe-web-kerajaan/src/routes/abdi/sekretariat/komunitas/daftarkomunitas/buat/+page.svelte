@@ -233,7 +233,7 @@
 						<input type="hidden" name="penanggungjawab_id" value={selectedPj?.id || ''} />
 
 						{#if showPjDropdown && filteredPjUsers.length > 0}
-							<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
+							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
 								<ul class="max-h-60 overflow-y-auto">
 									{#each filteredPjUsers as user}
 										<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -283,7 +283,7 @@
 						</div>
 						<input type="hidden" name="pembina_id" value={selectedPb?.id || ''} />
 						{#if showPbDropdown && filteredPbUsers.length > 0}
-							<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
+							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
 								<ul class="max-h-60 overflow-y-auto">
 									{#each filteredPbUsers as user}
 										<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -342,7 +342,7 @@
 				</div>
 				<input type="hidden" name="pelindung_id" value={selectedPl?.id || ''} />
 				{#if showPldropdown && filteredPlUsers.length > 0}
-					<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
+					<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
 						<ul class="max-h-60 overflow-y-auto">
 							{#each filteredPlUsers as user}
 								<!-- svelte-ignore a11y_click_events_have_key_events -->

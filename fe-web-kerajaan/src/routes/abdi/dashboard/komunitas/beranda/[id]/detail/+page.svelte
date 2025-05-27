@@ -1,7 +1,8 @@
 <script lang="ts">
 	import gambartemp from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
-	import { page } from '$app/state';
+	import { navigating, page } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	let { data } = $props();
 	console.log('detail : ', data.komunitas);
@@ -11,12 +12,15 @@
 	let datafotokomunitas = $state(data.fotoKomunitasDetails?.map((detail: any) => detail.url));
 	console.log(datafotokomunitas);
 
-	let idAktif = $state(page.params.id)
+	let idAktif = $state(page.params.id);
 	$effect(() => {
 		idAktif = page.params.id;
 	});
 </script>
 
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="h-full w-full">
 	<div class="block h-fit rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="relative mx-auto flex w-full items-center justify-center">
@@ -148,19 +152,19 @@
 			{#if datafotokomunitas && datafotokomunitas.length > 0}
 				{#each datafotokomunitas as imageUrl}
 					<div class="relative h-48 w-full">
-						<img 
-							src={imageUrl} 
-							class="h-full w-full rounded-lg object-cover" 
-							alt="Gambar Komunitas" 
+						<img
+							src={imageUrl}
+							class="h-full w-full rounded-lg object-cover"
+							alt="Gambar Komunitas"
 						/>
 					</div>
 				{/each}
 			{:else}
 				<div class="relative h-48 w-full">
-					<img 
-						src={gambartemp} 
-						class="h-full w-full rounded-lg object-cover" 
-						alt="Gambar Default" 
+					<img
+						src={gambartemp}
+						class="h-full w-full rounded-lg object-cover"
+						alt="Gambar Default"
 					/>
 				</div>
 			{/if}
@@ -169,7 +173,6 @@
 </div>
 
 <style>
-
 	@media (max-width: 768px) {
 		.flexcoba {
 			flex-direction: column;

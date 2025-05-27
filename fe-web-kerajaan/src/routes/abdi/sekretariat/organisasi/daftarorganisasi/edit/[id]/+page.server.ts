@@ -198,22 +198,27 @@ export const actions: Actions = {
             let senData = {
                 id_organisasi: parseInt(String(data.get("id_organisasi"))),
                 penanggung_jawab: parseInt(formData.penanggungjawab_id),
-                foto_organisasi: '2',
-                email: formData.email,
-                no_telp: formData.phone,
                 nama_organisasi: formData.nama_organisasi,
-                deskripsi_organisasi: formData.deskripsi_organisasi,
+                deskripsi: formData.deskripsi_organisasi,
                 alamat: formData.alamat,
-                tanggal_berdiri: data.get("tanggal_berdiri"),
+                no_telp: formData.phone,
+                email: formData.email,
                 pembina: formData.pembina_id,
                 pelindung: formData.pelindung_id,
+                tanggal_berdiri: formData.tanggal_berdiri,
+                foto_organisasi: '',
+                profile:'',
+                
             }
            
 
             console.log("form data to send : " , senData)
 
             const response = await fetch(`${env.URL_KERAJAAN}/organisasi`, {
-                method: "POST",
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(senData)
             });
 
