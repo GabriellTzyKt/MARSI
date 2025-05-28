@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { span, placeholder, img = null, gelar = null } = $props();
+	let { span, placeholder, img = null, gelar = null, name = '' } = $props();
 	let s = span as string;
 	let namagelar = $state('');
 </script>
@@ -13,7 +13,7 @@
 	>
 		<input
 			type="text"
-			name=""
+			{name}
 			{placeholder}
 			class="w-full rounded-lg py-2 pe-2 ps-2 focus:outline-none"
 			id=""
@@ -57,8 +57,8 @@
 		<div class="w-full">
 			<div class="relative">
 				<select
-					class="w-full rounded-lg border-2 border-black px-2 py-2 bg-white"
-					name="namagelar"
+					class="w-full rounded-lg border-2 border-black bg-white px-2 py-2"
+					name="gelar"
 					bind:value={namagelar}
 				>
 					<option value="" selected disabled>Nama Gelar</option>

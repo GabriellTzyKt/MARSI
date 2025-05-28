@@ -25,6 +25,8 @@
 	let deleteID = $state();
 	let gelarModal = $state(false);
 	let gelarDataID = $state();
+	let BJModal = $state(false);
+	let BJID = $state();
 	function openGelar(id: any) {
 		console.log('Open Gelar : ', id);
 		gelarDataID = id;
@@ -34,6 +36,12 @@
 		console.log('Non Aktifkan : ', id);
 		deleteID = id;
 		modalDelete = true;
+	}
+
+	function openBJ(id: any) {
+		console.log('Open BJ : ', id);
+		BJModal = true;
+		BJID = id;
 	}
 	function filterD(data: any[]) {
 		return data.filter(
@@ -153,12 +161,11 @@
 							},
 							{
 								label: 'History Gelar',
-								action: () => openGelar(data.id_user)
+								action: () => openGelar(data.id_anggota)
 							},
 							{
 								label: 'History Bintang Jasa',
-								action: () =>
-									goto(`/abdi/sekretariat/anggota/daftaranggota/historybintangjasa/${data.id_user}`)
+								action: () => openBJ(data.id_anggota)
 							},
 							{
 								label: 'Non Aktifkan',
@@ -217,9 +224,30 @@
 {/if}
 {#if gelarModal}
 	<HistoryPopUp
-		data={dummyHistoryGelar}
+		userId={gelarDataID}
 		bind:value={gelarModal}
 		title="History Gelar"
-		header={['nama_gelar', 'nama_pelantik', 'tanggal_dilantik', 'acara', 'sertifikat']}
+		header={[
+			['nama_gelar', 'Nama Gelar'],
+			['nama_pemberi', 'Nama Pelantik'],
+			['tanggal_penerimaan', 'Tanggal Dilantik'],
+			['nama_acara', 'Acara'],
+			['dokumentasi', 'Sertifikat']
+		]}
+	></HistoryPopUp>
+{/if}
+{#if BJModal}
+	<HistoryPopUp
+		userId={BJID}
+		bind:value={BJModal}
+		title="History Bintang Jasa"
+		header={[
+			['nama_penghargaan', 'Nama Bintang Jasa'],
+			['nama_pemberi', 'Pemberi Bintang Jasa'],
+			['tanggal_penerimaan', 'Tanggal Bintang Jasa'],
+			['nama_acara', 'Acara'],
+			['keterangan', 'Keterangan'],
+			['dokumentasi', 'Sertifikat']
+		]}
 	></HistoryPopUp>
 {/if}

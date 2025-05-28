@@ -637,6 +637,13 @@
 							active={`/abdi/dashboard/situs/beranda/${idAktif}/detail` ==
 								isRouteActive(pageAktif, idAktif)}
 						/>
+						<SidebarMenu
+							href="/abdi/dashboard/situs/beranda/{idAktif}/detail/daftarkomunitas"
+							icon="mdi:book"
+							anchor="Daftar Komunitas"
+							active={`/abdi/dashboard/situs/beranda/${idAktif}/detail/daftarkomunitas` ==
+								isRouteActive(pageAktif, idAktif)}
+						/>
 					</SidebarMenu>
 				{/if}
 			</Sidebar>

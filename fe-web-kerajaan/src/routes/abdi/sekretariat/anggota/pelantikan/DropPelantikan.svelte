@@ -1,7 +1,46 @@
 <script lang="ts">
 	import SekreAbdiInput from '$lib/input/SekreAbdiInput.svelte';
 	import { slide } from 'svelte/transition';
-	let { nama = null } = $props();
+
+	// Define interfaces for data structures
+	interface Anggota {
+		id_anggota: string | number; // Adjust type as needed
+		nama_lengkap: string;
+		email?: string; // Optional as it's used in display but not critical for ID
+	}
+
+	interface AcaraItem {
+		id_acara: string | number; // Adjust type as needed
+		nama_acara: string;
+		kapasitas_acara?: string | number; // Optional
+	}
+
+	interface GelarItem {
+		id_gelar: string | number; // Adjust type as needed
+		nama_gelar: string;
+	}
+
+	interface ErrorDetail {
+		path: (string | number)[];
+		message: string;
+	}
+
+	let {
+		nama = null,
+		anggotaData,
+		gelarData,
+		acara,
+		index,
+		errors = null
+	}: {
+		nama?: string | null;
+		anggotaData: Anggota[];
+		gelarData: GelarItem[];
+		acara: AcaraItem[];
+		index: number;
+		errors?: ErrorDetail[] | null;
+	} = $props();
+
 	let drop = $state(false);
 	const togle = () => {
 		if (!drop) {
@@ -9,6 +48,93 @@
 		} else drop = false;
 		console.log(drop);
 	};
+	console.log('Anggota : ', anggotaData);
+	console.log('acara : ', acara);
+
+	let abdiKeyword = $state('');
+	let selectedAbdi: Anggota | null = $state(null);
+	let showAbdiDropdown = $state(false);
+	let filteredAbdi = $derived(filterUser(abdiKeyword));
+
+	let acaraKeyword = $state('');
+	let selectedAcara: AcaraItem | null = $state(null);
+	let showAcaraDropdown = $state(false);
+	let filteredAcara = $derived(filteracara(acaraKeyword));
+
+	let pemberiKeyword = $state('');
+	let selectedPemberi: Anggota | null = $state(null); // Assuming Pemberi is also an Anggota type
+	let showPemberiDropdown = $state(false);
+	let filteredPemberi = $derived(filterUser(pemberiKeyword)); // Uses filterUser
+
+	let gelarKeyword = $state('');
+	let selectedGelar: GelarItem | null = $state(null);
+	let showGelarDropdown = $state(false);
+	let filteredGelar = $derived(filterGelar(gelarKeyword));
+
+	function filterUser(key: string): Anggota[] {
+		if (!anggotaData) return [];
+		return anggotaData.filter((v: Anggota) =>
+			v.nama_lengkap.toLowerCase().includes(key.toLowerCase())
+		);
+	}
+	function filteracara(key: string): AcaraItem[] {
+		if (!acara) return [];
+		return acara.filter((v: AcaraItem) => v.nama_acara.toLowerCase().includes(key.toLowerCase()));
+	}
+
+	function filterGelar(key: string): GelarItem[] {
+		if (!gelarData) return [];
+		return gelarData.filter((v: GelarItem) =>
+			v.nama_gelar.toLowerCase().includes(key.toLowerCase())
+		);
+	}
+
+	function selectAbdi(user: Anggota) {
+		selectedAbdi = user;
+		abdiKeyword = user.nama_lengkap;
+		showAbdiDropdown = false;
+	}
+	function selectAcara(user: AcaraItem) {
+		selectedAcara = user;
+		acaraKeyword = user.nama_acara;
+		showAcaraDropdown = false;
+	}
+	function selectGelar(user: GelarItem) {
+		selectedGelar = user;
+		gelarKeyword = user.nama_gelar;
+		showGelarDropdown = false;
+	}
+	function selectPemberi(user: Anggota) {
+		selectedPemberi = user;
+		pemberiKeyword = user.nama_lengkap;
+		showPemberiDropdown = false;
+	}
+
+	let fileName = $state('');
+	let imagePreview: string | null = $state(null);
+
+	function handleFileChange(event: Event) {
+		const target = event.target as HTMLInputElement;
+		const file = target.files?.[0];
+
+		if (file) {
+			fileName = file.name;
+
+			if (file.type.startsWith('image/')) {
+				imagePreview = URL.createObjectURL(file);
+			} else {
+				imagePreview = null;
+			}
+		}
+	}
+
+	// Helper function to get error message for a specific field
+	function getErrorMessage(fieldName: string): string | null {
+		if (!errors) return null;
+
+		const error = errors.find((e: ErrorDetail) => e.path[0] === index && e.path[1] === fieldName);
+		return error ? error.message : null;
+	}
 </script>
 
 <!-- abdi yang akan dilantik -->
@@ -24,13 +150,351 @@
 			class="mx-3 mt-3 grid grid-cols-1 gap-4 lg:grid-cols-4"
 			transition:slide={{ duration: 150 }}
 		>
+			<!-- nama abdi/ id abdi -->
+			<div class="relative col-span-1 flex w-full flex-col lg:col-span-1">
+				<div class="flex w-full justify-between rounded-md border border-gray-600 bg-white">
+					<input
+						type="text"
+						bind:value={abdiKeyword}
+						onfocus={() => {
+							showAbdiDropdown = true;
+						}}
+						onblur={() => {
+							setTimeout(() => {
+								showAbdiDropdown = false;
+							}, 200);
+						}}
+						placeholder="Nama Abdi/ID Abdi"
+						class="w-full rounded-lg py-2 pe-2 ps-2 focus:outline-none"
+						id=""
+					/>
+					<div class="me-2 flex items-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+							class=" size-6"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+							/>
+						</svg>
+					</div>
+				</div>
+				<input
+					type="text"
+					hidden
+					name={`abdi[${index}][abdi_id]`}
+					value={selectedAbdi?.id_anggota}
+				/>
+				{#if showAbdiDropdown && filteredAbdi.length > 0}
+					<div class="absolute top-full z-10 mt-1 rounded-lg border bg-white shadow-lg">
+						<ul class="max-h-60 overflow-y-auto">
+							{#each filteredAbdi as user}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								<li
+									class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+									onclick={() => selectAbdi(user)}
+								>
+									<ul class="flex flex-col">
+										<span class="font-medium">{user.nama_lengkap}</span>
+										<span class="text-sm text-gray-500">{user.email}</span>
+									</ul>
+								</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
+				{#if getErrorMessage('abdi_id')}
+					<p class="text-sm text-red-500">{getErrorMessage('abdi_id')}</p>
+				{/if}
+			</div>
+
+			<!-- nama Acara -->
+			<div class="relative col-span-1 flex w-full flex-col lg:col-span-1">
+				<div class=" flex w-full justify-between rounded-md border border-gray-600 bg-white">
+					<input
+						type="text"
+						placeholder="Nama Acara"
+						bind:value={acaraKeyword}
+						onfocus={() => {
+							showAcaraDropdown = true;
+						}}
+						onblur={() => {
+							setTimeout(() => {
+								showAcaraDropdown = false;
+							}, 200);
+						}}
+						class="w-full rounded-lg py-2 pe-2 ps-2 focus:outline-none"
+						id=""
+					/>
+					<div class="me-2 flex items-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+							class=" size-6"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+							/>
+						</svg>
+					</div>
+				</div>
+				<input
+					type="text"
+					hidden
+					name={`abdi[${index}][acara_id]`}
+					value={selectedAcara?.id_acara}
+				/>
+				{#if showAcaraDropdown && filteredAcara.length > 0}
+					<div class="absolute top-full z-10 mt-1 rounded-lg border bg-white shadow-lg">
+						<ul class="max-h-50 overflow-y-auto">
+							{#each filteredAcara as user}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								<li
+									class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+									onclick={() => selectAcara(user)}
+								>
+									<ul class="flex flex-col">
+										<span class="font-medium">{user.nama_acara}</span>
+										<span class="text-sm text-gray-500">{user.kapasitas_acara}</span>
+									</ul>
+								</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
+				{#if getErrorMessage('acara_id')}
+					<p class="text-sm text-red-500">{getErrorMessage('acara_id')}</p>
+				{/if}
+			</div>
+			<!-- Dilantik Siapa -->
+			<div class="relative col-span-1 flex w-full flex-col lg:col-span-1">
+				<div class="flex w-full justify-between rounded-md border border-gray-600 bg-white">
+					<input
+						type="text"
+						bind:value={pemberiKeyword}
+						onfocus={() => {
+							showPemberiDropdown = true;
+						}}
+						onblur={() => {
+							setTimeout(() => {
+								showPemberiDropdown = false;
+							}, 200);
+						}}
+						placeholder="Diberi oleh siapa"
+						class="w-full rounded-lg py-2 pe-2 ps-2 focus:outline-none"
+						id=""
+					/>
+					<div class="me-2 flex items-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+							class=" size-6"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+							/>
+						</svg>
+					</div>
+				</div>
+				<input
+					type="text"
+					hidden
+					name={`abdi[${index}][pemberi_id]`}
+					value={selectedPemberi?.id_anggota}
+				/>
+				{#if showPemberiDropdown && filteredPemberi.length > 0}
+					<div class="absolute top-full z-10 mt-1 rounded-lg border bg-white shadow-lg">
+						<ul class="max-h-50 overflow-y-auto">
+							{#each filteredPemberi as user}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								<li
+									class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+									onclick={() => selectPemberi(user)}
+								>
+									<ul class="flex flex-col">
+										<span class="font-medium">{user.nama_lengkap}</span>
+										<span class="text-sm text-gray-500">{user.email}</span>
+									</ul>
+								</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
+				{#if getErrorMessage('pemberi_id')}
+					<p class="text-sm text-red-500">{getErrorMessage('pemberi_id')}</p>
+				{/if}
+			</div>
+
+			<!-- bukti pelantikan -->
+			<div class="col-span-1 flex w-full flex-col lg:col-span-1">
+				<div class="flex w-full justify-between rounded-md border border-gray-600 bg-white">
+					<input
+						type="text"
+						readonly
+						name="bukti_gelar"
+						placeholder="Bukti Gelar"
+						class="w-full rounded-lg py-2 pe-2 ps-2 focus:outline-none"
+						bind:value={fileName}
+					/>
+
+					<div class="me-2 flex items-center">
+						<label for={`fileInput-${index}`} class="cursor-pointer">
+							{#if imagePreview}
+								<img src={imagePreview} alt="preview" class="h-6 w-6 rounded object-fill" />
+							{:else}
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									class="size-6"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+									/>
+								</svg>
+							{/if}
+						</label>
+
+						<input
+							type="file"
+							name={`abdi[${index}][bukti_gelar]`}
+							id={`fileInput-${index}`}
+							accept="image/*"
+							class="hidden"
+							onchange={handleFileChange}
+						/>
+					</div>
+				</div>
+				{#if getErrorMessage('bukti_gelar')}
+					<p class="text-sm text-red-500">{getErrorMessage('bukti_gelar')}</p>
+				{/if}
+			</div>
+
+			<!-- 
 			<SekreAbdiInput span="1" placeholder="Nama Abdi/ID Abdi"></SekreAbdiInput>
 			<SekreAbdiInput span="1" placeholder="Nama Acara"></SekreAbdiInput>
 			<SekreAbdiInput span="1" placeholder="Dilantik oleh Siapa"></SekreAbdiInput>
 			<SekreAbdiInput span="1" placeholder="Bukti Pelantikan" img={true}></SekreAbdiInput>
 			<SekreAbdiInput span="1" placeholder="Nama Abdi Dalam yang lama"></SekreAbdiInput>
 			<SekreAbdiInput span="2" placeholder="Nama Abdi Dalam yang baru"></SekreAbdiInput>
-			<SekreAbdiInput span="1" placeholder="Nama Gelar" gelar={true}></SekreAbdiInput>
+			<SekreAbdiInput span="1" placeholder="Nama Gelar" gelar={true}></SekreAbdiInput> -->
+		</div>
+		<div class="me-3 ms-3 mt-3 grid grid-cols-9 gap-4">
+			<!-- nama bintang jasa-->
+			<div class="col-span-1 flex w-full flex-col lg:col-span-3">
+				<div class="flex w-full justify-between rounded-md border border-gray-600 bg-white">
+					<input
+						type="text"
+						name={`abdi[${index}][gelar_lama]`}
+						placeholder="Nama Abdi Dalam Yang Lama"
+						class="w-full rounded-lg py-2 pe-2 ps-2 focus:outline-none"
+						id=""
+					/>
+				</div>
+				{#if getErrorMessage('gelar_lama')}
+					<p class="text-sm text-red-500">{getErrorMessage('gelar_lama')}</p>
+				{/if}
+			</div>
+			<!-- keterangan gelar-->
+			<div class="col-span-1 flex w-full flex-col lg:col-span-3">
+				<div class="flex w-full justify-between rounded-md border border-gray-600 bg-white">
+					<input
+						type="text"
+						name={`abdi[${index}][gelar_baru]`}
+						placeholder="Nama Abdi Dalam yang baru"
+						class="w-full rounded-lg py-2 pe-2 ps-2 focus:outline-none"
+						id=""
+					/>
+				</div>
+				{#if getErrorMessage('gelar_baru')}
+					<p class="text-sm text-red-500">{getErrorMessage('gelar_baru')}</p>
+				{/if}
+			</div>
+			<!-- Gelar -->
+			<div class="relative col-span-1 flex w-full flex-col lg:col-span-3">
+				<div class="flex w-full justify-between rounded-md border border-gray-600 bg-white">
+					<input
+						type="text"
+						bind:value={gelarKeyword}
+						onfocus={() => {
+							showGelarDropdown = true;
+						}}
+						onblur={() => {
+							setTimeout(() => {
+								showGelarDropdown = false;
+							}, 200);
+						}}
+						placeholder="Cari Gelar"
+						class="w-full rounded-lg py-2 pe-2 ps-2 focus:outline-none"
+						id={`gelar-search-${index}`}
+					/>
+					<div class="me-2 flex items-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+							class="size-6"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+							/>
+						</svg>
+					</div>
+				</div>
+				<input
+					type="text"
+					hidden
+					name={`abdi[${index}][gelar_id]`}
+					value={selectedGelar?.id_gelar}
+				/>
+				{#if showGelarDropdown && filteredGelar.length > 0}
+					<div class="absolute top-full z-10 mt-1 rounded-lg border bg-white shadow-lg">
+						<ul class="max-h-50 overflow-y-auto">
+							{#each filteredGelar as gelarItem}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								<li
+									class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+									onclick={() => selectGelar(gelarItem)}
+								>
+									<span class="font-medium">{gelarItem.nama_gelar}</span>
+									<!-- You can add more details here if available, e.g., gelarItem.deskripsi -->
+								</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
+				{#if getErrorMessage('gelar_id')}
+					<p class="text-sm text-red-500">{getErrorMessage('gelar_id')}</p>
+				{/if}
+			</div>
 		</div>
 	{/if}
 </div>
