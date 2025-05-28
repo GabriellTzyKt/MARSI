@@ -199,6 +199,76 @@
 		</form>
 	{/if}
 
+	{#if tipe === 'era'}
+		<form
+			action="?/hapusEra"
+			method="post"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					if (result.type === 'success') {
+						del = false;
+						success = true;
+						loading = true;
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							loading = false;
+							setTimeout(() => {
+								success = false;
+								del = false;
+								invalidateAll();
+							}, 3000);
+						});
+					}
+					if (result.type === 'failure') {
+						console.log(result.data?.error);
+					}
+				};
+			}}
+		>
+			<input type="hidden" name="id_era" value={data.id_era} />
+
+			<DeleteModal bind:value={del} text="Apakah Yakin ingin di delete?" data={data.id_era}
+			></DeleteModal>
+		</form>
+	{/if}
+
+		{#if tipe === 'rumpun'}
+		<form
+			action="?/hapusRumpun"
+			method="post"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					if (result.type === 'success') {
+						del = false;
+						success = true;
+						loading = true;
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							loading = false;
+							setTimeout(() => {
+								success = false;
+								del = false;
+								invalidateAll();
+							}, 3000);
+						});
+					}
+					if (result.type === 'failure') {
+						console.log(result.data?.error);
+					}
+				};
+			}}
+		>
+			<input type="hidden" name="id_rumpun" value={data.id_rumpun} />
+
+			<DeleteModal bind:value={del} text="Apakah Yakin ingin di delete?" data={data.id_rumpun}
+			></DeleteModal>
+		</form>
+	{/if}
+
 	{#if tipe === 'anggota'}
 		<form
 			action="?/hapusAnggota"
@@ -352,6 +422,70 @@
 				bind:input={edit}
 				header="Jenis Kerajaan"
 				tipe="gelar"
+			></Input>
+		</form>
+	{/if}
+
+	{#if tipe === 'era'}
+		<form
+			action="?/ubahEra"
+			method="post"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					if (result.type === 'success') {
+						success = true;
+						loading = true;
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							loading = false;
+							setTimeout(() => {
+								success = false;
+								edit = false;
+							}, 3000);
+						});
+					}
+					if (result.type === 'failure') {
+						error = result.data?.error;
+						console.log(error);
+					}
+				};
+			}}
+		>
+			<Input bind:value={data} name="nama_era" {error} bind:input={edit} header="Era" tipe="era"
+			></Input>
+		</form>
+	{/if}
+
+	{#if tipe === 'rumpun'}
+		<form
+			action="?/ubahRumpun"
+			method="post"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					if (result.type === 'success') {
+						success = true;
+						loading = true;
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							loading = false;
+							setTimeout(() => {
+								success = false;
+								edit = false;
+							}, 3000);
+						});
+					}
+					if (result.type === 'failure') {
+						error = result.data?.error;
+						console.log(error);
+					}
+				};
+			}}
+		>
+			<Input bind:value={data} name="nama_rumpun" {error} bind:input={edit} header="Rumpun" tipe="rumpun"
 			></Input>
 		</form>
 	{/if}

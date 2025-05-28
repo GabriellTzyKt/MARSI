@@ -10,6 +10,7 @@
 
 	const { data } = $props();
 	console.log(data.data);
+	data.a
 	let showDropdown = $state(false);
 
 	let nama = $state('');
@@ -87,6 +88,7 @@
 	async function handleSubmit(event: SubmitEvent) {
 		event.preventDefault();
 		loading = true;
+		error = null; // Reset error state
 		
 		try {
 			const form = event.target as HTMLFormElement;
@@ -103,16 +105,6 @@
 				}
 			});
 			
-			// Log all form data for debugging
-			console.log('Form data to be submitted:');
-			for (const [key, value] of formData.entries()) {
-				if (value instanceof File) {
-					console.log(`${key}: File - ${value.name} (${value.size} bytes)`);
-				} else {
-					console.log(`${key}: ${value}`);
-				}
-			}
-			
 			// Send the form data
 			const response = await fetch(form.action, {
 				method: 'POST',
@@ -122,22 +114,44 @@
 			const result = await response.json();
 			console.log('Response:', result);
 			
-			if (response.ok) {
-				loading = false;
+			// Set loading to false after getting a response
+			loading = false;
+			
+			// Check for success in various formats
+			if (result.type === 'success' || 
+				(result.data && result.data.success) || 
+				result.success === true || 
+				(result.message && result.message.includes('success'))) {
+				
+				console.log('Form submission successful, showing modal');
 				success = true;
+				
+				// Set a timer to hide the success message after 3 seconds
 				clearTimeout(timer);
 				timer = setTimeout(() => {
 					success = false;
-					showModal = false;
 				}, 3000);
-			} else {
-				error = result.errors || { general: ['Terjadi kesalahan saat mengirim data'] };
-				loading = false;
+			} else if (result.type === 'failure' && result.data?.errors) {
+				// Handle SvelteKit formatted errors
+				console.error('Form submission error:', result.data.errors);
+				error = result.data.errors;
+				success = false;
+			} else if (result.errors) {
+				// Handle direct API errors
+				console.error('Form submission error:', result.errors);
+				error = result.errors;
+				success = false;
+			} else if (!response.ok) {
+				// Handle HTTP errors
+				console.error('Form submission HTTP error:', response.status);
+				error = { general: [`Error: ${response.status} - ${result.message || 'Unknown error'}`] };
+				success = false;
 			}
 		} catch (err) {
 			console.error('Error submitting form:', err);
 			error = { general: ['Terjadi kesalahan saat mengirim data'] };
 			loading = false;
+			success = false;
 		}
 	}
 </script>
@@ -159,6 +173,23 @@
 			enctype="multipart/form-data"
 			onsubmit={handleSubmit}
 		>
+			{#if error && error.general}
+				<div class="mb-4 rounded-md bg-red-50 p-4">
+					<div class="flex">
+						<div class="ml-3">
+							<h3 class="text-sm font-medium text-red-800">Error:</h3>
+							<div class="mt-2 text-sm text-red-700">
+								<ul class="list-disc space-y-1 pl-5">
+									{#each error.general as message}
+										<li>{message}</li>
+									{/each}
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			{/if}
+
 			<div class="flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Nama Dokumen</label>
 				<input
@@ -168,6 +199,7 @@
 					name="nama"
 					bind:value={nama}
 					placeholder="Nama Dokumen"
+					required
 				/>
 				{#if error && error.namaDokumen}
 					{#each error.namaDokumen as errorMsg}
@@ -183,6 +215,7 @@
 						class="input-field rounded-lg border p-2 pr-10"
 						name="keterkaitan"
 						bind:value={keterkaitan}
+						required
 					/>
 
 					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
@@ -214,8 +247,9 @@
 					bind:value={jenisDokumen}
 					name="jenisDokumen"
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-				>
-					<option value=" " disabled>None</option>
+					required
+					>
+					<option value="" disabled>None</option>
 					<option value="1">1 </option>
 					<option value="2">2</option>
 				</select>
@@ -232,8 +266,9 @@
 					bind:value={kategori}
 					name="kategori"
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-				>
-					<option value=" " disabled>None</option>
+					required
+					>
+					<option value="" disabled>None</option>
 					<option value="masuk">Masuk </option>
 					<option value="keluar">Keluar</option>
 				</select>
@@ -247,14 +282,17 @@
 			<div class="text-md mt-2 text-start">
 				<label for="subkategori">Sub Kategori</label>
 				<div class="relative flex flex-col gap-1">
-					<input 
-						class="input-field rounded-lg border p-2 pr-10" 
-						name="subkategori"
+					<select
 						bind:value={subkategori}
-					/>
-
-					<span class="cil--magnifying-glass absolute right-2 top-2.5"></span>
-
+						name="subkategori"
+						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+						required
+					>
+						<option value="" disabled>None</option>
+						{#each data.arsipData as item}
+							<option value={item.id_arsip}>{item.nama_arsip}</option>
+						{/each}
+					</select>
 					{#if error && error.subkategori}
 						{#each error.subkategori as errorMsg}
 							<p class="text-left text-red-500">{errorMsg}</p>

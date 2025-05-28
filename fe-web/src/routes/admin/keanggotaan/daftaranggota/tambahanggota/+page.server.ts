@@ -5,26 +5,59 @@ import { env } from "$env/dynamic/private";
 
 export const load = async ({ fetch }) => {
     try {
-        const response = await fetch(`${env.PUB_PORT}/kerajaan/jenis?limit=200`, {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        });
+        const [jenisKerajaanResponse, eraResponse, rumpunResponse] = await Promise.all([
+            fetch(`${env.PUB_PORT}/kerajaan/jenis?limit=200`, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }),
+            fetch(`${env.PUB_PORT}/era?limit=200`, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }),
+            fetch(`${env.PUB_PORT}/rumpun?limit=200`, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            })
+        ]);
 
-        if (!response.ok) {
-            throw new Error(`HTTP Error! Status: ${response.status}`);
+        if (!jenisKerajaanResponse.ok || !eraResponse.ok || !rumpunResponse.ok) {
+            throw new Error(`HTTP Error! Status: ${jenisKerajaanResponse.status}, ${eraResponse.status}, ${rumpunResponse.status}`);
         }
 
-        const jenisKerajaan = await response.json();
+        const [jenisKerajaan, eraData, rumpunData] = await Promise.all([
+            jenisKerajaanResponse.json(),
+            eraResponse.json(),
+            rumpunResponse.json()
+        ]);
+        
         console.log("Jenis kerajaan data:", jenisKerajaan);
+        console.log("Era data:", eraData);
+        console.log("Rumpun data:", rumpunData);
         
         // Filter out deleted items
         const filteredJenisKerajaan = Array.isArray(jenisKerajaan) 
             ? jenisKerajaan.filter((item) => item.deleted_at === "0001-01-01T00:00:00Z" || !item.deleted_at)
             : [];
+            
+        const filteredEra = Array.isArray(eraData)
+            ? eraData.filter((item) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
+            : [];
+            
+        const filteredRumpun = Array.isArray(rumpunData)
+            ? rumpunData.filter((item) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
+            : [];
 
-        return { jenisKerajaan: filteredJenisKerajaan };
+        return { 
+            jenisKerajaan: filteredJenisKerajaan,
+            era: filteredEra,
+            rumpun: filteredRumpun
+        };
     } catch (e) {
         console.error("Error fetching jenis kerajaan:", e);
         return { jenisKerajaan: [] };
@@ -70,8 +103,8 @@ export const actions: Actions = {
                     deskripsi_kerajaan : deskripsi_kerajaan,
                     alamat_kerajaan : alamat_kerajaan,
                     tahun_berdiri : tanggal_berdiri,
-                    era : era_kerajaan,
-                    rumpun : rumpun_kerajaan,  
+                    era : Number(era_kerajaan),
+                    rumpun : Number(rumpun_kerajaan),  
                 })
             })
             const r = await send.json()

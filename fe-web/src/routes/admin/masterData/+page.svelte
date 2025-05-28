@@ -10,7 +10,7 @@
 	import CustomBtn from './CustomBtn.svelte';
 	import Input from './Input.svelte';
 	import ModalTambah from './ModalTambah.svelte';
-	let opt = ['Gelar', 'Jenis Kerajaan', 'Arsip'];
+	let opt = ['Gelar', 'Jenis Kerajaan', 'Arsip', 'Era', 'Rumpun'];
 	let { data } = $props();
 	const data_role = $state(data.dataArsip);
 	const data_gelar = $state(data.dataGelar);
@@ -25,6 +25,8 @@
 	let currPage = $state(1); // Untuk Arsip
 	let currPage2 = $state(1); // Untuk Jenis Kerajaan
 	let currPage3 = $state(1); // Untuk Gelar
+	let currPage4 = $state(1); // Untuk Era
+	let currPage5 = $state(1); // Untuk Rumpun
 
 	let success = $state(false);
 	let namagelar = $state('');
@@ -44,6 +46,8 @@
 		if (p === 'Arsip') currPage = 1;
 		else if (p === 'Jenis Kerajaan') currPage2 = 1;
 		else if (p === 'Gelar') currPage3 = 1;
+		else if (p === 'Era') currPage4 = 1;
+		else if (p === 'Rumpun') currPage5 = 1;
 	}
 	function filteredData(data: any[], tipe: any) {
 		if (tipe === 'arsip') {
@@ -53,6 +57,12 @@
 		} else if (tipe === 'jenis_kerajaan') {
 			return data.filter((item) =>
 				item?.nama_jenis_kerajaan?.toLowerCase().includes(keyword.toLowerCase())
+			);
+		} else if (tipe === 'era') {
+			return data.filter((item) => item?.nama_era?.toLowerCase().includes(keyword.toLowerCase()));
+		} else if (tipe === 'rumpun') {
+			return data.filter((item) =>
+				item?.nama_rumpun?.toLowerCase().includes(keyword.toLowerCase())
 			);
 		}
 	}
@@ -64,6 +74,8 @@
 		if (tipe === 'arsip') currentPage = currPage;
 		else if (tipe === 'jenis_kerajaan') currentPage = currPage2;
 		else if (tipe === 'gelar') currentPage = currPage3;
+		else if (tipe === 'era') currentPage = currPage4;
+		else if (tipe === 'rumpun') currentPage = currPage5;
 		else currentPage = 1;
 
 		const start = (currentPage - 1) * entries;
@@ -78,6 +90,8 @@
 	let displayData2 = $derived(paginate(data.dataJenisKerajaan, 'jenis_kerajaan'));
 
 	let displayData3 = $derived(paginate(data.dataGelar, 'gelar'));
+	let displayData4 = $derived(paginate(data.dataEra || [], 'era'));
+	let displayData5 = $derived(paginate(data.dataRumpun || [], 'rumpun'));
 
 	let del = $state(false);
 	function closeModal() {
@@ -107,6 +121,14 @@
 	let total_pages_3 = $derived(
 		Math.ceil((filteredData(data.dataGelar || [], 'gelar') || []).length / entries)
 	);
+
+	let total_pages_4 = $derived(
+		Math.ceil((filteredData(data.dataEra || [], 'era') || []).length / entries)
+	);
+
+	let total_pages_5 = $derived(
+		Math.ceil((filteredData(data.dataRumpun || [], 'rumpun') || []).length / entries)
+	);
 </script>
 
 <div class="flex w-full flex-col gap-4 xl:mx-4">
@@ -115,7 +137,7 @@
 			{#each opt as o}
 				<div class="flex flex-col">
 					<button
-						class=" w-full min-w-[200px] rounded-md border border-[#FFA600] py-2 font-[700] transition-colors duration-100 ease-in-out hover:bg-[#FFA600] hover:text-white"
+						class=" w-full min-w-[140px] rounded-md border border-[#FFA600] py-2 font-[700] transition-colors duration-100 ease-in-out hover:bg-[#FFA600] hover:text-white"
 						class:bg-[#FFA600]={select === o}
 						class:text-white={select === o}
 						onclick={() => change(o)}
@@ -562,6 +584,238 @@
 					>
 				</div>
 			</div>
+		{:else if select === 'Era'}
+			{console.log(select)}
+
+			<Table
+				table_header={[
+					['nama_era', 'Era', 'justify-start flex grow'],
+					['children', 'Aksi', 'text-right pe-48']
+				]}
+				table_data={displayData4 || []}
+			>
+				{#snippet children({ header, data, index })}
+					{#if header === 'Aksi'}
+						<CustomBtn {data} name="id_era" tipe="era"></CustomBtn>
+					{/if}
+				{/snippet}
+			</Table>
+			<div class="mt-4 flex flex-col lg:flex-row lg:justify-between">
+				<div>
+					{#if select === 'Era'}
+						<p>
+							Showing {(currPage4 - 1) * entries + 1}
+							to {Math.min(
+								currPage4 * entries,
+								(filteredData(data.dataEra ?? [], 'era') ?? []).length
+							)}
+							of {(filteredData(data.dataEra ?? [], 'era') ?? []).length}
+						</p>
+					{/if}
+				</div>
+				<div class="flex flex-row gap-3">
+					<button
+						class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
+						disabled={currPage4 === 1}
+						onclick={() => {
+							currPage4--;
+						}}>Previous</button
+					>
+					{#if total_pages_4 <= 5}
+						{#each Array(total_pages_4) as _, i}
+							<button
+								class="rounded-lg p-4"
+								class:bg-[#F9D48B]={currPage4 === i + 1}
+								class:text-white={currPage4 === i + 1}
+								onclick={() => (currPage4 = i + 1)}>{i + 1}</button
+							>
+						{/each}
+					{:else}
+						<button
+							class="rounded-lg p-4"
+							class:bg-[#F9D48B]={currPage4 === 1}
+							class:text-white={currPage4 === 1}
+							onclick={() => (currPage4 = 1)}>1</button
+						>
+
+						<!-- Ellipsis after first page if current page is far enough -->
+						{#if currPage4 > 3}
+							<span class="flex items-center px-2">...</span>
+						{/if}
+
+						<!-- Pages around current page -->
+						{#each Array(Math.min(3, total_pages_4 - 2)) as _, i}
+							{#if currPage4 > 2 && currPage4 < total_pages_4 - 1}
+								<!-- Show pages around current page -->
+								{#if currPage4 - 1 + i > 1 && currPage4 - 1 + i < total_pages_4}
+									<button
+										class="rounded-lg p-4"
+										class:bg-[#F9D48B]={currPage4 === currPage4 - 1 + i}
+										class:text-white={currPage4 === currPage4 - 1 + i}
+										onclick={() => (currPage4 = currPage4 - 1 + i)}>{currPage4 - 1 + i}</button
+									>
+								{/if}
+							{:else if currPage4 <= 2}
+								<!-- Show first few pages -->
+								{#if i + 2 < total_pages_4}
+									<button
+										class="rounded-lg p-4"
+										class:bg-[#F9D48B]={currPage4 === i + 2}
+										class:text-white={currPage4 === i + 2}
+										onclick={() => (currPage4 = i + 2)}>{i + 2}</button
+									>
+								{/if}
+							{:else}
+								<!-- Show last few pages -->
+								{#if total_pages_4 - 3 + i > 1}
+									<button
+										class="rounded-lg p-4"
+										class:bg-[#F9D48B]={currPage4 === total_pages_4 - 3 + i}
+										class:text-white={currPage4 === total_pages_4 - 3 + i}
+										onclick={() => (currPage4 = total_pages_4 - 3 + i)}
+										>{total_pages_4 - 3 + i}</button
+									>
+								{/if}
+							{/if}
+						{/each}
+
+						<!-- Ellipsis before last page if current page is far enough -->
+						{#if currPage4 < total_pages_4 - 2}
+							<span class="flex items-center px-2">...</span>
+						{/if}
+
+						<!-- Last page -->
+						<button
+							class="rounded-lg p-4"
+							class:bg-[#F9D48B]={currPage4 === total_pages_4}
+							class:text-white={currPage4 === total_pages_4}
+							onclick={() => (currPage4 = total_pages_4)}>{total_pages_4}</button
+						>
+					{/if}
+					<button
+						class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
+						disabled={currPage4 === total_pages_4}
+						onclick={() => {
+							currPage4++;
+						}}>Next</button
+					>
+				</div>
+			</div>
+		{:else if select === 'Rumpun'}
+			<Table
+				table_header={[
+					['nama_rumpun', 'Rumpun', 'justify-start flex grow'],
+					['children', 'Aksi', 'text-right pe-48']
+				]}
+				table_data={displayData5 || []}
+			>
+				{#snippet children({ header, data, index })}
+					{#if header === 'Aksi'}
+						<CustomBtn {data} name="id_rumpun" tipe="rumpun"></CustomBtn>
+					{/if}
+				{/snippet}
+			</Table>
+			<div class="mt-4 flex flex-col lg:flex-row lg:justify-between">
+				<div>
+					{#if select === 'Rumpun'}
+						<p>
+							Showing {(currPage5 - 1) * entries + 1}
+							to {Math.min(
+								currPage5 * entries,
+								(filteredData(data.dataRumpun ?? [], 'rumpun') ?? []).length
+							)}
+							of {(filteredData(data.dataRumpun ?? [], 'rumpun') ?? []).length}
+						</p>
+					{/if}
+				</div>
+				<div class="flex flex-row gap-3">
+					<button
+						class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
+						disabled={currPage5 === 1}
+						onclick={() => {
+							currPage5--;
+						}}>Previous</button
+					>
+					{#if total_pages_5 <= 5}
+						{#each Array(total_pages_5) as _, i}
+							<button
+								class="rounded-lg p-4"
+								class:bg-[#F9D48B]={currPage5 === i + 1}
+								class:text-white={currPage5 === i + 1}
+								onclick={() => (currPage5 = i + 1)}>{i + 1}</button
+							>
+						{/each}
+					{:else}
+						<button
+							class="rounded-lg p-4"
+							class:bg-[#F9D48B]={currPage5 === 1}
+							class:text-white={currPage5 === 1}
+							onclick={() => (currPage5 = 1)}>1</button
+						>
+
+						<!-- Ellipsis after first page if current page is far enough -->
+						{#if currPage5 > 3}
+							<span class="flex items-center px-2">...</span>
+						{/if}
+
+						<!-- Pages around current page -->
+						{#each Array(Math.min(3, total_pages_5 - 2)) as _, i}
+							{#if currPage5 > 2 && currPage5 < total_pages_5 - 1}
+								<!-- Show pages around current page -->
+								{#if currPage5 - 1 + i > 1 && currPage5 - 1 + i < total_pages_5}
+									<button
+										class="rounded-lg p-4"
+										class:bg-[#F9D48B]={currPage5 === currPage5 - 1 + i}
+										class:text-white={currPage5 === currPage5 - 1 + i}
+										onclick={() => (currPage5 = currPage5 - 1 + i)}>{currPage5 - 1 + i}</button
+									>
+								{/if}
+							{:else if currPage5 <= 2}
+								<!-- Show first few pages -->
+								{#if i + 2 < total_pages_5}
+									<button
+										class="rounded-lg p-4"
+										class:bg-[#F9D48B]={currPage5 === i + 2}
+										class:text-white={currPage5 === i + 2}
+										onclick={() => (currPage5 = i + 2)}>{i + 2}</button
+									>
+								{/if}
+							{:else}
+								<!-- Show last few pages -->
+								{#if total_pages_5 - 3 + i > 1}
+									<button
+										class="rounded-lg p-4"
+										class:bg-[#F9D48B]={currPage5 === total_pages_5 - 3 + i}
+										class:text-white={currPage5 === total_pages_5 - 3 + i}
+										onclick={() => (currPage5 = total_pages_5 - 3 + i)}
+										>{total_pages_4 - 3 + i}</button
+									>
+								{/if}
+							{/if}
+						{/each}
+
+						<!-- Ellipsis before last page if current page is far enough -->
+						{#if currPage5 < total_pages_5 - 2}
+							<span class="flex items-center px-2">...</span>
+						{/if}
+
+						<!-- Last page -->
+						<button
+							class="rounded-lg p-4"
+							class:bg-[#F9D48B]={currPage5 === total_pages_5}
+							class:text-white={currPage5 === total_pages_5}
+							onclick={() => (currPage5 = total_pages_5)}>{total_pages_5}</button
+						>
+					{/if}
+					<button
+						class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
+						disabled={currPage5 === total_pages_5}
+						onclick={() => {
+							currPage5++;
+						}}>Next</button
+					>
+				</div>
+			</div>
 		{/if}
 	</div>
 </div>
@@ -665,6 +919,70 @@
 			}}
 		>
 			<ModalTambah bind:value={openmodaltambah} name="nama_gelar" errors={error} header="Nama Gelar"
+			></ModalTambah>
+		</form>
+	{/if}
+
+	{#if select === 'Era'}
+		{console.log('hoi')}
+		<form
+			method="post"
+			action="?/tambahEra"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					console.log(result);
+					if (result.type === 'success') {
+						success = true;
+						clearTimeout(timer);
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							setTimeout(() => {
+								success = false;
+								openmodaltambah = false;
+								invalidateAll();
+							}, 3000);
+						});
+					} else if (result.type === 'failure') {
+						error = result?.data?.errors;
+					}
+				};
+			}}
+		>
+			<ModalTambah bind:value={openmodaltambah} name="nama_era" errors={error} header="Nama Era"
+			></ModalTambah>
+		</form>
+	{/if}
+
+	{#if select === 'Rumpun'}
+		{console.log('hoi')}
+		<form
+			method="post"
+			action="?/tambahRumpun"
+			use:enhance={() => {
+				loading = true;
+				return async ({ result }) => {
+					loading = false;
+					console.log(result);
+					if (result.type === 'success') {
+						success = true;
+						clearTimeout(timer);
+						await invalidateAll().then(() => {
+							console.log('Data invalidated');
+							setTimeout(() => {
+								success = false;
+								openmodaltambah = false;
+								invalidateAll();
+							}, 3000);
+						});
+					} else if (result.type === 'failure') {
+						error = result?.data?.errors;
+					}
+				};
+			}}
+		>
+			<ModalTambah bind:value={openmodaltambah} name="nama_rumpun" errors={error} header="Nama Rumpun"
 			></ModalTambah>
 		</form>
 	{/if}

@@ -37,7 +37,7 @@ export const load: PageServerLoad = async () => {
         };
 
         // Menggunakan p-limit untuk membatasi request paralel
-        const [dataArsip, dataGelar, dataJenisKerajaan] = await Promise.all([
+        const [dataArsip, dataGelar, dataJenisKerajaan, dataEra, dataRumpun] = await Promise.all([
             limit(() => fetchData(`${env.PUB_PORT}/jenis-arsip`).then(data =>
                 Array.isArray(data) ? data.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z") : []
             )),
@@ -47,12 +47,30 @@ export const load: PageServerLoad = async () => {
             limit(() => fetchData(`${env.PUB_PORT}/kerajaan/jenis?limit=200`).then(data =>
                 Array.isArray(data) ? data.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z") : []
             )),
+
+            // Fix for era data - include items with null deleted_at
+            limit(() => fetchData(`${env.PUB_PORT}/era?limit=200`).then(data => {
+                console.log("Raw era data:", data);
+                return Array.isArray(data)
+                    ? data.filter((item: any) => item.deleted_at === null || item.deleted_at === "0001-01-01T00:00:00Z")
+                    : [];
+            })),
+
+            limit(() => fetchData(`${env.PUB_PORT}/rumpun?limit=200`).then(data => {
+                return Array.isArray(data)
+                    ? data.filter((item: any) => item.deleted_at === null || item.deleted_at === "0001-01-01T00:00:00Z")
+                    : [];
+            })),
         ]);
+
+        console.log("Filtered era data:", dataEra);
 
         return {
             dataArsip,
             dataGelar,
-            dataJenisKerajaan
+            dataJenisKerajaan,
+            dataEra,
+            dataRumpun
         };
     } catch (error) {
         console.log("Load function error:", error);
@@ -378,6 +396,218 @@ export const actions: Actions = {
         catch (error) {
             console.error("Error deleting jenis kerajaan:", error);
             return fail(500, { error: "Server error when deleting record" });
+        }
+    },
+
+
+    ubahEra: async ({ request }) => {
+        try {
+            const req = await request.formData();
+            const data = Object.fromEntries(req);
+
+            const ver = z.object({
+                id_era: z.string().nullable(),
+                nama_era: z.string().nonempty("Field Ini Tidak Boleh Kosong")
+            });
+
+            console.log("Era data:", data);
+
+            const verification = ver.safeParse(data);
+            if (!verification.success) {
+                return fail(406, { error: verification.error.flatten().fieldErrors });
+            }
+
+            const obj = {
+                id_era: Number(data.id_era),
+                nama_era: data.nama_era
+            };
+
+            console.log("Payload era:", JSON.stringify(obj));
+
+            const edit = await fetch(`${env.PUB_PORT}/era`, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': "application/json"
+                },
+                body: JSON.stringify(obj),
+            });
+
+            if (!edit.ok) {
+                const m = await edit.json();
+                return fail(406, { error: `Error ${edit.status} Message: ${m.message}` });
+            }
+
+            return { error: "No Error", success: true };
+        }
+        catch (error) {
+            console.error("Error updating era:", error);
+            return fail(500, { error: "Server error when updating era" });
+        }
+    },
+    hapusEra: async ({ request }) => {
+        const data = await request.formData();
+        try {
+            console.log("ID Era:", data.get("id_era"));
+
+            const del = await fetch(`${env.PUB_PORT}/era/${data.get("id_era")}`, {
+                method: "DELETE"
+            });
+
+            if (!del.ok) {
+                const m = await del.json();
+                return fail(406, { error: `Code ${del.status} Message: ${m.message}` });
+            }
+
+            return { error: "no error" };
+        }
+        catch (error) {
+            console.error("Error deleting era:", error);
+            return fail(500, { error: "Server error when deleting era" });
+        }
+    },
+    tambahEra: async ({ request }) => {
+        const data = await request.formData();
+        const res = data.getAll("nama_era");
+
+        // Schema untuk array tanpa string kosong
+        const ver = z.array(z.string()).transform(arr => arr.filter(str => str !== ''));
+
+        const validation = ver.parse(res);
+        console.log("Era names:", validation);
+
+        try {
+            if (validation.length === 0) {
+                return fail(406, { errors: "No Data" });
+            }
+
+            for (const nama of validation) {
+                const payload = { nama_era: nama };
+                console.log("Payload:", payload);
+
+                const submit = await fetch(`${env.PUB_PORT}/era`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!submit.ok) {
+                    const m = await submit.json();
+                    return fail(406, { errors: `Error ${submit.status}: ${m.message}` });
+                }
+            }
+
+            return { errors: "Success", success: true, type: "add" };
+        } catch (error) {
+            console.error("Error adding era:", error);
+            return fail(500, { errors: "Server error when adding era" });
+        }
+    },
+
+
+    tambahRumpun: async ({ request }) => {
+        const data = await request.formData();
+        const res = data.getAll("nama_rumpun");
+
+        // Schema untuk array tanpa string kosong
+        const ver = z.array(z.string()).transform(arr => arr.filter(str => str !== ''));
+
+        const validation = ver.parse(res);
+        console.log("Rumpun names:", validation);
+
+        try {
+            if (validation.length === 0) {
+                return fail(406, { errors: "No Data" });
+            }
+
+            for (const nama of validation) {
+                const payload = { nama_rumpun: nama };
+                console.log("Payload:", payload);
+
+                const submit = await fetch(`${env.PUB_PORT}/rumpun`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!submit.ok) {
+                    const m = await submit.json();
+                    return fail(406, { errors: `Error ${submit.status}: ${m.message}` });
+                }
+            }
+
+            return { errors: "Success", success: true, type: "add" };
+        } catch (error) {
+            console.error("Error adding rumpun:", error);
+            return fail(500, { errors: "Server error when adding rumpun" });
+        }
+    },
+    ubahRumpun: async ({ request }) => {
+        try {
+            const req = await request.formData();
+            const data = Object.fromEntries(req);
+            console.log(
+                "Data " , data
+            )
+
+            const ver = z.object({
+                id_rumpun: z.string().nullable(),
+                nama_rumpun: z.string().nonempty("Field Ini Tidak Boleh Kosong")
+            });
+
+
+            console.log("Era data:", data);
+
+            const verification = ver.safeParse(data);
+            if (!verification.success) {
+                return fail(406, { error: verification.error.flatten().fieldErrors });
+            }
+
+            const obj = {
+                id_rumpun: Number(data.id_rumpun),
+                nama_rumpun: data.nama_rumpun
+            };
+
+            console.log("Payload era:", JSON.stringify(obj));
+
+            const edit = await fetch(`${env.PUB_PORT}/rumpun`, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': "application/json"
+                },
+                body: JSON.stringify(obj),
+            });
+
+            if (!edit.ok) {
+                const m = await edit.json();
+                return fail(406, { error: `Error ${edit.status} Message: ${m.message}` });
+            }
+
+            return { error: "No Error", success: true };
+        }
+        catch (error) {
+            console.error("Error updating era:", error);
+            return fail(500, { error: "Server error when updating era" });
+        }
+    },
+    hapusRumpun: async ({ request }) => {
+        const data = await request.formData();
+        try {
+            console.log("ID Era:", data.get("id_rumpun"));
+
+            const del = await fetch(`${env.PUB_PORT}/rumpun/${data.get("id_rumpun")}`, {
+                method: "DELETE"
+            });
+
+            if (!del.ok) {
+                const m = await del.json();
+                return fail(406, { error: `Code ${del.status} Message: ${m.message}` });
+            }
+
+            return { error: "no error" };
+        }
+        catch (error) {
+            console.error("Error deleting era:", error);
+            return fail(500, { error: "Server error when deleting era" });
         }
     },
 };

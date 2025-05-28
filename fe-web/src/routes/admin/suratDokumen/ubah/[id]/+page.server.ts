@@ -173,7 +173,7 @@ export const load = async ({ params, fetch }) => {
     
     try {
         // Fetch semua arsip
-        const response = await fetch(`${env.PUB_PORT}/arsip?limit=100`);
+        const response = await fetch(`${env.PUB_PORT}/arsip?limit=1000`);
         
         if (!response.ok) {
             throw error(response.status, `Failed to fetch documents`);
@@ -182,7 +182,7 @@ export const load = async ({ params, fetch }) => {
         const documents = await response.json();
         console.log("documents : ", documents);
 
-        const dataambil = await fetch(`${env.PUB_PORT}/kerajaan?limit=100`);
+        const dataambil = await fetch(`${env.PUB_PORT}/kerajaan?limit=1000`);
 
         const data = await dataambil.json();
 
@@ -191,6 +191,7 @@ export const load = async ({ params, fetch }) => {
 
         if (!document) {
             throw error(404, `Document with ID ${id} not found`);
+            
         }
 
         console.log("document sesuai ID : ", document);
@@ -284,7 +285,8 @@ export const load = async ({ params, fetch }) => {
         return {
             document,
             jenisArsip,
-            data,
+            kerajaanData : data,
+            arsipData : documents,
             files: fileDetails
         };
     } catch (e) {

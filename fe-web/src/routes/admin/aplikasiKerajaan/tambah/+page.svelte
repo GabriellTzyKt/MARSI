@@ -7,25 +7,25 @@
 	import ColorPicker from 'svelte-awesome-color-picker';
 
 	// Website features
-	let fiturSitus = $state(' ');
-	let fiturAcara = $state(' ');
-	let fiturOrganisasi = $state(' ');
-	let fiturKomunitas = $state(' ');
-	let fiturAset = $state(' ');
-	let fiturTugasWeb = $state(' '); // Renamed to fiturTugasWeb for website
+	let fiturSitus = $state('');
+	let fiturAcara = $state('');
+	let fiturOrganisasi = $state('');
+	let fiturKomunitas = $state('');
+	let fiturAset = $state('');
+	let fiturTugasWeb = $state(''); // Renamed to fiturTugasWeb for website
 
 	// Mobile features
-	let fiturMobile = $state(' ');
-	let fiturPenanggalan1 = $state(' ');
+	let fiturMobile = $state('');
+	let fiturPenanggalan1 = $state('');
 	let fiturPenanggalan2 = $state([]); // Array for multiple selections
-	let fiturTugasMobile = $state(' ');
-	let fiturTugasAcara = $state(' ');
-	let fiturSitusKerajaan = $state(' ');
-	let fiturCheckin = $state(' ');
-	let fiturAcaraKerajaan = $state(' ');
-	let fiturGroupChat = $state(' ');
-	let fiturForum = $state(' ');
-	let fiturPermohonan = $state(' ');
+	let fiturTugasMobile = $state('');
+	let fiturTugasAcara = $state('');
+	let fiturSitusKerajaan = $state('');
+	let fiturCheckin = $state('');
+	let fiturAcaraKerajaan = $state('');
+	let fiturGroupChat = $state('');
+	let fiturForum = $state('');
+	let fiturPermohonan = $state('');
 
 	let warnaUtama = $state('#4F46E5');
 	let warnaSecondary = $state('#FF5500');
@@ -77,28 +77,87 @@
 	}
 
 	$effect(() => {
+		// Handle parent-child relationships
+		
+		// Situs dependencies
 		if (fiturSitus === 'tidak') {
-			fiturCheckin = 'tidak';
 			fiturSitusKerajaan = 'tidak';
+			fiturCheckin = 'tidak';
 		} else if (fiturSitus === 'ya') {
-			fiturCheckin = '';
-			fiturSitusKerajaan = '';
-		} else if (fiturAcara === 'tidak') {
-			fiturTugasAcara = 'tidak';
-			fiturAcaraKerajaan = 'tidak';
-		} else if (fiturAcara === 'ya') {
-			fiturTugasAcara = '';
-			fiturAcaraKerajaan = '';
-		} else if (fiturTugasWeb === 'tidak') {
-			fiturTugasAcara = 'tidak';
-			fiturTugasMobile = 'tidak';
-		} else if (fiturTugasWeb === 'ya') {
-			fiturTugasAcara = '';
-			fiturTugasMobile = '';
-		} else if (fiturSitusKerajaan === 'tidak') {
+			// Enable child options when parent is enabled
+			if (fiturSitusKerajaan === '') fiturSitusKerajaan = '';
+		}
+		
+		// SitusKerajaan dependencies
+		if (fiturSitusKerajaan === 'tidak') {
 			fiturCheckin = 'tidak';
 		} else if (fiturSitusKerajaan === 'ya') {
-			fiturCheckin = '';
+			if (fiturCheckin === '') fiturCheckin = '';
+		}
+		
+		// Acara dependencies
+		if (fiturAcara === 'tidak') {
+			fiturAcaraKerajaan = 'tidak';
+			fiturTugasAcara = 'tidak';
+		} else if (fiturAcara === 'ya') {
+			if (fiturAcaraKerajaan === '') fiturAcaraKerajaan = '';
+			// Only enable TugasAcara if TugasWeb is also enabled
+			if (fiturTugasWeb === 'ya' && fiturTugasAcara === '') fiturTugasAcara = '';
+		}
+		
+		// TugasWeb dependencies
+		if (fiturTugasWeb === 'tidak') {
+			fiturTugasMobile = 'tidak';
+			fiturTugasAcara = 'tidak';
+		} else if (fiturTugasWeb === 'ya') {
+			if (fiturTugasMobile === '') fiturTugasMobile = '';
+			// Only enable TugasAcara if Acara is also enabled
+			if (fiturAcara === 'ya' && fiturTugasAcara === '') fiturTugasAcara = '';
+		}
+		
+		// Mobile dependencies
+		if (fiturMobile === 'tidak') {
+			fiturPenanggalan1 = 'tidak';
+			fiturTugasMobile = 'tidak';
+			fiturSitusKerajaan = 'tidak';
+			fiturCheckin = 'tidak';
+			fiturAcaraKerajaan = 'tidak';
+			fiturGroupChat = 'tidak';
+			fiturForum = 'tidak';
+			fiturPermohonan = 'tidak';
+		}
+	});
+
+	$effect(() => {
+		// Set default values for disabled inputs to ensure they're submitted
+		if (fiturSitus === 'tidak') {
+			fiturSitusKerajaan = 'tidak';
+			fiturCheckin = 'tidak';
+		}
+		
+		if (fiturSitusKerajaan === 'tidak') {
+			fiturCheckin = 'tidak';
+		}
+		
+		if (fiturAcara === 'tidak') {
+			fiturAcaraKerajaan = 'tidak';
+			fiturTugasAcara = 'tidak';
+		}
+		
+		if (fiturTugasWeb === 'tidak') {
+			fiturTugasMobile = 'tidak';
+			fiturTugasAcara = 'tidak';
+		}
+		
+		if (fiturMobile === 'tidak') {
+			fiturPenanggalan1 = 'tidak';
+			fiturTugasMobile = 'tidak';
+			fiturSitusKerajaan = 'tidak';
+			fiturCheckin = 'tidak';
+			fiturAcaraKerajaan = 'tidak';
+			fiturGroupChat = 'tidak';
+			fiturForum = 'tidak';
+			fiturPermohonan = 'tidak';
 		}
 	});
 
@@ -166,6 +225,27 @@
 		if (logoInput) {
 			(logoInput as HTMLInputElement).value = '';
 		}
+	}
+
+	// Function to handle radio button clicks with proper dependency management
+	function handleRadioChange(feature : any, value : any) {
+		// Set the value for the clicked feature
+		if (feature === 'fiturSitus') fiturSitus = value;
+		else if (feature === 'fiturAcara') fiturAcara = value;
+		else if (feature === 'fiturAset') fiturAset = value;
+		else if (feature === 'fiturKomunitas') fiturKomunitas = value;
+		else if (feature === 'fiturOrganisasi') fiturOrganisasi = value;
+		else if (feature === 'fiturTugasWeb') fiturTugasWeb = value;
+		else if (feature === 'fiturMobile') fiturMobile = value;
+		else if (feature === 'fiturPenanggalan1') fiturPenanggalan1 = value;
+		else if (feature === 'fiturTugasMobile') fiturTugasMobile = value;
+		else if (feature === 'fiturTugasAcara') fiturTugasAcara = value;
+		else if (feature === 'fiturSitusKerajaan') fiturSitusKerajaan = value;
+		else if (feature === 'fiturCheckin') fiturCheckin = value;
+		else if (feature === 'fiturAcaraKerajaan') fiturAcaraKerajaan = value;
+		else if (feature === 'fiturGroupChat') fiturGroupChat = value;
+		else if (feature === 'fiturForum') fiturForum = value;
+		else if (feature === 'fiturPermohonan') fiturPermohonan = value;
 	}
 </script>
 
@@ -246,6 +326,22 @@
 		<input type="hidden" name="warna_mobile_secondary" value={warnaMobileSecondary} />
 		<input type="hidden" name="warna_mobile_aksen1" value={warnaMobileAksen1} />
 		<input type="hidden" name="warna_mobile_aksen2" value={warnaMobileAksen2} />
+		<input type="hidden" name="fitur-situs" value={fiturSitus} />
+		<input type="hidden" name="fitur-acara" value={fiturAcara} />
+		<input type="hidden" name="fitur-aset" value={fiturAset} />
+		<input type="hidden" name="fitur-komunitas" value={fiturKomunitas} />
+		<input type="hidden" name="fitur-organisasi" value={fiturOrganisasi} />
+		<input type="hidden" name="fitur-tugas-web" value={fiturTugasWeb} />
+		<input type="hidden" name="fitur-mobile" value={fiturMobile} />
+		<input type="hidden" name="fitur-penanggalan1" value={fiturPenanggalan1} />
+		<input type="hidden" name="fitur-tugas-mobile" value={fiturTugasMobile} />
+		<input type="hidden" name="fitur-tugasacara" value={fiturTugasAcara} />
+		<input type="hidden" name="fitur-situskerajaan" value={fiturSitusKerajaan} />
+		<input type="hidden" name="fitur-checkin" value={fiturCheckin} />
+		<input type="hidden" name="fitur-acarakerajaan" value={fiturAcaraKerajaan} />
+		<input type="hidden" name="fitur-groupchat" value={fiturGroupChat} />
+		<input type="hidden" name="fitur-forum" value={fiturForum} />
+		<input type="hidden" name="fitur-permohonan" value={fiturPermohonan} />
 
 		<div class="mt-6 w-full rounded-lg border bg-white p-6 shadow-sm">
 			{#if success}
@@ -277,6 +373,7 @@
 							bind:group={fiturSitus}
 							name="fitur-situs"
 							class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+							onclick={() => handleRadioChange('fiturSitus', 'ya')}
 						/>
 						<label for="situs-ya" class="ml-2 text-sm font-medium text-gray-900">Ya</label>
 					</div>
@@ -288,6 +385,7 @@
 							bind:group={fiturSitus}
 							name="fitur-situs"
 							class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+							onclick={() => handleRadioChange('fiturSitus', 'tidak')}
 						/>
 						<label for="situs-tidak" class="ml-2 text-sm font-medium text-gray-900">Tidak</label>
 					</div>
@@ -685,7 +783,6 @@
 							type="radio"
 							value="tidak"
 							bind:group={fiturMobile}
-							checked
 							name="fitur-mobile"
 							class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 						/>
@@ -838,10 +935,11 @@
 								id="tugas-mobile-ya"
 								type="radio"
 								value="ya"
-								disabled={fiturTugasWeb === 'tidak' || fiturTugasWeb === "tidak"}
 								bind:group={fiturTugasMobile}
 								name="fitur-tugas-mobile"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+								disabled={fiturTugasWeb === 'tidak'}
+								onclick={() => handleRadioChange('fiturTugasMobile', 'ya')}
 							/>
 							<label for="tugas-mobile-ya" class="ml-2 text-sm font-medium text-gray-900">Ya</label>
 						</div>
@@ -851,13 +949,12 @@
 								type="radio"
 								value="tidak"
 								bind:group={fiturTugasMobile}
-								disabled={fiturTugasWeb === 'tidak' || fiturTugasWeb === "tidak"}
 								name="fitur-tugas-mobile"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+								disabled={fiturTugasWeb === 'tidak'}
+								onclick={() => handleRadioChange('fiturTugasMobile', 'tidak')}
 							/>
-							<label for="tugas-mobile-tidak" class="ml-2 text-sm font-medium text-gray-900"
-								>Tidak</label
-							>
+							<label for="tugas-mobile-tidak" class="ml-2 text-sm font-medium text-gray-900">Tidak</label>
 						</div>
 					</div>
 
@@ -889,6 +986,7 @@
 								disabled={fiturAcara === 'tidak' || fiturTugasWeb === "tidak"}
 								name="fitur-tugasacara"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+								onclick={() => handleRadioChange('fiturTugasAcara', 'ya')}
 							/>
 							<label for="tugasAcara-ya" class="ml-2 text-sm font-medium text-gray-900">Ya</label>
 						</div>
@@ -901,10 +999,9 @@
 								disabled={fiturAcara === 'tidak' || fiturTugasWeb === "tidak"}
 								name="fitur-tugasacara"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+								onclick={() => handleRadioChange('fiturTugasAcara', 'tidak')}
 							/>
-							<label for="tugasAcara-tidak" class="ml-2 text-sm font-medium text-gray-900"
-								>Tidak</label
-							>
+							<label for="tugasAcara-tidak" class="ml-2 text-sm font-medium text-gray-900">Tidak</label>
 						</div>
 					</div>
 					{#if error}
@@ -934,9 +1031,9 @@
 								disabled={fiturSitus === 'tidak'}
 								name="fitur-situskerajaan"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+								onclick={() => handleRadioChange('fiturSitusKerajaan', 'ya')}
 							/>
-							<label for="situsKerajaan-ya" class="ml-2 text-sm font-medium text-gray-900">Ya</label
-							>
+							<label for="situsKerajaan-ya" class="ml-2 text-sm font-medium text-gray-900">Ya</label>
 						</div>
 						<div class="flex items-center">
 							<input
@@ -947,10 +1044,9 @@
 								disabled={fiturSitus === 'tidak'}
 								name="fitur-situskerajaan"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+								onclick={() => handleRadioChange('fiturSitusKerajaan', 'tidak')}
 							/>
-							<label for="situsKerajaan-tidak" class="ml-2 text-sm font-medium text-gray-900"
-								>Tidak</label
-							>
+							<label for="situsKerajaan-tidak" class="ml-2 text-sm font-medium text-gray-900">Tidak</label>
 						</div>
 					</div>
 					{#if error}
@@ -980,6 +1076,7 @@
 								disabled={fiturSitus === 'tidak' || fiturSitusKerajaan === "tidak"}
 								name="fitur-checkin"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+								onclick={() => handleRadioChange('fiturCheckin', 'ya')}
 							/>
 							<label for="checkin-ya" class="ml-2 text-sm font-medium text-gray-900">Ya</label>
 						</div>
@@ -992,9 +1089,9 @@
 								disabled={fiturSitus === 'tidak' || fiturSitusKerajaan === "tidak"}
 								name="fitur-checkin"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+								onclick={() => handleRadioChange('fiturCheckin', 'tidak')}
 							/>
-							<label for="checkin-tidak" class="ml-2 text-sm font-medium text-gray-900">Tidak</label
-							>
+							<label for="checkin-tidak" class="ml-2 text-sm font-medium text-gray-900">Tidak</label>
 						</div>
 					</div>
 					{#if error}
@@ -1025,9 +1122,9 @@
 								disabled={fiturAcara === 'tidak'}
 								name="fitur-acarakerajaan"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+								onclick={() => handleRadioChange('fiturAcaraKerajaan', 'ya')}
 							/>
-							<label for="acaraKerajaan-ya" class="ml-2 text-sm font-medium text-gray-900">Ya</label
-							>
+							<label for="acaraKerajaan-ya" class="ml-2 text-sm font-medium text-gray-900">Ya</label>
 						</div>
 						<div class="flex items-center">
 							<input
@@ -1038,10 +1135,9 @@
 								disabled={fiturAcara === 'tidak'}
 								name="fitur-acarakerajaan"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
+								onclick={() => handleRadioChange('fiturAcaraKerajaan', 'tidak')}
 							/>
-							<label for="acaraKerajaan-tidak" class="ml-2 text-sm font-medium text-gray-900"
-								>Tidak</label
-							>
+							<label for="acaraKerajaan-tidak" class="ml-2 text-sm font-medium text-gray-900">Tidak</label>
 						</div>
 					</div>
 					{#if error}

@@ -7,16 +7,25 @@ import type { PageServerLoad } from "../$types";
 
 export const load: PageServerLoad = async () => {
     try {
-        const res = await fetch(`${env.PUB_PORT}/kerajaan`, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json'
-            }
-        });
-        if (res.ok) {
-            const data = await res.json();
-            console.log(data);
-            return { data }
+        const [kerajaanRes, arsipRes] = await Promise.all([
+            fetch(`${env.PUB_PORT}/kerajaan`, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json'
+                }
+            }),
+            fetch(`${env.PUB_PORT}/arsip?limit=200`, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json'
+                }
+            })
+        ]);
+        if (kerajaanRes.ok && arsipRes.ok) {
+            const kerajaanData = await kerajaanRes.json();
+            const arsipData = await arsipRes.json();
+            console.log(kerajaanData, arsipData);
+            return { kerajaanData, arsipData };
         }
     } catch (error) { }
 };
@@ -44,14 +53,12 @@ export const actions: Actions = {
                 namaDokumen: z.string({ message: "Input Tidak Boleh Kosong" }).max(255).nonempty("Isi Nama"),
                 jenisDokumen: z.string({ message: "Pilih 1 pilihan!" }).nonempty(),
                 kategori: z.string({ message: "Pilih 1 pilihan!" }).nonempty(),
-                urlfoto: z.array(z.any()).min(1, { message: "Minimal 1 File!" }),
             });
             
             const validation = ver.safeParse({
                 namaDokumen,
                 kategori,
                 jenisDokumen,
-                urlfoto: uploadedFiles,
             });
             
             if (!validation.success) {

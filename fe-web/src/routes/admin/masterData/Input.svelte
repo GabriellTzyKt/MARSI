@@ -100,6 +100,31 @@
 
 				<input type="text" name="id_jenis_kerajaan" hidden value={value.id_jenis_kerajaan} />
 			{/if}
+			{#if tipe === 'era'}
+				<input
+					type="text"
+					{name}
+					class="mt-1 rounded-lg px-2 focus:outline-none"
+					bind:value={value.nama_era}
+					placeholder="Silahkan diinput!"
+					id=""
+				/>
+
+				<input type="text" name="id_era" hidden value={value.id_era} />
+			{/if}
+
+			{#if tipe === 'rumpun'}
+				<input
+					type="text"
+					{name}
+					class="mt-1 rounded-lg px-2 focus:outline-none"
+					bind:value={value.nama_rumpun}
+					placeholder="Silahkan diinput!"
+					id=""
+				/>
+
+				<input type="text" name="id_rumpun" hidden value={value.id_rumpun} />
+			{/if}
 			{#if tipe === 'gelar'}
 				<input
 					type="text"

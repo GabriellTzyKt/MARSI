@@ -10,6 +10,8 @@
 
 	let { data } = $props();
 	let dataambil = data.jenisKerajaan;
+	let dataera = data.era
+	let datarumpun = data.rumpun
 	console.log('Data ambil : ', dataambil);
 	let results = writable<string[]>([]);
 	let showDropdown = writable(false);
@@ -166,13 +168,16 @@
 				</div>
 				<div class="flex flex-col">
 					<p class="text-md mb-1 self-start text-left">Era Kerajaan</p>
-					<input
+					<select
 						class="input-field rounded-lg border p-2"
-						type="text"
-						id="nama"
+						id="era_kerajaan"
 						name="era_kerajaan"
-						placeholder="era.."
-					/>
+					>
+						<option value="" disabled selected>Pilih Era Kerajaan</option>
+						{#each dataera || [] as era}
+							<option value={era.id_era}>{era.nama_era}</option>
+						{/each}
+					</select>
 					{#if errors}
 						{#each errors.era_kerajaan as e}
 							<p class="text-left text-red-500">{e}</p>
@@ -181,13 +186,16 @@
 				</div>
 				<div class="flex flex-col">
 					<p class="text-md mb-1 self-start text-left">Rumpun Kerajaan</p>
-					<input
+					<select
 						class="input-field rounded-lg border p-2"
-						type="text"
-						id="nama"
+						id="rumpun_kerajaan"
 						name="rumpun_kerajaan"
-						placeholder="rumpun..."
-					/>
+					>
+						<option value="" disabled selected>Pilih Rumpun Kerajaan</option>
+						{#each datarumpun || [] as rumpun}
+							<option value={rumpun.id_rumpun}>{rumpun.nama_rumpun}</option>
+						{/each}
+					</select>
 					{#if errors}
 						{#each errors.rumpun_kerajaan as e}
 							<p class="text-left text-red-500">{e}</p>

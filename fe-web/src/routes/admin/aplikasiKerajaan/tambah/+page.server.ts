@@ -8,10 +8,10 @@ export const actions: Actions = {
         const data = await request.formData();
 
         console.log("Data : ", data)
-        
+
         // Ambil file logo dari form data
         const logoFile = data.get("logo") as File | null;
-        
+
         // Cek apakah fitur mobile dipilih
         const fiturMobile = data.get("fitur-mobile") as string;
         const isMobileEnabled = fiturMobile === "ya";
@@ -25,15 +25,15 @@ export const actions: Actions = {
 
             // Validasi file logo
             logo_kerajaan: z.instanceof(File, { message: "Logo harus berupa file" })
-                .refine(file => file.size > 0, { 
-                    message: "File logo tidak boleh kosong" 
+                .refine(file => file.size > 0, {
+                    message: "File logo tidak boleh kosong"
                 })
-                .refine(file => file.size <= 5 * 1024 * 1024, { 
-                    message: "Ukuran logo tidak boleh lebih dari 5MB" 
+                .refine(file => file.size <= 5 * 1024 * 1024, {
+                    message: "Ukuran logo tidak boleh lebih dari 5MB"
                 })
-                .refine(file => 
-                    ['image/jpeg', 'image/png', 'image/webp'].includes(file.type), { 
-                    message: "Format logo harus JPG, PNG, atau WEBP" 
+                .refine(file =>
+                    ['image/jpeg', 'image/png', 'image/webp'].includes(file.type), {
+                    message: "Format logo harus JPG, PNG, atau WEBP"
                 }),
 
             // Website features
@@ -114,10 +114,6 @@ export const actions: Actions = {
                     required_error: "Silahkan pilih Ya atau Tidak",
                     invalid_type_error: "Silahkan pilih Ya atau Tidak"
                 }),
-                "fitur-permohonan": z.string({
-                    required_error: "Silahkan pilih Ya atau Tidak",
-                    invalid_type_error: "Silahkan pilih Ya atau Tidak"
-                }),
             };
 
             // Tambahkan validasi untuk fitur-penanggalan2 hanya jika penanggalan diaktifkan
@@ -157,7 +153,6 @@ export const actions: Actions = {
             formData["fitur-acarakerajaan"] = data.get("fitur-acarakerajaan") as string;
             formData["fitur-groupchat"] = data.get("fitur-groupchat") as string;
             formData["fitur-forum"] = data.get("fitur-forum") as string;
-            formData["fitur-permohonan"] = data.get("fitur-permohonan") as string;
 
             // Tambahkan fitur-penanggalan2 hanya jika penanggalan diaktifkan
             if (isPenanggalanEnabled) {
@@ -191,7 +186,6 @@ export const actions: Actions = {
                 "fitur-acarakerajaan": "fitur_acarakerajaan",
                 "fitur-groupchat": "fitur_groupchat",
                 "fitur-forum": "fitur_forum",
-                "fitur-permohonan": "fitur_permohonan",
             };
 
             const errors: any = {};
@@ -224,19 +218,27 @@ export const actions: Actions = {
 
         const penanggalanValues = data.getAll("fitur-penanggalan2");
 
-        const websiteFeatures = {
-            id_kerajaan: parseInt(data.get("id_kerajaan") as string) || 5, // Default semisal gada ( buat coba aja )
-            fitur_situs: data.get("fitur-situs") === "ya" ? 1 : 0,
-            fitur_acara: data.get("fitur-acara") === "ya" ? 1 : 0,
-            fitur_aset: data.get("fitur-aset") === "ya" ? 1 : 0,
-            fitur_organisasi: data.get("fitur-organisasi") === "ya" ? 1 : 0,
-            fitur_komunitas: data.get("fitur-komunitas") === "ya" ? 1 : 0,
-            fitur_tugas: data.get("fitur-tugas-web") === "ya" ? 1 : 0,
-            warna_utama: data.get("warna_utama") as string,
-            warna_secondary: data.get("warna_secondary") as string,
-            warna_aksen1: data.get("warna_aksen1") as string,
-            warna_aksen2: data.get("warna_aksen2") as string,
-        };
+        let permohonan = 0
+
+        if (data.get("fitur-acara") === "ya" || data.get("fitur-tugas-mobile") === "ya" || data.get("fitur-tugasacara") === "ya") {
+            permohonan = 1
+        }
+
+        const websiteFormData = new FormData();
+        websiteFormData.append("id_kerajaan", (data.get("id_kerajaan") as string) || "5");
+        websiteFormData.append("fitur_situs", data.get("fitur-situs") === "ya" ? "1" : "0");
+        websiteFormData.append("fitur_acara", data.get("fitur-acara") === "ya" ? "1" : "0");
+        websiteFormData.append("fitur_aset", data.get("fitur-aset") === "ya" ? "1" : "0");
+        websiteFormData.append("fitur_organisasi", data.get("fitur-organisasi") === "ya" ? "1" : "0");
+        websiteFormData.append("fitur_komunitas", data.get("fitur-komunitas") === "ya" ? "1" : "0");
+        websiteFormData.append("fitur_tugas", data.get("fitur-tugas-web") === "ya" ? "1" : "0");
+        websiteFormData.append("warna_utama", data.get("warna_utama") as string);
+        websiteFormData.append("warna_sekunder", data.get("warna_secondary") as string);
+        websiteFormData.append("warna_aksen_1", data.get("warna_aksen1") as string);
+        websiteFormData.append("warna_aksen_2", data.get("warna_aksen2") as string);
+        if (logoFile) {
+            websiteFormData.append("lambang_kerajaan", logoFile);
+        }
 
         // Mobile features (hanya jika fitur mobile diaktifkan)
         const mobileFeatures = isMobileEnabled ? {
@@ -250,20 +252,22 @@ export const actions: Actions = {
             acara: data.get("fitur-acarakerajaan") === "ya" ? 1 : 0,
             grup: data.get("fitur-groupchat") === "ya" ? 1 : 0,
             forum: data.get("fitur-forum") === "ya" ? 1 : 0,
-            permohonan: data.get("fitur-permohonan") === "ya" ? 1 : 0,
+            warna_utama: data.get("warna_mobile_utama") as string,
+            warna_sekunder: data.get("warna_mobile_secondary") as string,
+            warna_aksen1: data.get("warna_mobile_aksen1") as string,
+            warna_aksen2: data.get("warna_mobile_aksen2") as string,
+            permohonan: permohonan
         } : null;
 
         // Debug: Log payload yang akan dikirim ke API
-        console.log("Website features payload:", websiteFeatures);
+        console.log("Website features payload:", websiteFormData);
         console.log("Mobile features payload:", mobileFeatures);
 
         try {
+            console.log("hoi")
             const websiteResponse = await fetch(`${env.BASE_URL}/fitur/website`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(websiteFeatures)
+                body: websiteFormData
             });
 
             let mobileResponse = { ok: true };
@@ -277,11 +281,16 @@ export const actions: Actions = {
                 });
             }
 
-            if (!websiteResponse.ok || !mobileResponse.ok) {
-                return fail(400, {
-                    error: "Gagal menyimpan fitur aplikasi",
-                    success: false
-                });
+            if (!websiteResponse.ok) {
+                console.log("error")
+                throw new Error("Gagal menyimpan fitur aplikasi");
+
+            }
+
+            if (!mobileResponse.ok) {
+                console.log("error mobile")
+                throw new Error("Gagal menyimpan fitur aplikasi");
+
             }
 
             return {
