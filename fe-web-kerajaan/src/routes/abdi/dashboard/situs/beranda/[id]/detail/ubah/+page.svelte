@@ -7,6 +7,7 @@
 	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import { fade } from 'svelte/transition';
+	import { writable } from 'svelte/store';
 
 	let namasitus = $state('');
 	let email = $state('');
@@ -25,8 +26,15 @@
 	let wisata = $state('');
 	let showEditIcon = $state(true);
 
-	let { form } = $props();
+	let { form, data } = $props();
+	let dataambil = data.situs;
+	let jenisSitusList = data.jenisSitusList || [];
+	let usersList = data.usersList || [];
+	let wisataList = data.wisataList || [];
+	console.log('User list : ', usersList);
+	console.log("Data ambil : ", dataambil)
 	console.log('form data', form?.formData);
+	console.log("wisata : ", data.wisataList)
 
 	if (form?.formData) {
 		namasitus = form.formData.namasitus;
@@ -45,6 +53,18 @@
 		wisata = form.formData.wisata;
 	}
 
+	let tanggal = $state(
+		dataambil.tanggalberdiri
+			? typeof dataambil.tanggalberdiri === 'string'
+				? dataambil.tanggalberdiri.includes('T')
+					? dataambil.tanggalberdiri.split('T')[0]
+					: dataambil.tanggalberdiri
+				: dataambil.tanggalberdiri instanceof Date
+					? dataambil.tanggalberdiri.toISOString().split('T')[0]
+					: String(dataambil.tanggalberdiri)
+			: ''
+	);
+
 	let currentID = $state();
 
 	$effect(() => {
@@ -56,13 +76,68 @@
 	let timer: any;
 	let loading = $state(false);
 	let error: any = $state('');
+	let selectedFile = $state<File | null>(null);
 
 	function previewImage(event: any) {
 		const file = event.target.files[0];
 		const preview = document.getElementById('preview-image') as HTMLImageElement;
 		if (file && preview) {
+			selectedFile = file; // Store the file for submission
 			preview.src = URL.createObjectURL(file);
 			showEditIcon = false; // Sembunyikan icon edit setelah file dipilih
+		}
+	}
+
+	let results = writable<string[]>([]);
+	let showDropdown = writable(false);
+	let lokasi = $state(dataambil.alamat || '');
+	let locationsData: any[] = [];
+	let lat = $state(dataambil.latitude || '');
+	let long = $state(dataambil.longitude || '');
+	let selectedLocation: any = $state('');
+	const API_KEY = 'pk.def50126ee21d7c7b667386e05fc8bcb';
+
+	async function fetchLocations() {
+		if (!lokasi.trim()) return; // Prevent empty search
+
+		const url = `https://us1.locationiq.com/v1/search.php?key=${API_KEY}&q=${encodeURIComponent(lokasi)}&format=json&limit=5`;
+
+		try {
+			const res = await fetch(url);
+			const data = await res.json();
+
+			if (data && Array.isArray(data)) {
+				locationsData = data; // Store all location data
+				const extractedNames = data.map((item: any) => item.display_name);
+
+				results.set(extractedNames);
+				showDropdown.set(extractedNames.length > 0);
+			}
+		} catch (error) {
+			console.error('Error fetching data:', error);
+		}
+	}
+
+	function handleKeyDown(event: KeyboardEvent) {
+		if (event.key === 'Enter') {
+			event.preventDefault(); // Prevent form submission
+			fetchLocations();
+		}
+	}
+
+	function selectLocation(name: string) {
+		lokasi = name;
+		results.set([]);
+		showDropdown.set(false);
+
+		// Find latitude and longitude based on selected location name
+		selectedLocation = locationsData.find((item) => item.display_name === name);
+		if (selectedLocation) {
+			lat = selectedLocation.lat;
+			long = selectedLocation.lon;
+			console.log('Latitude:', lat, 'Longitude:', long);
+		} else {
+			console.log('Coordinates not found.');
 		}
 	}
 </script>
@@ -77,20 +152,22 @@
 	<form
 		method="post"
 		action="?/edit"
+		enctype="multipart/form-data"
 		use:enhance={() => {
 			loading = true;
 			return async ({ result }) => {
 				loading = false;
-				console.log(result);
+				console.log("Form submission result:", result);
 				if (result.type === 'success') {
 					open = true;
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						goto('/abdi/dashboard/situs/detail');
+						goto('/abdi/dashboard/situs/beranda');
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
+					console.error("Form submission errors:", error);
 				}
 			};
 		}}
@@ -103,7 +180,7 @@
 					<label for="upload-photo" class="relative ml-5 mr-5 cursor-pointer hover:opacity-25">
 						<img
 							id="preview-image"
-							src={gambardefault}
+							src={dataambil.profile || ''}
 							class="h-20 w-20 rounded-full object-cover"
 							alt="Profile"
 						/>
@@ -116,9 +193,23 @@
 					<input
 						type="file"
 						id="upload-photo"
+						name="profile_picture"
 						accept="image/*"
 						class="hidden"
 						onchange={previewImage}
+					/>
+
+					<input 
+						type="hidden" 
+						name="existing_foto_profile" 
+						bind:value={dataambil.profile} 
+					/>
+
+					<!-- Add a hidden input to store the existing photo ID -->
+					<input 
+						type="hidden" 
+						name="existing_foto_situs" 
+						bind:value={dataambil.foto_situs} 
 					/>
 				</div>
 				<div>
@@ -128,7 +219,7 @@
 							type="text"
 							placeholder="Masukkan Nama"
 							name="namasitus"
-							bind:value={namasitus}
+							bind:value={dataambil.namasitus}
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 						/>
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
@@ -146,7 +237,7 @@
 						<input
 							type="text"
 							name="email"
-							bind:value={email}
+							bind:value={dataambil.email}
 							placeholder="Masukkan Nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 						/>
@@ -165,7 +256,7 @@
 						<input
 							type="text"
 							name="notelepon"
-							bind:value={notelepon}
+							bind:value={dataambil.notelepon}
 							placeholder="Masukkan nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 						/>
@@ -181,7 +272,7 @@
 							type="text"
 							placeholder="Masukkan nama"
 							name="kepemilikan"
-							bind:value={kepemilikan}
+							bind:value={dataambil.kepemilikan}
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 						/>
 						{#if error}
@@ -198,7 +289,7 @@
 						<textarea
 							placeholder="Masukkan nama"
 							name="deskripsi"
-							bind:value={deskripsi}
+							bind:value={dataambil.deskripsi}
 							class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg"
 						></textarea>
 						<div class="h-full">
@@ -221,7 +312,7 @@
 						<input
 							type="text"
 							name="dibangunoleh"
-							bind:value={dibangunoleh}
+							bind:value={dataambil.dibangunoleh}
 							placeholder="Masukkan nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 						/>
@@ -232,11 +323,11 @@
 						{/if}
 					</div>
 					<div class="w-full">
-						<p>Tanggal Berdiri :</p>
+						<p>Tahun Berdiri :</p>
 						<input
-							type="date"
+							type="text"
 							name="tanggalberdiri"
-							bind:value={tanggalberdiri}
+							bind:value={tanggal}
 							placeholder="Masukkan nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 						/>
@@ -252,12 +343,32 @@
 					<p>Alamat:</p>
 					<div class="relative">
 						<input
+							class="input-field mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 							type="text"
+							id="alamat"
 							name="alamat"
-							bind:value={alamat}
-							placeholder="Masukkan Pembina"
-							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+							placeholder="Masukkan alamat..."
+							bind:value={lokasi}
+							onkeydown={handleKeyDown}
 						/>
+						<input type="hidden" name="longitude" bind:value={long} />
+						<input type="hidden" name="latitude" bind:value={lat} />
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+						{#if $showDropdown && lokasi !== ''}
+							<ul
+								class="dropdown absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-white shadow-lg"
+							>
+								{#each $results as name}
+									<li
+										class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+										onclick={() => selectLocation(name)}
+									>
+										{name}
+									</li>
+								{/each}
+							</ul>
+						{/if}
 					</div>
 					{#if error}
 						{#each error.alamat as a}
@@ -269,13 +380,18 @@
 				<div class="flexcoba mt-5 flex gap-6">
 					<div class="w-full">
 						<p>Juru Kunci :</p>
-						<input
-							type="text"
+						<select
 							name="jurukunci"
-							bind:value={jurukunci}
-							placeholder="Masukkan nama"
-							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
-						/>
+							bind:value={dataambil.jurukunci}
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						>
+							<option value="" disabled selected={!dataambil.jurukunci}>Pilih Juru Kunci</option>
+							{#each usersList as user}
+								<option value={user.nama_lengkap}>
+									{user.nama_lengkap || 'Unnamed'}
+								</option>
+							{/each}
+						</select>
 						{#if error}
 							{#each error.jurukunci as a}
 								<p class="text-center text-red-500">{a}</p>
@@ -284,13 +400,19 @@
 					</div>
 					<div class="w-full">
 						<p>Jenis Situs :</p>
-						<input
-							type="text"
+						<select
 							name="jenissitus"
-							bind:value={jenissitus}
-							placeholder="Masukkan nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-						/>
+						>
+							<option value="" disabled selected={!dataambil.jenissitus}>Pilih Jenis Situs</option>
+							{#each jenisSitusList as jenis}
+								<option
+									value={jenis.id_jenis_situs}
+								>
+									{jenis.jenis_situs || jenis.nama_jenis || 'Unnamed'}
+								</option>
+							{/each}
+						</select>
 						{#if error}
 							{#each error.jenissitus as a}
 								<p class="text-center text-red-500">{a}</p>
@@ -302,13 +424,20 @@
 				<div class="flexcoba mt-5 flex gap-6">
 					<div class="w-full">
 						<p>Pembina :</p>
-						<input
-							type="text"
+						<select
 							name="pembina"
-							bind:value={pembina}
-							placeholder="Masukkan nama"
-							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
-						/>
+							bind:value={dataambil.pembina}
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						>
+							<option value="" disabled selected={!dataambil.pembina}>Pilih Pembina</option>
+							{#each usersList as user}
+								<option
+									value={user.nama_lengkap}
+								>
+									{user.nama_lengkap || 'Unnamed'}
+								</option>
+							{/each}
+						</select>
 						{#if error}
 							{#each error.pembina as a}
 								<p class="text-center text-red-500">{a}</p>
@@ -317,13 +446,20 @@
 					</div>
 					<div class="w-full">
 						<p>Pelindung :</p>
-						<input
-							type="text"
+						<select
 							name="pelindung"
-							bind:value={pelindung}
-							placeholder="Masukkan nama"
-							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
-						/>
+							bind:value={dataambil.pelindung}
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+						>
+							<option value="" disabled selected={!dataambil.pelindung}>Pilih Pelindung</option>
+							{#each usersList as user}
+								<option
+									value={user.nama_lengkap}
+								>
+									{user.nama_lengkap || 'Unnamed'}
+								</option>
+							{/each}
+						</select>
 						{#if error}
 							{#each error.pelindung as a}
 								<p class="text-center text-red-500">{a}</p>
@@ -337,7 +473,7 @@
 						<p>Jam Buka :</p>
 						<input
 							type="time"
-							bind:value={jambuka}
+							bind:value={dataambil.jambuka}
 							name="jambuka"
 							placeholder="Masukkan nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
@@ -352,7 +488,7 @@
 						<p>Jam Tutup :</p>
 						<input
 							type="time"
-							bind:value={jamtutup}
+							bind:value={dataambil.jamtutup}
 							name="jamtutup"
 							placeholder="Masukkan nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
@@ -368,13 +504,20 @@
 				<div class="mt-3">
 					<p>Wisata:</p>
 					<div class="relative">
-						<input
-							type="text"
-							bind:value={wisata}
+						<select
 							name="wisata"
-							placeholder="Masukkan Pembina"
+							bind:value={dataambil.wisata}
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-						/>
+						>
+							<option value="" disabled>Pilih Pembina</option>
+							{#each wisataList as user}
+								<option
+									value={user.id_wisata}
+								>
+									{user.nama_wisata || 'Unnamed'}
+								</option>
+							{/each}
+						</select>
 					</div>
 					{#if error}
 						{#each error.wisata as a}
@@ -427,5 +570,28 @@
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'/%3E%3C/svg%3E");
+	}
+
+	.dropdown {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		width: 100%;
+		max-height: 200px;
+		overflow-y: auto;
+		background-color: white;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		z-index: 10;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	}
+
+	.dropdown li {
+		padding: 8px 12px;
+		cursor: pointer;
+	}
+
+	.dropdown li:hover {
+		background-color: #f0f0f0;
 	}
 </style>

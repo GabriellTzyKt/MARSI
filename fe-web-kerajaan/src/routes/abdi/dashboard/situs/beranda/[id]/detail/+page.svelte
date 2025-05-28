@@ -10,6 +10,9 @@
 	console.log("data ambil : ", dataambil)
 	let datasemuafoto = $state(data.fotoSitusDetails)
 	let datafotoprofil = $state(data.fileDetails)
+	console.log("Data foto profil : ", datafotoprofil)
+	console.log("Data semua foto : ", datasemuafoto)
+	console.log("Data wisata : ", data.wisata)
 	
 	let situsId = $state($page.params.id);
 	
@@ -52,7 +55,7 @@
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Wisata :</p>
-					<input type="text" bind:value={dataambil.wisata} readonly placeholder="Masih Kosong" />
+					<input type="text" bind:value={data.wisata.nama_wisata} readonly placeholder="Masih Kosong" />
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"

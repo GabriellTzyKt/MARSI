@@ -13,6 +13,7 @@
 	console.log('data ambil : ', dataambil);
 	console.log('data foto profil : ', datafotoprofile);
 	console.log('data all foto : ', datasemuafoto);
+	console.log('data ' , data.penanggungJawab)
 
 	let idAktif = $state(page.params.id);
 	console.log('ID Aktif : ', idAktif);
@@ -84,7 +85,7 @@
 					<p>Penanggung Jawab :</p>
 					<input
 						type="text"
-						value={data?.penanggungJawab.nama_lengkap}
+						value={data?.penanggungJawab?.nama_lengkap}
 						readonly
 						placeholder="Masukkan Penanggung Jawab"
 					/>
@@ -95,7 +96,7 @@
 					<p>Pembina :</p>
 					<input
 						type="text"
-						value={data?.pembina.nama_lengkap}
+						value={data?.pembina?.nama_lengkap}
 						readonly
 						placeholder="Masukkan Pembina"
 					/>

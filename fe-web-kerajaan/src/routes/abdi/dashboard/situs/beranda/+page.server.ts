@@ -21,11 +21,9 @@ export const load: PageServerLoad = async ({ }) => {
             filteredList.map(async (situs: any) => {
                 let profileUrl = null;
                 
-                if (situs.foto_situs) {
+                if (situs.profile) {
                     try {
-                        const firstPhotoId = situs.foto_situs.split(',')[0].trim();
-                        
-                        const filePathResponse = await fetch(`${env.URL_KERAJAAN}/doc/${firstPhotoId}`);
+                        const filePathResponse = await fetch(`${env.URL_KERAJAAN}/doc/${situs.profile}`);
                         if (filePathResponse.ok) {
                             const filePathData = await filePathResponse.json();
                             const filePath = filePathData.file_dokumentasi;

@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({fetch, params, depends}) => {
         console.log(`Events for organization ${currentOrgId}:`, acaraData);
         
         // Add organization info to each acara without processing photos
-        const processedAcara = acaraData.map(acara => ({
+        const processedAcara = acaraData.map((acara : any) => ({
             ...acara,
             organisasi_id: currentOrgId,
             organisasi_nama: currentOrganisasi.nama_organisasi || 'Unknown Organization'
