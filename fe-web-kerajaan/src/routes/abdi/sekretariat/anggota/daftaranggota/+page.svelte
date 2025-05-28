@@ -8,10 +8,12 @@
 	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
+	import HistoryPopUp from '$lib/popup/HistoryPopUp.svelte';
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Table from '$lib/table/Table.svelte';
 	let { data } = $props();
+
 	let dataAmbil = data.data;
 	let keyword = $state('');
 	let entries = $state(10);
@@ -20,16 +22,24 @@
 	let dataDelete = $state();
 	let success = $state(false);
 	let loading = $state(false);
-	function nonAktifkan(id: number) {
+	let deleteID = $state();
+	let gelarModal = $state(false);
+	let gelarDataID = $state();
+	function openGelar(id: any) {
+		console.log('Open Gelar : ', id);
+		gelarDataID = id;
+		gelarModal = true;
+	}
+	function nonAktifkan(id: any) {
 		console.log('Non Aktifkan : ', id);
-		dataDelete = dataAmbil.find((item) => item.id_user === id).id_user || '';
+		deleteID = id;
 		modalDelete = true;
 	}
 	function filterD(data: any[]) {
 		return data.filter(
 			(item) =>
 				item?.nama_lengkap?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.asma_dalem?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.panggilan?.toLowerCase().includes(keyword.toLowerCase()) ||
 				item?.tempat_lahir?.toLowerCase().includes(keyword.toLowerCase()) ||
 				item?.tanggal_lahir?.toLowerCase().includes(keyword.toLowerCase()) ||
 				item?.jabatan_organisasi?.toLowerCase().includes(keyword.toLowerCase()) ||
@@ -44,7 +54,7 @@
 		let end = start + entries;
 		return dataa.slice(start, end);
 	}
-	let resdata = $derived(pagination(dataAmbil || []));
+	let resdata = $derived(pagination(data.data || []));
 </script>
 
 {#if loading}
@@ -121,12 +131,11 @@
 		<Table
 			table_header={[
 				['nama_lengkap', 'Nama Lengkap'],
-				['asma_dalem', 'Asma Dalem'],
-				['tempat_lahir', 'tempat_lahir'],
-				['tanggal_lahir', 'tanggal_lahir'],
-				['jabatan_organisasi', 'Jabatan Organisasi'],
-				['jaatan_komunitas', 'Jabatan Komunitas'],
-				['gelar', 'Gelar'],
+				['panggilan', 'Asma Dalem'],
+				['tempat_lahir', 'Tempat Lahir'],
+				['tanggal_lahir', 'Tanggal Lahir'],
+				['jabatan', 'Jabatan'],
+				['nama_gelar', 'Gelar'],
 				['no_telp', 'Nomer Telepon'],
 				['children', 'Aksi']
 			]}
@@ -139,12 +148,12 @@
 						items={[
 							{
 								label: 'Edit',
-								action: () => goto(`/abdi/sekretariat/anggota/daftaranggota/edit/${data.id_user}`)
+								action: () =>
+									goto(`/abdi/sekretariat/anggota/daftaranggota/ubah/${data.id_anggota}`)
 							},
 							{
 								label: 'History Gelar',
-								action: () =>
-									goto(`/abdi/sekretariat/anggota/daftaranggota/historygelar/${data.id_user}`)
+								action: () => openGelar(data.id_user)
 							},
 							{
 								label: 'History Bintang Jasa',
@@ -153,7 +162,7 @@
 							},
 							{
 								label: 'Non Aktifkan',
-								action: () => nonAktifkan(data.id_user)
+								action: () => nonAktifkan(data.id_anggota)
 							}
 						]}
 						id={`id-${index}`}
@@ -167,7 +176,7 @@
 </div>
 {#if modalDelete}
 	<form
-		action="?/delete"
+		action="?/hapusAnggota"
 		method="post"
 		use:enhance={() => {
 			loading = true;
@@ -179,12 +188,13 @@
 						success = true;
 						// goto(`/abdi/sekretariat/anggota/daftaranggota`, {
 						// 	replaceState: true
-						invalidateAll();
+						await invalidateAll().then(() => {
+							setTimeout(() => {
+								modalDelete = false;
+								success = false;
+							}, 1000);
+						});
 						// });
-						setTimeout(() => {
-							modalDelete = false;
-							success = false;
-						}, 3000);
 					} catch (error) {}
 				}
 				if (result.type === 'failure') {
@@ -199,9 +209,17 @@
 			successText="Anggota berhasil dihapus!"
 			choose="delete"
 		></DeleteModal>
-		<input type="hidden" name="id_user" value={dataDelete} />
+		<input type="hidden" name="id_anggota" value={deleteID} />
 	</form>
 {/if}
 {#if success}
 	<SuccessModal text="Anggota berhasil dihapus!"></SuccessModal>
+{/if}
+{#if gelarModal}
+	<HistoryPopUp
+		data={dummyHistoryGelar}
+		bind:value={gelarModal}
+		title="History Gelar"
+		header={['nama_gelar', 'nama_pelantik', 'tanggal_dilantik', 'acara', 'sertifikat']}
+	></HistoryPopUp>
 {/if}
