@@ -6,19 +6,45 @@
 	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
+	import { navigating } from '$app/state';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	let namakomunitas = $state('');
 	let alamat = $state('');
 	let email = $state('');
 	let deskripsikomunitas = $state('');
-	let penanggungjawab = $state('');
-	let pembina = $state('');
-	let pelindung = $state('');
 	let notelepon = $state('');
 	let jumlahanggota = $state('');
 
-	let { form } = $props();
+	let { form, data } = $props();
 	console.log('form data', form?.formData);
+	let dataambil = data.komunitas;
+	console.log('Data : ', dataambil);
+	let datafoto = data.profileUrl || gambardefault;
+	console.log('data foto : ', datafoto);
+	let usersList = data.usersList || [];
+	console.log('User list : ', usersList);
+	let existingfotoId = data.profileId;
+	console.log('Existing foto id : ', existingfotoId);
+	let tanggal_berdiri = $state(dataambil.tanggal_berdiri.split('T')[0]);
+	let pembina = $state(Number(dataambil.pembina));
+	let penanggungjawab = $state(Number(dataambil.penanggung_jawab));
+	let pelindung = $state(Number(dataambil.pelindung));
+	let loading = $state(false)
+
+	let showEditIcon = $state(true);
+
+	let selectedFile = $state<File | null>(null);
+
+	function previewImage(event: any) {
+		const file = event.target.files[0];
+		const preview = document.getElementById('preview-image') as HTMLImageElement;
+		if (file && preview) {
+			selectedFile = file; // Store the file for submission
+			preview.src = URL.createObjectURL(file);
+			showEditIcon = false; // Sembunyikan icon edit setelah file dipilih
+		}
+	}
 
 	if (form?.formData) {
 		namakomunitas = form.formData.namakomunitas;
@@ -34,29 +60,79 @@
 
 	let open = $state(false);
 	let timer: any;
-	let error : any = $state('')
-
+	let error: any = $state('');
 </script>
 
+
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+
+{#if loading}
+	<Loader text="processing..."></Loader>
+{/if}
+
 <div class="h-full w-full">
-	<form method="post" action="?/edit" use:enhance={() => {
-		return async ({ result }) => {
-			console.log(result);
-			if (result.type === 'success') {
-				open = true;
-				clearTimeout(timer);
-				timer = setTimeout(() => {
-					open = false;
-					goto('/abdi/dashboard/komunitas/detail');
-				}, 3000);
-			} else if (result.type === 'failure') {
-				error = result.data?.errors;
-			}
-		};
-	}}>
+	<form
+		method="post"
+		action="?/edit"
+		enctype="multipart/form-data"
+		use:enhance={() => {
+			loading = true;
+			return async ({ result }) => {
+				loading = false;
+				console.log(result);
+				if (result.type === 'success') {
+					open = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						open = false;
+						goto('/abdi/dashboard/komunitas/beranda');
+					}, 3000);
+				} else if (result.type === 'failure') {
+					error = result.data?.errors;
+				}
+			};
+		}}
+	>
 		<div class="relative mx-auto flex w-full items-center justify-center">
-			<img src={gambardefault} class="h-25 w-25 relative ml-5 mr-5 rounded-full" alt="" />
-			<span class="mdi--edit absolute"></span>
+			<div class="relative mx-auto mb-9 flex w-full items-center justify-center">
+				<!-- Image yang bisa diklik -->
+				<label for="profile_picture" class="relative cursor-pointer">
+					<div class="relative">
+						<img
+							id="preview-image"
+							src={datafoto || ''}
+							class="h-20 w-20 rounded-full object-cover"
+							alt="Profile"
+						/>
+						{#if showEditIcon}
+							<span
+								class="mdi--edit absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform"
+							></span>
+						{/if}
+					</div>
+				</label>
+
+				<!-- Input file yang disembunyikan - fixed the ID to match the label -->
+				<input
+					type="file"
+					id="profile_picture"
+					name="profile_picture"
+					accept="image/*"
+					class="hidden"
+					onchange={previewImage}
+				/>
+
+				<!-- Add a hidden input to store the existing photo ID -->
+				<input type="hidden" name="existing_profile_id" value={existingfotoId || ''} />
+
+				<input
+					type="hidden"
+					name="existing_foto_komunitas"
+					value={dataambil.foto_komunitas || ''}
+				/>
+			</div>
 		</div>
 		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<!-- 1 -->
@@ -67,7 +143,7 @@
 						<input
 							type="text"
 							name="namakomunitas"
-							bind:value={namakomunitas}
+							bind:value={dataambil.nama_komunitas}
 							placeholder="Masukkan Nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 						/>
@@ -86,7 +162,7 @@
 						<input
 							type="text"
 							name="alamat"
-							bind:value={alamat}
+							bind:value={dataambil.alamat}
 							placeholder="Masukkan Nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 						/>
@@ -105,7 +181,7 @@
 						<input
 							type="text"
 							name="email"
-							bind:value={email}
+							bind:value={dataambil.email}
 							placeholder="Masukkan Nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 						/>
@@ -119,12 +195,30 @@
 				</div>
 
 				<div>
+					<p class="mt-5">Tanggal Berdiri:</p>
+					<div class="relative">
+						<input
+							type="date"
+							name="tanggal_berdiri"
+							id="tanggal_berdiri"
+							bind:value={tanggal_berdiri}
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						/>
+					</div>
+					{#if error}
+						{#each error.tanggalBerdiri as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
+				</div>
+
+				<div>
 					<p class="mt-5">Deskripsi Komunitas:</p>
 					<div class="relative w-full">
 						<textarea
 							placeholder="Masukkan nama"
 							name="deskripsikomunitas"
-							bind:value={deskripsikomunitas}
+							bind:value={dataambil.deskripsi_komunitas}
 							class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg"
 						></textarea>
 						<div class="h-full">
@@ -143,15 +237,18 @@
 			<div>
 				<div>
 					<p>Penanggung Jawab:</p>
-					<div class="relative">
-						<input
-							type="text"
-							bind:value={penanggungjawab}
-							name="penanggungjawab"
-							placeholder="Masukkan Penanggung Jawab"
-							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
-						/>
-					</div>
+					<select
+						name="penanggungjawab"
+						bind:value={penanggungjawab}
+						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+					>
+						<option value="" disabled>Pilih Penanggung Jawab</option>
+						{#each usersList as user}
+							<option value={user.id}>
+								{user.nama_lengkap || 'Unnamed'}
+							</option>
+						{/each}
+					</select>
 					{#if error}
 						{#each error.penanggungjawab as a}
 							<p class="text-left text-red-500">{a}</p>
@@ -160,36 +257,58 @@
 				</div>
 
 				<div class="mt-5">
-					<p>Pembina:</p>
-					<div class="relative">
-						<input
-							type="text"
-							bind:value={pembina}
-							name="pembina"
-							placeholder="Masukkan Pembina"
-							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
-						/>
-					</div>
+					<p>Pembina :</p>
+					<select
+						name="pembina"
+						bind:value={pembina}
+						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+					>
+						<option value="" disabled>Pilih Pembina</option>
+						{#each usersList as user}
+							<option value={user.id}>
+								{user.nama_lengkap || 'Unnamed'}
+							</option>
+						{/each}
+					</select>
 					{#if error}
 						{#each error.pembina as a}
-							<p class="text-left text-red-500">{a}</p>
+							<p class="text-center text-red-500">{a}</p>
 						{/each}
 					{/if}
 				</div>
 
 				<div class="mt-5">
-					<p>Pelindung:</p>
-					<div class="relative">
-						<input
-							type="text"
-							name="pelindung"
-							bind:value={pelindung}
-							placeholder="Masukkan Pelindung"
-							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
-						/>
-					</div>
+					<p>Pelindung :</p>
+					<select
+						name="pelindung"
+						bind:value={pelindung}
+						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+					>
+						<option value="" disabled selected={!dataambil.pelindung}>Pilih Pelindung</option>
+						{#each usersList as user}
+							<option value={user.id}>
+								{user.nama_lengkap || 'Unnamed'}
+							</option>
+						{/each}
+					</select>
 					{#if error}
 						{#each error.pelindung as a}
+							<p class="text-center text-red-500">{a}</p>
+						{/each}
+					{/if}
+				</div>
+
+				<div class="mt-5 w-full">
+					<p>Tempat Operasional :</p>
+					<input
+						type="text"
+						name="tempat_operasional"
+						bind:value={dataambil.tempat_operasional}
+						placeholder="Masukkan nama"
+						class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
+					/>
+					{#if error}
+						{#each error.tempat_operasional as a}
 							<p class="text-left text-red-500">{a}</p>
 						{/each}
 					{/if}
@@ -201,7 +320,7 @@
 						<input
 							type="text"
 							name="notelepon"
-							bind:value={notelepon}
+							bind:value={dataambil.no_telp}
 							placeholder="Masukkan nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 						/>
@@ -216,9 +335,10 @@
 						<input
 							type="text"
 							name="jumlahanggota"
-							bind:value={jumlahanggota}
+							readonly
+							bind:value={dataambil.jumlah_anggota}
 							placeholder="Masukkan nama"
-							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+							class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
 						/>
 						{#if error}
 							{#each error.jumlahanggota as a}

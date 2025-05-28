@@ -33,7 +33,7 @@ export const load: PageServerLoad = async ({fetch, params, depends}) => {
         const acaraNestedData = await acaraResponse.json();
         
         // Process acara data - extract from nested structure
-        const processedAcara = acaraNestedData.map(item => {
+        const processedAcara = acaraNestedData.map((item : any) => {
             if (item.Acara) {
                 return {
                     ...item.Acara,

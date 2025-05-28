@@ -264,6 +264,8 @@
 			return 'Daftar Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit/[id]') {
 			return 'Edit Organisasi';
+		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/edit') {
+			return 'Edit Organisasi';
 		}
 	});
 
