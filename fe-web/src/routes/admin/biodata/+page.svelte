@@ -4,6 +4,7 @@
 
 	let { data } = $props()
 	let dataKerajaan : any = data.dataKerajaan
+	console.log("Data " , data)
 	console.log("Data kerajaan : ", dataKerajaan)
 </script>
 

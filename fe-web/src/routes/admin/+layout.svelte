@@ -71,7 +71,7 @@
 	});
 
 	const { children, data } = $props();
-	console.log(data);
+	console.log('Data : ', data);
 	let sidebarActive = writable(false);
 
 	const toggleSidebar = () => {
@@ -144,7 +144,7 @@
 					active={page.route.id?.startsWith('/admin/suratDokumen')}
 				/>
 				<SidebarMenu
-					href="/admin/aplikasiKerajaan"
+					href={`/admin/aplikasiKerajaan/${data.id_kerajaan}`}
 					icon="mdi:home"
 					anchor="Aplikasi Kerajaan"
 					active={page.route.id?.startsWith('/admin/aplikasiKerajaan')}
@@ -222,82 +222,88 @@
 <div class="flex h-fit min-w-full">
 	<div class="test bg-customYellow hidden min-h-screen w-fit lg:block lg:w-[16.7%]">
 		<Sidebar>
-			<SidebarMenu
-				href="/admin/beranda"
-				icon="mdi:home"
-				anchor="Beranda"
-				active={isActive('/admin/beranda')}
-			/>
+			{#if data.tipe === 'super admin'}
+				<SidebarMenu
+					href="/admin/beranda"
+					icon="mdi:home"
+					anchor="Beranda"
+					active={isActive('/admin/beranda')}
+				/>
 
-			<SidebarMenu
-				href="/admin/keanggotaan/daftaranggota"
-				icon="mdi:book"
-				anchor="Daftar Anggota"
-				active={page.route.id?.startsWith('/admin/keanggotaan/daftaranggota')}
-			></SidebarMenu>
+				<SidebarMenu
+					href="/admin/keanggotaan/daftaranggota"
+					icon="mdi:book"
+					anchor="Daftar Anggota"
+					active={page.route.id?.startsWith('/admin/keanggotaan/daftaranggota')}
+				></SidebarMenu>
 
-			<SidebarMenu
-				href="/admin/acara"
-				icon="mdi:calendar"
-				anchor="Acara"
-				active={page.route.id?.startsWith('/admin/acara')}
-			/>
-			<SidebarMenu
-				href="/admin/landingPage"
-				icon="mdi:globe"
-				anchor="Landing page"
-				active={isActive('/admin/landingPage')}
-			/>
-			<SidebarMenu
-				href="/admin/masterData"
-				icon="mdi:globe"
-				anchor="Master Data"
-				active={isActive('/admin/masterData')}
-			/>
+				<SidebarMenu
+					href="/admin/acara"
+					icon="mdi:calendar"
+					anchor="Acara"
+					active={page.route.id?.startsWith('/admin/acara')}
+				/>
+				<SidebarMenu
+					href="/admin/landingPage"
+					icon="mdi:globe"
+					anchor="Landing page"
+					active={isActive('/admin/landingPage')}
+				/>
+				<SidebarMenu
+					href="/admin/masterData"
+					icon="mdi:globe"
+					anchor="Master Data"
+					active={isActive('/admin/masterData')}
+				/>
 
-			<SidebarMenu
-				href="/admin/manajemenWebsite"
-				icon="mdi:home"
-				anchor="Website Kerajaan"
-				active={page.route.id?.startsWith('/admin/manajemenWebsite')}
-			/>
+				<SidebarMenu
+					href="/admin/manajemenWebsite"
+					icon="mdi:home"
+					anchor="Website Kerajaan"
+					active={page.route.id?.startsWith('/admin/manajemenWebsite')}
+				/>
+			{/if}
 
-			<SidebarMenu
-				href="/admin/aplikasiKerajaan/15"
-				icon="mdi:home"
-				anchor="Aplikasi Kerajaan"
-				active={page.route.id?.startsWith('/admin/aplikasiKerajaan')}
-			/>
+			{#if data.tipe === 'admin kerajaan'}
+				<SidebarMenu
+					href={`/admin/aplikasiKerajaan/${data.id_kerajaan}`}
+					icon="mdi:home"
+					anchor="Aplikasi Kerajaan"
+					active={page.route.id?.startsWith('/admin/aplikasiKerajaan')}
+				/>
+				<SidebarMenu
+					href="/admin/biodata"
+					icon="mdi:home"
+					anchor="Biodata Kerajaan"
+					active={page.route.id?.startsWith('/admin/biodata')}
+				/>
+			{/if}
 			<!-- <SidebarMenu
 				href="/admin/biodata"
 				icon="mdi:globe"
 				anchor="Biodata Kerajaan"
 				active={isActive('/admin/biodata')}
 			/> -->
-			<SidebarMenu
-				href="/admin/suratDokumen"
-				icon="mdi:home"
-				anchor="Surat Dokumen"
-				active={page.route.id?.startsWith('/admin/suratDokumen')}
-			/>
-			<SidebarMenu
-				href="/admin/biodata"
-				icon="mdi:home"
-				anchor="Biodata Kerajaan"
-				active={page.route.id?.startsWith('/admin/biodata')}
-			/>
-			<SidebarMenu
-				href="/admin/managemen"
-				icon="mdi:home"
-				anchor="Managemen Admin"
-				active={isActive('/admin/managemen')}
-			/>
-			<!-- <SidebarMenu
+			{#if data.tipe === 'super admin'}
+				<SidebarMenu
+					href="/admin/suratDokumen"
+					icon="mdi:home"
+					anchor="Surat Dokumen"
+					active={page.route.id?.startsWith('/admin/suratDokumen')}
+				/>
+				<SidebarMenu
+					href="/admin/managemen"
+					icon="mdi:home"
+					anchor="Managemen Admin"
+					active={isActive('/admin/managemen')}
+				/>
+				<!-- <SidebarMenu
 				href="/admin/pendaftaranKerajaan"
 				icon="mdi:home"
 				anchor="Pendaftaran Kerajaan"
 				active={page.route.id?.startsWith('/admin/pendaftaranKerajaan')}
 			/> -->
+			{/if}
 		</Sidebar>
 	</div>
 

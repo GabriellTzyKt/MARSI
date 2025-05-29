@@ -6,8 +6,12 @@ import { fail } from "@sveltejs/kit";
 
 
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ parent }) => {
     try {
+        const parentData = await parent();
+        const id_kerajaan = parentData.id_kerajaan;
+        console.log("ID Kerajaan from parent data:", id_kerajaan);
+
         const request = await fetch(env.PUB_PORT + "/kerajaan?limit=200", {
             method: "GET",
             headers: {

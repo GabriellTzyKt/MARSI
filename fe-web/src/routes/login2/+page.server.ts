@@ -48,6 +48,7 @@ export const actions: Actions = {
             username: data.get("username"),
             password: data.get("pass")
         }
+        // First, make the API call to sign in
         const res = await fetch(`${env.PUB_PORT}/sign-in`, {
             method: "POST",
             headers: {
@@ -55,21 +56,87 @@ export const actions: Actions = {
             },
             body: dataaa
         });
-        
-            const s = await res.json()
-        
+
+        const s = await res.json()
+
         if (res.ok) {
-            console.log(s)
-            const data = jwtDecode(s.jwt_token)
+            console.log("Login successful, response:", s);
+            const data: any = jwtDecode(s.jwt_token);
             
-        cookies.set("userSession", JSON.stringify({ nama: s.username, data:data, token:s.jwt_token }), {
-            path: '/',
-            maxAge: 60 * 60 * 60000,
-            sameSite: 'strict'
-        })
-           return {errors:false,success: true}
-           
+            // Extract id_user from the decoded JWT data
+            const id_user = data.id_user;
+            console.log("Decoded JWT, id_user:", id_user);
             
+            // Check if this user is an admin by fetching admin data
+            let adminResponse = await fetch(`${env.BASE_URL}/admin?limit=200`, {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            
+            let isAdmin = false;
+            let adminType = null;
+            let adminData = null;
+            let id_kerajaan = 0;
+            
+            if (adminResponse.ok) {
+                const admins = await adminResponse.json();
+                console.log("Admin data fetched, total admins:", admins.length);
+                
+                // Find admin with matching id_user
+                adminData = admins.find((admin: any) => admin.id_user === id_user);
+                console.log("Admin data for current user:", adminData);
+                
+                if (adminData) {
+                    // Check if admin account is active
+                    if (adminData.status_aktif === 0) {
+                        console.log(`Admin account is inactive (status_aktif = 0)`);
+                        // Return specific error for inactive account
+                        return fail(403, { 
+                            errorB: "Akun tidak aktif. Silahkan hubungi administrator.", 
+                            success: false, 
+                            username: data.get("username"),
+                            inactive: true
+                        });
+                    } else {
+                        isAdmin = true;
+                        adminType = adminData.jenis_admin;
+                        id_kerajaan = adminData.id_kerajaan || 0;
+                        console.log(`User is an admin of type: ${adminType}, id_kerajaan: ${id_kerajaan}`);
+                    }
+                } else {
+                    console.log("No admin data found for this user");
+                }
+            } else {
+                console.error("Failed to fetch admin data:", adminResponse.status);
+            }
+            
+            // Set cookie with all the necessary information
+            cookies.set("userSession", JSON.stringify({ 
+                nama: s.username, 
+                data: data, 
+                token: s.jwt_token,
+                id_user: id_user,
+                isAdmin: isAdmin,
+                adminType: adminType,
+                adminData: adminData,
+                id_kerajaan
+            }), {
+                path: '/',
+                maxAge: 60 * 60 * 60000,
+                sameSite: 'strict'
+            });
+            
+            console.log("Cookie set with adminType:", adminType);
+            
+            // Return success response with admin information including id_kerajaan
+            return {
+                errors: false, 
+                success: true, 
+                id_user: id_user,
+                isAdmin: isAdmin,
+                adminType: adminType,
+                id_kerajaan: id_kerajaan
+            };
         }
        
        

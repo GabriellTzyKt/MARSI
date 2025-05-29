@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { scaleUtc, timeout } from 'd3';
 	import image from '../../asset/Logo_MARSI_login.png';
 	import SModal from '$lib/popup/SModal.svelte';
@@ -9,7 +10,17 @@
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
 
-	let { form } = $props();
+	let { form, data } = $props();
+	let errorMessage = $state('');
+
+	// Check for error parameter in URL
+	$effect(() => {
+		const error = $page.url.searchParams.get('error');
+		if (error === 'inactive') {
+			errorMessage = 'Akun admin tidak aktif. Silahkan hubungi administrator.';
+		}
+		console.log("Error message : ", errorMessage)
+	});
 
 	let open = $state(false);
 	onMount(() => {
@@ -24,8 +35,8 @@
 	let error = $state();
 
 	let inputt = $state('');
-	if (form?.email) {
-		inputt = form.email.toString();
+	if (form?.username) {
+		inputt = form.username.toString();
 	}
 	let tipe = $state('password');
 	let trans = $state(false);
@@ -58,22 +69,64 @@
 					loading = true;
 					return async ({ result }) => {
 						loading = false;
+						console.log("Form submission result:", result);
+						
 						if (result.type === 'success') {
 							let timer: number;
 							open = true;
+							
+							// Check admin type from the result
+							const adminType : any = result.data?.adminType;
+							const id : any = result.data?.id_kerajaan
+							console.log("Admin type from result:", adminType);
+							console.log("Admin dat : ", result.data?.id_kerajaan);
+							
+							// Redirect based on admin type
 							timer = setTimeout(() => {
 								open = false;
-								goto('/admin/beranda');
+								
+								// If admin type is "admin kerajaan", redirect to a specific page
+								if (adminType && adminType.toLowerCase() === 'admin kerajaan') {
+									console.log("Redirecting to admin kerajaan page");
+									goto(`/admin/aplikasiKerajaan/${id}`);
+								} else {
+									// Default redirect for super admin or other types
+									console.log("Redirecting to default admin page");
+									goto('/admin/beranda');
+								}
 							}, 3000);
 						}
+						
 						if (result.type === 'failure') {
 							error = result.data?.errors;
 							errB = result.data?.errorB;
+							
+							// If account is inactive, redirect to error page or show specific message
+							if (result.data?.inactive) {
+								errorMessage = "Akun tidak aktif. Silahkan hubungi administrator.";
+							}
 						}
 					};
 				}}
 			>
 				<div class="mt-3">
+					<!-- Display error message for inactive account -->
+					{#if errB}
+						{console.log("ya")}
+						<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+							<strong class="font-bold">Error!</strong>
+							<span class="block sm:inline">{errB}</span>
+						</div>
+					{/if}
+					
+					<!-- Display error message from URL parameter -->
+					{#if errorMessage}
+						<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+							<strong class="font-bold">Error!</strong>
+							<span class="block sm:inline">{errorMessage}</span>
+						</div>
+					{/if}
+					
 					<div class="flex flex-col">
 						<p class="mb-2">Masukkan Username</p>
 
@@ -259,3 +312,19 @@
 		color: #c1a411;
 	}
 </style>
+
+<!-- Display error message from URL parameter -->
+{#if errorMessage}
+	<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+		<strong class="font-bold">Error!</strong>
+		<span class="block sm:inline">{errorMessage}</span>
+	</div>
+{/if}
+
+<!-- Display error from form submission -->
+{#if form?.errorB}
+	<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+		<strong class="font-bold">Error!</strong>
+		<span class="block sm:inline">{form.errorB}</span>
+	</div>
+{/if}

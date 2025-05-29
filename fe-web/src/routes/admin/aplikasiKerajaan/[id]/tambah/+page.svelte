@@ -194,6 +194,9 @@
 		showColorPicker = false;
 	}
 
+	let { data } = $props();
+	console.log("Data  : ", data.id_kerajaan)
+
 	let loading = $state(false);
 	let success = $state(false);
 	let error: any = $state('');
@@ -286,7 +289,7 @@
 {/if}
 
 <div class="w-full px-5">
-	<a href="/admin/aplikasiKerajaan" class="mb-4 inline-block">
+	<a href="/admin/aplikasiKerajaan/{data.id_kerajaan}" class="mb-4 inline-block">
 		<p class="text-md font-semibold">← Kembali ke Halaman Kerajaan</p>
 	</a>
 
@@ -306,7 +309,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						success = false;
-						goto('/admin/aplikasiKerajaan/11');
+						goto(`/admin/aplikasiKerajaan/${data.id_kerajaan}`);
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result.data?.errors;

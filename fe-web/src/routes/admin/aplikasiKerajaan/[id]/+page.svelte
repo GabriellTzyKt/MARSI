@@ -5,6 +5,7 @@
 	let isDetailOpen = $state(false);
 
 	const { data } = $props();
+	console.log("Data  : ", data)
 	console.log('Data website : ', data.websiteFeatures);
 	console.log('Data mobile : ', data.mobileFeatures);
 
@@ -31,7 +32,7 @@
 	{#if berhasil === 'ayaya'}
 		<img src={gambarEmpty} alt="" class=" h-50 mt-2 flex w-full items-center" />
 		<div class="mt-5 flex w-full items-center justify-center">
-			<a href="/admin/aplikasiKerajaan/tambah">
+			<a href="/admin/aplikasiKerajaan/{data.id_kerajaan}/tambah">
 				<button class=" bg-customOrange2 rounded-lg px-2 py-1 font-semibold">
 					+ Tambah Permintaan
 				</button>
