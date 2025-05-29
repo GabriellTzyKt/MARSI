@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
                     "Authorization": `Bearer ${token?.token}`
                 }
             }),
-            fetch(`${env.URL_KERAJAAN}/situs`)
+            fetch(`${env.URL_KERAJAAN}/situs?limit=500`)
         ]);
         
         // Check responses and process data
@@ -31,7 +31,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         }
         
         // Process data in parallel
-        const [komunitas, jumlahAnggotaData, userData, situsData] = await Promise.all([
+        let [komunitas, jumlahAnggotaData, userData, situsData] = await Promise.all([
             komunitasResponse.json(),
             jumlahAnggota.json(),
             usersResponse.ok ? usersResponse.json() : [],
@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         ]);
         
         // Format komunitas data
-        const formattedKomunitas = {
+        let formattedKomunitas = {
             ...komunitas,
             tanggal_berdiri: formatDate(komunitas.tanggal_berdiri)
         };
@@ -116,6 +116,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
                 console.error("Error fetching file details:", fileError);
             }
         }
+        formattedKomunitas.lokasi_nama = allSitus.find((situs: any) => situs.id == formattedKomunitas.lokasi)?.name || 'Tidak ada lokasi';
         console.log("file : " , fileDetails)
         console.log("komunitas lengkap : ", formattedKomunitas)
         console.log("token : ", token)
@@ -137,7 +138,8 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 
 export const actions: Actions = {
     ubahKomunitas: async ({ request, params }) => {
-         const data = await request.formData()
+        const data = await request.formData()
+        let pp = data.get("profile_image") as File;
         console.log("komunitas : ", data)
         const ver = z.object({
             nama_situs:
@@ -231,14 +233,36 @@ export const actions: Actions = {
             return fail(418, { errors: verification.error.flatten().fieldErrors, success: false, formData })
         }
         // return { success: true, formData }
+        if (pp.size > 0) {
+            try {
+                let formDataToSend = new FormData();
+                formDataToSend.append("nama_komunitas", formData.nama_situs);
+                formDataToSend.append("foto_profile", pp as File);
 
+                let ppRes = await fetch(`${env.URL_KERAJAAN}/file/profile_komunitas`, {
+                    method: "POST",
+                    body: formDataToSend
+                });
+                let pps = await ppRes.json();
+                if (!ppRes.ok) {
+                    return fail(400, { 
+                        errors: { server: [`Error: ${ppRes.status} - ${errorData.message || "Terjadi kesalahan saat mengunggah foto profil"}`] },
+                        success: false, 
+                        formData 
+                    });
+                }
+                pp = pps.id_path;
+            } catch (error) {
+                
+            }
+        }   
         try {
             let formDataToSend = {
                 id_komunitas: parseInt(String(data.get("id_komunitas"))),
                 penanggung_jawab: parseInt(formData.penanggungjawab_id),
                 // id_pengajuan: parseInt(String(data.get("id_pengajuan"))),
-                foto_komunitas: '2',
-                profile: '2',
+                foto_komunitas: pp ? pp : null,
+                profile: pp ? pp  : null,
                 lokasi: formData.situs_id,
                 nama_komunitas: formData.nama_situs,
                 deskripsi: formData.deskripsi_komunitas,

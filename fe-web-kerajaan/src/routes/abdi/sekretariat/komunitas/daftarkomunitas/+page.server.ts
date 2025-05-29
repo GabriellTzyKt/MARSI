@@ -26,10 +26,10 @@ export const load: PageServerLoad = async () => {
                 tanggal_berdiri: formatDatetoUI(item.tanggal_berdiri)
             };
             
-            console.log(`Processing komunitas: ${item.nama_komunitas}`);
-            console.log(`- penanggung_jawab: ${item.penanggung_jawab}`);
-            console.log(`- pembina: ${item.pembina}`);
-            console.log(`- pelindung: ${item.pelindung}`);
+            // console.log(`Processing komunitas: ${item.nama_komunitas}`);
+            // console.log(`- penanggung_jawab: ${item.penanggung_jawab}`);
+            // console.log(`- pembina: ${item.pembina}`);
+            // console.log(`- pelindung: ${item.pelindung}`);
             
             // Process user IDs for each role
             let roles = {
@@ -45,7 +45,7 @@ export const load: PageServerLoad = async () => {
                 ...roles.pelindung
             ]);
             
-            console.log(`Unique user IDs to fetch:`, Array.from(allUserIds));
+            // console.log(`Unique user IDs to fetch:`, Array.from(allUserIds));
             
             // Fetch all unique user details in parallel using port 8888
             let userDetailsMap = new Map();
@@ -84,7 +84,7 @@ export const load: PageServerLoad = async () => {
                 let userData = userDetailsMap.get(penanggungJawabId);
                 // Extract nama_lengkap
                 penanggungJawabName = userData.nama_lengkap || `User ${penanggungJawabId}`;
-                console.log(`Penanggung jawab (${penanggungJawabId}) name:`, penanggungJawabName);
+                // console.log(`Penanggung jawab (${penanggungJawabId}) name:`, penanggungJawabName);
             } else {
                 console.log(`No data found for penanggung jawab ID: ${penanggungJawabId}`);
                 // If it's not a number, it might already be a name
@@ -124,7 +124,7 @@ export const load: PageServerLoad = async () => {
             };
         }));
         
-        console.log("Processed data:", processedData);
+        // console.log("Processed data:", processedData);
         return { data: processedData };
     }
     catch (error) {

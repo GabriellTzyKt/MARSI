@@ -28,8 +28,22 @@ export const load: PageServerLoad = async ({ cookies,locals }) => {
                 email: item.email
             }
         });
+        let situsResdata = await fetch(`${env.URL_KERAJAAN}/situs?limit=300`);
+        if (!situsResdata.ok) {
+            throw new Error(`HTTP Error! Status: ${situsResdata.status}`);
+        }
+        let situsData = await situsResdata.json();
+        console.log("Situs data:", situsData);
+        situsData = situsData.filter((item: any) => {
+            return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
+        }).map((item: any) => {
+            return {
+                id: item.id_situs,
+                name: item.nama_situs,
+            }
+        });
         console.log("Raw admin data:", data);
-        return { data, user: dataCookies.user_data };
+        return { data, user: dataCookies.user_data, situsData, locals };
     }
     catch (error) {
         console.log(error);
@@ -135,7 +149,7 @@ export const actions: Actions = {
             formDataToSend.append("penanggung_jawab", formData.penanggungjawab_id);
             formDataToSend.append("nama_komunitas", formData.nama_situs);
             formDataToSend.append("deskripsi", formData.deskripsi_komunitas);
-            formDataToSend.append("lokasi", '2');
+            formDataToSend.append("lokasi", formData.tempat_operasional);
             formDataToSend.append("pelindung", formData.pelindung_id);
             formDataToSend.append("pembina", formData.pembina_id);
             formDataToSend.append("alamat", formData.alamat);

@@ -11,9 +11,10 @@
 	import { Item } from '@radix-ui/react-dropdown-menu';
 	// Get data from server
 	let { data } = $props();
-	let users = data.users || [];
-	let situsTypes = data.situsTypes || [];
-	let situs = data.situs || {};
+	let users = data?.users || [];
+	let situsTypes = data?.situsTypes || [];
+	let wisata = data?.wisata || [];
+	let situs = data?.situs || {};
 	console.log('data situs : ', situs);
 	console.log('Data jenis_situs', situsTypes);
 	let open = $state(false);
@@ -37,35 +38,52 @@
 		}
 	}
 	function searchUser(searchTerm: string) {
-		return users.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+		return users.filter((item) => item?.name.toLowerCase().includes(searchTerm.toLowerCase()));
 	}
 	// User selection for pembina and pelindung
-	let pembinaSearchTerm = $state(situs.pembina || '');
-	let pelindungSearchTerm = $state(situs.pelindung || '');
-	let selectedPembina = $state(searchUser(situs.pembina) || null);
-	let selectedPelindung = $state(searchUser(situs.pelindung) || null);
+	let pembinaSearchTerm = $state(situs?.pembina || '');
+	let pelindungSearchTerm = $state(situs?.pelindung || '');
+	let selectedPembina = $state(searchUser(situs?.pembina) || null);
+	let selectedPelindung = $state(searchUser(situs?.pelindung) || null);
 	let showPembinaDropdown = $state(false);
 	let showPelindungDropdown = $state(false);
 	let showJuruKunciDropdown = $state(false);
-	let selectedJuruKunci = $state(searchUser(situs.juru_kunci) || null);
-	let juruKunciSearchTerm = $state(situs.juru_kunci || '');
-	let find = situsTypes.find((item) => item.id === situs.id_jenis_situs);
-	let situsSearchTerm = $state(find.name || '');
+	let selectedJuruKunci = $state(searchUser(situs?.juru_kunci) || null);
+	let juruKunciSearchTerm = $state(situs?.juru_kunci || '');
+	let find = situsTypes.find((item) => item.id === situs?.id_jenis_situs);
+	let situsSearchTerm = $state(find?.name || '');
 	console.log('find', find);
 	let selectedSitus = $state(find || null);
 	let showSitusDropdown = $state(false);
 
 	// Filter users based on search term
 	function filterUser(searchTerm: string) {
-		return users.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()) || '');
+		return users.filter(
+			(item) => item?.name.toLowerCase().includes(searchTerm.toLowerCase()) || ''
+		);
 	}
 
 	function filterSitus(searchTerm: string) {
 		return situsTypes.filter(
-			(item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()) || ''
+			(item) => item?.name.toLowerCase().includes(searchTerm.toLowerCase()) || ''
+		);
+	}
+	let wisataSearchTerm = $state(wisata.find((item) => item.id == situs.id_wisata)?.name || '');
+	let selectedWisata = $state(wisata.find((item) => item.id == situs.id_wisata) || null);
+	let filteredWisata = $derived(filterWisata(wisataSearchTerm));
+	let showWisataDropdown = $state(false);
+
+	function filterWisata(searchTerm: string) {
+		return wisata.filter(
+			(item) => item?.name.toLowerCase().includes(searchTerm.toLowerCase()) || ''
 		);
 	}
 
+	function selectWisata(wisata: any) {
+		selectedWisata = wisata;
+		wisataSearchTerm = wisata.name;
+		showWisataDropdown = false;
+	}
 	let filteredPelindungUsers = $derived(filterUser(pelindungSearchTerm));
 	let filteredPembinaUsers = $derived(filterUser(pembinaSearchTerm));
 	let filteredJuruKunciUsers = $derived(filterUser(juruKunciSearchTerm));
@@ -744,17 +762,62 @@
 						</div>
 					</div>
 
+					<div>
+						<p>Email:</p>
+						<div class="relative">
+							<input
+								type="email"
+								name="email"
+								value={situs.email || '-'}
+								placeholder="Masukkan Email"
+								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+							/>
+							<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+						</div>
+						{#if errors}
+							{#each errors.email as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
 					<div class="mt-3">
 						<p>Wisata:</p>
 						<div class="relative">
 							<input
 								type="text"
 								name="wisata"
-								value={situs.wisata || '-'}
+								bind:value={wisataSearchTerm}
+								onfocus={() => (showWisataDropdown = true)}
+								onblur={() => {
+									// Delay hiding dropdown to allow for click
+									setTimeout(() => {
+										showWisataDropdown = false;
+									}, 200);
+								}}
 								placeholder="Masukkan Pembina"
 								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 							/>
 						</div>
+						<input type="text" hidden name="id_wisata" value={selectedWisata?.id || ''} />
+						{#if showWisataDropdown && filteredWisata.length > 0}
+							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+								<ul class="max-h-60 overflow-y-auto">
+									{#each filteredWisata as wisataItem}
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+										<li
+											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+											onclick={() => selectWisata(wisataItem)}
+										>
+											<div class="flex flex-col">
+												<span class="font-medium">{wisataItem.name}</span>
+												<span class="text-sm text-gray-500">{wisataItem.email}</span>
+											</div>
+										</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
 						{#if errors}
 							{#each errors.wisata as e}
 								<p class="text-left text-red-500">- {e}</p>

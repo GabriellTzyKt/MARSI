@@ -23,9 +23,7 @@
 	let showPjDropdown = $state(false);
 	let filteredPjUsers = $derived(filterUser(pjKeyword));
 
-	let plKeyword = $state(
-		data.allUsers.find((user) => user.id == data.data.pelindung_nama)?.name || ''
-	);
+	let plKeyword = $state(data.allUsers.find((user) => user.id == data.data.pelindung)?.name || '');
 	let selectedPl = $state(data.allUsers.find((user) => user.id == data.data.pelindung) || null);
 	let showPlDropdown = $state(false);
 	let filteredPlUsers = $derived(filterUser(plKeyword));
@@ -64,7 +62,7 @@
 	}
 	// Tambahkan state untuk gambar
 	let selectedImage = $state(null);
-	let imagePreview = $state(gambardefault);
+	let imagePreview = $state(data?.data?.profile_path || gambardefault);
 	let namaimage = $state('');
 
 	// Fungsi untuk menangani upload gambar
@@ -86,30 +84,10 @@
 	<Loader></Loader>
 {/if}
 <div class="h-full w-full">
-	<div class="relative mx-auto flex w-full items-center justify-center">
-		<div class="group relative h-[100px] w-[100px]">
-			<img src={imagePreview} class="h-full w-full rounded-full" alt="" />
-
-			<div
-				class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-			>
-				<label for="profileImage" class="cursor-pointer">
-					<p class="font-semibold text-white">Ganti Foto</p>
-				</label>
-				<input
-					type="file"
-					id="profileImage"
-					name="profile_image"
-					accept="image/*"
-					onchange={handleImageUpload}
-					class="hidden"
-				/>
-			</div>
-		</div>
-	</div>
 	<form
 		action="?/ubahOrganisasi"
 		method="post"
+		enctype="multipart/form-data"
 		use:enhance={() => {
 			loading = true;
 			return async ({ result, update }) => {
@@ -119,7 +97,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						// goto('/abdi/sekretariat/organisasi/daftarorganisasi');
+						goto('/abdi/sekretariat/organisasi/daftarOrganisasi');
 					}, 3000);
 				}
 				if (result.type === 'failure') {
@@ -129,6 +107,28 @@
 			};
 		}}
 	>
+		<div class="relative mx-auto flex w-full items-center justify-center">
+			<div class="group relative h-[100px] w-[100px]">
+				<img src={imagePreview} class="h-full w-full rounded-full" alt="" />
+
+				<div
+					class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+				>
+					<label for="profileImage" class="cursor-pointer">
+						<p class="font-semibold text-white">Ganti Foto</p>
+					</label>
+					<input
+						type="file"
+						id="profileImage"
+						name="profile_image"
+						accept="image/*"
+						onchange={handleImageUpload}
+						class="hidden"
+					/>
+				</div>
+			</div>
+		</div>
+
 		<input type="text" name="id_organisasi" value={data?.data.id_organisasi} hidden />
 		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<!-- 1 -->

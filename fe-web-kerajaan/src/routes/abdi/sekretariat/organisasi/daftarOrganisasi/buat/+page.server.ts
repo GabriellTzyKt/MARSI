@@ -37,6 +37,7 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
                 email: item.email
             }
         });
+       
         return {allUsers: data, allSitus}
     } catch (error) {
         
@@ -47,7 +48,7 @@ export const actions: Actions = {
          const data = await request.formData()
                console.log(data)
               const ver = z.object({
-                   nama_situs:
+                   nama_organisasi:
                        z.string({ message: "Field Nama Situs Harus diisi" })
                            .nonempty("Field ini tidak boleh kosong"),
        
@@ -109,7 +110,7 @@ export const actions: Actions = {
        
                })
                const formData = {
-                   nama_situs: String(data.get("nama_organisasi")),
+                   nama_organisasi: String(data.get("nama_organisasi")),
                    alamat: String(data.get("alamat")),
                    email: String(data.get("email")),
                    deskripsi_organisasi: String(data.get("deskripsi_organisasi")),
@@ -139,7 +140,7 @@ export const actions: Actions = {
                    const formDataToSend = new FormData();
                 //    formDataToSend.append("id_pemohon", data.get("id_pemohon") as string);
                    formDataToSend.append("penanggung_jawab", formData.penanggungjawab_id);
-                   formDataToSend.append("nama_organisasi", formData.nama_situs);
+                   formDataToSend.append("nama_organisasi", formData.nama_organisasi);
                    formDataToSend.append("deskripsi", formData.deskripsi_organisasi);
                    formDataToSend.append("email", formData.email);
                    formDataToSend.append("no_telp", formData.phone);
@@ -148,7 +149,7 @@ export const actions: Actions = {
                    formDataToSend.append("pembina", formData.pembina_id);
                    formDataToSend.append("tanggal_berdiri", formData.tanggal_berdiri);
                    formDataToSend.append("foto_organisasi", data.get("profile_image") as File);
-                   formDataToSend.append("foto_profile", data.get("profile_image") as File);
+                   formDataToSend.append("profile", data.get("profile_image") as File);
                    // formDataToSend.append("lokasi", '2');
                    // formDataToSend.append("tempat_operasional", formData.tempat_operasional);
                    // formDataToSend.append("jumlah_anggota", formData.jumlahanggota);

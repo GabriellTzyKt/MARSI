@@ -16,7 +16,7 @@
 	let { data } = $props();
 	let loading = $state(false);
 	let success = $state(false);
-	let tableData = $derived(data?.data || []);
+
 	let entries = $state(10);
 	let keyword = $state('');
 	let currPage = $state(1);
@@ -48,14 +48,13 @@
 	}
 	$effect(() => {
 		if (keyword || entries) {
-			console.log(resData);
 			currPage = 1;
 		}
 		if (entries <= 1) {
 			entries = 1;
 		}
 	});
-	let resData = $derived(pagination(tableData || []));
+	let resData = $derived(pagination(data?.data));
 </script>
 
 {#if navigating.to}
@@ -159,7 +158,7 @@
 				{/if}
 			{/snippet}
 		</Table>
-		<Pagination bind:currPage bind:entries totalItems={filterD(data.data).length}></Pagination>
+		<Pagination bind:currPage bind:entries totalItems={filterD(data?.data).length}></Pagination>
 	</div>
 </div>
 {#if deleteModal}

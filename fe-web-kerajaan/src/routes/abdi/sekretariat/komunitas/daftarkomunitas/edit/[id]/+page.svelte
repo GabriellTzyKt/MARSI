@@ -109,7 +109,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						// goto('/abdi/sekretariat/komunitas/daftarkomunitas');
+						goto('/abdi/sekretariat/komunitas/daftarkomunitas');
 					}, 3000);
 				}
 				if (result.type === 'failure') {
