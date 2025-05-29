@@ -30,6 +30,22 @@
 					let nama_pemberi = 'Nama tidak ditemukan';
 					let nama_acara = 'Acara tidak ditemukan';
 					let nama_penghargaan = 'Penghargaan tidak ditemukan';
+					let fileUrls = [];
+					if (item.dokumentasi) {
+						try {
+							let resPict = await fetch(`${env.PUBLIC_URL_KERAJAAN}/doc/${item.dokumentasi}`);
+							if (resPict.ok) {
+								const docData = await resPict.json();
+								const filePath = docData.file_dokumentasi || docData;
+								// Jika filePath adalah array, ambil yang pertama
+								if (filePath) {
+									fileUrls.push(
+										`${env.PUBLIC_URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`
+									);
+								}
+							}
+						} catch (error) {}
+					}
 
 					try {
 						const resAnggota = await fetch(`${env.PUBLIC_URL_KERAJAAN}/anggota/${item.id_anggota}`);
@@ -43,7 +59,7 @@
 
 					try {
 						const resPemberi = await fetch(
-							`${env.PUBLIC_PUB_PORT}/user/${item.pemberi_penghargaan}`
+							`${env.PUBLIC_URL_KERAJAAN}/anggota/${item.pemberi_penghargaan}`
 						);
 						if (resPemberi.ok) {
 							const pemberi = await resPemberi.json();
@@ -55,7 +71,7 @@
 
 					try {
 						const resAcara = await fetch(
-							`${env.PUBLIC_URL_KERAJAAN}/acara/${item.acara_pemberian}`
+							`${env.PUBLIC_URL_KERAJAAN}/acara/detail/${item.acara_pemberian}`
 						);
 						if (resAcara.ok) {
 							const acara = await resAcara.json();
@@ -77,7 +93,9 @@
 						nama_pemberi,
 						nama_acara,
 						tanggal_penerimaan: formatDatetoUI(item.tanggal_penerimaan),
-						nama_penghargaan
+						nama_penghargaan,
+						keterangan: item.keterangan || 'Tidak ada keterangan',
+						dokumentasi: fileUrls.length > 0 ? fileUrls : ['Tidak ada dokumentasi']
 					};
 				})
 			);
@@ -112,6 +130,22 @@
 					let nama_pemberi = 'Nama tidak ditemukan';
 					let nama_acara = 'Acara tidak ditemukan';
 					let nama_gelar = 'Gelar tidak ditemukan';
+					let fileUrls = [];
+					if (item.dokumentasi) {
+						try {
+							let resPict = await fetch(`${env.PUBLIC_URL_KERAJAAN}/doc/${item.dokumentasi}`);
+							if (resPict.ok) {
+								const docData = await resPict.json();
+								const filePath = docData.file_dokumentasi || docData;
+								// Jika filePath adalah array, ambil yang pertama
+								if (filePath) {
+									fileUrls.push(
+										`${env.PUBLIC_URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`
+									);
+								}
+							}
+						} catch (error) {}
+					}
 					try {
 						const resAnggota = await fetch(`${env.PUBLIC_URL_KERAJAAN}/anggota/${item.id_anggota}`);
 						if (resAnggota.ok) {
@@ -155,7 +189,9 @@
 						nama_anggota,
 						nama_pemberi,
 						nama_acara,
-						nama_gelar
+						nama_gelar,
+						keterangan: item.keterangan || 'Tidak ada keterangan',
+						dokumentasi: fileUrls.length > 0 ? fileUrls : ['Tidak ada dokumentasi']
 					};
 				})
 			);
@@ -295,7 +331,23 @@
 			</div>
 		</div>
 		<div class="  overflow-x-auto md:mx-6">
-			<Table table_header={header} table_data={finalData}></Table>
+			<Table table_header={header} table_data={finalData}>
+				{#snippet picture({ data, header, index })}
+					{#if data.dokumentasi && data.dokumentasi.length > 0}
+						{#each data.dokumentasi as doc, i}
+							{#if doc === 'Tidak ada dokumentasi'}
+								<p class="text-gray-500">Tidak ada dokumentasi</p>
+							{:else}
+								<a href={doc} target="_blank" rel="noopener noreferrer">
+									<img src={doc} alt="Dokumentasi" class="h-12 w-12 rounded-md object-cover" />
+								</a>
+							{/if}
+						{/each}
+					{:else if data.dokumentasi && data.dokumentasi[0] === 'Tidak ada dokumentasi'}
+						<p class="text-gray-500">Tidak ada dokumentasi</p>
+					{/if}
+				{/snippet}
+			</Table>
 			{#if !loading && finalData.length === 0}
 				<p class="flex items-center justify-center text-center">No data available</p>
 			{/if}

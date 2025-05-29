@@ -1,5 +1,5 @@
 import { env } from "$env/dynamic/private";
-import type { Actions } from "@sveltejs/kit";
+import { fail, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "../$types";
 
 
@@ -26,5 +26,24 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 
 export const actions: Actions = {
-    
+    deleteKomunitas: async ({ request }) => {
+        const data = await request.formData();
+        const id = data.get("id_komunitas");
+        console.log("Deleting komunitas with ID:", id);
+        try {
+            const delres = await fetch(`${env.URL_KERAJAAN}/komunitas/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            if (!delres.ok) {
+                throw new Error(`HTTP Error! Status: ${delres.status}`);
+            }
+            return { success: true };
+        } catch (error) {
+            console.error("Error deleting komunitas:", error);
+            return fail(400, { success: false, error: error.message });
+        }
+    }
 };

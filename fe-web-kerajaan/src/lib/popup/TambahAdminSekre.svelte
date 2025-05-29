@@ -3,8 +3,16 @@
 	import xbutton from '$lib/asset/icon/xbutton.png';
 	import { formatDate } from '$lib/index';
 
-	let { value = $bindable(), textM, open = $bindable(), errors = null, data = null } = $props();
+	let {
+		value = $bindable(),
+		textM,
+		open = $bindable(),
+		errors = null,
+		data = null,
+		userData = null
+	} = $props();
 	console.log('data : ', data);
+	console.log('userData : ', userData);
 	let namagelar = $state(data?.afiliasi || '');
 	let daftarGelar: any = $state([]);
 	function tambahGelar() {

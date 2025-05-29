@@ -232,7 +232,7 @@
 			['nama_pemberi', 'Nama Pelantik'],
 			['tanggal_penerimaan', 'Tanggal Dilantik'],
 			['nama_acara', 'Acara'],
-			['dokumentasi', 'Sertifikat']
+			['picture', 'Sertifikat']
 		]}
 	></HistoryPopUp>
 {/if}
@@ -247,7 +247,7 @@
 			['tanggal_penerimaan', 'Tanggal Bintang Jasa'],
 			['nama_acara', 'Acara'],
 			['keterangan', 'Keterangan'],
-			['dokumentasi', 'Sertifikat']
+			['picture', 'Sertifikat']
 		]}
 	></HistoryPopUp>
 {/if}

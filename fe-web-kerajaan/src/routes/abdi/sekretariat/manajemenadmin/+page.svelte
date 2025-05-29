@@ -12,6 +12,7 @@
 	let selectTipe = $state<string>('');
 
 	let { data } = $props();
+	let userData = data?.userData || [];
 	let open = $state(false);
 	let valo = $state(false);
 	let edit = $state(false);
@@ -216,7 +217,7 @@
 				console.log(result);
 				if (result.type === 'success') {
 					valo = true;
-					clearTimeout(timer);
+					open = true;
 					await invalidateAll().then(() => {
 						setTimeout(() => {
 							valo = false;
@@ -229,7 +230,13 @@
 			};
 		}}
 	>
-		<TambahAdminSekre textM="Tambah" bind:value={open} bind:open={valo} errors={error} {data}
+		<TambahAdminSekre
+			textM="Tambah"
+			{userData}
+			bind:value={open}
+			bind:open={valo}
+			errors={error}
+			{data}
 		></TambahAdminSekre>
 	</form>
 {/if}

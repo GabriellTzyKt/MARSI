@@ -3,18 +3,33 @@ import { z } from "zod";
 import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
 import { formatDatetoUI } from "$lib";
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({cookies}) => {
     try {
-        let res = await fetch(`${env.URL_KERAJAAN}/admin?limit=100000000000000000`)
-        if (!res.ok) {
-            throw new Error(`HTTP Error! Status: ${res.status}`)
+        const token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
+        if (!token) {
+            throw new Error("Token tidak ditemukan");
         }
-        let data = await res.json()
-        data = data.filter(item => item.deleted_at === "0001-01-01T00:00:00Z")
-        console.log(data)
-        return {data}
+        let [userRes, adminRes] = await Promise.all([
+            fetch(`${env.PUB_PORT}/users`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }),
+            fetch(`${env.URL_KERAJAAN}/admin?limit=10000`)
+        ]);
+        if (!userRes.ok || !adminRes.ok) {
+            throw new Error(`HTTP Error! Status: ${userRes.status} ${adminRes.status}`);
+        }
+        let userData = await userRes.json();
+        userData = userData.filter((item: any) => {
+            return item.deleted_at === "0001-01-01T00:00:00Z";
+        });
+        let data = await adminRes.json();
+        data = data.filter(item => item.deleted_at === "0001-01-01T00:00:00Z");
+        console.log(data);
+        return {data, user: userData, userSession: token};
     } catch (error) {
-        
+
     }
 };
 
