@@ -129,7 +129,7 @@
 				['alamat', 'Alamat Situs'],
 				['nama_pendiri', 'Dibangun Oleh'],
 				['juru_kunci', 'Juru Kunci'],
-				['wisata', 'Wisata'],
+				['nama_wisata', 'Wisata'],
 				['children', 'Aksi']
 			]}
 			table_data={resData}

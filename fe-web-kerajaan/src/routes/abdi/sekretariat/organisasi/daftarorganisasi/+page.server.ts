@@ -6,7 +6,7 @@ import { formatDatetoUI } from "$lib";
 export const load: PageServerLoad = async ({fetch, cookies}) => {
     const token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
     try {
-        let organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi`);
+        let organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi?limit=500`);
         if (!organisasiResponse.ok) {
             throw error(organisasiResponse.status, `Failed to fetch Organisasi: ${organisasiResponse.statusText}`);
         }

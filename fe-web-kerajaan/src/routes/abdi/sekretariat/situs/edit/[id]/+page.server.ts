@@ -75,8 +75,22 @@ export let load: PageServerLoad = async ({ params, cookies }) => {
         //     fetchUserData(situsData.pelindung),
         //     fetchUserData(situsData.juru_kunci)
         // ]);
-        
-        return { 
+        let resWisata = await fetch(`${env.URL_KERAJAAN}/situs/wisata?limit=500`);
+        if (!resWisata.ok) {
+            throw new Error(`HTTP Error! Status: ${resWisata.status}`);
+        }
+          let dataWisata = await resWisata.json();
+        dataWisata = dataWisata.filter((item: any) => {
+            return item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at;
+        });
+          // Find the wisata data for the current situs
+          let wisataData = dataWisata.find((item: any) => item.id_wisata == situsData.id_wisata);
+        if (wisataData) {
+            situsData.wisata = wisataData.nama_wisata || 'Tidak Tersedia';
+            situsData.id_wisata = wisataData.id_wisata || 'Tidak Tersedia';
+          }
+          console.log("Wisata Data:",   wisataData);
+        return {
             situs: {
                 ...situsData,
                 imageUrls,
@@ -93,6 +107,11 @@ export let load: PageServerLoad = async ({ params, cookies }) => {
                 id: user.id_user,
                 name: user.nama_lengkap || 'Nama tidak tersedia',
                 email: user.email || 'Email tidak tersedia'
+            })) || [],
+            wisata: dataWisata.map((item: any) => ({
+                id: item.id_wisata,
+                name: item.nama_wisata || 'Nama tidak tersedia',
+                
             })) || []
         };
     } catch (err) {
@@ -120,6 +139,7 @@ export let actions: Actions = {
     editSitus: async ({request}) => {
         let data = await request.formData()
         console.log(data)
+        let profile_picture = data.get("profile_picture") as File;
         let ver = z.object({
             nama_situs:
                 z.string({ message: "Field Nama Situs harus diisi" })
@@ -167,6 +187,10 @@ export let actions: Actions = {
                 z.string({ message: "Field Pelindung harus diisi" })
                     .nonempty("Field Ini tidak boleh kosong"),
             
+            wisata_id:
+                z.string({ message: "Field Wisata harus diisi" })
+                    .nonempty("Field Ini tidak boleh kosong"),
+
             jenis_situs:
                 z.string({ message: "Field Jenis Situs harus diisi" })
                     .nonempty("Field Ini tidak boleh kosong"),
@@ -188,7 +212,10 @@ export let actions: Actions = {
                     
             wisata:
                 z.string({ message: "Field Wisata harus diisi" })
-                    .nonempty("Field Ini tidak boleh kosong")
+                    .nonempty("Field Ini tidak boleh kosong"),
+            email:
+                z.string({ message: "Field Email harus diisi" })
+                    .nonempty("Field Ini tidak boleh kosong").email("Email tidak valid").optional(),
         })
 
           const formatTimeField = (timeString) => {
@@ -221,7 +248,8 @@ export let actions: Actions = {
             latitude: String(data.get("latitude")),
             longitude: String(data.get("longitude")),
             phone: String(data.get("phone")),
-            kepemilikan: String(data.get("kepemilikan")),
+             kepemilikan: String(data.get("kepemilikan")),
+            email: String(data.get("email")),
             deskripsi_situs: String(data.get("deskripsi_situs")),
             juru_kunci: String(data.get("juru_kunci")),
             dibangun_oleh: String(data.get("dibangun_oleh")),
@@ -232,43 +260,75 @@ export let actions: Actions = {
             jam_buka: String(data.get("jam_buka")),
             jam_tutup: String(data.get("jam_tutup")),
             jumlah_anggota: String(data.get("jumlah_anggota")),
-            wisata: String(data.get("wisata"))
+            wisata: String(data.get("wisata")),
+            wisata_id: String(data.get("id_wisata"))
         }
         let verification = ver.safeParse({ ...formData })
-        
+        let profile = '';
         if (!verification.success) {
             return fail(418, {
                 errors: verification.error.flatten().fieldErrors, success: false, formData
             })
         }
+        if (profile_picture.size > 0) {
+            // If a new profile picture is uploaded, handle it
+            let formData = new FormData();
+            formData.append("nama_situs", String(data.get("nama_situs")));
+            formData.append("profile", profile_picture as File);
+            console.log("Uploading profile picture:", formData);
+            try {
+                let response = await fetch(`${env.URL_KERAJAAN}/file/profile_situs`, {
+                    method: "POST",
+                    body: formData
+                });
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(`HTTP Error! Status: ${response.status}, Response: ${errorText}`);
+                    return fail(400, { success: false, error: `Error: ${response.status} - ${errorText}` });
+                }
+                let result = await response.json();
+                console.log("Profile picture upload result:", result);
+                if (response.ok) {
+                    // If the upload is successful, set the profile picture path
+                    profile = result.id_path; // Use the uploaded file path
+                    console.log("Profile picture uploaded successfully:", profile);
+                }
+            } catch (error) {
+                console.error("Error uploading profile picture:", error);
+                return fail(500, { success: false, error: String(error) });
+            }
+        }
         try {
+
             let sendData = {
                  id_situs: parseInt(String(data.get("id_situs"))),
-    id_jenis_situs: parseInt(String(data.get("jenis_situs"))),
-    foto_situs: "2", // pastikan ini benar
-    nama_situs: String(data.get("nama_situs")),
-    deskripsi_situs: String(data.get("deskripsi_situs")),
-    alamat: String(data.get("alamat")),
-    longitude: parseFloat(String(data.get("longitude"))),
-    latitude: parseFloat(String(data.get("latitude"))),
-    nama_pendiri: String(data.get("dibangun_oleh")),
-    pemilik_situs: String(data.get("kepemilikan")),
-    tahun_berdiri: parseInt(String(data.get("tahun_berdiri"))),
-    pelindung: String(data.get("pelindung")),
-    pembina: String(data.get("pembina")),
-    juru_kunci: String(data.get("juru_kunci")),
-    jam_buka: formatTimeField(String(data.get("jam_buka"))),
-        jam_tutup: formatTimeField(String(data.get("jam_tutup"))),
-    no_telp: String(data.get("phone")),
+                 id_wisata:parseInt( String(data.get("id_wisata"))),    
+                 gambar_profile: profile ? String(profile) : '',
+                 id_jenis_situs: parseInt(String(data.get("jenis_situs"))),
+                foto_situs: '',
+                nama_situs: String(data.get("nama_situs")),
+                deskripsi_situs: String(data.get("deskripsi_situs")),
+                alamat: String(data.get("alamat")),
+                longitude: parseFloat(String(data.get("longitude"))),
+                latitude: parseFloat(String(data.get("latitude"))),
+                nama_pendiri: String(data.get("dibangun_oleh")),
+                pemilik_situs: String(data.get("kepemilikan")),
+                tahun_berdiri: parseInt(String(data.get("tahun_berdiri"))),
+                pelindung: String(data.get("pelindung")),
+                pembina: String(data.get("pembina")),
+                juru_kunci: String(data.get("juru_kunci")),
+                jam_buka: formatTimeField(String(data.get("jam_buka"))),
+                jam_tutup: formatTimeField(String(data.get("jam_tutup"))),
+                no_telp: String(data.get("phone")),
+                email: String(data.get("email")),
     // jumlah_anggota: parseInt(String(data.get("jumlah_anggota"))),
-    // wisata: String(data.get("wisata"))
             }
             console.log(sendData)
             const response = await fetch(`${env.URL_KERAJAAN}/situs`, {
                 method: "PUT",
                 headers: {
-        "Content-Type": "application/json"
-    },
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify(sendData)
             })
             console.log(response)

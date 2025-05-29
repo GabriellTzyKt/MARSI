@@ -2,7 +2,7 @@ import { fail, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
 import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
-import { formatDatetoUI } from "$lib";
+import { formatDate, formatDatetoUI } from "$lib";
 export const load: PageServerLoad = async ({cookies}) => {
     try {
         const token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
@@ -11,8 +11,9 @@ export const load: PageServerLoad = async ({cookies}) => {
         }
         let [userRes, adminRes] = await Promise.all([
             fetch(`${env.PUB_PORT}/users`, {
+                method: "GET",
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    'Authorization': `Bearer ${token.token}`
                 }
             }),
             fetch(`${env.URL_KERAJAAN}/admin?limit=10000`)
@@ -22,11 +23,24 @@ export const load: PageServerLoad = async ({cookies}) => {
         }
         let userData = await userRes.json();
         userData = userData.filter((item: any) => {
-            return item.deleted_at === "0001-01-01T00:00:00Z";
-        });
+            return item.deleted_at === "0001-01-01T00:00:00Z" || !item.deleted_at;
+        }).map((item: any) => {
+            return {
+                id: item.id_user,
+                name: item.nama_lengkap,
+                email: item.email,
+                username: item.username,
+                no_telp: item.no_telp,
+                jenis_kelamin: item.jenis_kelamin,
+                tempat_lahir: item.tempat_lahir,
+                tanggal_lahir: formatDate(item.tanggal_lahir),
+                password: item.password,
+            };
+        }
+        );
         let data = await adminRes.json();
         data = data.filter(item => item.deleted_at === "0001-01-01T00:00:00Z");
-        console.log(data);
+        console.log("User Data:", userData);
         return {data, user: userData, userSession: token};
     } catch (error) {
 
@@ -44,6 +58,7 @@ export const actions: Actions = {
                     .nonempty("Tidak Boleh kosong")
                     .max(300, "Nama Terlalu Panjang (max = 300)")
                     .trim(),
+            id: z.string().nonempty("Field Tidak Boleh Kosong"),
             admin_role:
                 z.string({ message: "Harus diisi / harus berupa string" })
                     .nonempty("Field Tidak Boleh Kosong")

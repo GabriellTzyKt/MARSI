@@ -13,7 +13,24 @@ export const load: PageServerLoad = async () => {
         }
         let data = await res.json();
         let formattedData = data.filter(item => item.deleted_at === "0001-01-01T00:00:00Z")
-
+        let resWisata = await fetch(`${env.URL_KERAJAAN}/situs/wisata?limit=1000`);
+        if (!resWisata.ok) {
+            throw new Error(`HTTP Error! Status: ${resWisata.status}`);
+        }
+        let dataWisata = await resWisata.json();
+        dataWisata = dataWisata.filter((item: any) => {
+            return item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at;
+        }
+        )
+        formattedData = formattedData.map((item: any) => {
+            let wisata = dataWisata.find((wisata: any) => wisata.id_wisata === item.id_wisata);
+            return {
+                ...item,
+                nama_wisata: wisata ? wisata.nama_wisata : "Tidak Tersedia",
+                // lokasi: wisata ? wisata.lokasi : "Tidak Tersedia",
+                tanggal_berdiri: item.tanggal_berdiri ? new Date(item.tanggal_berdiri).toLocaleDateString() : "Tidak Tersedia"
+            };
+        });
         // const processedData = await Promise.all(data.map(async (item: any) => {
         //     if (item.id_lokasi) {
         //         try {
@@ -40,7 +57,8 @@ export const load: PageServerLoad = async () => {
         return { data: formattedData };
     }
     catch (error) {
-        
+        console.error("Error fetching data:", error);
+        return { data: [] };
     }
 };
 export const actions: Actions = {

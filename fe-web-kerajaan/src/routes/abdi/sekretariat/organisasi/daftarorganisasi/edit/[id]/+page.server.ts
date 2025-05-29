@@ -71,7 +71,19 @@ export const load: PageServerLoad = async ({params, cookies}) => {
         
         // Filter out any undefined values that might have occurred during mapping
         finalData = finalData.filter(item => item !== undefined);
-        
+        if (finalData[0].profile) {
+            try {
+                const filePathResponse = await fetch(`${env.URL_KERAJAAN}/doc/${finalData[0].profile}`);
+                if (filePathResponse.ok) {
+                    const filePathData = await filePathResponse.json();
+                    finalData[0].profile_path = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePathData.file_dokumentasi)}`;
+                } else {
+                    console.error("Failed to fetch profile image path:", filePathResponse.statusText);
+                }
+            } catch (error) {
+                console.error("Error fetching profile image path:", error);
+            }
+        }
         console.log("finalData:", finalData);
         
         // Fetch all users for dropdown selection
@@ -105,7 +117,8 @@ export const load: PageServerLoad = async ({params, cookies}) => {
 export const actions: Actions = {
     ubahOrganisasi: async ({request}) => {
         const data = await request.formData()
-        console.log(data)
+        console.log(data)   
+        let orgpp = data.get("profile_image") as File;
        const ver = z.object({
             nama_organisasi:
                 z.string({ message: "Field Nama Situs Harus diisi" })
@@ -193,7 +206,29 @@ export const actions: Actions = {
             return fail(418, { errors: verification.error.flatten().fieldErrors, success: false, formData })
         }
         // return { success: true, formData }
-
+        if (orgpp.size > 0) {
+            const formData = new FormData();
+            formData.append("nama_organisasi", String(data.get("nama_organisasi")));
+            formData.append("foto_profile", orgpp);
+            try {
+                let res = await fetch(`${env.URL_KERAJAAN}/file/profile_organisasi`, {
+                    method: "POST",
+                    body: formData
+                });
+                if (!res.ok) {
+                    throw new Error(`HTTP Error! Status: ${res.status}`);
+                }
+                let resData = await res.json();
+                console.log("Response from file upload:", resData);
+                orgpp = resData.id_path; // Use the uploaded file name
+            } catch (error) {
+                console.error("Error uploading file:", error);
+                return fail(500, { 
+                    errors: { server: ["Terjadi kesalahan saat mengupload file"] },
+                    success: false
+                });
+            }
+        }
         try {
             let senData = {
                 id_organisasi: parseInt(String(data.get("id_organisasi"))),
@@ -206,8 +241,8 @@ export const actions: Actions = {
                 pembina: formData.pembina_id,
                 pelindung: formData.pelindung_id,
                 tanggal_berdiri: formData.tanggal_berdiri,
-                foto_organisasi: '',
-                profile:'',
+                foto_organisasi: orgpp ? orgpp : null,
+                profile: orgpp ? orgpp : null,
                 
             }
            

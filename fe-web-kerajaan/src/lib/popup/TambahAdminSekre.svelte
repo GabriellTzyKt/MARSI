@@ -13,6 +13,7 @@
 	} = $props();
 	console.log('data : ', data);
 	console.log('userData : ', userData);
+
 	let namagelar = $state(data?.afiliasi || '');
 	let daftarGelar: any = $state([]);
 	function tambahGelar() {
@@ -20,6 +21,26 @@
 			daftarGelar = [...daftarGelar, namagelar.trim()];
 			namagelar = ''; // Reset input setelah ditambahkan
 		}
+	}
+
+	let userKeyword = $state('');
+	let filteredUserData = $derived(filterUserData(userData));
+	let selectedUser = $state<any>(null);
+	let userDropdownOpen = $state(false);
+
+	function handleUserSelection(user: any) {
+		selectedUser = user;
+		userKeyword = user.nama_lengkap || user.username || user.email || '';
+		userDropdownOpen = false;
+	}
+	function filterUserData(data: any[]) {
+		if (!data) return [];
+		return data.filter(
+			(item) =>
+				(item.nama_lengkap?.toLowerCase() || '').includes(userKeyword.toLowerCase()) ||
+				(item.username?.toLowerCase() || '').includes(userKeyword.toLowerCase()) ||
+				(item.email?.toLowerCase() || '').includes(userKeyword.toLowerCase())
+		);
 	}
 
 	function hapusGelar(index: number) {
@@ -143,8 +164,14 @@
 						class="w-full rounded-lg border border-gray-300 px-2 py-2 pr-10 focus:outline-none"
 						name="nama_lengkap"
 						placeholder="Jane Doe"
+						bind:value={userKeyword}
+						onfocus={() => (userDropdownOpen = true)}
+						onblur={() => {
+							setTimeout(() => {
+								userDropdownOpen = false;
+							}, 200);
+						}}
 						id=""
-						value={data ? data.nama_lengkap : ''}
 					/>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -159,11 +186,49 @@
 						/>
 					</svg>
 				</div>
+				<div class="relative">
+					{#if userDropdownOpen && filteredUserData.length > 0}
+						<div
+							class="absolute z-10 mt-2 max-h-40 overflow-auto rounded-lg border bg-white shadow-lg"
+						>
+							{#each filteredUserData as user}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_static_element_interactions -->
+								<div
+									class="max-h-60 cursor-pointer overflow-y-auto px-4 py-2 hover:bg-gray-100"
+									onclick={() => {
+										handleUserSelection(user);
+									}}
+								>
+									<p class="text-sm font-semibold">
+										{user.nama_lengkap || user.username || user.email}
+									</p>
+									<p class="text-xs text-gray-500">
+										{user.email || 'Tidak ada email'}
+									</p>
+								</div>
+							{/each}
+						</div>
+					{/if}
+				</div>
+				{#if selectedUser}
+					<input type="hidden" name="nama_lengkap" value={selectedUser.nama_lengkap} />
+					<input type="hidden" name="jenis_kelamin" value={selectedUser.jenis_kelamin} />
+					<input type="hidden" name="tempat_lahir" value={selectedUser.tempat_lahir} />
+					<input type="hidden" name="tanggal_lahir" value={selectedUser.tanggal_lahir} />
+					<input type="hidden" name="username" value={selectedUser.username} />
+					<input type="hidden" name="password" value={selectedUser.password} />
+					<input type="hidden" name="email" value={selectedUser.email} />
+					<input type="hidden" name="no_telp" value={selectedUser.no_telp} />
+					<input type="hidden" name="id_user" value={selectedUser.id_user} />
+				{/if}
+
 				{#if errors}
 					{#each errors.nama_lengkap as a}
 						<p class="text-left text-red-500">{a}</p>
 					{/each}
 				{/if}
+				{#if errors}{/if}
 
 				{#if radioinput == 'sekre_tidak'}
 					<!-- username -->

@@ -12,7 +12,7 @@
 	let selectTipe = $state<string>('');
 
 	let { data } = $props();
-	let userData = data?.userData || [];
+	let userData = data?.user || [];
 	let open = $state(false);
 	let valo = $state(false);
 	let edit = $state(false);

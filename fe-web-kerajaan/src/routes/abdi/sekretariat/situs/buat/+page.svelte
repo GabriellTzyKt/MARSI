@@ -14,6 +14,7 @@
 	let { data } = $props();
 	let users = data.users || [];
 	let situs = data.situs || [];
+	let wisata = data.wisata || [];
 	console.log(users);
 	console.log(situs);
 	let open = $state(false);
@@ -57,6 +58,23 @@
 			}
 		};
 	});
+
+	let wisataKeyword = $state('');
+	let selectedWisata = $state();
+	let showWisataDropdown = $state(false);
+
+	// Function to filter wisata based on keyword
+	function filterWisata(keyword: string) {
+		return wisata.filter((item) => item.name.toLowerCase().includes(keyword.toLowerCase()));
+	}
+	let filteredWisata = $derived(filterWisata(wisataKeyword));
+
+	// Function to select a wisata
+	function selectWisata(wisataItem: any) {
+		selectedWisata = wisataItem;
+		wisataKeyword = wisataItem.name;
+		showWisataDropdown = false;
+	}
 
 	// User selection for pembina and pelindung
 	let pembinaSearchTerm = $state('');
@@ -516,6 +534,9 @@
 						{#each errors.juru_kunci as e}
 							<p class="text-left text-red-500">- {e}</p>
 						{/each}
+						{#each errors.juru_kunci_id as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
 					{/if}
 				</div>
 
@@ -679,6 +700,50 @@
 
 						{#if errors}
 							{#each errors.jenis_situs as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
+						{/if}
+					</div>
+				</div>
+				<div class="mt-5 grid w-full grid-cols-1 flex-col gap-4 lg:grid-cols-2">
+					<div class="relative col-span-full w-full">
+						<p>Wisata:</p>
+						<input
+							type="text"
+							placeholder="Masukkan Wisata"
+							bind:value={wisataKeyword}
+							class="mt-2 flex w-full rounded-lg border-2 px-2 py-2 text-start"
+							onfocus={() => (showWisataDropdown = true)}
+							onblur={() => {
+								// Delay hiding dropdown to allow for click
+								setTimeout(() => {
+									showWisataDropdown = false;
+								}, 200);
+							}}
+						/>
+
+						<input type="hidden" name="wisata_id" value={selectedWisata?.id || ''} />
+						{#if showWisataDropdown && filteredWisata.length > 0}
+							<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
+								<ul class="max-h-60 overflow-y-auto">
+									{#each filteredWisata as wisata}
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+										<li
+											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+											onclick={() => selectWisata(wisata)}
+										>
+											<div class="flex flex-col">
+												<span class="font-medium">{wisata.name}</span>
+											</div>
+										</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
+
+						{#if errors}
+							{#each errors.wisata_id as e}
 								<p class="text-left text-red-500">- {e}</p>
 							{/each}
 						{/if}

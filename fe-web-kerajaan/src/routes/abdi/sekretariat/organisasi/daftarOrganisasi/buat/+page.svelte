@@ -89,7 +89,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						// goto('/abdi/sekretariat/organisasi/daftarorganisasi');
+						goto('/abdi/sekretariat/organisasi/daftarOrganisasi');
 					}, 3000);
 				}
 				if (result.type === 'failure') {
@@ -419,7 +419,7 @@
 </div>
 
 {#if open}
-	<SuccessModal text="Organisasi Berhasil Diubah"></SuccessModal>
+	<SuccessModal text="Organisasi Berhasil Ditambah"></SuccessModal>
 {/if}
 
 <style>

@@ -14,6 +14,20 @@
 	let loading = $state(false);
 	let user = data?.user || [];
 
+	let lokasiKeyword = $state('');
+	let lokasi = $state('');
+	let showLokasiDropdown = $state(false);
+	let filteredLokasi = $derived(
+		data?.situsData?.filter((item) =>
+			item.name.toLowerCase().includes(lokasiKeyword.toLowerCase())
+		) || []
+	);
+	function selectLokasi(item: any) {
+		lokasi = item;
+		lokasiKeyword = item.name;
+		showLokasiDropdown = false;
+	}
+
 	let pbKeyword = $state('');
 	let selectedPb = $state(null);
 	let showPbDropdown = $state(false);
@@ -374,11 +388,38 @@
 					<div class="relative">
 						<input
 							type="text"
-							name="tempat_operasional"
+							bind:value={lokasiKeyword}
+							onfocus={() => (showLokasiDropdown = true)}
+							onblur={() => {
+								// Delay hiding dropdown to allow for click
+								setTimeout(() => {
+									showLokasiDropdown = false;
+								}, 200);
+							}}
 							placeholder="Masukkan Tempat Operasional"
 							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 						/>
 					</div>
+					<input type="hidden" name="tempat_operasional" value={lokasi?.id || ''} />
+					{#if showLokasiDropdown && filteredLokasi.length > 0}
+						<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+							<ul class="max-h-60 overflow-y-auto">
+								{#each filteredLokasi as item}
+									<!-- svelte-ignore a11y_click_events_have_key_events -->
+									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+									<li
+										class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+										onclick={() => selectLokasi(item)}
+									>
+										<div class="flex flex-col">
+											<span class="font-medium">{item.name}</span>
+											<span class="text-sm text-gray-500">{item.address}</span>
+										</div>
+									</li>
+								{/each}
+							</ul>
+						</div>
+					{/if}
 					{#if errors}
 						{#each errors.tempat_operasional as e}
 							<p class="text-left text-red-500">- {e}</p>
@@ -396,7 +437,7 @@
 						/>
 					</div>
 					{#if errors}
-						{#each errors.tangal_berdiri as e}
+						{#each errors.tanggal_berdiri as e}
 							<p class="text-left text-red-500">- {e}</p>
 						{/each}
 					{/if}

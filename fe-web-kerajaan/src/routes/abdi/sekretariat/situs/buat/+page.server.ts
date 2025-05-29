@@ -35,7 +35,21 @@ export const load: PageServerLoad = async ({ cookies }) => {
             user.deleted_at === '0001-01-01T00:00:00Z' || !user.deleted_at
         );
         console.log(situs)
-        
+         let resWisata = await fetch(`${env.URL_KERAJAAN}/situs/wisata`);
+        if (!resWisata.ok) {
+            throw new Error(`HTTP Error! Status: ${resWisata.status}`)
+        }
+        let wisataData = await resWisata.json();
+        wisataData = wisataData.filter((item: any) => {
+            return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
+        }).map((item: any) => {
+            return {
+                id: item.id_wisata,
+                name: item.nama_wisata || 'Nama tidak tersedia',
+               
+            }
+        });
+        console.log(wisataData)
         return { 
             users: activeUsers.map((user: any) => ({
                 id: user.id_user,
@@ -45,7 +59,8 @@ export const load: PageServerLoad = async ({ cookies }) => {
             situs: activeSitus.map((doc: any) => ({
                 id: doc.id_jenis_situs,
                 name: doc.jenis_situs || 'Nama tidak tersedia',
-            }))
+            })),
+            wisata: wisataData
         };
     } catch (error) {
         console.error("Error fetching users:", error);
@@ -107,11 +122,23 @@ export const actions: Actions = {
             juru_kunci: 
                 z.string({ message: "Field Juru Kunci Harus diisi" })
                     .nonempty("Field ini tidak boleh kosong"),
+            // juru_kunci_id: 
+            //     z.string({ message: "Field Juru Kunci Harus dipilih" })
+            //         .nonempty("Field ini tidak boleh kosong"),
             pembina: 
                 z.string({ message: "Field Pembina Harus diisi" })
                     .nonempty("Field ini tidak boleh kosong"),
+            // pembina_id:
+            //     z.string({ message: "Field Pembina Harus dipilih" })
+            //         .nonempty("Field ini tidak boleh kosong"),
             pelindung: 
                 z.string({ message: "Field Pelindung Harus diisi" })
+                    .nonempty("Field ini tidak boleh kosong"),
+            // pelindung_id: 
+            //     z.string({ message: "Field Pelindung Harus dipilih" })
+            //         .nonempty("Field ini tidak boleh kosong"),
+            wisata_id: 
+                z.string({ message: "Field Wisata Harus dipilih" })
                     .nonempty("Field ini tidak boleh kosong"),
             phone:
                 z.string({ message: "Field Nomer Telepon Harus diisi" })
@@ -167,9 +194,11 @@ export const actions: Actions = {
             pelindung: String(data.get("pelindung")),
             phone: String(data.get("phone")),
             latitude: latitude ? String(latitude) : "",
+            
             longitude: longitude ? String(longitude) : "",
             jam_buka: String(data.get("jam_buka")),
-            jam_tutup: String(data.get("jam_tutup"))
+            jam_tutup: String(data.get("jam_tutup")),
+            wisata_id: data.get("wisata_id") ? String(data.get("wisata_id")) : "",
         }
         console.log("Extracted Form:", formData);
 
@@ -185,7 +214,7 @@ export const actions: Actions = {
         try {
             let formDataToSend = new FormData();
             formDataToSend.append("id_jenis_situs", data.get("jenis_situs") as string);
-            formDataToSend.append("id_wisata", '1');
+            formDataToSend.append("id_wisata", data.get("wisata_id") as string);
             formDataToSend.append("gambar_profile", data.get("profile_picture") as File);
             formDataToSend.append("nama_situs", formData.nama_situs);
             formDataToSend.append("deskripsi_situs", formData.deskripsi_situs);
