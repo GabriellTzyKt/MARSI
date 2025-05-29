@@ -1,6 +1,33 @@
 import { error, fail, type Actions } from "@sveltejs/kit";
 import { any, z } from "zod";
+import type { PageServerLoad } from "../$types";
+import { env } from "$env/dynamic/private";
 
+export const load: PageServerLoad = async ({ fetch, params }) => {
+    // Ambil id dari params
+    const { id } = params;
+
+    // Fetch users dan situs seperti sebelumnya
+    const [usersRes, situsRes, acaraRes] = await Promise.all([
+        fetch(`${env.BASE_URL}/users?limit=200`),
+        fetch(`${env.BASE_URL_8008}/situs?limit=200`),
+        fetch(`${env.BASE_URL_8008}/acara/situs/${id}`) // endpoint acara per situs
+    ]);
+
+    if (!usersRes.ok || !situsRes.ok || !acaraRes.ok) {
+        throw error(500, "Gagal mengambil data users, situs, atau acara");
+    }
+
+    const users = await usersRes.json();
+    const situs = await situsRes.json();
+    const acara = await acaraRes.json();
+
+    return {
+        users,
+        situs,
+        acara // <-- data acara per situs
+    };
+};
 
 export const actions: Actions = {
     tambah: async ({ request }) => {
@@ -80,7 +107,7 @@ export const actions: Actions = {
             namabawah: {},
             notelpbawah: {},
             namalengkapbawah: {},
-            namajabatan : {},
+            namajabatan: {},
         };
 
         for (const id of ids) {
@@ -102,8 +129,8 @@ export const actions: Actions = {
         if (!validation.success) {
             const fieldErrors = validation.error.flatten().fieldErrors;
 
-            console.log("errors : " , fieldErrors)
-            
+            console.log("errors : ", fieldErrors)
+
             return fail(406, {
                 errors: fieldErrors,
                 success: false,

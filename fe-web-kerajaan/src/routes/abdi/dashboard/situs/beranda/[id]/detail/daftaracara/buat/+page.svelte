@@ -7,15 +7,17 @@
 	import TambahArray from '$lib/tambah/TambahArray.svelte';
 	import { fade } from 'svelte/transition';
 	import { number } from 'zod';
+	import { writable } from 'svelte/store';
 
 	let input_radio = $state('');
 	let namaacara = $state('');
-	let lokasiacara = $state('');
+	let lokasiacara: any = $state('');
 	let tujuanacara = $state('');
 	let deskripsiacara = $state('');
 	let kapasitasacara = $state('');
 	let penanggungjawab = $state('');
 	let tanggalmulai = $state('');
+	let alamatacara = $state('');
 	let tanggalselesai = $state('');
 	let waktumulai = $state('');
 	let waktuselesai = $state('');
@@ -28,8 +30,21 @@
 	let namajabatan = $state([]);
 	let notelpbawah = $state([]);
 
-	let { form } = $props();
+	let { form, data } = $props();
+	console.log('Data : ', data);
 	console.log('form data', form);
+
+	let selectedAcara = null;
+
+	$effect(() => {
+		if (activeTab === 'completed' && namaacara) {
+			selectedAcara = data.acara.find((a: any) => a.nama_acara === namaacara) ?? null;
+			lokasiacara = Number(selectedAcara.id_lokasi);
+			console.log('Selected : ', selectedAcara);
+		} else {
+			selectedAcara = null;
+		}
+	});
 
 	if (form?.formData) {
 		buttonselect = form.formData.buttonselect;
@@ -117,9 +132,10 @@
 		console.log('Sesudah hapus:', invitationIds);
 	}
 
-	function setActive(tab: string) {
+	function setActiveTab(tab: string) {
 		activeTab = tab;
-		buttonselect = tab;
+		buttonselect = tab === 'upcoming' ? 'baru' : 'selesai';
+		console.log('active tab : ', activeTab);
 	}
 
 	let success = $state(false);
@@ -130,6 +146,37 @@
 		} else success = false;
 	};
 	let loading = $state(false);
+
+	let lokasiDropdown = writable<string[]>([]);
+	let showLokasiDropdown = writable(false);
+
+	const API_KEY = 'pk.def50126ee21d7c7b667386e05fc8bcb';
+
+	async function fetchLocations(query: string) {
+		if (!query) {
+			lokasiDropdown.set([]);
+			showLokasiDropdown.set(false);
+			return;
+		}
+		const res = await fetch(
+			`https://api.locationiq.com/v1/autocomplete?key=${API_KEY}&q=${encodeURIComponent(query)}&limit=100`
+		);
+		const data = await res.json();
+		lokasiDropdown.set(data.map((item: any) => item.display_name));
+		showLokasiDropdown.set(true);
+	}
+
+	function handleLokasiKeyDown(event: KeyboardEvent) {
+		if (event.key === 'Enter') {
+			event.preventDefault();
+			fetchLocations(alamatacara); // gunakan alamatacara
+		}
+	}
+
+	function selectLokasi(name: string) {
+		alamatacara = name; // set alamatacara,
+		showLokasiDropdown.set(false);
+	}
 </script>
 
 {#if navigating.to}
@@ -166,8 +213,13 @@
 			<div class="mt-2 flex w-fit gap-2 rounded-full border-2 px-5 py-2">
 				<input type="hidden" name="buttonselect" bind:value={buttonselect} />
 
+				<!-- Tombol 'Baru' -->
 				<button
-					onclick={() => setActive('upcoming')}
+					type="button"
+					onclick={(e) => {
+						e.preventDefault();
+						setActiveTab('upcoming');
+					}}
 					class="relative overflow-hidden rounded-full border-2 px-5 py-1 font-semibold"
 				>
 					<span
@@ -185,7 +237,11 @@
 
 				<!-- Tombol 'Selesai' -->
 				<button
-					onclick={() => setActive('completed')}
+					type="button"
+					onclick={(e) => {
+						e.preventDefault();
+						setActiveTab('completed');
+					}}
 					class="relative overflow-hidden rounded-full border-2 px-5 py-1 font-semibold"
 				>
 					<span
@@ -210,13 +266,26 @@
 				<div class="col-span-2">
 					<div class="mt-2 w-full">
 						<p>Nama Acara:</p>
-						<input
-							type="text"
-							name="namaacara"
-							bind:value={namaacara}
-							placeholder="Masukkan Nama"
-							class="w-full rounded-lg border px-2 py-1"
-						/>
+						{#if activeTab === 'completed'}
+							<select
+								name="namaacara"
+								bind:value={namaacara}
+								class="w-full rounded-lg border px-2 py-1"
+							>
+								<option value="" disabled selected>Pilih Acara Lama</option>
+								{#each data.acara as acara}
+									<option value={acara.nama_acara}>{acara.nama_acara}</option>
+								{/each}
+							</select>
+						{:else}
+							<input
+								type="text"
+								name="namaacara"
+								bind:value={namaacara}
+								placeholder="Masukkan Nama"
+								class="w-full rounded-lg border px-2 py-1"
+							/>
+						{/if}
 						{#if error}
 							{#each error.namaacara as a}
 								<p class="text-left text-red-500">{a}</p>
@@ -226,19 +295,24 @@
 
 					<div class="mt-2 w-full">
 						<p>Lokasi Acara:</p>
-						<input
-							type="text"
+						<select
 							name="lokasiacara"
 							bind:value={lokasiacara}
-							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
-						/>
+						>
+							<option value="" disabled selected>Pilih Lokasi Acara</option>
+							{#each data.situs as s}
+								<option value={s.id_situs}>{s.nama_situs}</option>
+							{/each}
+						</select>
+
 						{#if error}
 							{#each error.lokasiacara as a}
 								<p class="text-left text-red-500">{a}</p>
 							{/each}
 						{/if}
 					</div>
+
 					<div class="mt-2 w-full">
 						<p>Tujuan Acara:</p>
 						<input
@@ -254,6 +328,7 @@
 							{/each}
 						{/if}
 					</div>
+
 					<div class="mt-2 w-full">
 						<p>Deskripsi Acara:</p>
 						<textarea
@@ -328,13 +403,16 @@
 					</div>
 					<div class="col-span-2 mt-2 w-full">
 						<p class="mt-2">Penanggung Jawab:</p>
-						<input
-							type="text"
+						<select
 							name="penanggungjawab"
-							placeholder="Masukkan Nama"
 							bind:value={penanggungjawab}
 							class="w-full rounded-lg border px-2 py-1"
-						/>
+						>
+							<option value="" disabled selected>Pilih Penanggung Jawab</option>
+							{#each data.users as user}
+								<option value={user.id_user}>{user.nama_lengkap}</option>
+							{/each}
+						</select>
 						{#if error}
 							{#each error.penanggungjawab as a}
 								<p class="text-left text-red-500">{a}</p>
@@ -406,6 +484,40 @@
 								{/if}
 							</div>
 						</div>
+					</div>
+					<div class="mt-2 w-full" style="position:relative">
+						<p>Alamat acara:</p>
+						{#if activeTab === 'completed'}
+							<input
+							type="text"
+							name="alamatacara"
+							bind:value={alamatacara}
+							placeholder="Masukkan alamat"
+							class="w-full rounded-lg border px-2 py-1"
+						/>
+						{:else}
+							<input
+								class="input-field w-full rounded-lg border p-2 pr-8"
+								type="text"
+								name="alamatacara"
+								bind:value={alamatacara}
+								onkeydown={handleLokasiKeyDown}
+								placeholder="Cari alamat..."
+								autocomplete="off"
+							/>
+							{#if $showLokasiDropdown && alamatacara !== ''}
+								<ul class="dropdown">
+									{#each $lokasiDropdown as name}
+										<li onclick={() => selectLokasi(name)}>{name}</li>
+									{/each}
+								</ul>
+							{/if}
+						{/if}
+						{#if error}
+							{#each error.lokasiacara as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -584,6 +696,45 @@
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='%23fff6f6'%3E%3Cpath fill-rule='evenodd' d='M17 5V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v1H4a1 1 0 0 0 0 2h1v11a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V7h1a1 1 0 1 0 0-2zm-2-1H9v1h6zm2 3H7v11a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1z' clip-rule='evenodd'/%3E%3Cpath d='M9 9h2v8H9zm4 0h2v8h-2z'/%3E%3C/g%3E%3C/svg%3E");
+	}
+
+	.dropdown {
+		position: absolute;
+		left: 0;
+		right: 0;
+		z-index: 20;
+		width: 100%;
+		max-height: 120px;
+		overflow-y: auto;
+		background: #fff;
+		border: 1px solid #d1d5db;
+		border-radius: 0.5rem;
+		box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+		margin-top: 0.25rem;
+		padding: 0.25rem 0;
+	}
+
+	.dropdown li {
+		padding: 0.75rem 1rem;
+		cursor: pointer;
+		transition: background 0.2s, color 0.2s;
+		font-size: 1rem;
+		color: #222;
+	}
+
+	.dropdown li:hover,
+	.dropdown li:focus {
+		background: #2563eb;
+		color: #fff;
+	}
+
+	/* Optional: animate dropdown */
+	.dropdown {
+		animation: fadeIn 0.2s;
+	}
+	@keyframes fadeIn {
+		from { opacity: 0; transform: translateY(-8px);}
+		to { opacity: 1; transform: translateY(0);}
 	}
 
 	@media (max-width: 1100px) {
