@@ -297,7 +297,6 @@ export const actions: Actions = {
         const username = data.get("username");
         const email = data.get("email");
         const no_telp = data.get("no_telp");
-        const password = data.get("password") || "password"; // Default password if not provided
         const tgl_lahir = data.get("tgl_lahir");
         const kota_lahir = data.get("kota_lahir");
         const jenis_kelamin = data.get("jenis_kelamin");
@@ -347,7 +346,6 @@ export const actions: Actions = {
                 tempat_lahir: String(kota_lahir),
                 tanggal_lahir: formattedDate,
                 username: String(username),
-                password: String(password),
                 email: String(email),
                 no_telp: String(no_telp),
                 id_kerajaan: id_kerajaan,
