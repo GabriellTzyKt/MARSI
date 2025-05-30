@@ -266,6 +266,8 @@
 			return 'Edit Organisasi';
 		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/edit') {
 			return 'Edit Organisasi';
+		} else if (page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail/daftaracara/edit/[idacarasitus]') {
+			return 'Edit acara situs';
 		}
 	});
 

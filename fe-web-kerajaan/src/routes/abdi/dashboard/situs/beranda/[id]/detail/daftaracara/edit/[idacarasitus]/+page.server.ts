@@ -1,6 +1,44 @@
-import { fail } from "@sveltejs/kit";
-import { error, type Actions } from "@sveltejs/kit";
+import { env } from "$env/dynamic/private";
+import { fail, error, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
+
+export const load = async ({ params, fetch }) => {
+    const id_situs = params.id;
+    const id_acarasitus = params.idacarasitus;
+
+    // Ambil semua data yang dibutuhkan secara paralel
+    const [usersRes, situsRes, komunitasRes, organisasiRes, acaraRes] = await Promise.all([
+        fetch(`${env.BASE_URL}/users?limit=2000`),
+        fetch(`${env.BASE_URL_8008}/situs?limit=200`),
+        fetch(`${env.BASE_URL_8008}/komunitas?limit=200`),
+        fetch(`${env.BASE_URL_8008}/organisasi?limit=200`),
+        fetch(`${env.BASE_URL_8008}/acara/situs/${id_situs}`)
+    ]);
+
+    if (!usersRes.ok || !situsRes.ok || !komunitasRes.ok || !organisasiRes.ok || !acaraRes.ok) {
+        throw error(500, "Gagal mengambil data users, situs, komunitas, organisasi, atau acara");
+    }
+
+    const users = await usersRes.json();
+    const situs = await situsRes.json();
+    const komunitas = await komunitasRes.json();
+    const organisasi = await organisasiRes.json();
+    const acaraList = await acaraRes.json();
+
+    // Cari acara yang id-nya sama dengan id_acarasitus
+    const acara = acaraList.find((a: any) => String(a.id_acara) === String(id_acarasitus));
+    if (!acara) throw error(404, "Acara tidak ditemukan");
+
+    return {
+        users,
+        situs,
+        komunitas,
+        organisasi,
+        acaraList,
+        acara
+    };
+};
+
 
 export const actions: Actions = {
     edit: async ({ request }) => {

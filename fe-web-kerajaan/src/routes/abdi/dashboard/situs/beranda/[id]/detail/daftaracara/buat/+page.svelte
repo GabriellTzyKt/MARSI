@@ -15,20 +15,21 @@
 	let tujuanacara = $state('');
 	let deskripsiacara = $state('');
 	let kapasitasacara = $state('');
-	let penanggungjawab = $state('');
+	let penanggungjawab: any = $state('');
+	let penyelenggaraacara = $state('');
 	let tanggalmulai = $state('');
 	let alamatacara = $state('');
 	let tanggalselesai = $state('');
 	let waktumulai = $state('');
 	let waktuselesai = $state('');
-	let buttonselect = $state('');
+	let buttonselect = $state('baru');
 	let error: any = $state('');
 
-	let panggilan = $state([]);
-	let namabawah = $state([]);
+	let panggilan: any = $state([]);
+	let namabawah: any = $state([]);
 	let namalengkapbawah = $state([]);
 	let namajabatan = $state([]);
-	let notelpbawah = $state([]);
+	let notelpbawah: any = $state([]);
 
 	let { form, data } = $props();
 	console.log('Data : ', data);
@@ -40,9 +41,23 @@
 		if (activeTab === 'completed' && namaacara) {
 			selectedAcara = data.acara.find((a: any) => a.nama_acara === namaacara) ?? null;
 			lokasiacara = Number(selectedAcara.id_lokasi);
+			penanggungjawab = Number(selectedAcara.id_penanggung_jawab);
+			alamatacara = selectedAcara.alamat_acara;
+			kapasitasacara = selectedAcara.kapasitas_acara;
+			deskripsiacara = selectedAcara.deskripsi_acara;
+			tujuanacara = selectedAcara.tujuan_acara;
+			input_radio = selectedAcara.jenis_acara;
 			console.log('Selected : ', selectedAcara);
 		} else {
 			selectedAcara = null;
+			namaacara = '';
+			lokasiacara = '';
+			penanggungjawab = '';
+			alamatacara = '';
+			kapasitasacara = '';
+			deskripsiacara = '';
+			tujuanacara = '';
+			input_radio = '';
 		}
 	});
 
@@ -61,7 +76,7 @@
 		waktuselesai = form.formData.waktuselesai;
 	}
 
-	let activeTab = $state('');
+	let activeTab = $state('upcoming');
 	let open = $state(false);
 	let timer: number;
 
@@ -177,6 +192,21 @@
 		alamatacara = name; // set alamatacara,
 		showLokasiDropdown.set(false);
 	}
+
+	function handleNamaChange(invitationId: number) {
+		const user = data.users.find((u: any) => u.id_user == namabawah[invitationId]);
+		if (user) {
+			// Set panggilan otomatis berdasarkan jenis_kelamin
+			panggilan[invitationId] =
+				user.jenis_kelamin.toLowerCase() === 'laki-laki' ? 'laki-laki' : 'perempuan';
+			// Set nomor telepon otomatis
+			notelpbawah[invitationId] = user.no_telp ?? '';
+		}
+	}
+
+	function isKetuaDipilih(currentId: number) {
+		return invitations2.some((inv) => inv.id !== currentId && namajabatan[inv.id] === 'ketua');
+	}
 </script>
 
 {#if navigating.to}
@@ -220,6 +250,7 @@
 						e.preventDefault();
 						setActiveTab('upcoming');
 					}}
+					value="baru"
 					class="relative overflow-hidden rounded-full border-2 px-5 py-1 font-semibold"
 				>
 					<span
@@ -238,6 +269,7 @@
 				<!-- Tombol 'Selesai' -->
 				<button
 					type="button"
+					value="lama"
 					onclick={(e) => {
 						e.preventDefault();
 						setActiveTab('completed');
@@ -262,6 +294,9 @@
 					{/each}
 				{/if}
 			</div>
+
+			<input type="hidden" name="id_user" bind:value={data.id} />
+
 			<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 				<div class="col-span-2">
 					<div class="mt-2 w-full">
@@ -288,6 +323,55 @@
 						{/if}
 						{#if error}
 							{#each error.namaacara as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+
+					<div class="col-span-2 mt-2 w-full">
+						<p class="mt-2">Penanggung Jawab:</p>
+						<select
+							name="penanggungjawab"
+							bind:value={penanggungjawab}
+							class="w-full rounded-lg border px-2 py-1"
+						>
+							<option value="" disabled selected>Pilih Penanggung Jawab</option>
+							{#each data.users as user}
+								<option value={user.id_user}>{user.nama_lengkap}</option>
+							{/each}
+						</select>
+						{#if error}
+							{#each error.penanggungjawab as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+
+					<div class="col-span-2 mt-2 w-full">
+						<p class="mt-2">Penyelenggara Acara:</p>
+						<select
+							name="penyelenggaraacara"
+							bind:value={penyelenggaraacara}
+							class="w-full rounded-lg border px-2 py-1"
+						>
+							<option value="" disabled selected>Pilih Penyelenggara</option>
+							<optgroup label="Komunitas">
+								{#each data.komunitas as komunitas}
+									<option value={`komunitas-${komunitas.id_komunitas}`}
+										>{komunitas.nama_komunitas}</option
+									>
+								{/each}
+							</optgroup>
+							<optgroup label="Organisasi">
+								{#each data.organisasi as organisasi}
+									<option value={`organisasi-${organisasi.id_organisasi}`}
+										>{organisasi.nama_organisasi}</option
+									>
+								{/each}
+							</optgroup>
+						</select>
+						{#if error}
+							{#each error.penyelenggaraacara as a}
 								<p class="text-left text-red-500">{a}</p>
 							{/each}
 						{/if}
@@ -324,21 +408,6 @@
 						/>
 						{#if error}
 							{#each error.tujuanacara as a}
-								<p class="text-left text-red-500">{a}</p>
-							{/each}
-						{/if}
-					</div>
-
-					<div class="mt-2 w-full">
-						<p>Deskripsi Acara:</p>
-						<textarea
-							name="deskripsiacara"
-							bind:value={deskripsiacara}
-							placeholder="Masukkan Deskripsi Acara"
-							class="h-32 w-full resize-none rounded-md border px-3 py-3 text-lg"
-						></textarea>
-						{#if error}
-							{#each error.deskripsiacara as a}
 								<p class="text-left text-red-500">{a}</p>
 							{/each}
 						{/if}
@@ -401,26 +470,9 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-span-2 mt-2 w-full">
-						<p class="mt-2">Penanggung Jawab:</p>
-						<select
-							name="penanggungjawab"
-							bind:value={penanggungjawab}
-							class="w-full rounded-lg border px-2 py-1"
-						>
-							<option value="" disabled selected>Pilih Penanggung Jawab</option>
-							{#each data.users as user}
-								<option value={user.id_user}>{user.nama_lengkap}</option>
-							{/each}
-						</select>
-						{#if error}
-							{#each error.penanggungjawab as a}
-								<p class="text-left text-red-500">{a}</p>
-							{/each}
-						{/if}
-					</div>
+
 					<div class="flexcoba mt-2 flex w-full">
-						<div class="mt-2 lg:flex-1">
+						<div class="lg:flex-1">
 							<p>Tanggal Mulai:</p>
 							<input
 								type="date"
@@ -436,7 +488,7 @@
 							{/if}
 						</div>
 						<div class="flex-1 lg:ml-10">
-							<div class="mt-2 w-full">
+							<div class="w-full">
 								<p>Tanggal Selesai:</p>
 								<input
 									type="date"
@@ -454,7 +506,7 @@
 						</div>
 					</div>
 					<div class="flexcoba mt-2 flex w-full">
-						<div class="mt-2 lg:flex-1">
+						<div class="lg:flex-1">
 							<p>Waktu Mulai:</p>
 							<input
 								type="time"
@@ -469,7 +521,7 @@
 							{/if}
 						</div>
 						<div class="flex-1 lg:ml-10">
-							<div class="mt-2 w-full">
+							<div class="w-full">
 								<p>Waktu Selesai:</p>
 								<input
 									type="time"
@@ -485,16 +537,16 @@
 							</div>
 						</div>
 					</div>
-					<div class="mt-2 w-full" style="position:relative">
+					<div class="w-full" style="position:relative">
 						<p>Alamat acara:</p>
 						{#if activeTab === 'completed'}
 							<input
-							type="text"
-							name="alamatacara"
-							bind:value={alamatacara}
-							placeholder="Masukkan alamat"
-							class="w-full rounded-lg border px-2 py-1"
-						/>
+								type="text"
+								name="alamatacara"
+								bind:value={alamatacara}
+								placeholder="Masukkan alamat"
+								class="w-full rounded-lg border px-2 py-1"
+							/>
 						{:else}
 							<input
 								class="input-field w-full rounded-lg border p-2 pr-8"
@@ -515,6 +567,20 @@
 						{/if}
 						{#if error}
 							{#each error.lokasiacara as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+					<div class="w-full">
+						<p>Deskripsi Acara:</p>
+						<textarea
+							name="deskripsiacara"
+							bind:value={deskripsiacara}
+							placeholder="Masukkan Deskripsi Acara"
+							class="h-12 w-full resize-none rounded-md border px-3 py-3 text-lg"
+						></textarea>
+						{#if error}
+							{#each error.deskripsiacara as a}
 								<p class="text-left text-red-500">{a}</p>
 							{/each}
 						{/if}
@@ -548,20 +614,25 @@
 							id={`panggilan_${invitation.id}`}
 							class="mt-1 w-full"
 						>
-							<option value="Tn">Tn</option>
-							<option value="Ny">Ny</option>
+							<option value="laki-laki">Laki-laki</option>
+							<option value="perempuan">Perempuan</option>
 						</select>
 					</div>
 
 					<div class="col-span-3 w-full rounded-lg border px-2 py-1">
-						<input
-							type="text"
+						<!-- Nama jadi dropdown -->
+						<select
 							bind:value={namabawah[invitation.id]}
-							placeholder="Nama"
 							name={`namabawah_${invitation.id}`}
 							id={`namabawah_${invitation.id}`}
 							class="w-full focus:outline-none"
-						/>
+							onchange={() => handleNamaChange(invitation.id)}
+						>
+							<option value="" disabled selected>Pilih Nama</option>
+							{#each data.users as user}
+								<option value={user.id_user}>{user.nama_lengkap}</option>
+							{/each}
+						</select>
 						{#if error}
 							{console.log(error)}
 							{#if error.namabawah && !namabawah[invitation.id]}
@@ -622,14 +693,17 @@
 					<input type="hidden" name="id2" value={invitation.id} />
 
 					<div class="col-span-4 w-full rounded-lg border px-2 py-1">
-						<input
-							type="text"
+						<select
 							bind:value={namalengkapbawah[invitation.id]}
-							placeholder="Nama"
 							name={`namalengkapbawah_${invitation.id}`}
 							id={`namalengkapbawah_${invitation.id}`}
 							class="w-full focus:outline-none"
-						/>
+						>
+							<option value="" disabled selected>Pilih Nama</option>
+							{#each data.users as user}
+								<option value={user.id_user}>{user.nama_lengkap}</option>
+							{/each}
+						</select>
 						{#if error}
 							{console.log(error)}
 							{#if error.namalengkapbawah && !namalengkapbawah[invitation.id]}
@@ -648,8 +722,16 @@
 							class="mt-1 w-full"
 						>
 							<option value="" disabled selected>Silahkan Pilih!</option>
-							<option value="ketua">Ketua</option>
+							<option value="ketua" disabled={isKetuaDipilih(invitation.id)}>Ketua</option>
+							<option value="wakilketua">Wakil Ketua</option>
 							<option value="sekretariat">Sekretariat</option>
+							<option value="bendahara">Bendahara</option>
+							<option value="acara">Acara</option>
+							<option value="komunikasi">Komunikasi</option>
+							<option value="perlengkapan">Perlengkapan</option>
+							<option value="pdd">PDD</option>
+							<option value="keamanan">Keamanan</option>
+							<option value="humas">Humas</option>
 						</select>
 						{#if error.namajabatan && !namajabatan[invitation.id]}
 							<p class="text-left text-red-500">{error.namajabatan[0]}</p>
@@ -682,7 +764,7 @@
 		<SucessModal
 			{open}
 			text="Tamu Berhasil Di Undang!"
-			to="/abdi/dashboard/organisasi/acara"
+			to="/abdi/dashboard/situs/beranda"
 			on:close={toggle}
 		></SucessModal>
 	</div>
@@ -709,7 +791,7 @@
 		background: #fff;
 		border: 1px solid #d1d5db;
 		border-radius: 0.5rem;
-		box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 		margin-top: 0.25rem;
 		padding: 0.25rem 0;
 	}
@@ -717,7 +799,9 @@
 	.dropdown li {
 		padding: 0.75rem 1rem;
 		cursor: pointer;
-		transition: background 0.2s, color 0.2s;
+		transition:
+			background 0.2s,
+			color 0.2s;
 		font-size: 1rem;
 		color: #222;
 	}
@@ -733,8 +817,14 @@
 		animation: fadeIn 0.2s;
 	}
 	@keyframes fadeIn {
-		from { opacity: 0; transform: translateY(-8px);}
-		to { opacity: 1; transform: translateY(0);}
+		from {
+			opacity: 0;
+			transform: translateY(-8px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
 	@media (max-width: 1100px) {
