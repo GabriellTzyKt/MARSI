@@ -216,6 +216,7 @@ export const actions: Actions = {
                 pembina: form.pembina,
                 pelindung: form.pelindung,
                 profile: profileId || null,
+                tanggal_berdiri: form.tanggalBerdiri,
                 lokasi: "4",
                 foto_komunitas: existingFotoKomunitasId || null,
             };

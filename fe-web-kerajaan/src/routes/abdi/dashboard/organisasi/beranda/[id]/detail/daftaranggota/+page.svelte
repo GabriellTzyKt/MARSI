@@ -21,7 +21,7 @@
 	import { string } from 'zod';
 
 	let { data } = $props();
-	console.log(data);
+	// console.log(data);
 	let allUser = data.userData;
 
 	let idAktif = $state(page.params.id);
@@ -52,25 +52,28 @@
 			console.log('Fetching members for organization:', organizationId);
 			// Fetch members for the selected organization
 			let anggotaResponse = await fetch(
-				`${env.PUBLIC_URL_KERAJAAN}/organisasi/anggota/${organizationId}?limit=200`
+				`${env.PUBLIC_URL_KERAJAAN}/organisasi/anggota/${organizationId}?limit=300`
 			);
 			if (anggotaResponse.ok) {
 				let anggotaList = await anggotaResponse.json();
 
-				anggotaList = anggotaList.map((item: any) => {
-					return {
-						...item,
-						nama_anggota:
-							data.allUser.find((user: any) => user.id_user === item.id_user)?.nama_lengkap ||
-							item.nama_anggota,
-						email:
-							data.allUser.find((user: any) => user.id_user === item.id_user)?.email || item.email,
-						nomor_telepon:
-							data.allUser.find((user: any) => user.id_user === item.id_user)?.no_telp ||
-							item.nomor_telepon,
-						tanggal_bergabung: formatDatetoUI(item.tanggal_bergabung)
-					};
-				});
+				anggotaList = anggotaList
+					.filter((item) => item.deleted_at == '0001-01-01T00:00:00Z')
+					.map((item: any) => {
+						return {
+							...item,
+							nama_anggota:
+								data.allUser.find((user: any) => user.id_user === item.id_user)?.nama_lengkap ||
+								item.nama_anggota,
+							email:
+								data.allUser.find((user: any) => user.id_user === item.id_user)?.email ||
+								item.email,
+							nomor_telepon:
+								data.allUser.find((user: any) => user.id_user === item.id_user)?.no_telp ||
+								item.nomor_telepon,
+							tanggal_bergabung: formatDatetoUI(item.tanggal_bergabung)
+						};
+					});
 				console.log('Fetched members:', anggotaList);
 				// Fetch user information for each member
 				// Process each member to add user information

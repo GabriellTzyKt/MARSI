@@ -12,6 +12,7 @@
 	import { enhance } from '$app/forms';
 	import Loader from '$lib/loader/Loader.svelte';
 	import Bracode from '$lib/popup/Bracode.svelte';
+	import { formatDate } from '$lib';
 
 	let { form, data } = $props();
 
@@ -256,7 +257,7 @@
 					name="tanggal_lahir"
 					class="w-full rounded-lg border border-gray-500 bg-white py-2 ps-2 text-gray-500 focus:outline-none"
 					id="tanggal_lahir"
-					value={data.data.tanggal_lahir_UI || '-'}
+					value={formatDate(data.data.tanggal_lahir) || '-'}
 				/>
 				{#if form?.errors}
 					{#each form?.errors.tanggal_lahir as e}

@@ -13,30 +13,30 @@
 	let { data } = $props();
 	console.log(data);
 	console.log('data.user : ', data.user);
-	let user = $state(data?.data.user_data);
+	let user = $state(data?.data);
 	console.log(user);
-	let adminData = $state();
-	async function fetchuser() {
-		try {
-			let adminRes = await fetch(`${env.PUBLIC_URL_KERAJAAN}/admin?limit=500`, {
-				method: 'GET'
-			});
-			let admin = await adminRes.json();
+	// let adminData = $state();
+	// async function fetchuser() {
+	// 	try {
+	// 		let adminRes = await fetch(`${env.PUBLIC_URL_KERAJAAN}/admin?limit=500`, {
+	// 			method: 'GET'
+	// 		});
+	// 		let admin = await adminRes.json();
 
-			admin = admin.filter(
-				(item) => item.status_aktif == 1 && item.deleted_at == '0001-01-01T00:00:00Z'
-			);
-			console.log(admin);
-			adminData = admin;
-		} catch (error) {}
-	}
-	onMount(() => {
-		fetchuser();
-		let find = adminData?.filter((item) => item.id_user === user.id_user);
-		if (!find) {
-			goto('/beranda');
-		}
-	});
+	// 		admin = admin.filter(
+	// 			(item) => item.status_aktif == 1 && item.deleted_at == '0001-01-01T00:00:00Z'
+	// 		);
+	// 		console.log(admin);
+	// 		adminData = admin;
+	// 	} catch (error) {}
+	// }
+	// onMount(() => {
+	// 	fetchuser();
+	// 	let find = adminData?.filter((item) => item.id_user === user.id_user);
+	// 	if (!find) {
+	// 		goto('/beranda');
+	// 	}
+	// });
 	let total = $state(16);
 </script>
 

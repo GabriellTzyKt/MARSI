@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ params, fetch, cookies }) => {
         // Use Promise.all to fetch data in parallel
         const [userRes, allUsersRes] = await Promise.all([
             fetch(`${env.PUB_PORT}/user/${params.id}`),
-            fetch(`${env.PUB_PORT}/users`, {
+            fetch(`${env.URL_KERAJAAN}/anggota`, {
                 headers: {
                     "Authorization": `Bearer ${session.token}`
                 }

@@ -3,7 +3,8 @@ import { z } from "zod";
 import { env } from "$env/dynamic/private";
 import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, cookies }) => {
+    const cookie = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
     try {
         // Fetch acara details using the ID
         const id = params.id;
@@ -17,7 +18,12 @@ export const load: PageServerLoad = async ({ params }) => {
         const acara = await response.json();
 
 
-        const usersResponse = await fetch(`${env.BASE_URL}/users`);
+        const usersResponse = await fetch(`${env.PUB_PORT}/users`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${cookie.token}`
+            }
+        });
         let allUsers = [];
         if (usersResponse.ok) {
             allUsers = await usersResponse.json();

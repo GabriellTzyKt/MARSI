@@ -16,7 +16,7 @@
 	});
 
 	// Check if data exists and has the expected structure
-	const komunitas = data?.data.komunitas || {}; // Access komunitas data
+	const komunitas = data?.komunitas || {}; // Access komunitas data
 	console.log(komunitas);
 	const nama_komunitas = komunitas?.nama_komunitas || 'Nama Komunitas Tidak Tersedia';
 	const tanggal_berdiri = komunitas?.tanggal_berdiri
@@ -28,7 +28,7 @@
 
 	// Get penanggung jawab name
 	const penanggung_jawab =
-		data?.data?.penanggungJawab?.nama_lengkap || komunitas?.penanggung_jawab || '-';
+		data?.penanggungJawab?.nama_lengkap || komunitas?.penanggung_jawab || '-';
 
 	// Handle image URLs safely
 	const imageUrls = data?.imageUrls || [];
@@ -55,7 +55,7 @@
 			<div class="grid grid-cols-1 gap-8 px-10 py-10 md:grid-cols-2">
 				<div>
 					<img
-						src={data.data.profileUrl}
+						src={data.profileUrl}
 						class="mt-12 h-auto w-[500px] self-center rounded-lg object-cover"
 						alt="foto 1"
 					/>
