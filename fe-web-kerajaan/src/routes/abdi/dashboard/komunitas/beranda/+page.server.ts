@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ }) => {
         }
         
         const komunitasList = await komunitasResponse.json();
-        console.log("komunitas : ", komunitasList);
+        // console.log("komunitas : ", komunitasList);
 
         const filteredList = komunitasList.filter((doc: any) => {
             return doc.deleted_at == '0001-01-01T00:00:00Z' && doc.deleted_at !== null;
@@ -44,7 +44,7 @@ export const load: PageServerLoad = async ({ }) => {
             })
         );
 
-        console.log("komunitas with profiles:", komunitasWithProfiles);
+        // console.log("komunitas with profiles:", komunitasWithProfiles);
 
         return {
             filteredList: komunitasWithProfiles

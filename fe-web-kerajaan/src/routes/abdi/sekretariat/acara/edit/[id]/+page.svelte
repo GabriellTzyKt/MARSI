@@ -5,6 +5,7 @@
 	import Loader from '$lib/loader/Loader.svelte';
 	// import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
+	import { Item } from '@radix-ui/react-dropdown-menu';
 	import { fade } from 'svelte/transition';
 	import type { AnymatchFn } from 'vite';
 	import { tuple } from 'zod';
@@ -17,10 +18,14 @@
 	console.log('User: ', data.data.jenis_acara);
 	let input_radio = $state(data?.data?.jenis_acara || '');
 	let res = $state();
-	let isLocationSelected = $state(false);
+	let isLocationSelected = $state(data?.data.id_lokasi ? true : false);
 
-	let penanggungjawabSearchTerm = $state('');
-	let selectedPenanggungjawab = $state<any>(null);
+	let penanggungjawabSearchTerm = $state(
+		data?.user.find((user) => user.id == data?.data?.id_penanggung_jawab).name || ''
+	);
+	let selectedPenanggungjawab = $state<any>(
+		data?.user.find((nama) => nama.id == data?.data.id_penanggung_jawab) || null
+	);
 	let showPenanggungjawabDropdown = $state(false);
 
 	let namaacara = $state(data?.data.nama_acara || '-');
@@ -31,11 +36,11 @@
 	let tanggalmulai = $state(data?.data.tanggal_mulai || '');
 	let tanggalselesai = $state(data?.data.tanggal_selesai || '');
 	let penanggungjawab = $state(data?.data.nama_penanggung_jawab || '');
-	let panggilan = $state([]);
-	let namabawah = $state([]);
+	let panggilan: any = $state([]);
+	let namabawah: any = $state([]);
 	let namalengkapbawah = $state([]);
 	let namajabatan = $state([]);
-	let notelpbawah = $state([]);
+	let notelpbawah: any = $state([]);
 
 	let invitations: { id: number; panggilan: string; nama: string; notelepon: string }[] = $state(
 		[]
@@ -62,6 +67,9 @@
 
 	function filterUser(searchTerm: string) {
 		return users.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+	}
+	function isKetuaDipilih(currentId: number) {
+		return invitations2.some((inv) => inv.id !== currentId && namajabatan[inv.id] === 'ketua');
 	}
 	function bindId(item: any) {
 		if (lokasi_acara) {
@@ -132,7 +140,16 @@
 		invitationIds2 = [...invitationIds2, newId];
 		console.log('invitations id: ', invitationIds2);
 	}
-
+	function handleNamaChange(invitationId: number) {
+		const user = data.user.find((u: any) => u.id == namabawah[invitationId]);
+		if (user) {
+			// Set panggilan otomatis berdasarkan jenis_kelamin
+			panggilan[invitationId] =
+				user.jenis_kelamin.toLowerCase() === 'laki-laki' ? 'laki-laki' : 'perempuan';
+			// Set nomor telepon otomatis
+			notelpbawah[invitationId] = user.no_telp ?? '';
+		}
+	}
 	function hapus2(index: number) {
 		console.log('Sebelum hapus:', invitations2);
 		console.log('Menghapus indeks:', index);
@@ -152,9 +169,13 @@
 			success = true;
 		} else success = false;
 	};
+	let selectedLokasi = $state(
+		data?.situs.find((item) => item.id_situs == data?.data.id_lokasi) || null
+	);
 	function select(item: any) {
 		lokasi_acara = item.nama_situs;
 		lokasi = item.alamat;
+		selectedLokasi = item;
 		isLocationSelected = true;
 		showDropdown = false;
 	}
@@ -196,6 +217,7 @@
 			};
 		}}
 	>
+		<input type="hidden" name="id" value={data?.data.id_acara} />
 		<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 			<div class="col-span-2">
 				<div class="mt-2 w-full">
@@ -245,6 +267,7 @@
 						class="w-full rounded-lg border px-2 py-1"
 					/>
 					<!-- Location dropdown -->
+					<input type="hidden" name="id_lokasi" value={selectedLokasi?.id_situs || ''} />
 					{#if showDropdown && data?.data}
 						<ul
 							class="dropdown absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border bg-white"
@@ -332,7 +355,7 @@
 									<input
 										id="default-radio-1"
 										type="radio"
-										value="Tertutup"
+										value="private"
 										bind:group={input_radio}
 										name="jenisacara"
 										class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
@@ -345,7 +368,7 @@
 									<input
 										id="default-radio-2"
 										type="radio"
-										value="Terbuka"
+										value="public"
 										bind:group={input_radio}
 										name="jenisacara"
 										class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600"
@@ -380,11 +403,8 @@
 							}}
 							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 						/>
-						<input
-							type="hidden"
-							name="penanggungjawab"
-							value={selectedPenanggungjawab?.name || data.situs.penanggungjawab || null}
-						/>
+						<input type="hidden" name="penanggungjawab" value={selectedPenanggungjawab.name} />
+						<input type="hidden" name="penanggungjawab_id" value={selectedPenanggungjawab.id} />
 
 						{#if showPenanggungjawabDropdown && filteredPenanggungJawab.length > 0}
 							<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
@@ -530,20 +550,25 @@
 						id={`panggilan_${invitation.id}`}
 						class="mt-1 w-full"
 					>
-						<option value="Tn">Tn</option>
-						<option value="Ny">Ny</option>
+						<option value="laki-laki">Laki-laki</option>
+						<option value="perempuan">Perempuan</option>
 					</select>
 				</div>
 
 				<div class="col-span-3 w-full rounded-lg border px-2 py-1">
-					<input
-						type="text"
+					<!-- Nama jadi dropdown -->
+					<select
 						bind:value={namabawah[invitation.id]}
-						placeholder="Nama"
 						name={`namabawah_${invitation.id}`}
 						id={`namabawah_${invitation.id}`}
 						class="w-full focus:outline-none"
-					/>
+						onchange={() => handleNamaChange(invitation.id)}
+					>
+						<option value="" disabled selected>Pilih Nama</option>
+						{#each data.user as user}
+							<option value={user.id}>{user.name}</option>
+						{/each}
+					</select>
 					{#if errors}
 						{console.log(errors)}
 						{#if errors.namabawah && !namabawah[invitation.id]}
@@ -605,14 +630,17 @@
 				<input type="hidden" name="id2" value={invitation.id} />
 
 				<div class="col-span-4 w-full rounded-lg border px-2 py-1">
-					<input
-						type="text"
+					<select
 						bind:value={namalengkapbawah[invitation.id]}
-						placeholder="Nama"
 						name={`namalengkapbawah_${invitation.id}`}
 						id={`namalengkapbawah_${invitation.id}`}
 						class="w-full focus:outline-none"
-					/>
+					>
+						<option value="" disabled selected>Pilih Nama</option>
+						{#each data.user as user}
+							<option value={user.id}>{user.name}</option>
+						{/each}
+					</select>
 					{#if errors}
 						{console.log(errors)}
 						{#if errors.namalengkapbawah && !namalengkapbawah[invitation.id]}
@@ -631,8 +659,16 @@
 						class="mt-1 w-full"
 					>
 						<option value="" disabled selected>Silahkan Pilih!</option>
-						<option value="ketua">Ketua</option>
+						<option value="ketua" disabled={isKetuaDipilih(invitation.id)}>Ketua</option>
+						<option value="wakilketua">Wakil Ketua</option>
 						<option value="sekretariat">Sekretariat</option>
+						<option value="bendahara">Bendahara</option>
+						<option value="acara">Acara</option>
+						<option value="komunikasi">Komunikasi</option>
+						<option value="perlengkapan">Perlengkapan</option>
+						<option value="pdd">PDD</option>
+						<option value="keamanan">Keamanan</option>
+						<option value="humas">Humas</option>
 					</select>
 					{#if errors.namajabatan && !namajabatan[invitation.id]}
 						<p class="text-left text-red-500">{errors.namajabatan[0]}</p>

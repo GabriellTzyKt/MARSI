@@ -6,14 +6,15 @@ import {
     
  } from "$lib";
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({cookies}) => {
     try {
-        let res = await fetch(`${env.URL_KERAJAAN}/acara?limit=300`);
+        let token = JSON.parse(cookies.get("userSession") as string);
+        let res = await fetch(`${env.URL_KERAJAAN}/acara?limit=500`);
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }
         let data = await res.json();
-        console.log("acara",data)
+        // console.log("acara",data)
      data = data.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
         let formatDateTime = (isoString) => {
     if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
@@ -71,8 +72,28 @@ export const load: PageServerLoad = async () => {
         //     return formattedItem;
         // }));
 
-        console.log("Merged Data:",mergedData)
-        return { data: mergedData };
+        // console.log("Merged Data:",mergedData)
+        let finalData = await Promise.all(
+            mergedData.map(async (item) => {
+                // Example: fetch additional d etails if needed
+                let userDetails = await fetch(`${env.PUB_PORT}/user/${item.id_penanggung_jawab}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token?.token}`
+                    }
+                });
+                let resuser = await userDetails.json();
+                console.log("User Details:", resuser)
+                if (!resuser.ok) {
+                    console.error("Failed to fetch user details:", item.id_penanggung_jawab);
+                   
+                }
+                return {
+                    ...item,
+                    nama_penanggung_jawab: resuser.nama_lengkap || ''
+                }
+            })
+        )
+        return { data: finalData };
     }
     catch (error) {
         console.error("Error fetching data:", error);

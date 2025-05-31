@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({params, cookies}) => {
         if (!res.ok) {
              return fail(404, { error: "Acara not found" })
         }
-         let resSitus = await fetch(`${env.URL_KERAJAAN}/situs`);
+         let resSitus = await fetch(`${env.URL_KERAJAAN}/situs?limit=600`);
         if (!resSitus.ok) {
             return fail(404, { error: "Situs not found" })
         }
@@ -69,13 +69,29 @@ export const load: PageServerLoad = async ({params, cookies}) => {
             return {
                 id: item.id_user,
                 name: item.nama_lengkap,
-                email: item.email
+                email: item.email,
+                no_telp: item.no_telp,
+                jenis_kelamin: item.jenis_kelamin
             }
         });
         formattedData = {
             ...formattedData,
-            nama_penanggung_jawab: userData.nama_lengkap
+            nama_penanggung_jawab: userData.name
         };
+
+        let [resUndangan, resPanit] = await Promise.all([
+            fetch(`${env.URL_KERAJAAN}/undangan/${data.id}`, {
+                headers: {
+                    "Authorization": `Bearer ${token?.token}`
+                }
+            }),
+            fetch(`${env.URL_KERAJAAN}/acara/panit/${data.id}`, {
+                headers: {
+                    "Authorization": `Bearer ${token?.token}`
+                }
+            })
+        ]);
+
         console.log(formattedData)
         return { data: formattedData, situs,    user: userData };
     }

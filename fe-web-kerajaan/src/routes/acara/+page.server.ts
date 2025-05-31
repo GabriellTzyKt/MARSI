@@ -5,7 +5,7 @@ import { filterArsip, formatDateTime,formatDate,formatTime } from "$lib";
 
 export const load: PageServerLoad = async () => {
     try {
-        const res = await fetch(`${env.URL_KERAJAAN}/acara`);
+        const res = await fetch(`${env.URL_KERAJAAN}/acara?limit=600`);
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }

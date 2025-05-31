@@ -8,9 +8,9 @@ export const load: PageServerLoad = async ({ }) => {
         if (!organisasiResponse.ok) {
             throw error(organisasiResponse.status, `Failed to fetch Organisasi: ${organisasiResponse.statusText}`);
         }
-        console.log("Respon org",organisasiResponse)
+        // console.log("Respon org",organisasiResponse)
         const organisasiList = await organisasiResponse.json();
-        console.log("Organisasi : ", organisasiList);
+        // console.log("Organisasi : ", organisasiList);
 
         const filteredList = organisasiList.filter((doc: any) => {
             return doc.deleted_at == '0001-01-01T00:00:00Z' && doc.deleted_at !== null;
@@ -46,7 +46,7 @@ export const load: PageServerLoad = async ({ }) => {
             })
         );
 
-        console.log("komunitas with profiles:", organisasiWithProfiles);
+        // console.log("komunitas with profiles:", organisasiWithProfiles);
 
         return {
             filteredList: organisasiWithProfiles

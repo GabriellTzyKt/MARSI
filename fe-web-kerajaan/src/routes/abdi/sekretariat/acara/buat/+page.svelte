@@ -338,6 +338,11 @@
 								placeholder="Masukkan Jumlah Kapasitas"
 								class="w-full rounded-lg border px-2 py-1"
 							/>
+							{#if errors}
+								{#each errors.kapasitasacara as e}
+									<p class="text-red-500">{e}</p>
+								{/each}
+							{/if}
 						</div>
 						<div class="mr-10 w-full items-center text-center">
 							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara</p>
@@ -426,7 +431,7 @@
 						{/if}
 					</div>
 					{#if errors}
-						{#each errors.juru_kunci as e}
+						{#each errors.penanggungjawab as e}
 							<p class="text-left text-red-500">- {e}</p>
 						{/each}
 					{/if}
@@ -523,7 +528,7 @@
 			</div>
 		</div>
 
-		<div class="mt-5 h-1 w-full bg-slate-300"></div>
+		<!-- <div class="mt-5 h-1 w-full bg-slate-300"></div>
 		<div class="mt-8 flex w-full">
 			<p class="my-auto ml-10 w-full font-bold">Undangan</p>
 			<button
@@ -536,9 +541,9 @@
 			>
 				Tambah Undangan
 			</button>
-		</div>
+		</div> -->
 
-		<div class="mt-10 grid grid-cols-8 gap-2">
+		<!-- <div class="mt-10 grid grid-cols-8 gap-2">
 			{#each invitations as invitation, i (invitation.id)}
 				<div class="col-span-1">{i + 1}</div>
 				<input type="hidden" name="id" value={invitation.id} />
@@ -555,8 +560,8 @@
 				</div>
 
 				<div class="col-span-3 w-full rounded-lg border px-2 py-1">
-					<!-- Nama jadi dropdown -->
-					<select
+					Nama jadi dropdown -->
+		<!-- <select
 						bind:value={namabawah[invitation.id]}
 						name={`namabawah_${invitation.id}`}
 						id={`namabawah_${invitation.id}`}
@@ -593,11 +598,11 @@
 					{#if errors.notelpbawah && !notelpbawah[invitation.id]}
 						<p class="text-left text-red-500">{errors.notelpbawah[0]}</p>
 					{/if}
-				</div>
-				<!-- svelte-ignore a11y_no_static_element_interactions -->
-				<div class="col-span-1">
-					<!-- svelte-ignore a11y_click_events_have_key_events -->
-					<span
+				</div> -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<!-- <div class="col-span-1"> -->
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- <span
 						class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-red-400 p-2"
 						onclick={() => hapus(i)}
 					>
@@ -605,11 +610,11 @@
 					</span>
 				</div>
 			{/each}
-		</div>
+		</div>  -->
 
 		<!-- bawah -->
 
-		<div class="mt-8 flex w-full">
+		<!-- <div class="mt-8 flex w-full">
 			<p class="my-auto ml-10 w-full text-start font-bold">Panitia Acara</p>
 			<button
 				class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white"
@@ -621,9 +626,9 @@
 			>
 				Tambah Undangan
 			</button>
-		</div>
+		</div> -->
 
-		<div class="mt-10 grid grid-cols-10 gap-2">
+		<!-- <div class="mt-10 grid grid-cols-10 gap-2">
 			{#each invitations2 as invitation, i (invitation.id)}
 				<div class="col-span-1">{i + 1}</div>
 				<input type="hidden" name="id2" value={invitation.id} />
@@ -673,18 +678,18 @@
 						<p class="text-left text-red-500">{errors.namajabatan[0]}</p>
 					{/if}
 				</div>
-				<!-- svelte-ignore a11y_no_static_element_interactions -->
-				<div class="col-span-1">
-					<!-- svelte-ignore a11y_click_events_have_key_events -->
-					<span
+				 svelte-ignore a11y_no_static_element_interactions -->
+		<!-- <div class="col-span-1"> -->
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- <span
 						class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-red-400 p-2"
 						onclick={() => hapus2(i)}
 					>
 						<i class="gg--trash z-10 items-center text-2xl"></i>
 					</span>
 				</div>
-			{/each}
-		</div>
+			{/each} -->
+		<!-- </div> -->
 
 		<div class="mt-8 flex w-full justify-center lg:justify-end">
 			<button class="w-50 text-nowrap rounded-lg bg-green-400 px-2 py-2 text-white" type="submit">

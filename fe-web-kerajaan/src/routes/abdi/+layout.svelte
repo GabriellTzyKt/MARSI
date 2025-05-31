@@ -280,7 +280,7 @@
 		goto('/login');
 	}
 	let { children, data } = $props();
-	console.log('data : ', data);
+	// console.log('data : ', data);
 	let sidebarActive = writable(false);
 
 	const toggleSidebar = () => {

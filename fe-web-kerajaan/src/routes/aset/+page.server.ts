@@ -5,7 +5,7 @@ import type { PageServerLoad } from "../acara/[id]/$types";
 
 export const load: PageServerLoad = async () => {
     try {
-        const res = await fetch(`${env.URL_KERAJAAN}/aset`);
+        const res = await fetch(`${env.URL_KERAJAAN}/aset?limit=600`);
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }

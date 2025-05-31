@@ -4,7 +4,8 @@ import { detail_acara } from "$lib/dummy";
 import type { PageServerLoad } from "./$types";
 
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, cookies }) => {
+    let cookie = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
     try {
         console.log("Fetching acara with ID:", params.id);
         const acara = await fetch(`${env.URL_KERAJAAN}/acara/detail/${params.id}`);
@@ -67,14 +68,22 @@ export const load: PageServerLoad = async ({ params }) => {
                 }
             }
             
-            console.log("Processed item with images:", processedItem);
+            // console.log("Processed item with images:", processedItem);
             processedData.push(processedItem);
         }
-        
-        console.log("Final processed data:", processedData[0]);
+        let userData = await fetch(`${env.PUB_PORT}/user/${detil_acara.id_penanggung_jawab}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${cookie.token}`
+            }
+        })
+        let user = await userData.json();
+        console.log(`user : ${detil_acara.id_penanggung_jawab} adalah ${user.nama_lengkap}`)
+        // console.log("Final processed data:", processedData[0]);
         const final = {
             ...processedData[0],
             tanggal_mulai: formatDate(processedData[0].waktu_mulai),
+            nama_penanggung_jawab: user.nama_lengkap,
             tanggal_selesai: formatDatetoUI(processedData[0].waktu_selesai),
             waktu_mulai: formatTime(processedData[0].waktu_mulai),  
             waktu_selesai: formatTime(processedData[0].waktu_selesai),  

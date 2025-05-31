@@ -160,22 +160,37 @@ export const actions: Actions = {
 
             let formsend = new FormData()
             formsend.append("id_pemohon", data.get("id_pemohon") as string)
-            formsend.append("penanggung_jawab", data.get("penanggung_jawab_id") as string)
+            formsend.append("penanggung_jawab", data.get("penanggungjawab_id") as string)
             formsend.append("id_lpj", data.get("id_lpj") as string||"1")
             formsend.append("lokasi_acara", data.get("id_lokasi") as string || data.get("lokasi_acara") as string)
-
             formsend.append("nama_acara", data.get("namaacara") as string)
             formsend.append("deskripsi_acara", data.get("deskripsi_acara") as string)
-            formsend.append("nama_acara", data.get("namaacara") as string)
-            formsend.append("nama_acara", data.get("namaacara") as string)
-            formsend.append("nama_acara", data.get("namaacara") as string)
-            formsend.append("nama_acara", data.get("namaacara") as string)
-           
+            formsend.append("tujuan_acara", data.get("tujuan_acara") as string)
+            formsend.append("alamat_acara", data.get("alamat_acara") as string)
+            formsend.append("waktu_mulai", `${data.get("tanggalmulai") as string} ${data.get("waktumulai") as string}:00`)
+            formsend.append("waktu_selesai", `${data.get("tanggalselesai") as string} ${data.get("waktuselesai") as string}:00`)
+            formsend.append("jenis_acara", data.get("default-radio") as string)
+            formsend.append("kapasitas_acara", data.get("kapasitasacara") as string)
+            formsend.append("status", "Diajukan")
             
-
-            let res = await fetch(`${env.URL_KERAJAAN}/acara`,{
-
+            
+            
+            console.log(" data yang si send", formsend)
+            let res = await fetch(`${env.URL_KERAJAAN}/acara`, {
+                method:"POST",
+                body: formsend
             })
+            let s = await res.json()
+            if (!res.ok) {
+
+                console.log(s)
+                
+
+
+                return fail(400, { errors: { server: 'Something went wrong on the server.' } });
+            }
+     
+        // ... success logic
         } catch (error) {
             
         }

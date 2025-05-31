@@ -4,7 +4,7 @@ import type { PageServerLoad } from "./$types";
 export const load: PageServerLoad = async () => {
     try {
         // komunitas
-        const resKom = await fetch(`${env.URL_KERAJAAN}/komunitas`);
+        const resKom = await fetch(`${env.URL_KERAJAAN}/komunitas?limit=600`);
         if (!resKom.ok) {
             throw new Error(`HTTP Error! Status: ${resKom.status}`);
         }
@@ -13,7 +13,7 @@ export const load: PageServerLoad = async () => {
         console.log("komunitas", filterKomunitas);
 
         // organisasi
-        const resOrg = await fetch(`${env.URL_KERAJAAN}/organisasi`);
+        const resOrg = await fetch(`${env.URL_KERAJAAN}/organisasi?limit=600`);
         if (!resOrg.ok) {
             throw new Error(`HTTP Error! Status: ${resOrg.status}`);
         }

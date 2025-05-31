@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ }) => {
         }
         
         const situsList = await situsResponse.json();
-        console.log("situs : ", situsList);
+        // console.log("situs : ", situsList);
 
         const filteredList = situsList.filter((doc: any) => {
             return doc.deleted_at == '0001-01-01T00:00:00Z' && doc.deleted_at !== null;
@@ -44,7 +44,7 @@ export const load: PageServerLoad = async ({ }) => {
             })
         );
 
-        console.log("situs with profiles:", situsWithProfiles);
+        // console.log("situs with profiles:", situsWithProfiles);
 
         return {
             filteredList: situsWithProfiles

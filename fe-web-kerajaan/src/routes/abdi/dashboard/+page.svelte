@@ -6,6 +6,37 @@
 	import sekre from '$lib/asset/icon/gov.png';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
+	import { redirect } from '@sveltejs/kit';
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
+	import { env } from '$env/dynamic/public';
+	let { data } = $props();
+	console.log(data);
+	console.log('data.user : ', data.user);
+	let user = $state(data?.data.user_data);
+	console.log(user);
+	let adminData = $state();
+	async function fetchuser() {
+		try {
+			let adminRes = await fetch(`${env.PUBLIC_URL_KERAJAAN}/admin?limit=500`, {
+				method: 'GET'
+			});
+			let admin = await adminRes.json();
+
+			admin = admin.filter(
+				(item) => item.status_aktif == 1 && item.deleted_at == '0001-01-01T00:00:00Z'
+			);
+			console.log(admin);
+			adminData = admin;
+		} catch (error) {}
+	}
+	onMount(() => {
+		fetchuser();
+		let find = adminData?.filter((item) => item.id_user === user.id_user);
+		if (!find) {
+			goto('/beranda');
+		}
+	});
 	let total = $state(16);
 </script>
 
