@@ -269,7 +269,9 @@
 			return 'Edit Organisasi';
 		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/edit') {
 			return 'Edit Organisasi';
-		} else if (page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail/daftaracara/edit/[idacarasitus]') {
+		} else if (
+			page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail/daftaracara/edit/[idacarasitus]'
+		) {
 			return 'Edit acara situs';
 		}
 	});
@@ -524,7 +526,7 @@
 	<div class="width_head2 hidden items-center justify-between lg:flex lg:w-[83.3%]">
 		<p class="ml-5 p-5 text-3xl font-bold text-black">{pageTitle}</p>
 		<div class="relative mr-5 flex items-center rounded-md border-2 border-blue-600 py-2">
-			<span class="ml-5 text-black">{data?.user?.username}</span>
+			<span class="ml-5 text-black">{data?.username}</span>
 			<img
 				src={imageprofile}
 				alt="profile"

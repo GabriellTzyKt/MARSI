@@ -9,16 +9,18 @@
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
 	import { invalidateAll } from '$app/navigation';
+	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
 
 	let { data } = $props();
 	let dataambil = data.acaraList;
-	let dataacara = dataambil.map((item : any) => ({
+	let dataacara = dataambil.map((item: any) => ({
 		...item.Acara,
 		id_organisasi: item.id_organisasi,
 		organisasi_nama: item.organisasi_nama,
-		nama_penanggung_jawab : item.nama_penanggung_jawab
+		nama_penanggung_jawab: item.nama_penanggung_jawab
 	}));
 	console.log('DATA AMBIL : ', dataambil);
+	let id_org = data.id_org;
 
 	// // Check if allEvents exists and process it
 	// if (data.allEvents && Array.isArray(data.allEvents)) {
@@ -40,6 +42,13 @@
 	let entries = $state(10);
 	let currPage = $state(1);
 
+	let deleteid = $state();
+	let deleteModal = $state(false);
+	function handleDelete(id: any) {
+		console.log('Delete', id);
+		deleteid = id;
+		deleteModal = true;
+	}
 	function pagination(data: any[]) {
 		if (!data || !Array.isArray(data)) return [];
 		let start = (currPage - 1) * entries;
@@ -162,29 +171,36 @@
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
-					<DropDown
-						text={`Apakah yakin ingin mengarsipkan ${data.nama_acara || 'acara ini'}?`}
-						successText={`Berhasil mengarsipkan ${data.nama_acara || 'acara ini'}!`}
-						link={`/abdi/dashboard/organisasi/beranda/${dataambil[0].id_organisasi}/detail/acara`}
+					<DropDownNew
+						text={`Apakah yakin ingin mengarsipkan ${data.nama_anggota}?`}
 						items={[
-							[
-								'Detail',
-								`/abdi/dashboard/organisasi/beranda/${dataambil[0].id_organisasi}/detail/acara/detail/${data.id_acara}`
-							],
-							[
-								'Ubah',
-								`/abdi/dashboard/organisasi/beranda/${dataambil[0].id_organisasi}/detail/acara/ubah/${data.id_acara}`
-							],
-							[
-								'Laporan',
-								`/abdi/dashboard/organisasi/beranda/${dataambil[0].id_organisasi}/detail/acara/laporan/${data.id_acara}`
-							],
-							['children', 'Arsip', '']
+							{
+								label: 'Detail',
+								action: () =>
+									goto(`/abdi/dashboard/organisasi/beranda/${id_org}/detail/acara/detail`)
+							},
+							{
+								label: 'Ubah',
+								action: () =>
+									goto(
+										`/abdi/dashboard/organisasi/beranda/${id_org}/detail/acara/ubah/${data.id_organisasi}`
+									)
+							},
+							{
+								label: 'Laporan',
+								action: () =>
+									goto(
+										`/abdi/dashboard/organisasi/beranda/${id_org}/detail/acara/laporan/${data.id_organisasi}`
+									)
+							},
+							{
+								label: 'Hapus',
+								action: () => handleDelete(data.id_user)
+							}
 						]}
 						id={`id-${index}`}
-						{data}
-						onSuccess={refreshData}
-					></DropDown>
+						data={resdata}
+					></DropDownNew>
 				{:else if header === 'Status'}
 					<Status status={data.status || 'unknown'}></Status>
 				{/if}
@@ -198,3 +214,6 @@
 		</div>
 	</div>
 </div>
+{#if deleteModal}
+	<form action="?/hapusAcara"></form>
+{/if}

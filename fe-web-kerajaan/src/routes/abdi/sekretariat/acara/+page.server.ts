@@ -8,13 +8,13 @@ import {
 
 export const load: PageServerLoad = async () => {
     try {
-        let res = await fetch(`${env.URL_KERAJAAN}/acara?limit=100`);
+        let res = await fetch(`${env.URL_KERAJAAN}/acara?limit=300`);
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }
         let data = await res.json();
         console.log("acara",data)
-
+     data = data.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
         let formatDateTime = (isoString) => {
     if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
     let date = new Date(isoString);

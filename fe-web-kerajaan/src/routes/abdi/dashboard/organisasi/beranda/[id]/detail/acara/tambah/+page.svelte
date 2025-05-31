@@ -8,6 +8,7 @@
 	import { number } from 'zod';
 	import { writable } from 'svelte/store';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 
 	let input_radio = $state('');
 	let namaacara = $state('');
@@ -48,10 +49,10 @@
 			deskripsiacara = selectedAcara.Acara.deskripsi_acara;
 			tujuanacara = selectedAcara.Acara.tujuan_acara;
 			input_radio = selectedAcara.Acara.jenis_acara;
-			if(input_radio.toLowerCase() === "tertutup"){
-				input_radio = "private"
+			if (input_radio.toLowerCase() === 'tertutup') {
+				input_radio = 'private';
 			} else {
-				input_radio = "public"
+				input_radio = 'public';
 			}
 		} else {
 			selectedAcara = null;
@@ -362,9 +363,7 @@
 							<option value="" disabled selected>Pilih Penyelenggara</option>
 							<optgroup label="Organisasi">
 								{#each data.organisasi as organisasi}
-									<option value={organisasi.id_organisasi}
-										>{organisasi.nama_organisasi}</option
-									>
+									<option value={organisasi.id_organisasi}>{organisasi.nama_organisasi}</option>
 								{/each}
 							</optgroup>
 						</select>
@@ -759,12 +758,7 @@
 
 {#if open}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
-		<SucessModal
-			{open}
-			text="Tamu Berhasil Di Undang!"
-			to="/abdi/dashboard/organisasi/beranda"
-			on:close={toggle}
-		></SucessModal>
+		<SuccessModal text="Sukses"></SuccessModal>
 	</div>
 {/if}
 

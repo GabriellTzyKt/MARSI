@@ -3,19 +3,25 @@ import { any, z } from "zod";
 import type { PageServerLoad } from "../$types";
 import { env } from "$env/dynamic/private";
 
-export const load: PageServerLoad = async ({ fetch, params }) => {
+export const load: PageServerLoad = async ({ fetch, params, cookies }) => {
     // Ambil id dari params
-    const { id } = params;
-
+    const id = params.id;
+    let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
+    console.log("Params", id)
     // Fetch users, situs, komunitas, organisasi, dan acara
     const [usersRes, situsRes, organisasiRes, acaraRes] = await Promise.all([
-        fetch(`${env.BASE_URL}/users?limit=2000`),
+        fetch(`${env.PUB_PORT}/users`, {
+            headers: {
+               "Authorization": `Bearer ${token?.token}`
+            }
+        }),
         fetch(`${env.BASE_URL_8008}/situs?limit=200`),
         fetch(`${env.BASE_URL_8008}/organisasi?limit=200`),
         fetch(`${env.BASE_URL_8008}/acara/organisasi/${id}?limit=200`)
     ]);
 
     if (!usersRes.ok || !situsRes.ok || !organisasiRes.ok || !acaraRes.ok) {
+        console.log("Error", usersRes, situsRes, organisasiRes, acaraRes)
         throw error(500, "Gagal mengambil data users, situs, komunitas, organisasi, atau acara");
     }
 

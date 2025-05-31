@@ -10,10 +10,11 @@
 	import { tuple } from 'zod';
 
 	let { data } = $props();
+	console.log(data);
 	let total = $state(8);
 	let activeTab = $state('upcoming');
 	let showDropdown = $state(false);
-	let input_radio = $state('');
+	let input_radio = $state('public');
 	let res = $state();
 	let isLocationSelected = $state(false);
 
@@ -36,12 +37,12 @@
 	let tanggalmulai = $state();
 	let tanggalselesai = $state();
 	let penganggungjawab = $state();
-	let panggilan = $state([]);
-	let namabawah = $state([]);
+
+	let panggilan: any = $state([]);
+	let namabawah: any = $state([]);
 	let namalengkapbawah = $state([]);
 	let namajabatan = $state([]);
-	let notelpbawah = $state([]);
-
+	let notelpbawah: any = $state([]);
 	let invitations: { id: number; panggilan: string; nama: string; notelepon: string }[] = $state(
 		[]
 	);
@@ -53,6 +54,7 @@
 	function setActive(tab: string) {
 		activeTab = tab;
 	}
+	let error: any = $state('');
 	let errors: any = $state('');
 	let success = $state(false);
 	let lokasi_acara = $state('');
@@ -70,6 +72,18 @@
 			isLocationSelected = true;
 		}
 	}
+
+	function handleNamaChange(invitationId: number) {
+		const user = data.user.find((u: any) => u.id == namabawah[invitationId]);
+		if (user) {
+			// Set panggilan otomatis berdasarkan jenis_kelamin
+			panggilan[invitationId] =
+				user.jenis_kelamin.toLowerCase() === 'laki-laki' ? 'laki-laki' : 'perempuan';
+			// Set nomor telepon otomatis
+			notelpbawah[invitationId] = user.no_telp ?? '';
+		}
+	}
+
 	function handleLocationInput() {
 		showDropdown = true;
 		// If user manually types, allow alamat editing
@@ -144,6 +158,9 @@
 	function toggleDropdown() {
 		showDropdown = !showDropdown;
 	}
+	function isKetuaDipilih(currentId: number) {
+		return invitations2.some((inv) => inv.id !== currentId && namajabatan[inv.id] === 'ketua');
+	}
 	const toggle = () => {
 		if (!success) {
 			success = true;
@@ -151,7 +168,7 @@
 	};
 	function select(item: any) {
 		lokasi_acara = item.nama_situs;
-		lokasi = item.alamat;
+		lokasi = item;
 		isLocationSelected = true;
 		showDropdown = false;
 	}
@@ -184,7 +201,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						success = false;
-						goto('/abdi/sekretariat/acara');
+						// goto('/abdi/sekretariat/acara');
 					}, 3000);
 				}
 				if (result.type === 'failure') {
@@ -193,6 +210,7 @@
 			};
 		}}
 	>
+		<input type="hidden" name="id_pemohon" value={data?.id_pemohon} />
 		<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 			<div class="col-span-2">
 				<div class="mt-2 w-full">
@@ -241,6 +259,7 @@
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
+					<input type="hidden" name="id_lokasi" value={lokasi?.id_situs} />
 					<!-- Location dropdown -->
 					{#if showDropdown && data?.data}
 						<ul
@@ -273,7 +292,7 @@
 					<input
 						type="text"
 						name="alamat_acara"
-						bind:value={lokasi}
+						value={lokasi?.alamat}
 						readonly={isLocationSelected}
 						placeholder="Masukkan Alamat"
 						class="w-full rounded-lg border px-2 py-1"
@@ -379,6 +398,11 @@
 							type="hidden"
 							name="penanggungjawab"
 							value={selectedPenanggungjawab?.name || ''}
+						/>
+						<input
+							type="hidden"
+							name="penanggungjawab_id"
+							value={selectedPenanggungjawab?.id || ''}
 						/>
 
 						{#if showPenanggungjawabDropdown && filteredPenanggungJawab.length > 0}
@@ -525,20 +549,25 @@
 						id={`panggilan_${invitation.id}`}
 						class="mt-1 w-full"
 					>
-						<option value="Tn">Tn</option>
-						<option value="Ny">Ny</option>
+						<option value="laki-laki">Laki-laki</option>
+						<option value="perempuan">Perempuan</option>
 					</select>
 				</div>
 
 				<div class="col-span-3 w-full rounded-lg border px-2 py-1">
-					<input
-						type="text"
+					<!-- Nama jadi dropdown -->
+					<select
 						bind:value={namabawah[invitation.id]}
-						placeholder="Nama"
 						name={`namabawah_${invitation.id}`}
 						id={`namabawah_${invitation.id}`}
 						class="w-full focus:outline-none"
-					/>
+						onchange={() => handleNamaChange(invitation.id)}
+					>
+						<option value="" disabled selected>Pilih Nama</option>
+						{#each data.user as user}
+							<option value={user.id}>{user.name}</option>
+						{/each}
+					</select>
 					{#if errors}
 						{console.log(errors)}
 						{#if errors.namabawah && !namabawah[invitation.id]}
@@ -600,14 +629,17 @@
 				<input type="hidden" name="id2" value={invitation.id} />
 
 				<div class="col-span-4 w-full rounded-lg border px-2 py-1">
-					<input
-						type="text"
+					<select
 						bind:value={namalengkapbawah[invitation.id]}
-						placeholder="Nama"
 						name={`namalengkapbawah_${invitation.id}`}
 						id={`namalengkapbawah_${invitation.id}`}
 						class="w-full focus:outline-none"
-					/>
+					>
+						<option value="" disabled selected>Pilih Nama</option>
+						{#each data.user as user}
+							<option value={user.id}>{user.name}</option>
+						{/each}
+					</select>
 					{#if errors}
 						{console.log(errors)}
 						{#if errors.namalengkapbawah && !namalengkapbawah[invitation.id]}
@@ -626,8 +658,16 @@
 						class="mt-1 w-full"
 					>
 						<option value="" disabled selected>Silahkan Pilih!</option>
-						<option value="ketua">Ketua</option>
+						<option value="ketua" disabled={isKetuaDipilih(invitation.id)}>Ketua</option>
+						<option value="wakilketua">Wakil Ketua</option>
 						<option value="sekretariat">Sekretariat</option>
+						<option value="bendahara">Bendahara</option>
+						<option value="acara">Acara</option>
+						<option value="komunikasi">Komunikasi</option>
+						<option value="perlengkapan">Perlengkapan</option>
+						<option value="pdd">PDD</option>
+						<option value="keamanan">Keamanan</option>
+						<option value="humas">Humas</option>
 					</select>
 					{#if errors.namajabatan && !namajabatan[invitation.id]}
 						<p class="text-left text-red-500">{errors.namajabatan[0]}</p>

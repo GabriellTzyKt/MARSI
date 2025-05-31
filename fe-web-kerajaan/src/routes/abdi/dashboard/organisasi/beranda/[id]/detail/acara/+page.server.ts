@@ -74,7 +74,8 @@ export const load: PageServerLoad = async ({ fetch, params, depends }) => {
         return {
             organisasi: currentOrganisasi,
             acaraList: processedAcara,
-            organisasiList: organisasiList
+            organisasiList: organisasiList,
+            id_org: params.id
         };
     } catch (err) {
         console.error("Error in load function:", err);
