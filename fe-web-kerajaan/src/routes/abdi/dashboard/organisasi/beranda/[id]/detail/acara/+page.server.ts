@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ fetch, params, depends }) => {
         console.log("Current organization:", currentOrganisasi);
 
         // Directly fetch events for the current organization using the correct API endpoint
-        const acaraResponse = await fetch(`${env.URL_KERAJAAN}/acara/organisasi/${currentOrgId}`, {
+        const acaraResponse = await fetch(`${env.URL_KERAJAAN}/acara/organisasi/${currentOrgId}?limit=200`, {
             cache: 'no-store'
         });
 
