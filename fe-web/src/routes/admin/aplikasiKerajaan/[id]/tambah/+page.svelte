@@ -320,7 +320,7 @@
 			};
 		}}
 	>
-		<input type="hidden" name="id_kerajaan" value="32" />
+		<input type="hidden" name="id_kerajaan" value={data.id_kerajaan} />
 		<input type="hidden" name="warna_utama" value={warnaUtama} />
 		<input type="hidden" name="warna_secondary" value={warnaSecondary} />
 		<input type="hidden" name="warna_aksen1" value={warnaAksen1} />

@@ -23,9 +23,13 @@ export const load: PageServerLoad = async ({ parent }) => {
             const data = await request.json();
             
             // Filter data yang tidak dihapus (deleted_at = '0001-01-01T00:00:00Z')
+            // dan yang memiliki id_kerajaan yang sama dengan parent data
             const filteredData = data.filter((item: any) => 
-                item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
+                (item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at) &&
+                item.id_kerajaan === id_kerajaan
             );
+
+            console.log("Filtered data : ", filteredData)
             
             // Format tanggal
             const formatDate = (iso: string) => {

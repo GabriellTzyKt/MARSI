@@ -10,6 +10,9 @@
 	import Loader from '$lib/loader/Loader.svelte';
 
 	const { data } = $props();
+	console.log('Data : ', data);
+	let dataera = data.eraList;
+	let datarumpun = data.rumpunList;
 	let datagelar = data.gelar;
 	console.log('data gelar : ', datagelar);
 	let dataGet = data.detil_kerajaan;
@@ -315,7 +318,9 @@
 
 	function toggleSort() {
 		sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+		console.log(sortOrder)
 		arrowDirection = sortOrder === 'asc' ? 'mingcute--arrow-up-fill' : 'mingcute--arrow-down-fill';
+		console.log(arrowDirection)
 		updateFilteredData();
 	}
 
@@ -609,6 +614,18 @@
 				console.error('VIDEO DEBUG: Error converting video URL to File:', error);
 			}
 		}
+
+		console.log('Lokasi : ', lokasi);
+		if (lokasi) {
+			await fetchLocations();
+			// Tunggu locationsData terisi, lalu cari dan set long/lat
+			const found = locationsData.find((item) => item.display_name === lokasi);
+			if (found) {
+				selectLocation(lokasi);
+			}
+		}
+
+		updateFilteredData();
 	});
 
 	// bersihkan url yang ada blob karena itu url temp (sementara) -> pas user ninggalin halaman supaya mencegah memori leak
@@ -942,6 +959,8 @@
 			</div> -->
 			</div>
 
+			<input type="hidden" name="raja_sekarang" value={data.detil_kerajaan.raja_sekarang} />
+
 			<div class="flex flex-grow flex-col gap-4 lg:flex-row">
 				<div class="w-full flex-col">
 					<label class="text-md mt-5 self-start text-left" for="tanggalberdiri">
@@ -978,7 +997,9 @@
 						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 					>
 						<option value="" selected disabled>Pilih Era</option>
-						<option value="kolonial">Kolonial </option>
+						{#each dataera as era}
+							<option value={era.id_era}>{era.nama_era}</option>
+						{/each}
 					</select>
 					{#if error.era}
 						<p class="text-left text-red-500">{error.era}</p>
@@ -994,7 +1015,9 @@
 						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 					>
 						<option value="" selected disabled>Pilih Rumpun</option>
-						<option value="mataram">Mataram</option>
+						{#each datarumpun as rumpun}
+							<option value={rumpun.id_rumpun}>{rumpun.nama_rumpun}</option>
+						{/each}
 					</select>
 					{#if error.rumpun}
 						<p class="text-left text-red-500">{error.rumpun}</p>
@@ -1260,7 +1283,7 @@
 					</button>
 				</div>
 				<div class="mt-8 w-full">
-					{#each data.historyRaja || [] as raja, index}
+					{#each dataHistoryAmbil || [] as raja, index}
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<div
@@ -1353,6 +1376,7 @@
 					class="w-fit rounded-lg bg-yellow-500 px-4 py-2 text-white"
 					type="submit"
 					formaction="?/selesai"
+					disabled={!long || !lat || long == '0' || lat == '0'}
 				>
 					Simpan
 				</button>
@@ -1696,11 +1720,11 @@
 				enctype="multipart/form-data"
 				use:enhance={() => {
 					loading = true;
-
 					return async ({ result }) => {
 						loading = false;
 						console.log('Form submission result:', result);
 						if (result.type === 'success') {
+							success = true
 							// Reset form dan tutup modal
 							showModal2 = false;
 							selectedRaja = null;

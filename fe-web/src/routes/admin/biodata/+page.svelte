@@ -3,9 +3,8 @@
 	import jd from '../../../asset/profile/jdpp.jpg';
 
 	let { data } = $props()
-	let dataKerajaan : any = data.dataKerajaan
 	console.log("Data " , data)
-	console.log("Data kerajaan : ", dataKerajaan)
+	console.log("Data kerajaan : ", data.id_kerajaan)
 </script>
 
 <div class="flex w-full flex-col gap-4 px-6 py-4">
@@ -35,11 +34,9 @@
 		</div>
 	</div>
 	<div class="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-		{#each dataKerajaan as kerajaan, i}
 			<BiodataKerajaan 
-				href="biodata/{kerajaan.id_kerajaan}" 
-				data={kerajaan}
+				href={`biodata/${data.id_kerajaan}`} 
+				data={data}
 			></BiodataKerajaan>
-		{/each}
 	</div>
 </div>

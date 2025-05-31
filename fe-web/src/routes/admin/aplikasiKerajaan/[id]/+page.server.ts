@@ -21,8 +21,8 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
         
         // Fetch existing data from both endpoints
         const [websiteResponse, mobileResponse] = await Promise.all([
-            fetch(`${env.BASE_URL}/fitur/website`),
-            fetch(`${env.BASE_URL}/fitur/mobile`)
+            fetch(`${env.BASE_URL}/fitur/website?limit=200`),
+            fetch(`${env.BASE_URL}/fitur/mobile?limit=200`)
         ]);
         
         let websiteFeatures = null;

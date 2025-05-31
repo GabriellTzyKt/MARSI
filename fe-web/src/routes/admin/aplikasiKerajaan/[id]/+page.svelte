@@ -5,14 +5,11 @@
 	let isDetailOpen = $state(false);
 
 	const { data } = $props();
-	console.log("Data  : ", data)
+	console.log('Data  : ', data);
 	console.log('Data website : ', data.websiteFeatures);
 	console.log('Data mobile : ', data.mobileFeatures);
 
-	if (
-		data.mobileFeatures?.status_permintaan == 'Ditinjau' ||
-		data.websiteFeatures?.status_permintaan == 'Ditinjau'
-	) {
+	if (data.mobileFeatures || data.websiteFeatures) {
 		berhasil = 'ayaya2';
 	}
 
@@ -45,11 +42,15 @@
 			<div class="relative w-full max-w-3xl">
 				<div class="flex items-center justify-between">
 					<div class="relative flex flex-col items-center">
-						<div class="icon-circle" class:active={currentStep >= 1}>
+						<!-- Step 1: Email -->
+						<div
+							class="icon-circle"
+							class:active={['Ditinjau', 'Diproses', 'Selesai'].includes(data.websiteFeatures?.status_permintaan)}
+						>
 							<span class="ic--baseline-email"></span>
 						</div>
 						<div class="step-text-container">
-							{#if currentStep === 1}
+							{#if data.websiteFeatures?.status_permintaan === 'Ditinjau'}
 								<span class="mt-2 text-center text-xs">Permintaan Anda telah kami simpan</span>
 							{/if}
 						</div>
@@ -57,16 +58,24 @@
 
 					<!-- Connecting line 1-2 -->
 					<div class="connecting-line">
-						<div class="progress-line" style="width: {currentStep > 1 ? '100%' : '0%'};"></div>
+						<div
+							class="progress-line"
+							style="width: {data.websiteFeatures?.status_permintaan === 'Diproses'
+								? '100%'
+								: '0%'};"
+						></div>
 					</div>
 
 					<!-- Step 2: Tools -->
 					<div class="relative flex flex-col items-center">
-						<div class="icon-circle" class:active={currentStep >= 2}>
+						<div
+							class="icon-circle"
+							class:active={['Diproses', 'Selesai'].includes(data.websiteFeatures?.status_permintaan)}
+						>
 							<span class="mdi--wrench"></span>
 						</div>
 						<div class="step-text-container">
-							{#if currentStep === 2}
+							{#if data.websiteFeatures?.status_permintaan === 'Diproses'}
 								<span class="max-w-30 mt-2 text-center text-xs"
 									>Proses pengembangan Aplikasi Kerajaan Anda sedang berlangsung. Harap bersabar dan
 									pantau progresnya secara berkala.</span
@@ -77,16 +86,22 @@
 
 					<!-- Connecting line 2-3 -->
 					<div class="connecting-line">
-						<div class="progress-line" style="width: {currentStep > 2 ? '100%' : '0%'};"></div>
+						<div
+							class="progress-line"
+							style="width: {data.websiteFeatures?.status_permintaan === 'Selesai' ? '100%' : '0%'};"
+						></div>
 					</div>
 
 					<!-- Step 3: Checkmark -->
 					<div class="relative flex flex-col items-center">
-						<div class="icon-circle" class:active={currentStep >= 3}>
+						<div
+							class="icon-circle"
+							class:active={data.websiteFeatures?.status_permintaan === 'Selesai'}
+						>
 							<span class="ic--baseline-check"></span>
 						</div>
 						<div class="step-text-container">
-							{#if currentStep === 3}
+							{#if data.websiteFeatures?.status_permintaan === 'Selesai'}
 								<span class="mt-2 text-center text-xs"
 									>Aplikasi Kerajaan Anda sudah selesai dan dapat anda akses melalui link dibawah
 									ini. Harap hubungi kami apabila ada kendala atau pertanyaan</span
@@ -100,18 +115,9 @@
 			</div>
 		</div>
 
-		<!-- Tombol coba animasi -->
-		<div class="mt-20 flex justify-center">
-			<button
-				class="bg-customOrange2 rounded-md px-4 py-2 text-white transition-colors hover:bg-orange-600"
-				onclick={nextStep}
-			>
-				Langkah Berikutnya (Saat ini: {currentStep}/3)
-			</button>
-		</div>
 	{/if}
 
-	{#if currentStep === 3}
+	{#if data.websiteFeatures?.status_permintaan === 'Selesai'}
 		<p>Link Website Kerajaan :</p>
 		<div class="rounded-lg border-2 border-black bg-slate-300 px-2 py-2">
 			<p>https://kerajaan.com</p>
@@ -122,191 +128,286 @@
 		</div>
 	{/if}
 
-	{#if berhasil === "ayaya2"}
-	<div class="mt-24 w-full">
-		<!-- svelte-ignore a11y_click_events_have_key_events -->
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div
-			class="flex w-full cursor-pointer items-center justify-between rounded-t-lg border bg-gray-100 px-4 py-3"
-			onclick={toggleDetail}
-		>
-			<p class="font-medium">Detail Permintaan Aplikasi Kerajaan Anda</p>
-			<span class="transform transition-transform duration-300" class:rotate-180={isDetailOpen}>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="20"
-					height="20"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<polyline points="6 9 12 15 18 9"></polyline>
-				</svg>
-			</span>
-		</div>
-
-		{#if isDetailOpen}
+	{#if berhasil === 'ayaya2'}
+		<div class="mt-24 w-full">
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<div
-				class="rounded-b-lg border-x border-b bg-white p-4 transition-all duration-300 ease-in-out"
+				class="flex w-full cursor-pointer items-center justify-between rounded-t-lg border bg-gray-100 px-4 py-3"
+				onclick={toggleDetail}
 			>
-				<!-- Website Kerajaan Section -->
-				<div class="mb-6">
-					<div class="mb-2 grid grid-cols-12">
-						<h3 class="col-span-8 text-lg font-semibold">Website Kerajaan</h3>
-						<div class="col-span-2 border-r border-gray-300 text-center font-medium">Ya</div>
-						<div class="col-span-2 text-center font-medium">Tidak</div>
-					</div>
-
-					<div class="border-t border-gray-200 pt-2">
-						<!-- Fitur Situs -->
-						<div class="grid grid-cols-12 py-2">
-							<div class="col-span-8">Fitur Situs</div>
-							<div class="col-span-2 flex justify-center border-r border-gray-300">
-								<span class="text-customOrange2 text-xl">✓</span>
-							</div>
-							<div class="col-span-2"></div>
-						</div>
-
-						<!-- Fitur Acara -->
-						<div class="grid grid-cols-12 py-2">
-							<div class="col-span-8">Fitur Acara</div>
-							<div class="col-span-2 flex justify-center border-r border-gray-300">
-								<span class="text-customOrange2 text-xl">✓</span>
-							</div>
-							<div class="col-span-2"></div>
-						</div>
-
-						<!-- Fitur Aset -->
-						<div class="grid grid-cols-12 py-2">
-							<div class="col-span-8">Fitur Aset</div>
-							<div class="col-span-2 border-r border-gray-300"></div>
-							<div class="col-span-2 flex justify-center">
-								<span class="text-customOrange2 text-xl">✓</span>
-							</div>
-						</div>
-
-						<!-- Fitur Komunitas -->
-						<div class="grid grid-cols-12 py-2">
-							<div class="col-span-8">Fitur Komunitas</div>
-							<div class="col-span-2 flex justify-center">
-								<span class="text-customOrange2 text-xl">✓</span>
-							</div>
-							<div class="col-span-2 border-l border-gray-300"></div>
-						</div>
-
-						<!-- Fitur Organisasi -->
-						<div class="grid grid-cols-12 py-2">
-							<div class="col-span-8">Fitur Organisasi</div>
-							<div class="col-span-2 flex justify-center border-r border-gray-300">
-								<span class="text-customOrange2 text-xl">✓</span>
-							</div>
-							<div class="col-span-2"></div>
-						</div>
-
-						<!-- Fitur Tugas -->
-						<div class="grid grid-cols-12 py-2">
-							<div class="col-span-8">Fitur Tugas</div>
-							<div class="col-span-2 border-r border-gray-300"></div>
-							<div class="col-span-2 flex justify-center">
-								<span class="text-customOrange2 text-xl">✓</span>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- Aplikasi Mobile Kerajaan Section -->
-				<div class="border-t border-gray-300 pt-4">
-					<div class="mb-2 grid grid-cols-12">
-						<h3 class="col-span-8 text-lg font-semibold">Aplikasi Mobile Kerajaan</h3>
-						<div class="col-span-2 border-r border-gray-300 text-center font-medium">Ya</div>
-						<div class="col-span-2 text-center font-medium">Tidak</div>
-					</div>
-
-					<div class="border-t border-gray-200 pt-2">
-						<!-- Fitur Penanggalan -->
-						<div class="grid grid-cols-12 py-2">
-							<div class="col-span-8">Fitur Penanggalan</div>
-							<div class="col-span-2 flex justify-center">
-								<span class="text-customOrange2 text-xl">✓</span>
-							</div>
-							<div class="col-span-2 border-l border-gray-300"></div>
-						</div>
-
-						<!-- Fitur Tugas Pribadi -->
-						<div class="grid grid-cols-12 py-2">
-							<div class="col-span-8">Fitur Tugas Pribadi</div>
-							<div class="col-span-2 flex justify-center">
-								<span class="text-customOrange2 text-xl">✓</span>
-							</div>
-							<div class="col-span-2 border-l border-gray-300"></div>
-						</div>
-
-						<!-- Fitur Tugas Acara -->
-						<div class="grid grid-cols-12 py-2">
-							<div class="col-span-8">Fitur Tugas Acara</div>
-							<div class="col-span-2 flex justify-center">
-								<span class="text-customOrange2 text-xl">✓</span>
-							</div>
-							<div class="col-span-2 border-l border-gray-300"></div>
-						</div>
-
-						<!-- Fitur Situs Kerajaan -->
-						<div class="grid grid-cols-12 py-2">
-							<div class="col-span-8">Fitur Situs Kerajaan</div>
-							<div class="col-span-2 flex justify-center">
-								<span class="text-customOrange2 text-xl">✓</span>
-							</div>
-							<div class="col-span-2 border-l border-gray-300"></div>
-						</div>
-
-						<!-- Fitur Check-In Situs -->
-						<div class="grid grid-cols-12 py-2">
-							<div class="col-span-8">Fitur Check-In Situs</div>
-							<div class="col-span-2 border-r border-gray-300"></div>
-							<div class="col-span-2 flex justify-center">
-								<span class="text-customOrange2 text-xl">✓</span>
-							</div>
-						</div>
-
-						<!-- Fitur Acara Kerajaan -->
-						<div class="grid grid-cols-12 py-2">
-							<div class="col-span-8">Fitur Acara Kerajaan</div>
-							<div class="col-span-2 border-r border-gray-300"></div>
-							<div class="col-span-2 flex justify-center">
-								<span class="text-customOrange2 text-xl">✓</span>
-							</div>
-						</div>
-
-						<!-- Fitur Group Chat -->
-						<div class="grid grid-cols-12 py-2">
-							<div class="col-span-8">Fitur Group Chat</div>
-							<div class="col-span-2 flex justify-center border-r border-gray-300">
-								<span class="text-customOrange2 text-xl">✓</span>
-							</div>
-							<div class="col-span-2"></div>
-						</div>
-
-						<!-- Fitur Forum -->
-						<div class="grid grid-cols-12 py-2">
-							<div class="col-span-8">Fitur Forum</div>
-							<div class="col-span-2 flex justify-center">
-								<span class="text-customOrange2 text-xl">✓</span>
-							</div>
-							<div class="col-span-2 border-l border-gray-300"></div>
-						</div>
-					</div>
-				</div>
+				<p class="font-medium">Detail Permintaan Aplikasi Kerajaan Anda</p>
+				<span class="transform transition-transform duration-300" class:rotate-180={isDetailOpen}>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="20"
+						height="20"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<polyline points="6 9 12 15 18 9"></polyline>
+					</svg>
+				</span>
 			</div>
-		{/if}
-	</div>
+
+			{#if isDetailOpen}
+				<div
+					class="rounded-b-lg border-x border-b bg-white p-4 transition-all duration-300 ease-in-out"
+				>
+					<!-- Website Kerajaan Section -->
+					<div class="mb-6">
+						<div class="mb-2 grid grid-cols-12">
+							<h3 class="col-span-8 text-lg font-semibold">Website Kerajaan</h3>
+							<div class="col-span-2 border-r border-gray-300 text-center font-medium">Ya</div>
+							<div class="col-span-2 text-center font-medium">Tidak</div>
+						</div>
+
+						<div class="border-t border-gray-200 pt-2">
+							<!-- Fitur Situs -->
+							<div class="grid grid-cols-12 py-2">
+								<div class="col-span-8">Fitur Situs</div>
+								<div class="col-span-2 flex justify-center border-r border-gray-300">
+									{#if data.websiteFeatures.fitur_situs == 1}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+								<div class="col-span-2 flex justify-center">
+									{#if data.websiteFeatures.fitur_situs == 0}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+							</div>
+
+							<!-- Fitur Acara -->
+							<div class="grid grid-cols-12 py-2">
+								<div class="col-span-8">Fitur Acara</div>
+								<div class="col-span-2 flex justify-center border-r border-gray-300">
+									{#if data.websiteFeatures.fitur_acara == 1}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+								<div class="col-span-2 flex justify-center">
+									{#if data.websiteFeatures.fitur_acara == 0}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+							</div>
+
+							<!-- Fitur Aset -->
+							<div class="grid grid-cols-12 py-2">
+								<div class="col-span-8">Fitur Aset</div>
+								<div class="col-span-2 flex justify-center border-r border-gray-300">
+									{#if data.websiteFeatures.fitur_aset == 1}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+								<div class="col-span-2 flex justify-center">
+									{#if data.websiteFeatures.fitur_aset == 0}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+							</div>
+
+							<!-- Fitur Komunitas -->
+							<div class="grid grid-cols-12 py-2">
+								<div class="col-span-8">Fitur Komunitas</div>
+								<div class="col-span-2 flex justify-center border-r border-gray-300">
+									{#if data.websiteFeatures.fitur_komunitas == 1}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+								<div class="col-span-2 flex justify-center">
+									{#if data.websiteFeatures.fitur_komunitas == 0}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+							</div>
+
+							<!-- Fitur Organisasi -->
+							<div class="grid grid-cols-12 py-2">
+								<div class="col-span-8">Fitur Organisasi</div>
+								<div class="col-span-2 flex justify-center border-r border-gray-300">
+									{#if data.websiteFeatures.fitur_organisasi == 1}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+								<div class="col-span-2 flex justify-center">
+									{#if data.websiteFeatures.fitur_organisasi == 0}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+							</div>
+
+							<!-- Fitur Tugas -->
+							<div class="grid grid-cols-12 py-2">
+								<div class="col-span-8">Fitur Tugas</div>
+								<div class="col-span-2 flex justify-center border-r border-gray-300">
+									{#if data.websiteFeatures.fitur_tugas == 1}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+								<div class="col-span-2 flex justify-center">
+									{#if data.websiteFeatures.fitur_tugas == 0}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Aplikasi Mobile Kerajaan Section -->
+					{#if data.mobileFeatures}
+					<div class="border-t border-gray-300 pt-4">
+						<div class="mb-2 grid grid-cols-12">
+							<h3 class="col-span-8 text-lg font-semibold">Aplikasi Mobile Kerajaan</h3>
+							<div class="col-span-2 border-r border-gray-300 text-center font-medium">Ya</div>
+							<div class="col-span-2 text-center font-medium">Tidak</div>
+						</div>
+
+						<div class="border-t border-gray-200 pt-2">
+							<!-- Fitur Penanggalan -->
+							<div class="grid grid-cols-12 py-2">
+								<div class="col-span-8">Fitur Penanggalan</div>
+								<div class="col-span-2 flex justify-center border-r border-gray-300">
+									{#if data.mobileFeatures.fitur_kalender == 1}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+								<div class="col-span-2 flex justify-center">
+									{#if data.mobileFeatures.fitur_kalender == 0}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+							</div>
+
+							<!-- Fitur Tugas Pribadi -->
+							<div class="grid grid-cols-12 py-2">
+								<div class="col-span-8">Fitur Tugas Pribadi</div>
+								<div class="col-span-2 flex justify-center border-r border-gray-300">
+									{#if data.mobileFeatures.fitur_tugas_pribadi == 1}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+								<div class="col-span-2 flex justify-center">
+									{#if data.mobileFeatures.fitur_tugas_pribadi == 0}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+							</div>
+
+							<!-- Fitur Tugas Acara -->
+							<div class="grid grid-cols-12 py-2">
+								<div class="col-span-8">Fitur Tugas Acara</div>
+								<div class="col-span-2 flex justify-center border-r border-gray-300">
+									{#if data.mobileFeatures.fitur_tugas_acara == 1}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+								<div class="col-span-2 flex justify-center">
+									{#if data.mobileFeatures.fitur_tugas_acara == 0}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+							</div>
+
+							<!-- Fitur Situs Kerajaan -->
+							<div class="grid grid-cols-12 py-2">
+								<div class="col-span-8">Fitur Situs Kerajaan</div>
+								<div class="col-span-2 flex justify-center border-r border-gray-300">
+									{#if data.mobileFeatures.fitur_situs == 1}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+								<div class="col-span-2 flex justify-center">
+									{#if data.mobileFeatures.fitur_situs == 0}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+							</div>
+
+							<!-- Fitur Check-In Situs -->
+							<div class="grid grid-cols-12 py-2">
+								<div class="col-span-8">Fitur Check-In Situs</div>
+								<div class="col-span-2 flex justify-center border-r border-gray-300">
+									{#if data.mobileFeatures.fitur_check_in == 1}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+								<div class="col-span-2 flex justify-center">
+									{#if data.mobileFeatures.fitur_check_in == 0}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+							</div>
+
+							<!-- Fitur Acara Kerajaan -->
+							<div class="grid grid-cols-12 py-2">
+								<div class="col-span-8">Fitur Acara Kerajaan</div>
+								<div class="col-span-2 flex justify-center border-r border-gray-300">
+									{#if data.mobileFeatures.fitur_acara == 1}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+								<div class="col-span-2 flex justify-center">
+									{#if data.mobileFeatures.fitur_acara == 0}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+							</div>
+
+							<!-- Fitur Group Chat -->
+							<div class="grid grid-cols-12 py-2">
+								<div class="col-span-8">Fitur Group Chat</div>
+								<div class="col-span-2 flex justify-center border-r border-gray-300">
+									{#if data.mobileFeatures.fitur_chat == 1}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+								<div class="col-span-2 flex justify-center">
+									{#if data.mobileFeatures.fitur_chat == 0}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+							</div>
+
+							<!-- Fitur Forum -->
+							<div class="grid grid-cols-12 py-2">
+								<div class="col-span-8">Fitur Forum</div>
+								<div class="col-span-2 flex justify-center border-r border-gray-300">
+									{#if data.mobileFeatures.fitur_forum == 1}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+								<div class="col-span-2 flex justify-center">
+									{#if data.mobileFeatures.fitur_forum == 0}
+										<span class="text-customOrange2 text-xl">✓</span>
+									{/if}
+								</div>
+							</div>
+						</div>
+					</div>
+					{/if}
+				</div>
+			{/if}
+		</div>
 	{/if}
 </div>
 
 <style>
 	.ic--baseline-email {
+		display: inline-block;
+		width: 48px;
+		height: 48px;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23FFA600' d='M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 4l-8 5l-8-5V6l8 5l8-5z'/%3E%3C/svg%3E");
+	}
+
+	.icon-circle.active .ic--baseline-email {
 		display: inline-block;
 		width: 48px;
 		height: 48px;
@@ -325,6 +426,11 @@
 	}
 
 	.icon-circle.active .mdi--wrench {
+		display: inline-block;
+		width: 48px;
+		height: 48px;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ffffff' d='m22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9c-2-2-5-2.4-7.4-1.3L9 6L6 9L1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4'/%3E%3C/svg%3E");
 	}
 
@@ -388,4 +494,9 @@
 		margin-top: 8px;
 		height: 2.5em; /* Tinggi tetap untuk teks */
 	}
+
+	.icon-circle.active {
+    background-color: #ffa600;
+    border: none;
+}
 </style>

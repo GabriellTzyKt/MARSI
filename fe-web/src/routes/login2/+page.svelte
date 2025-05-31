@@ -119,13 +119,6 @@
 						</div>
 					{/if}
 					
-					<!-- Display error message from URL parameter -->
-					{#if errorMessage}
-						<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-							<strong class="font-bold">Error!</strong>
-							<span class="block sm:inline">{errorMessage}</span>
-						</div>
-					{/if}
 					
 					<div class="flex flex-col">
 						<p class="mb-2">Masukkan Username</p>
@@ -229,9 +222,6 @@
 								<a href="/forgotPassword" class="txt-pass">Forgot Password?</a>
 							</div>
 						</div>
-						{#if errB}
-							<p class="text-left text-red-500">{errB}</p>
-						{/if}
 						<div class="flex items-center justify-center text-center">
 							<button class="bg-bt w-full py-3 font-[650] text-white" type="submit">Log In</button>
 						</div>

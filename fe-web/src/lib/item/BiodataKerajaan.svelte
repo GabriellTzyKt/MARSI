@@ -3,6 +3,8 @@
 
 	let { href, data } = $props();
 	console.log('Data : ', data);
+	let dataambil = data.dataKerajaan[0]
+	console.log("Data ambil : ", dataambil.imageUrl)
 </script>
 
 <a {href}>
@@ -10,15 +12,15 @@
 		class="flex w-full items-center justify-between gap-2 rounded-md border border-[#76768033] bg-white p-4 shadow-xl"
 	>
 		<div class="flex items-center justify-center">
-			{#if data.imageUrl != ''}
-				<img src={data.imageUrl} class="h-[60px] w-[60px] rounded-full" alt="" />
+			{#if dataambil.imageUrl != ''}
+				<img src={dataambil.imageUrl} class="h-[60px] w-[60px] rounded-full" alt="" />
 			{:else}
 				<img src={temp} class="h-[60px] w-[60px] rounded-full" alt="" />
 			{/if}
 		</div>
 		<div class="flex grow flex-col justify-start gap-2">
 			<div class="flex">
-				<p class="text-lg">{data.nama_kerajaan}</p>
+				<p class="text-lg">{dataambil.nama_kerajaan}</p>
 			</div>
 			<div class="flex items-center justify-start gap-1">
 				<div>
@@ -30,7 +32,7 @@
 					>
 				</div>
 				<div class="flex">
-					<p>{data.place_name}</p>
+					<p>{dataambil.place_name}</p>
 				</div>
 			</div>
 		</div>

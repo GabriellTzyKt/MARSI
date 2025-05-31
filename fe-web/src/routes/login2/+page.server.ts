@@ -61,10 +61,10 @@ export const actions: Actions = {
 
         if (res.ok) {
             console.log("Login successful, response:", s);
-            const data: any = jwtDecode(s.jwt_token);
+            const data12: any = jwtDecode(s.jwt_token);
             
             // Extract id_user from the decoded JWT data
-            const id_user = data.id_user;
+            const id_user = data12.id_user;
             console.log("Decoded JWT, id_user:", id_user);
             
             // Check if this user is an admin by fetching admin data
@@ -77,6 +77,7 @@ export const actions: Actions = {
             let adminType = null;
             let adminData = null;
             let id_kerajaan = 0;
+            let nama = data.get("username")
             
             if (adminResponse.ok) {
                 const admins = await adminResponse.json();
@@ -94,7 +95,7 @@ export const actions: Actions = {
                         return fail(403, { 
                             errorB: "Akun tidak aktif. Silahkan hubungi administrator.", 
                             success: false, 
-                            username: data.get("username"),
+                            username: nama,
                             inactive: true
                         });
                     } else {

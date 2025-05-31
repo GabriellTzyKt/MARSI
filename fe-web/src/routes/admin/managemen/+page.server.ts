@@ -340,7 +340,6 @@ export const actions: Actions = {
             // Prepare payload for API
             const adminPayload = {
                 id_admin: Number(id_admin),
-                id_user: Number(id_user || 0),
                 nama_lengkap: String(nama_lengkap),
                 jenis_kelamin: String(jenis_kelamin),
                 tempat_lahir: String(kota_lahir),

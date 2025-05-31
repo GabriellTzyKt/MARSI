@@ -250,7 +250,7 @@ export const actions: Actions = {
             situs: data.get("fitur-situskerajaan") === "ya" ? 1 : 0,
             check_in: data.get("fitur-checkin") === "ya" ? 1 : 0,
             acara: data.get("fitur-acarakerajaan") === "ya" ? 1 : 0,
-            grup: data.get("fitur-groupchat") === "ya" ? 1 : 0,
+            chat: data.get("fitur-groupchat") === "ya" ? 1 : 0,
             forum: data.get("fitur-forum") === "ya" ? 1 : 0,
             warna_utama: data.get("warna_mobile_utama") as string,
             warna_sekunder: data.get("warna_mobile_secondary") as string,

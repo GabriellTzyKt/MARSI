@@ -74,7 +74,7 @@ export const load: PageServerLoad = async ({ params }) => {
         });
 
         console.log(`Found ${filteredHistoryRaja.length} history raja records for this kerajaan`);
-        
+
         // Tambahkan URL gambar dan format tahun menjabat untuk setiap history raja
         console.log("Processing images and formatting dates for history raja...");
         const historyRajaWithImages = [];
@@ -82,25 +82,25 @@ export const load: PageServerLoad = async ({ params }) => {
         // Gunakan loop for biasa daripada Promise.all untuk debugging yang lebih mudah
         for (let i = 0; i < filteredHistoryRaja.length; i++) {
             const raja = filteredHistoryRaja[i];
-            console.log(`Processing raja ${i+1}/${filteredHistoryRaja.length}: ${raja.nama_raja || 'Unknown'}`);
-            
+            console.log(`Processing raja ${i + 1}/${filteredHistoryRaja.length}: ${raja.nama_raja || 'Unknown'}`);
+
             // Buat salinan objek raja
-            const rajaWithImage = { 
-                ...raja, 
+            const rajaWithImage = {
+                ...raja,
                 imageUrl: '',
                 periodeMenjabat: '' // Tambahkan properti untuk periode menjabat
             };
-            
+
             // Format periode menjabat (tahun mulai - tahun selesai)
             try {
                 // Ambil tahun dari tanggal mulai menjabat
                 const mulaiDate = new Date(raja.mulai_menjabat);
                 const tahunMulai = mulaiDate.getFullYear();
-                
+
                 // Cek apakah tanggal selesai menjabat valid
                 const selesaiDate = new Date(raja.selesai_menjabat);
                 let periodeMenjabat = '';
-                
+
                 // Jika tanggal selesai adalah default (0001-01-01) atau tidak ada, berarti "sampai sekarang"
                 if (raja.selesai_menjabat === '0001-01-01T00:00:00Z' || !raja.selesai_menjabat) {
                     periodeMenjabat = `${tahunMulai} - Sekarang`;
@@ -108,33 +108,33 @@ export const load: PageServerLoad = async ({ params }) => {
                     const tahunSelesai = selesaiDate.getFullYear();
                     periodeMenjabat = `${tahunMulai} - ${tahunSelesai}`;
                 }
-                
+
                 rajaWithImage.periodeMenjabat = periodeMenjabat;
                 console.log(`Periode menjabat: ${periodeMenjabat}`);
             } catch (error) {
                 console.error(`Error formatting periode menjabat:`, error);
                 rajaWithImage.periodeMenjabat = 'Periode tidak diketahui';
             }
-            
+
             // Cek apakah raja memiliki foto
             if (raja.dokumentasi && raja.dokumentasi.trim() !== '') {
                 console.log(`Raja has foto_raja ID: ${raja.dokumentasi}`);
-                
+
                 try {
                     // Ambil file path dari endpoint /doc/{id}
                     const docUrl = `${env.BASE_URL}/doc/${raja.dokumentasi}`;
                     console.log(`Fetching document from: ${docUrl}`);
-                    
+
                     const docRes = await fetch(docUrl);
                     console.log(`Document fetch status: ${docRes.status}`);
-                    
+
                     if (docRes.ok) {
                         const docData = await docRes.json();
                         console.log(`Document data received:`, docData);
-                        
+
                         const filePath = docData.file_dokumentasi || docData;
                         console.log(`File path extracted: ${typeof filePath === 'string' ? filePath : 'Not a string'}`);
-                        
+
                         if (typeof filePath === 'string') {
                             // Buat URL lengkap ke file
                             rajaWithImage.imageUrl = `${env.BASE_URL}/file?file_path=${encodeURIComponent(filePath)}`;
@@ -149,7 +149,7 @@ export const load: PageServerLoad = async ({ params }) => {
             } else {
                 console.log(`Raja has no foto_raja ID`);
             }
-            
+
             historyRajaWithImages.push(rajaWithImage);
         }
 
@@ -257,13 +257,35 @@ export const load: PageServerLoad = async ({ params }) => {
             videoUrl
         };
 
-        console.log("DATA RAJA : " , kerajaanWithMedia)
+        console.log("DATA RAJA : ", kerajaanWithMedia)
+
+        const [eraRes, rumpunRes] = await Promise.all([
+            fetch(`${env.BASE_URL}/era?limit=200`, {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            }),
+            fetch(`${env.BASE_URL}/rumpun?limit=200`, {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            })
+        ]);
+
+        if (!eraRes.ok || !rumpunRes.ok) {
+            throw new Error(`HTTP Error! Status: era=${eraRes.status}, rumpun=${rumpunRes.status}`);
+        }
+
+        const eraList = await eraRes.json();
+        const rumpunList = await rumpunRes.json();
+
 
         return {
             detil_kerajaan: kerajaanWithMedia,
             jenisKerajaan: filteredJenisKerajaan,
             historyRaja: historyRajaWithImages,
-            gelar: gelarKerajaan
+            gelar: gelarKerajaan,
+            eraList,    
+            rumpunList   
+        
         };
     } catch (error) {
         console.error("Error loading data:", error);
@@ -540,39 +562,39 @@ export const actions: Actions = {
         }
 
         // Cek apakah ada file baru (yang tidak memiliki prefix "image_")
-        const newFiles = dokumenFiles.filter(file => 
-            file instanceof File && 
-            file.size > 0 && 
+        const newFiles = dokumenFiles.filter(file =>
+            file instanceof File &&
+            file.size > 0 &&
             !file.name.startsWith('image_')
         );
 
         // Jika ada file baru, upload dan tambahkan ID-nya ke fotoUmumIds
         if (newFiles.length > 0) {
             console.log(`Found ${newFiles.length} new files to upload`);
-            
+
             // Upload setiap file baru
             for (const file of newFiles) {
                 if (!(file instanceof File)) continue;
-                
+
                 console.log(`Uploading new file: ${file.name} (${file.size} bytes)`);
-                
+
                 const formData = new FormData();
                 formData.append("nama_kerajaan", res.nama || "Unknown");
                 formData.append("foto_umum", file);
-                
+
                 try {
                     const response = await fetch(env.BASE_URL + "/file/umum", {
                         method: 'POST',
                         body: formData
                     });
-                    
+
                     if (response.ok) {
                         const result = await response.json();
                         console.log("Upload response:", result);
-                        
+
                         // Extract ID
                         if (result.id_path && result.id_path.data) {
-                            const newIds = result.id_path.data.split(',').map((id : any) => id.trim()).filter((id : any) => id);
+                            const newIds = result.id_path.data.split(',').map((id: any) => id.trim()).filter((id: any) => id);
                             fotoUmumIds.push(...newIds);
                         } else if (result.id_path) {
                             fotoUmumIds.push(result.id_path);
@@ -603,12 +625,12 @@ export const actions: Actions = {
                 const formData = new FormData();
                 formData.append("nama_kerajaan", res.nama || "Unknown");
                 formData.append("bendera_kerajaan", bendera);
-                
+
                 const response = await fetch(env.BASE_URL + "/file/bendera", {
                     method: 'POST',
                     body: formData
                 });
-                
+
                 if (response.ok) {
                     const result = await response.json();
                     if (result.id_path) {
@@ -644,12 +666,12 @@ export const actions: Actions = {
                 const formData = new FormData();
                 formData.append("nama_kerajaan", res.nama || "Unknown");
                 formData.append("lambang_kerajaan", lambang);
-                
+
                 const response = await fetch(env.BASE_URL + "/file/lambang", {
                     method: 'POST',
                     body: formData
                 });
-                
+
                 if (response.ok) {
                     const result = await response.json();
                     if (result.id_path) {
@@ -682,12 +704,12 @@ export const actions: Actions = {
                 const formData = new FormData();
                 formData.append("nama_kerajaan", res.nama || "Unknown");
                 formData.append("video_kerajaan", video);
-                
+
                 const response = await fetch(env.BASE_URL + "/file/video", {
                     method: 'POST',
                     body: formData
                 });
-                
+
                 if (response.ok) {
                     const result = await response.json();
                     if (result.id_path) {
@@ -717,7 +739,7 @@ export const actions: Actions = {
             longitude: Number(res.long || 0),
             latitude: Number(res.lat || 0),
             nama_kerajaan: res.nama,
-            raja_sekarang: res.rajasekarang || " ",
+            raja_sekarang: data.get("raja_sekarang"),
             jenis_kerajaan: Number(res.jenis || 1),
             deskripsi_kerajaan: res.deskripsi,
             alamat_kerajaan: res.lokasi,
@@ -727,8 +749,8 @@ export const actions: Actions = {
             video_kerajaan: videoId,
             tahun_berdiri: res.tahun_berdiri || "1900",
             tahun_berakhir: res.tahunberakhir || "1980",
-            era: res.era,
-            rumpun: res.rumpun,
+            era: Number(res.era),
+            rumpun: Number(res.rumpun),
             email: res.email || "email",
             url_website: res.linkkerajaan || "url1@marsi.com",
             url_acara_1: res.linkacara1 || "url2@marsi.com",
@@ -844,31 +866,31 @@ export const actions: Actions = {
         const data = await request.formData();
         const id_history_raja = data.get("id_history_raja");
         const id_kerajaan = data.get("id_kerajaan") || params.id;
-        
+
         console.log(`Attempting to delete history raja with ID: ${id_history_raja} from kerajaan ID: ${id_kerajaan}`);
-        
+
         if (!id_history_raja) {
             console.error("Missing history raja ID");
             return fail(400, { errors: "ID history raja tidak ditemukan" });
         }
-        
+
         try {
             // Kirim request DELETE ke API
             const deleteUrl = `${env.BASE_URL}/history-raja/${id_history_raja}`;
             console.log(`Sending DELETE request to: ${deleteUrl}`);
-            
+
             const response = await fetch(deleteUrl, {
                 method: "DELETE",
                 headers: {
                     "Accept": "application/json"
                 }
             });
-            
+
             // Ambil response sebagai text terlebih dahulu
             const responseText = await response.text();
             console.log("API Response status:", response.status);
             console.log("API Response text:", responseText);
-            
+
             // Parse response sebagai JSON jika memungkinkan
             let responseData;
             try {
@@ -877,14 +899,14 @@ export const actions: Actions = {
                 console.error("Failed to parse response as JSON:", e);
                 responseData = { message: responseText };
             }
-            
+
             if (!response.ok) {
                 console.error(`Failed to delete history raja: ${response.status}`, responseData);
-                return fail(response.status, { 
-                    errors: responseData.message || `Gagal menghapus data (${response.status})` 
+                return fail(response.status, {
+                    errors: responseData.message || `Gagal menghapus data (${response.status})`
                 });
             }
-            
+
             console.log("Successfully deleted history raja");
             return { success: true };
         } catch (error) {
@@ -895,7 +917,7 @@ export const actions: Actions = {
 
     editHistory: async ({ request, params }) => {
         const data = await request.formData();
-        
+
         // Log semua data yang diterima
         console.log("EDIT HISTORY SERVER - All form data entries:");
         for (const [key, value] of data.entries()) {
@@ -905,18 +927,18 @@ export const actions: Actions = {
                 console.log(`EDIT HISTORY SERVER - ${key}: ${value}`);
             }
         }
-        
+
         const res = Object.fromEntries(data);
         console.log("EDIT HISTORY SERVER - Form data as object:", res);
-        
+
         // Cek apakah ada ID foto raja yang sudah ada
         const existingFotoRajaId = data.get("existing_foto_raja_id")?.toString() || "";
         console.log("EDIT HISTORY SERVER - Existing foto raja ID:", existingFotoRajaId);
-        
+
         // Cek apakah ada file foto raja baru
         const newFotoRaja = data.get("inputfotoraja");
         let fotoRajaId = existingFotoRajaId;
-        
+
         if (newFotoRaja instanceof File && newFotoRaja.size > 0) {
             console.log("EDIT HISTORY SERVER - New foto raja detected, uploading...");
             try {
@@ -924,12 +946,12 @@ export const actions: Actions = {
                 const fotoRajaFormData = new FormData();
                 fotoRajaFormData.append("nama_kerajaan", res.nama_kerajaan || res.nama_raja || "Unknown");
                 fotoRajaFormData.append("dokumentasi", res.inputfotoraja);
-                
+
                 const fotoRajaResponse = await fetch(`${env.BASE_URL}/file/raja`, {
                     method: 'POST',
                     body: fotoRajaFormData,
                 });
-                
+
                 if (fotoRajaResponse.ok) {
                     const fotoRajaResult = await fotoRajaResponse.json();
                     fotoRajaId = fotoRajaResult.id_path || "";
@@ -943,15 +965,15 @@ export const actions: Actions = {
         } else {
             console.log("EDIT HISTORY SERVER - No new foto raja, using existing ID:", fotoRajaId);
         }
-        
+
         // Prepare data for history-raja update
         try {
             // Check if "masih" checkbox is checked
             const masihMenjabat = data.get("inputcheckbox") === "masih";
-            
+
             const historyRajaData = {
                 id_raja: Number(res.id_raja),
-                id_kerajaan: Number(res.id || params.id),   
+                id_kerajaan: Number(res.id || params.id),
                 id_gelar: Number(res.gelarraja),
                 nama_raja: res.namaraja,
                 tempat_lahir: res.kotalahir,
@@ -965,9 +987,9 @@ export const actions: Actions = {
                 selesai_menjabat: masihMenjabat ? "" : (res.tanggalakhir || ""),
                 dokumentasi: fotoRajaId,
             };
-            
+
             console.log("EDIT HISTORY SERVER - Sending update to API:", historyRajaData);
-            
+
             const updateResponse = await fetch(`${env.BASE_URL}/history-raja`, {
                 method: 'PUT',
                 headers: {
@@ -975,10 +997,10 @@ export const actions: Actions = {
                 },
                 body: JSON.stringify(historyRajaData),
             });
-            
+
             const updateResult = await updateResponse.text();
             console.log("EDIT HISTORY SERVER - API response status:", updateResponse.status);
-            
+
             let parsedResult;
             try {
                 parsedResult = JSON.parse(updateResult);
@@ -986,14 +1008,14 @@ export const actions: Actions = {
                 console.error("EDIT HISTORY SERVER - Failed to parse response as JSON:", e);
                 parsedResult = { message: updateResult };
             }
-            
+
             if (updateResponse.ok) {
                 console.log("EDIT HISTORY SERVER - Update successful");
                 return { success: true };
             } else {
                 console.error("EDIT HISTORY SERVER - Update failed:", parsedResult);
-                return fail(updateResponse.status, { 
-                    errors: parsedResult.message || `Error updating history raja (${updateResponse.status})` 
+                return fail(updateResponse.status, {
+                    errors: parsedResult.message || `Error updating history raja (${updateResponse.status})`
                 });
             }
         } catch (error) {
