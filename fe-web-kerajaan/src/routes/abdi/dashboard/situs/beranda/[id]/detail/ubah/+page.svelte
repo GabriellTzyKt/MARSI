@@ -28,6 +28,7 @@
 
 	let { form, data } = $props();
 	let dataambil = data.situs;
+	console.log("Data : ", data)
 	let jenisSitusList = data.jenisSitusList || [];
 	let usersList = data.usersList || [];
 	let wisataList = data.wisataList || [];

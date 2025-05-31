@@ -4,6 +4,7 @@ import { env } from "$env/dynamic/private";
 
 export const load = async ({ params }) => {
     const id = params.id;
+    console.log("Id : ", id)
 
     try {
         // Fetch all situs data with limit 200
@@ -244,7 +245,7 @@ export const actions: Actions = {
                 id_situs: Number(id),
                 id_wisata: Number(form.wisata),
                 id_jenis_situs: Number(form.jenissitus),
-                gambar_profile: profile_id, // Changed from foto_situs to profile
+                profile: profile_id, // Changed from foto_situs to profile
                 foto_situs: data.get("existing_foto_situs") || "",
                 nama_situs: form.namasitus,
                 deskripsi_situs: form.deskripsi,

@@ -3,6 +3,22 @@ import { error, fail, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "../$types";
 import { formatDatetoUI, formatTime } from "$lib";
 
+function extractRegion(alamat: string) {
+    if (!alamat) return 'Unknown Region';
+    const lower = alamat.toLowerCase();
+
+    if (lower.includes('jawa')) return 'Jawa';
+    if (lower.includes('kalimantan')) return 'Kalimantan';
+    if (lower.includes('sumatera')) return 'Sumatera';
+    if (lower.includes('sulawesi')) return 'Sulawesi';
+    if (lower.includes('papua')) return 'Papua';
+    if (lower.includes('bali')) return 'Bali';
+    if (lower.includes('ntt') || lower.includes('nusa tenggara timur') || lower.includes('ntb') || lower.includes('nusa tenggara barat')) return 'Nusa Tenggara';
+    // Tambahkan region lain sesuai kebutuhan
+
+    return 'Lainnya';
+}
+
 export const load: PageServerLoad = async ({ cookies, params }) => {
     try {
         // Get the situs ID from params
@@ -45,7 +61,7 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
         const eventsWithSitusInfo = events.map((event : any) => ({
             ...event,
             situs_nama: situsData.nama_situs || 'Unknown',
-            situs_alamat: situsData.alamat || 'Unknown Location'
+            situs_alamat: extractRegion(event.alamat_acara || '') // gunakan fungsi ini
         }));
         
         // Handle users response
