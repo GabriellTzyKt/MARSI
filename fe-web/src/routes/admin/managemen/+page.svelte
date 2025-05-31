@@ -115,6 +115,7 @@
 						setTimeout(() => {
 							valo = false;
 							open = false;
+							error = false;
 						}, 3000);
 					});
 				} else if (result.type === 'failure') {

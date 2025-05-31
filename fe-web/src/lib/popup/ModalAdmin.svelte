@@ -3,6 +3,8 @@
 	import xbutton from '../../asset/icons/xbutton.png';
 	import SModal from './SModal.svelte';
 
+	let showPassword = $state(false);
+
 	let {
 		value = $bindable(),
 		textM,
@@ -303,6 +305,7 @@
 					<p class="text-left text-red-500">{errors?.api}</p>
 				{/if}
 			</div>
+
 			<!-- Email -->
 			<div class="flex flex-col md:col-span-3">
 				<div class="">
@@ -323,6 +326,73 @@
 					{/each}
 				{/if}
 			</div>
+
+			{#if textM !== 'Ubah' && textM !== 'ubah'}
+				<div class="flex flex-col md:col-span-full">
+					<div>
+						<p>Password</p>
+					</div>
+					<div class="relative">
+						<input
+							type={showPassword ? 'text' : 'password'}
+							class="w-full rounded-lg border border-gray-300 pr-10 text-gray-500 focus:outline-none"
+							name="password"
+							placeholder="Password"
+							autocomplete="new-password"
+						/>
+						<!-- Icon mata -->
+						<span
+							class="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer select-none"
+							onclick={() => (showPassword = !showPassword)}
+						>
+							{#if showPassword}
+								<!-- Mata terbuka (SVG) -->
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-5 w-5 text-gray-500"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm-9 0a9 9 0 0118 0 9 9 0 01-18 0z"
+									/>
+								</svg>
+							{:else}
+								<!-- Mata tertutup (SVG) -->
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-5 w-5 text-gray-500"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-4.477-10-10 0-1.657.336-3.236.938-4.675m1.675-1.675A9.956 9.956 0 0112 3c5.523 0 10 4.477 10 10 0 1.657-.336 3.236-.938 4.675m-1.675 1.675A9.956 9.956 0 0112 21c-5.523 0-10-4.477-10-10 0-1.657.336-3.236.938-4.675"
+									/>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M3 3l18 18"
+									/>
+								</svg>
+							{/if}
+						</span>
+					</div>
+					{#if errors}
+						{#each errors.password as a}
+							<p class="text-left text-red-500">{a}</p>
+						{/each}
+					{/if}
+				</div>
+			{/if}
 
 			<input type="hidden" name="id_admin" value={formValues.id_admin} />
 			<input type="hidden" name="id_user" value={formValues.id_user} />
