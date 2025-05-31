@@ -12,9 +12,13 @@
 
 	let { data } = $props();
 	let dataambil = data.acaraList;
-
-	// Transform the data to handle nested Acara objects
-	let dataacara: any = $state([]);
+	let dataacara = dataambil.map((item : any) => ({
+		...item.Acara,
+		id_organisasi: item.id_organisasi,
+		organisasi_nama: item.organisasi_nama,
+		nama_penanggung_jawab : item.nama_penanggung_jawab
+	}));
+	console.log('DATA AMBIL : ', dataambil);
 
 	// // Check if allEvents exists and process it
 	// if (data.allEvents && Array.isArray(data.allEvents)) {
@@ -79,8 +83,10 @@
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
 		<button
 			class="bg-badran-bt cursor-pointer rounded-lg px-3 py-2 text-white"
-			onclick={() => goto(`/abdi/dashboard/organisasi/beranda/${idOrganisasi}/detail/acara/tambah`)}
-			>+Tambah Data</button
+			onclick={() =>
+				goto(
+					`/abdi/dashboard/organisasi/beranda/${dataambil[0].id_organisasi}/detail/acara/tambah`
+				)}>+Tambah Data</button
 		>
 		<div
 			class="mt-4 flex flex-col items-center justify-center gap-2 md:flex-row xl:mt-0 xl:justify-start"
@@ -159,19 +165,19 @@
 					<DropDown
 						text={`Apakah yakin ingin mengarsipkan ${data.nama_acara || 'acara ini'}?`}
 						successText={`Berhasil mengarsipkan ${data.nama_acara || 'acara ini'}!`}
-						link={`/abdi/dashboard/organisasi/beranda/${idOrganisasi}/detail/acara`}
+						link={`/abdi/dashboard/organisasi/beranda/${dataambil[0].id_organisasi}/detail/acara`}
 						items={[
 							[
 								'Detail',
-								`/abdi/dashboard/organisasi/beranda/${idOrganisasi}/detail/acara/detail/${data.id_acara}`
+								`/abdi/dashboard/organisasi/beranda/${dataambil[0].id_organisasi}/detail/acara/detail/${data.id_acara}`
 							],
 							[
 								'Ubah',
-								`/abdi/dashboard/organisasi/beranda/${idOrganisasi}/detail/acara/ubah/${data.id_acara}`
+								`/abdi/dashboard/organisasi/beranda/${dataambil[0].id_organisasi}/detail/acara/ubah/${data.id_acara}`
 							],
 							[
 								'Laporan',
-								`/abdi/dashboard/organisasi/beranda/${idOrganisasi}/detail/acara/laporan/${data.id_acara}`
+								`/abdi/dashboard/organisasi/beranda/${dataambil[0].id_organisasi}/detail/acara/laporan/${data.id_acara}`
 							],
 							['children', 'Arsip', '']
 						]}

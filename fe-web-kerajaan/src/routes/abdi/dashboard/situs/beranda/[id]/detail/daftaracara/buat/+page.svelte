@@ -225,7 +225,7 @@
 				console.log(result);
 				console.log(input_radio);
 				loading = false;
-				if (result.type === 'success') {
+				if (result.type === 'success' || result.status == 200) {
 					open = true;
 					clearTimeout(timer);
 					timer = setTimeout(() => {
@@ -760,6 +760,7 @@
 </div>
 
 {#if open}
+{console.log("Oiiii anjeeee")}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
 		<SucessModal
 			{open}

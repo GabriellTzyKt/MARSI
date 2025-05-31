@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
         fetch(`${env.BASE_URL_8008}/situs?limit=200`),
         fetch(`${env.BASE_URL_8008}/komunitas?limit=200`),
         fetch(`${env.BASE_URL_8008}/organisasi?limit=200`),
-        fetch(`${env.BASE_URL_8008}/acara/situs/${id}`)
+        fetch(`${env.BASE_URL_8008}/acara/situs/${id}?limit=200`)
     ]);
 
     if (!usersRes.ok || !situsRes.ok || !komunitasRes.ok || !organisasiRes.ok || !acaraRes.ok) {
