@@ -58,7 +58,7 @@
 			</div>
 		</a>
 
-		<a href="/abdi/sekretariat/anggota/daftaranggota" class="md:col-start-2">
+		<a href="/abdi/sekretariat/anggota/daftaranggota" class="">
 			<div
 				class="an border-badran-bdg mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer"
 			>

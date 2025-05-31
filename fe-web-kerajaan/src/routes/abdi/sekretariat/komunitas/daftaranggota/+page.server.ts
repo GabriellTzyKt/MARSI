@@ -18,6 +18,11 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
         }
         console.log("User res:", userRes);
            let userData = await userRes.json();
+
+           let fullUser = userData.filter((item: any) => {
+               return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
+              }
+            )
            userData = userData.filter((item: any) => {
                return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
            }).map((item: any) => {
@@ -27,7 +32,7 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
                    email: item.email
                }
            });
-   
+          
            let res = await fetch(`${env.URL_KERAJAAN}/komunitas?limit=300`)
            if (!res.ok) {
                throw new Error(`HTTP Error! Status: ${res.status}`)
@@ -39,7 +44,7 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
                nama_komunitas: item.nama_komunitas,
                tanggal_berdiri: item.tanggal_berdiri ? formatDatetoUI(item.tanggal_berdiri) : item.tanggal_berdiri
            }));
-           return { data: finalData, userData };
+           return { data: finalData, userData, fullUser };
        } catch (error) {
            
        }
@@ -58,7 +63,7 @@ export const actions: Actions = {
 
         let form = {
             namaanggota: String(data.get("namaanggota") || "").trim(),
-            id_anggota: String(data.get("id_anggota") || "").trim(),
+            id_anggota: String(data.get("id_user") || "").trim(),
             deskripsi: String(data.get("deskripsitugas") || "").trim(),
             jabatan: String(data.get("jabatan") || "").trim(),
         };
@@ -122,7 +127,7 @@ export const actions: Actions = {
         const data = await request.formData();
         console.log(data)
         const komunitasId = data.get("id_komunitas");
-        const userId = data.get("id_anggota");
+        const userId = data.get("id_user");
         
         if (!komunitasId || !userId) {
             return fail(400, {
@@ -141,7 +146,7 @@ export const actions: Actions = {
 
         let form = {
             namaanggota: String(data.get("namaanggota") || "").trim(),
-            id_user: String(data.get("id_anggota") || "").trim(),
+            id_user: String(data.get("id_user") || "").trim(),
             deskripsi: String(data.get("deskripsitugas") || "").trim(),
             jabatan: String(data.get("jabatan") || "").trim(),
         };
@@ -168,6 +173,7 @@ export const actions: Actions = {
                     id_user: Number(userId),
                     deskripsi_tugas: String(form.deskripsi),
                     jabatan_anggota: String(form.jabatan),
+                    tanggal_bergabung: new Date().toISOString().split("T")[0],
                 })
             });
 

@@ -80,6 +80,16 @@
 			namaimage = 'exist';
 		}
 	}
+	function handleSubmit(event) {
+		if (!sPb || !sPl) {
+			errorppp = true;
+			return;
+		}
+		event.target.submit(); // submit form jika sudah boleh
+	}
+	let sPl = $state(false);
+	let sPb = $state(false);
+	let errorppp = $state(false);
 </script>
 
 {#if navigating.to}
@@ -98,12 +108,23 @@
 			return async ({ result, update }) => {
 				loading = false;
 				if (result.type === 'success') {
-					open = true;
-					clearTimeout(timer);
-					timer = setTimeout(() => {
-						open = false;
-						goto('/abdi/sekretariat/komunitas/daftarkomunitas');
-					}, 3000);
+					if (result?.data?.permohonanPembina) {
+						sPb = true;
+					}
+					if (result?.data?.permohonanPelindung) {
+						sPl = true;
+					}
+
+					if (sPb && sPl) {
+						open = true;
+						clearTimeout(timer);
+						timer = setTimeout(() => {
+							open = false;
+							goto('/abdi/sekretariat/komunitas/daftarkomunitas');
+						}, 3000);
+					} else {
+						errorppp = true;
+					}
 				}
 				if (result.type === 'failure') {
 					errors = result.data?.errors;
@@ -112,6 +133,10 @@
 					}
 				}
 			};
+		}}
+		onsubmit={(e) => {
+			e.preventDefault();
+			handleSubmit();
 		}}
 	>
 		<div class="relative mx-auto flex w-full items-center justify-center">
@@ -152,12 +177,12 @@
 			<!-- 1 -->
 			<div>
 				<div>
-					<p>Nama Situs</p>
+					<p>Nama Komunitas</p>
 					<div class="relative">
 						<input
 							type="text"
 							name="nama_situs"
-							placeholder="Masukkan Nama Situs"
+							placeholder="Masukkan Nama Komunitas"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 pr-10"
 						/>
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
@@ -296,40 +321,50 @@
 							/>
 						</div>
 						<input type="hidden" name="pembina_id" value={selectedPb?.id || ''} />
-						{#if showPbDropdown && filteredPbUsers.length > 0}
-							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
-								<ul class="max-h-60 overflow-y-auto">
-									{#each filteredPbUsers as user}
-										<!-- svelte-ignore a11y_click_events_have_key_events -->
-										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-										<li
-											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
-											onclick={() => selectPb(user)}
-										>
-											<div class="flex flex-col">
-												<span class="font-medium">{user.name}</span>
-												<span class="text-sm text-gray-500">{user.email}</span>
-											</div>
-										</li>
-									{/each}
-								</ul>
-							</div>
-						{/if}
-
-						{#if errors}
-							{#each errors.pembina as e}
-								<p class="text-left text-red-500">- {e}</p>
-							{/each}
-							{#each errors.pembina_id as e}
-								<p class="text-left text-red-500">- {e}</p>
-							{/each}
-						{/if}
 					</div>
-					<button class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white">
+					<button
+						class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white"
+						formaction="?/permohonanPembina"
+					>
 						Permohonan
 					</button>
 				</div>
-
+				{#if showPbDropdown && filteredPbUsers.length > 0}
+					<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+						<ul class="max-h-60 overflow-y-auto">
+							{#each filteredPbUsers as user}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								<li
+									class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+									onclick={() => selectPb(user)}
+								>
+									<div class="flex flex-col">
+										<span class="font-medium">{user.name}</span>
+										<span class="text-sm text-gray-500">{user.email}</span>
+									</div>
+								</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
+				{#if sPb}
+					<p class="text-green-500">Permohonan Pembina berhasil diajukan</p>
+				{/if}
+				{#if errors}
+					{#each errors.pembina as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+					{#each errors.pembina_id as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+					{#each errors.id_pembina as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+					{#each errors.asal_lembaga as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+				{/if}
 				<div class="mt-5 flex items-center gap-3">
 					<div class="w-full">
 						<p>Pelindung</p>
@@ -350,7 +385,11 @@
 							/>
 						</div>
 					</div>
-					<button class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white">
+
+					<button
+						class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white"
+						formaction="?/permohonanPelindung"
+					>
 						Permohonan
 					</button>
 				</div>
@@ -374,12 +413,20 @@
 						</ul>
 					</div>
 				{/if}
-
+				{#if sPl}
+					<p class="text-green-500">Permohonan Pelindung berhasil diajukan</p>
+				{/if}
 				{#if errors}
 					{#each errors.pelindung as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 					{#each errors.pelindung_id as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+					{#each errors.id_pelindung as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+					{#each errors.asal_lembaga as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -482,13 +529,30 @@
 		<div class="relative flex w-full justify-center lg:justify-end">
 			<button
 				class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
-				type="submit">Simpan Data</button
+				type="submit"
+				disabled={!sPb || !sPl}
 			>
+				Simpan Data
+			</button>
 		</div>
+		{#if !sPb || !sPl}
+			<p class="mt-2 text-center text-red-500">
+				Permohonan Pembina dan Pelindung harus diajukan terlebih dahulu.
+			</p>
+		{/if}
 		<input type="text" hidden name="id_pemohon" value={data?.user?.id_user} id="" />
 	</form>
 	{#if errors?.server}
 		<p class="text-red-500">{errors?.server}</p>
+	{/if}
+	{#if errors?.permohonanPembina}
+		<p class="text-red-500">{errors?.permohonanPembina}</p>
+	{/if}
+	{#if errors?.permohonanPelindung}
+		<p class="text-red-500">{errors?.permohonanPelindung}</p>
+	{/if}
+	{#if errorppp}
+		<p class="text-red-500">Permohonan Pembina atau Pelindung blm diaajukan</p>
 	{/if}
 </div>
 {#if open}

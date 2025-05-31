@@ -7,11 +7,15 @@
 	import TambahAdminSekre from '$lib/popup/TambahAdminSekre.svelte';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
-	import { invalidateAll } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
+	import { formatDatetoUI } from '$lib';
+
 	// import { load } from '../organisasi/daftaranggota/proxy+page.server.js';
 	let selectTipe = $state<string>('');
 
 	let { data } = $props();
+	let success = $state(false);
 	let userData = data?.user || [];
 	let open = $state(false);
 	let valo = $state(false);
@@ -19,43 +23,56 @@
 	let selected = $state('ASitus');
 	let error = $state();
 	let timer: number;
-
+	let editData = $state<any>(null);
+	let deleteID = $state<any>(null);
+	let deleteModal = $state(false);
+	let editmodal = $state(false);
 	let activeTab = $state('ASitus');
+	let nonAktifkanData = $state<any>(null);
+	let nonAktifkanModal = $state(false);
 	console.log(data.data);
+
+	function editAction(data: any) {
+		console.log('Edit Action : ', data);
+		editData = data;
+		editmodal = true;
+	}
+	function hapusAction(data: any) {
+		console.log('Hapus Action : ', data);
+		deleteID = data.id_admin;
+		deleteModal = true;
+	}
+	function nonAktifkan(data: any) {
+		console.log('Non Aktifkan Action : ', data);
+		nonAktifkanData = data;
+	}
 	let user = data.data;
 
+	function filteredUserByTab(tab: string) {
+		if (!user) return [];
+		let tipe = selectTipe;
+		let tipeField = '';
+		if (tab === 'ASitus') tipeField = 'Admin Situs';
+		if (tab === 'AOrganisasi') tipeField = 'Admin Organisasi';
+		if (tab === 'AKomunitas') tipeField = 'Admin Komunitas';
+
+		let filtered = user.filter((item: any) => item.jenis_admin === tipeField);
+
+		// Jika selectTipe diisi, filter lagi berdasarkan tipe tertentu (misal field 'tipe' pada data)
+		if (tipe) {
+			// Ganti 'tipe' dengan field yang sesuai pada data kamu, misal 'kategori', 'tipe', dsb.
+			filtered = filtered.filter((item: any) =>
+				(item.tipe || '').toLowerCase().includes(tipe.toLowerCase())
+			);
+		}
+		return filtered;
+	}
 	function setActive(tab: string) {
 		activeTab = tab;
 		selected = activeTab;
 		console.log('Selected : ', selected);
 	}
 
-	// onMount(() => {
-	// 	if (form?.errors) {
-	// 		error = form.errors;
-	// 		data = form.formData;
-	// 		if (form.type === 'add') {
-	// 			open = true;
-	// 		} else {
-	// 			edit = true;
-	// 		}
-	// 		valo = false;
-	// 	} else if (form?.success) {
-	// 		if (form.type === 'add') {
-	// 			open = false;
-	// 		} else {
-	// 			edit = false;
-	// 		}
-	// 		valo = true;
-	// 		timer = setTimeout(() => {
-	// 			valo = false;
-	// 		}, 3000);
-	// 	} else {
-	// 		open = false;
-	// 		valo = false;
-	// 		edit = false;
-	// 	}
-	// });
 	let loading = $state(false);
 </script>
 
@@ -158,33 +175,72 @@
 	<div class="grid w-full auto-rows-min grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
 		<!-- container -->
 		{#if selected === 'ASitus'}
-			{#each user as data}
-				<DropDownAdmin {data}></DropDownAdmin>
+			{#each filteredUserByTab('ASitus') as data}
+				<DropDownAdmin
+					{data}
+					editAction={{
+						action: () => {
+							editAction(data);
+						}
+					}}
+					hapusAction={{
+						action: () => {
+							hapusAction(data);
+						}
+					}}
+					nonAktifAction={{
+						action: () => {
+							nonAktifkan(data);
+						}
+					}}
+				></DropDownAdmin>
 			{/each}
-			<DropDownAdmin bind:edit {error} {data}></DropDownAdmin>
-
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
 		{/if}
 
 		{#if selected === 'AOrganisasi'}
-			<DropDownAdmin bind:edit {error} {data}></DropDownAdmin>
-
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
+			{#each filteredUserByTab('AOrganisasi') as data}
+				<DropDownAdmin
+					{data}
+					editAction={{
+						action: () => {
+							editAction(data);
+						}
+					}}
+					hapusAction={{
+						action: () => {
+							hapusAction(data);
+						}
+					}}
+					nonAktifAction={{
+						action: () => {
+							nonAktifkan(data);
+						}
+					}}
+				></DropDownAdmin>
+			{/each}
 		{/if}
 
 		{#if selected === 'AKomunitas'}
-			<DropDownAdmin bind:edit {error} {data}></DropDownAdmin>
-
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
-			<DropDownAdmin></DropDownAdmin>
+			{#each filteredUserByTab('AKomunitas') as data}
+				<DropDownAdmin
+					{data}
+					editAction={{
+						action: () => {
+							editAction(data);
+						}
+					}}
+					hapusAction={{
+						action: () => {
+							hapusAction(data);
+						}
+					}}
+					nonAktifAction={{
+						action: () => {
+							nonAktifkan(data);
+						}
+					}}
+				></DropDownAdmin>
+			{/each}
 		{/if}
 
 		<div
@@ -222,6 +278,7 @@
 						setTimeout(() => {
 							valo = false;
 							open = false;
+							goto('/abdi/sekretariat/manajemenadmin', { replaceState: true });
 						}, 3000);
 					});
 				} else if (result.type === 'failure') {
@@ -242,4 +299,107 @@
 {/if}
 {#if valo}
 	<SuccessModal text="Admin Berhasil Ditambah"></SuccessModal>
+{/if}
+{#if nonAktifkanModal}
+	<form
+		action="?/nonAktifkan"
+		method="post"
+		use:enhance={() => {
+			loading = true;
+			return async ({ result }) => {
+				loading = false;
+				if (result.type === 'success') {
+					nonAktifkanModal = false;
+					await invalidateAll().then(() => {
+						setTimeout(() => {
+							goto('/abdi/sekretariat/manajemenadmin', { replaceState: true });
+						}, 1000);
+					});
+				} else if (result.type === 'failure') {
+					console.log(result.data?.errors);
+				}
+			};
+		}}
+	>
+		<input type="hidden" name="id_admin" value={nonAktifkanData.id_admin} />
+		<input type="hidden" name="nama_lengkap" value={nonAktifkanData.nama_lengkap} />
+		<input type="hidden" name="email" value={nonAktifkanData.email} />
+		<input type="hidden" name="no_telp" value={nonAktifkanData.no_telp} />
+		<input
+			type="hidden"
+			name="tanggal_lahir"
+			value={formatDatetoUI(nonAktifkanData.tanggal_lahir)}
+		/>
+		<input type="hidden" name="tempat_lahir" value={nonAktifkanData.tempat_lahir} />
+		<input type="hidden" name="jenis_kelamin" value={nonAktifkanData.jenis_kelamin} />
+		<input type="hidden" name="id_kerajaan" value={nonAktifkanData.id_kerajaan} />
+		<input type="hidden" name="jenis_admin" value={nonAktifkanData.jenis_admin} />
+		<input type="hidden" name="jenis_admin" value={nonAktifkanData.jenis_admin} />
+	</form>
+{/if}
+{#if editmodal}
+	<form
+		action="?/ubahAdmin"
+		method="post"
+		autocomplete="off"
+		use:enhance={() => {
+			loading = true;
+			return async ({ result }) => {
+				loading = false;
+				console.log(result);
+				if (result.type === 'success') {
+					valo = true;
+					editmodal = true;
+					await invalidateAll().then(() => {
+						setTimeout(() => {
+							valo = false;
+							editmodal = false;
+							goto('/abdi/sekretariat/manajemenadmin', { replaceState: true });
+						}, 3000);
+					});
+				} else if (result.type === 'failure') {
+					error = result?.data?.errors;
+				}
+			};
+		}}
+	>
+		<TambahAdminSekre textM="Edit" bind:value={editmodal} errors={error} data={editData}
+		></TambahAdminSekre>
+	</form>
+{/if}
+{#if deleteModal}
+	<form
+		action="?/hapusAdmin"
+		method="post"
+		use:enhance={() => {
+			loading = true;
+			return async ({ result }) => {
+				loading = false;
+				if (result.type === 'success') {
+					success = true;
+					deleteModal = false;
+					await invalidateAll().then(() => {
+						setTimeout(() => {
+							deleteModal = false;
+							success = false;
+							goto('/abdi/sekretariat/manajemenadmin', { replaceState: true });
+						}, 3000);
+					});
+				} else if (result.type === 'failure') {
+					console.log(result.data?.errors);
+				}
+			};
+		}}
+	>
+		<input type="hidden" name="id_admin" value={deleteID} />
+		<DeleteModal
+			bind:value={deleteModal}
+			text="Apakah yakin ingin menghapus admin ini?"
+			successText="Admin berhasil dihapus!"
+			choose="delete"
+		></DeleteModal>
+	</form>
+{/if}
+{#if success}
+	<SuccessModal text="Admin berhasil dihapus!"></SuccessModal>
 {/if}

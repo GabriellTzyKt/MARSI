@@ -54,47 +54,29 @@
 			let anggotaResponse = await fetch(
 				`${env.PUBLIC_URL_KERAJAAN}/organisasi/anggota/${organizationId}?limit=200`
 			);
-			if (!anggotaResponse.ok) {
-			}
-			let anggotaList = await anggotaResponse.json();
-			console.log('anggota list: ', anggotaList);
-			anggotaList = anggotaList.filter((item: any) => {
-				return item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at;
-			});
-			let finalData = await Promise.all(
-				anggotaList.map(async (item: any) => {
-					let memberInfo = {
+			if (anggotaResponse.ok) {
+				let anggotaList = await anggotaResponse.json();
+
+				anggotaList = anggotaList.map((item: any) => {
+					return {
 						...item,
-						nama_anggota: 'Unknown User',
-						email: 'No Email',
-						nomor_telepon: 'No Phone',
+						nama_anggota:
+							data.allUser.find((user: any) => user.id_user === item.id_user)?.nama_lengkap ||
+							item.nama_anggota,
+						email:
+							data.allUser.find((user: any) => user.id_user === item.id_user)?.email || item.email,
+						nomor_telepon:
+							data.allUser.find((user: any) => user.id_user === item.id_user)?.no_telp ||
+							item.nomor_telepon,
 						tanggal_bergabung: formatDatetoUI(item.tanggal_bergabung)
 					};
+				});
+				console.log('Fetched members:', anggotaList);
+				// Fetch user information for each member
+				// Process each member to add user information
 
-					// Fetch user details if id_user exists
-					if (item.id_user) {
-						try {
-							const userResponse = await fetch(`${env.PUBLIC_PUB_PORT}/user/${item.id_user}`);
-							if (userResponse.ok) {
-								const userData = await userResponse.json();
-								memberInfo = {
-									...memberInfo,
-									nama_anggota: userData.nama_lengkap || userData.nama || 'Unknown User',
-									email: userData.email || 'No Email',
-									nomor_telepon: userData.no_telp || 'No Phone'
-								};
-							}
-						} catch (error) {
-							console.error(`Error fetching user ${item.id_user}:`, error);
-						}
-					}
-
-					return memberInfo;
-				})
-			);
-			console.log('Final data: ', finalData);
-			organizationMembers = finalData;
-			console.log('Organization Members:', organizationMembers);
+				organizationMembers = anggotaList;
+			}
 		} catch (error) {
 			console.error('Error fetching organization members:', error);
 		} finally {

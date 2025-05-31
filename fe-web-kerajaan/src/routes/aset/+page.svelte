@@ -9,49 +9,6 @@
 	let dataambil = data.data;
 	console.log('Aset : ', dataambil);
 
-	const events = [
-		{
-			id: 1,
-			header: 'Keraton Surakarta Hadiningrat',
-			isi: `Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
-				  Dikenal karena kejernihan airnya yang memukau, tempat ini menjadi salah satu tujuan
-				  wisata populer bagi penduduk lokal maupun wisatawan. Dengan suasana yang tenang dan
-				  pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
-				  menyegarkan. In the name of the wind`,
-			situs: situs1,
-			status: 'benda'
-		},
-		{
-			id: 2,
-			header: 'Candi Prambanan',
-			isi: `Candi Prambanan adalah kompleks candi Hindu terbesar di Indonesia dan diakui
-				  sebagai situs warisan dunia UNESCO. Tempat ini menawarkan sejarah dan keindahan
-				  arsitektur yang memukau.`,
-			situs: situs1,
-			status: 'benda'
-		},
-		{
-			id: 3,
-			header: 'Keraton Surakarta Hadiningrat',
-			isi: `Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
-				  Dikenal karena kejernihan airnya yang memukau, tempat ini menjadi salah satu tujuan
-				  wisata populer bagi penduduk lokal maupun wisatawan. Dengan suasana yang tenang dan
-				  pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
-				  menyegarkan.`,
-			situs: situs1,
-			status: 'benda'
-		},
-		{
-			id: 4,
-			header: 'Candi Borobudur',
-			isi: `Candi Borobudur merupakan candi Buddha terbesar di dunia dan menjadi ikon
-				  kebudayaan Indonesia. Tempat ini tidak hanya menawarkan nilai sejarah tetapi juga
-				  pemandangan alam yang luar biasa.`,
-			situs: situs1,
-			status: 'takbenda'
-		}
-	];
-
 	let activeTab = $state('benda');
 
 	function setActive(tab: string) {

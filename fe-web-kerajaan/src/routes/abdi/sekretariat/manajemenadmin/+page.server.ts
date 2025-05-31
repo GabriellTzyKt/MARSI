@@ -5,7 +5,7 @@ import { env } from "$env/dynamic/private";
 import { formatDate, formatDatetoUI } from "$lib";
 export const load: PageServerLoad = async ({cookies}) => {
     try {
-        const token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
+        let token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
         if (!token) {
             throw new Error("Token tidak ditemukan");
         }
@@ -40,7 +40,7 @@ export const load: PageServerLoad = async ({cookies}) => {
         );
         let data = await adminRes.json();
         data = data.filter(item => item.deleted_at === "0001-01-01T00:00:00Z");
-        console.log("User Data:", userData);
+        // console.log("User Data:", userData);
         return {data, user: userData, userSession: token};
     } catch (error) {
 
@@ -208,7 +208,7 @@ export const actions: Actions = {
                     password,
                     email,
                     no_telp,
-                    afiliasi : "Tes Afiliasi",
+                    afiliasi : data.get("afiliasi_nama") || "Afiliasi Tidak Ada",
                     jenis_admin: admin_role
                 }
                 console.log(sendData)
@@ -220,12 +220,13 @@ export const actions: Actions = {
                     body: JSON.stringify(sendData)
                 })
                 if (!res.ok) {
+                    return fail(406, { errors_api: "Gagal menambahkan admin" })
                     throw new Error(`HTTP Error! Status: ${res.status} ${res.statusText}`)
                 }
                 console.log(res)
             } catch (error) {
                 console.log(error)
-                return fail(406, { errors_api: "Gagal menambahkan admin" })
+                return fail(406, { errors_api: "Gagal menambahkan admin (username/email terpakai)" })
             }
             return { success: true, formData, type: "add" }
         }
@@ -234,6 +235,7 @@ export const actions: Actions = {
     ubahAdmin: async ({ request }) => {
         let sendData = {};
          const data = await request.formData()
+         let obj = Object.fromEntries(data)
         console.log(data)
         const akun = data.get("superadmin")
         const accVer = z.object({
@@ -301,9 +303,7 @@ export const actions: Actions = {
                     .max(255, "Input hanya bisa sampai 255 kata")
                     .trim(),
 
-            afiliasi:
-                z.string().nonempty("Tidak Boleh Kosong")
-                    .min(1, { message: "Minimal 1 Afiliasi" }),
+           
 
             admin_role:
                 z.string({ message: "Harus diisi" })
@@ -324,10 +324,10 @@ export const actions: Actions = {
             kota_lahir: data.get("kota_lahir"),
             jenis_kelamin: data.get("jenis_kelamin"),
             admin_role: data.get("admin_role"),
-            afiliasi: data.get("afiliasi")
-        }
-        const verif = ver.safeParse({ ...dataVerif })
-    
+         
+        }   
+        const verif = ver.safeParse(dataVerif)
+
         if (!verif.success) {
     
             const fieldErrors = verif.error.flatten().fieldErrors;
@@ -337,17 +337,14 @@ export const actions: Actions = {
             return fail(406, {
                 errors: fieldErrors,
                 success: false,
-                formData: data,
+                
                 type: "edit"
             });
     
         }
-      
-            
-         
-        try {
+       try {
             let sendData = {
-                id_admin: data.get("id_admin"),
+                id_admin: Number(data.get("id_admin") as string),
                 nama_lengkap: data.get("nama_lengkap"),
                 email: data.get("email"),
                 no_telp: data.get("no_telp"),
@@ -355,9 +352,7 @@ export const actions: Actions = {
                 tempat_lahir: data.get("kota_lahir"),
                 jenis_kelamin: data.get("jenis_kelamin"),
                 id_kerajaan: 2,
-                password: data.get("password"),
                 jenis_admin: data.get("admin_role"),
-                // username: data.get("username"),
                 status: 1
             }
             console.log("Form Data: ", sendData)
@@ -379,7 +374,7 @@ export const actions: Actions = {
     },
     hapusAdmin: async ({ request }) => {
         const data = await request.formData()
-        const id = data.get("id_user")
+        const id = data.get("id_admin")
         console.log("Id yang dihapus: ",id)
         try {
             const del = await fetch(`${env.URL_KERAJAAN}/admin/${id}`, {
@@ -394,6 +389,52 @@ export const actions: Actions = {
             console.log(error)
             return fail(406, { errors_api: "Gagal menghapus admin" })
         }
-    }
+    },
+    nonAktifkan: async ({ request, cookies }) => {
+        const token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
+        const data = await request.formData()
+        const id = data.get("id_user")
+        let status = data.get("status_aktif")
+        let resStatus = Number(data.get("status_aktif") as string)
+        if (status == "1") {
+            resStatus = 0
+        }
+        else {
+            resStatus = 1
+        }
+        console.log("data non aktif",data)
+        console.log("Id yang dihapus: ",id)
+        let dataSend = {
+           id_admin: Number(data.get("id_admin") as string),
+           nama_lengkap: data.get("nama_lengkap"),
+                email: data.get("email"),
+                no_telp: data.get("no_telp"),
+                tanggal_lahir: formatDatetoUI(data.get("tanggal_lahir") as string),
+                tempat_lahir: data.get("tempat_lahir"),
+                jenis_kelamin: data.get("jenis_kelamin"),
+                id_kerajaan: 1,
+                jenis_admin: data.get("jenis_admin"),
+                status: resStatus,
+        }
+        console.log("Data yang dikirim: ",dataSend)
+        try {
+            const del = await fetch(`${env.URL_KERAJAAN}/admin`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token?.token}`
+                },
+                body: JSON.stringify(dataSend)
+            })
+            if (!del.ok) {
+                throw new Error(`HTTP Error! Status: ${del.status} ${del.statusText}`)
+            }
+            console.log(del.statusText, del.status)
+            return { success: true }
+        } catch (error) {
+            console.log(error)
+            return fail(406, { errors_api: "Gagal menghapus admin" })
+        }
+    },
 
 };

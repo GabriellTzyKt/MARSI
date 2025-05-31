@@ -6,24 +6,32 @@
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import ModalAdmin from '$lib/popup/ModalAdmin.svelte';
 	import TambahAdminSekre from '$lib/popup/TambahAdminSekre.svelte';
-	import { invalidateAll } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
+	import { formatDatetoUI } from '$lib';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	let open = $state(false);
 	let value = $state(false);
 	let timer: number;
+	interface Act {
+		action?: () => void;
+	}
 	// let edit = $state(false);
 	let valo = $state(false);
-	let { data = null, edit = $bindable(), error = null } = $props();
-
+	let {
+		data = null,
+		edit = $bindable(),
+		error = null,
+		editAction = $bindable<Act>(),
+		hapusAction = $bindable<Act>(),
+		nonAktifAction = $bindable<Act>()
+	} = $props();
+	let loading = $state(false);
 	// Initialize isAktif with a safe default value
-	let isAktif = $state(data?.status_aktif === 1 ? true : false);
+	let isAktif = $state(data?.status_aktif || '');
+	console.log('Data Admin: ', data);
 
 	// Update isAktif when data changes
-	$effect(() => {
-		if (data) {
-			isAktif = data.status_aktif === 1 ? true : false;
-		}
-	});
 
 	function formatTanggalLahir(isoString: string): string {
 		if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
@@ -85,13 +93,50 @@
 			<div>
 				<p class="ml-2 text-lg font-[600]">{data?.nama_lengkap || '-'}</p>
 			</div>
-			<div class="flex w-full items-center justify-between text-nowrap px-2">
-				<div
-					class="status cursor-pointer rounded-md px-3 py-1 {isAktif ? 'aktif' : 'non-aktif'}"
-					onclick={isAktiforNon}
+			<div
+				class="flex w-full items-center justify-between text-nowrap px-2"
+				onclick={(e) => {
+					e.stopPropagation();
+				}}
+			>
+				<form
+					action="?/nonAktifkan"
+					method="post"
+					use:enhance={() => {
+						loading = true;
+						return async ({ result }) => {
+							loading = false;
+							if (result.type === 'success') {
+								await invalidateAll().then(() => {
+									setTimeout(() => {
+										isAktif = data.status_aktif;
+										console.log('Success', isAktif);
+									}, 3000);
+								});
+							} else if (result.type === 'failure') {
+								console.log(result.data?.errors);
+							}
+						};
+					}}
 				>
-					<p class="font-[500]">{isAktif ? 'Aktif' : 'Non-Aktif'}</p>
-				</div>
+					<input type="hidden" name="id_admin" value={data.id_admin} />
+					<input type="hidden" name="nama_lengkap" value={data.nama_lengkap} />
+					<input type="hidden" name="email" value={data.email} />
+					<input type="hidden" name="no_telp" value={data.no_telp} />
+					<input type="hidden" name="tanggal_lahir" value={formatDatetoUI(data.tanggal_lahir)} />
+					<input type="hidden" name="tempat_lahir" value={data.tempat_lahir} />
+					<input type="hidden" name="jenis_kelamin" value={data.jenis_kelamin} />
+					<input type="hidden" name="id_kerajaan" value={data.id_kerajaan} />
+					<input type="hidden" name="jenis_admin" value={data.jenis_admin} />
+					<input type="hidden" name="status_aktif" value={data.status_aktif} />
+					<button
+						class="status cursor-pointer rounded-md px-3 py-1 {isAktif == '1'
+							? 'aktif'
+							: 'non-aktif'}"
+					>
+						<p class="font-[500]">{isAktif == '1' ? 'Aktif' : 'Non-Aktif'}</p>
+					</button>
+				</form>
 			</div>
 		</div>
 		<div class="flex items-center transition-transform duration-150" class:rotate-180={open}>
@@ -169,7 +214,7 @@
 					<button
 						class="flex gap-1 rounded-lg bg-red-500 px-6 py-2 text-white"
 						onclick={() => {
-							value = true;
+							hapusAction?.action?.();
 						}}
 						><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
 							><path
@@ -187,7 +232,7 @@
 					<button
 						class="flex gap-1 rounded-lg bg-[#FFA600] px-6 py-2 text-white"
 						onclick={() => {
-							edit = true;
+							editAction.action();
 						}}
 						><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
 							><path
@@ -201,62 +246,8 @@
 		</div>
 	{/if}
 </div>
-{#if value}
-	<form
-		action="?/hapusAdmin"
-		method="POST"
-		use:enhance={() => {
-			return async ({ result }) => {
-				if (result.type === 'success') {
-					valo = true;
-					clearTimeout(timer);
-					invalidateAll();
-					timer = setTimeout(() => {
-						valo = false;
-						value = false;
-					}, 3000);
-				} else if (result.type === 'failure') {
-					error = result?.data?.errors;
-				}
-			};
-		}}
-	>
-		<DeleteModal
-			bind:value
-			choose="arsip"
-			text="Apakah Adna Ingin Mengarsip Admin?"
-			successText="Admin Berhasil Dihapus"
-		></DeleteModal>
-		<input type="text" hidden name="id_user" value={data.id_admin} />
-	</form>
-{/if}
-{#if edit}
-	<form
-		action="?/ubahAdmin"
-		method="POST"
-		use:enhance={() => {
-			return async ({ result }) => {
-				console.log(result);
-				if (result.type === 'success') {
-					valo = true;
-					clearTimeout(timer);
-					invalidateAll();
-					timer = setTimeout(() => {
-						valo = false;
-						edit = false;
-					}, 3000);
-				} else if (result.type === 'failure') {
-					error = result?.data?.errors;
-				}
-			};
-		}}
-	>
-		<TambahAdminSekre textM="Ubah" bind:value={edit} bind:open={valo} errors={error} {data}
-		></TambahAdminSekre>
-	</form>
-{/if}
-{#if valo}
-	<SuccessModal text="Admin Berhasil Dirubah"></SuccessModal>
+{#if loading}
+	<Loader></Loader>
 {/if}
 
 <style>
@@ -270,5 +261,11 @@
 
 	.status {
 		transition: background-color 0.4s ease-in-out;
+	}
+
+	p {
+		word-break: break-word;
+		overflow-wrap: anywhere;
+		white-space: normal;
 	}
 </style>

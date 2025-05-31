@@ -20,6 +20,9 @@ export const load: PageServerLoad = async ({ fetch, params, cookies }) => {
             throw error(users.status, `Failed to fetch users: ${users.statusText}`);
         }
         let userData = await users.json();
+        let allUser = userData.filter((item: any) => {
+            return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
+        })
         userData = userData.filter((item: any) => {
             return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
         }).map((item: any) => {
@@ -33,17 +36,17 @@ export const load: PageServerLoad = async ({ fetch, params, cookies }) => {
 
         return {
             userData,
-            id_organisasi: id_organisasi
+            id_organisasi: id_organisasi,
+            allUser
         }
   
         // console.log("organisasi : ", organisasiList);
 
         // Filter out deleted organizations (keep only non-deleted ones)
-    
-        
-        
+
+
         // Array untuk menyimpan semua data anggota dari semua organisasi
-        
+
         
         // console.log("all anggota with user info: ", allAnggot
 

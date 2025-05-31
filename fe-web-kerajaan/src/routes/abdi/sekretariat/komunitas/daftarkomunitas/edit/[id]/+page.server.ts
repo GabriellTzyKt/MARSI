@@ -271,6 +271,7 @@ export const actions: Actions = {
                 alamat: formData.alamat,    
                 email: formData.email,
                 no_telp: formData.phone,
+                tanggal_berdiri: formData.tanggal_berdiri,
                 // jumlah_anggota: formData.jumlahanggota,
 
             }

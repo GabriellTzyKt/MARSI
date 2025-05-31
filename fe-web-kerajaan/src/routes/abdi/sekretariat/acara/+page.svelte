@@ -20,6 +20,10 @@
 	let loading = $state(false);
 	let deleteD = $state(false);
 	let selectedItem = $state(null);
+	let statusOptions = $derived(
+		Array.from(new Set((data.data || []).map((item) => item.status))).filter(Boolean)
+	);
+	let selectedStatus = $state('');
 
 	// Check for delete parameter in URL
 	$effect(() => {
@@ -40,13 +44,14 @@
 	function filterD(data: any[]) {
 		return data.filter(
 			(item) =>
-				item?.nama_acara?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.tanggal?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.lokasi?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.penanggungjawab?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.jenis_acara?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.kapasitas?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.status?.toLowerCase().includes(keyword.toLowerCase())
+				(item?.nama_acara?.toLowerCase().includes(keyword.toLowerCase()) ||
+					item?.tanggal?.toLowerCase().includes(keyword.toLowerCase()) ||
+					item?.lokasi?.toLowerCase().includes(keyword.toLowerCase()) ||
+					item?.penanggungjawab?.toLowerCase().includes(keyword.toLowerCase()) ||
+					item?.jenis_acara?.toLowerCase().includes(keyword.toLowerCase()) ||
+					item?.kapasitas?.toLowerCase().includes(keyword.toLowerCase()) ||
+					item?.status?.toLowerCase().includes(keyword.toLowerCase())) &&
+				(selectedStatus === '' || item.status === selectedStatus)
 		);
 	}
 	function pagination(data: any[]) {
@@ -83,18 +88,22 @@
 		>
 		<div class="flex flex-col items-center justify-center gap-2 lg:flex-row lg:justify-start">
 			<!-- select -->
-			<select
-				name="Organisasi"
-				id=""
-				value="Organisasi"
-				placeholder="cari organisasi"
-				class="rounded-md border px-3 py-2 focus:outline-none"
-			>
-				<option value="organisasi">Organisasi</option>
-				<option value="Komunitas">Komunitas</option>
-				<option value="Abdi">Abdi</option>
-				<option value="organisasi">Organisasi</option>
-			</select>
+			<!-- Dropdown filter for status -->
+			<div class="relative">
+				<input
+					type="text"
+					placeholder="Cari status..."
+					class="rounded-md border px-3 py-2 focus:outline-none"
+					bind:value={selectedStatus}
+					list="statusList"
+				/>
+				<datalist id="statusList">
+					<option value="">Semua Status</option>
+					{#each statusOptions as status}
+						<option value={status}>{status}</option>
+					{/each}
+				</datalist>
+			</div>
 			<!-- cari -->
 			<div class="flex items-center rounded-lg border px-2">
 				<input

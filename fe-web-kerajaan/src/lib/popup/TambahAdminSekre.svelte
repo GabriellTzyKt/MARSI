@@ -2,6 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import xbutton from '$lib/asset/icon/xbutton.png';
 	import { formatDate } from '$lib/index';
+	import { env } from '$env/dynamic/public';
 
 	let {
 		value = $bindable(),
@@ -11,6 +12,13 @@
 		data = null,
 		userData = null
 	} = $props();
+
+	let adminRole = $state(data ? data.jenis_admin : '');
+	let dataAfiliasi = $state<any>(null);
+	let afiliasiLoading = $state(false);
+	let afiliasiKeyword = $state(data?.jenis_admin || '');
+	let selectedAfiliasi = $state();
+	let showAfiliasiDropdown = $state(false);
 	console.log('data : ', data);
 	console.log('userData : ', userData);
 
@@ -23,7 +31,7 @@
 		}
 	}
 
-	let userKeyword = $state('');
+	let userKeyword = $state(data?.nama_lengkap || data?.username || data?.email || '');
 	let filteredUserData = $derived(filterUserData(userData));
 	let selectedUser = $state<any>(null);
 	let userDropdownOpen = $state(false);
@@ -43,6 +51,75 @@
 		);
 	}
 
+	async function getAfiliasi(role: string) {
+		afiliasiLoading = true;
+		let url = '';
+		if (role === 'Admin Komunitas') {
+			url = `${env.PUBLIC_URL_KERAJAAN}/komunitas?limit=1000`;
+		} else if (role === 'Admin Organisasi') {
+			url = `${env.PUBLIC_URL_KERAJAAN}/organisasi?limit=1000`;
+		} else if (role === 'Admin Situs') {
+			url = `${env.PUBLIC_URL_KERAJAAN}/situs?limit=1000`;
+		}
+		try {
+			const response = await fetch(url);
+			if (!response.ok) throw new Error('Network response was not ok');
+			const data = await response.json();
+			if (role === 'Admin Komunitas') {
+				dataAfiliasi =
+					data
+						.filter((item) => {
+							return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
+						})
+						.map((item) => ({
+							id: item.id_komunitas,
+							type: 'komunitas',
+							nama: item.nama_komunitas || item.nama_organisasi || item.nama_situs
+						})) || [];
+			} else if (role === 'Admin Organisasi') {
+				dataAfiliasi =
+					data
+						.filter((item) => {
+							return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
+						})
+						.map((item) => ({
+							id: item.id_organisasi,
+							type: 'organisasi',
+							nama: item.nama_komunitas || item.nama_organisasi || item.nama_situs
+						})) || [];
+			} else if (role === 'Admin Situs') {
+				dataAfiliasi =
+					data
+						.filter((item) => {
+							return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
+						})
+						.map((item) => ({
+							id: item.id_situs,
+							type: 'situs',
+							nama: item.nama_komunitas || item.nama_organisasi || item.nama_situs
+						})) || [];
+			}
+			console.log('Afiliasi Data:', dataAfiliasi);
+		} catch (error) {
+			console.error('Error fetching afiliasi:', error);
+		} finally {
+			afiliasiLoading = false;
+		}
+	}
+	let filteredAfiliasiOptions = $derived(
+		dataAfiliasi?.filter((opt) =>
+			(opt.nama_komunitas || opt.nama_organisasi || opt.nama_situs || '')
+				.toLowerCase()
+				.includes(afiliasiKeyword.toLowerCase())
+		)
+	);
+	let jenisAfiliasi = $state();
+	function handleAfiliasiSelect(opt: any) {
+		afKeyword = opt.nama;
+		jenisAfiliasi = opt.type;
+		selectedAfiliasi = opt;
+		showAfiliasiDropdown = false;
+	}
 	function hapusGelar(index: number) {
 		daftarGelar = daftarGelar.filter((_: any, i: number) => i !== index);
 	}
@@ -106,6 +183,17 @@
 		const year = date.getFullYear();
 
 		return `${day} ${month} ${year}`;
+	}
+	let afKeyword = $state(data?.afiliasi || '');
+	let selectedaf = $state<any>(null);
+	let filteredAfiliasi: any[] = $derived(
+		dataAfiliasi?.filter((item) => item.nama.toLowerCase().includes(afKeyword.toLowerCase()))
+	);
+	function handleAfiliasiSelection(afiliasi: any) {
+		selectedaf = afiliasi;
+		afiliasiKeyword =
+			afiliasi.nama_komunitas || afiliasi.nama_organisasi || afiliasi.nama_situs || '';
+		showAfiliasiDropdown = false;
 	}
 </script>
 
@@ -187,7 +275,7 @@
 					</svg>
 				</div>
 				<div class="relative">
-					{#if userDropdownOpen && filteredUserData.length > 0}
+					{#if userDropdownOpen && filteredUserData.length > 0 && radioinput === 'sekre_ya'}
 						<div
 							class="absolute z-10 mt-2 max-h-40 overflow-auto rounded-lg border bg-white shadow-lg"
 						>
@@ -428,7 +516,19 @@
 				<div>
 					<select
 						name="admin_role"
-						value={data ? data.jenis_admin : ''}
+						bind:value={afiliasiKeyword}
+						onchange={(event) => {
+							adminRole = (event.target as HTMLSelectElement).value;
+							if (
+								adminRole === 'Admin Komunitas' ||
+								adminRole === 'Admin Organisasi' ||
+								adminRole === 'Admin Situs'
+							) {
+								getAfiliasi(adminRole);
+							} else {
+								dataAfiliasi = null; // Reset afiliasi data if not applicable
+							}
+						}}
 						class="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-500 focus:outline-none"
 						id=""
 					>
@@ -448,51 +548,103 @@
 
 			<!-- Afiliasi -->
 			<div class="flex w-full flex-col md:col-span-full">
-				<label for="gelar">Afiliasi:</label>
-				<div class="relative w-full">
-					<input
-						id="gelar"
-						name="afiliasi"
-						bind:value={namagelar}
-						class="w-full rounded-lg border px-3 py-2 pr-10"
-						placeholder="Masukkan Gelar"
-					/>
-					<button
-						class="absolute bottom-0 right-0 top-0 h-full rounded-r-lg bg-blue-500 px-8 text-white"
-						onclick={tambahGelar}
-						type="button"
-					>
-						Add
-					</button>
-				</div>
-
-				{#if daftarGelar.length > 0}
-					<div class="w-full overflow-x-auto">
-						<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-							{#each daftarGelar as gelar, index}
-								<div class="mt-3 flex items-center justify-between rounded-lg border p-3">
-									<p class="w-full max-w-[200px] truncate break-words">
-										{gelar}
-									</p>
-									<input type="text" hidden name="afiliasi" value={gelar} id="" />
-									<!-- svelte-ignore a11y_consider_explicit_label -->
-									<button class="text-red-500" onclick={() => hapusGelar(index)}>
-										<span class="carbon--close-outline2 ml-2 items-center"></span>
-									</button>
-								</div>
-							{/each}
-						</div>
+				<label for="afiliasi">Afiliasi:</label>
+				{#if adminRole === 'Admin Situs' || adminRole === 'Admin Komunitas' || adminRole === 'Admin Organisasi'}
+					<div class="relative w-full">
+						<input
+							id="afiliasi"
+							name="afiliasi_nama"
+							bind:value={afKeyword}
+							class="w-full rounded-lg border px-3 py-2 pr-10"
+							placeholder="Cari Afiliasi..."
+							onfocus={() => (showAfiliasiDropdown = true)}
+							onblur={() => {
+								setTimeout(() => {
+									showAfiliasiDropdown = false;
+								}, 200);
+							}}
+							autocomplete="off"
+							readonly={afiliasiLoading || data ? true : false}
+						/>
+						{#if afiliasiLoading}
+							<div class="absolute right-3 top-1/2 -translate-y-1/2">
+								<!-- Simple loader spinner -->
+								<svg class="h-5 w-5 animate-spin text-blue-500" viewBox="0 0 24 24">
+									<circle
+										class="opacity-25"
+										cx="12"
+										cy="12"
+										r="10"
+										stroke="currentColor"
+										stroke-width="4"
+										fill="none"
+									/>
+									<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+								</svg>
+							</div>
+						{:else}
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="18"
+								height="18"
+								viewBox="0 0 24 24"
+								class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+							>
+								<path
+									fill="#4a4a4a"
+									d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5T6.313 6.313T5 9.5t1.313 3.188T9.5 14"
+								/>
+							</svg>
+						{/if}
+						<input
+							type="hidden"
+							name="afiliasi"
+							value={selectedAfiliasi ? selectedAfiliasi.nama : ''}
+						/>
+						{#if showAfiliasiDropdown && filteredAfiliasi.length > 0}
+							<div
+								class="absolute z-10 mt-2 max-h-40 w-full overflow-auto rounded-lg border bg-white shadow-lg"
+							>
+								<p class="p-2 text-sm text-gray-500">Pilih Afiliasi</p>
+								{#each filteredAfiliasi as opt}
+									<!-- svelte-ignore a11y_click_events_have_key_events -->
+									<!-- svelte-ignore a11y_no_static_element_interactions -->
+									<div
+										class="cursor-pointer px-4 py-2 hover:bg-gray-100"
+										onclick={() => handleAfiliasiSelect(opt)}
+									>
+										<p class="text-sm font-semibold">
+											{opt.nama}
+										</p>
+										<p class="text-sm text-gray-500">
+											{opt.type}
+										</p>
+									</div>
+								{/each}
+							</div>
+						{/if}
+					</div>
+				{:else}
+					<!-- Default input for Super Admin or no role -->
+					<div class="relative w-full">
+						<input
+							id="afiliasi"
+							name="afiliasi"
+							bind:value={afKeyword}
+							readonly={data ? true : false}
+							class="w-full rounded-lg border px-3 py-2 pr-10"
+							placeholder="Masukkan Afiliasi"
+						/>
+						<button
+							class="absolute bottom-0 right-0 top-0 h-full rounded-r-lg bg-blue-500 px-8 text-white"
+							type="button"
+						>
+							Add
+						</button>
 					</div>
 				{/if}
-				<div>
-					{#if errors}
-						{#each errors.afiliasi as a}
-							<p class="text-left text-red-500">{a}</p>
-						{/each}
-					{/if}
-				</div>
+				<!-- ...existing daftarGelar display and error handling... -->
 			</div>
-
 			<div class="flex w-full md:col-span-full md:justify-end">
 				<div class="mb-4 w-full md:w-auto">
 					<button class="w-full rounded-md bg-[#0011ff] px-8 py-2 text-white" type="submit"
@@ -500,6 +652,11 @@
 					>
 				</div>
 			</div>
+			{#if errors}
+				{#if errors.errors_api}
+					<p class="text-red-500">{errors.errors_api[0]}</p>
+				{/if}
+			{/if}
 		</div>
 	</div>
 </div>

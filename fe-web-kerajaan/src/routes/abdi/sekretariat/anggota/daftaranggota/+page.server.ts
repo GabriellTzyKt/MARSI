@@ -5,7 +5,10 @@ import { formatDatetoUI } from "$lib";
 
 export const load: PageServerLoad = async ({cookies}) => {
     const token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
+   
+    let userid = token.user_data
     console.log("Token:", token);
+    console.log("User ID:", userid.id_user);
     if(!token) redirect(302, '/login') ;
     try {
         // Fetch anggota and gelar data in parallel

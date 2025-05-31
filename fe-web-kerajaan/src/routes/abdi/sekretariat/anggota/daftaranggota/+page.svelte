@@ -81,18 +81,6 @@
 			class="mt-4 flex flex-col items-center justify-center gap-2 lg:mt-0 lg:flex-row lg:justify-start"
 		>
 			<!-- select -->
-			<select
-				name="Organisasi"
-				id=""
-				value="Organisasi"
-				placeholder="cari organisasi"
-				class="rounded-md border px-3 py-2 focus:outline-none"
-			>
-				<option value="organisasi">Organisasi</option>
-				<option value="Komunitas">Komunitas</option>
-				<option value="Abdi">Abdi</option>
-				<option value="organisasi">Organisasi</option>
-			</select>
 			<!-- cari -->
 			<div class="flex items-center rounded-lg border px-2">
 				<input

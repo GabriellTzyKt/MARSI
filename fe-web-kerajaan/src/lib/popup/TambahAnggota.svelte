@@ -134,6 +134,7 @@
 				class="w-full rounded-lg border-2 {isValidSelection
 					? 'border-green-400'
 					: 'border-gray-400'} px-2 py-2 pr-8"
+				readonly={dataEdit ? true : false}
 				onfocus={() => (showDropdown = true)}
 				onblur={() => handleBlur()}
 			/>

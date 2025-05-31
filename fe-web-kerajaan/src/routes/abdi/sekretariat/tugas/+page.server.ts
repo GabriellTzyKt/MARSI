@@ -266,7 +266,7 @@ export const actions: Actions = {
                 lokasi_tugas: formData.jenis_tugas === "pribadi" ? data.get("id_situs") : null,
                 jenis_tugas: formData.jenis_tugas,
                 tanggal_mulai: formatDatetoUI(formData.tanggal_penugasan),
-                status: "Selesai"
+                status: "Ditugaskan"
                 // lokasi
                 // id_acara ?
             };

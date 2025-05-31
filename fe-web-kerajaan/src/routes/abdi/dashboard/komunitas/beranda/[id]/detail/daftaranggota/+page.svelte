@@ -17,6 +17,7 @@
 	import Table from '$lib/table/Table.svelte';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+
 	let { data } = $props();
 	let dataambil = data.data;
 	console.log(data);
@@ -55,52 +56,31 @@
 		try {
 			console.log('Fetching members for organization:', komId);
 			// Fetch members for the selected organization
-			const anggotaResponse = await fetch(
+			let anggotaResponse = await fetch(
 				`${env.PUBLIC_URL_KERAJAAN}/komunitas/anggota/${komId}?limit=200`
 			);
 			if (anggotaResponse.ok) {
-				const anggotaList = await anggotaResponse.json();
+				let anggotaList = await anggotaResponse.json();
 
+				anggotaList = anggotaList.map((item: any) => {
+					return {
+						...item,
+						nama_anggota:
+							data.dataUser.find((user: any) => user.id_user === item.id_user)?.nama_lengkap ||
+							item.nama_anggota,
+						email:
+							data.dataUser.find((user: any) => user.id_user === item.id_user)?.email || item.email,
+						nomor_telepon:
+							data.dataUser.find((user: any) => user.id_user === item.id_user)?.no_telp ||
+							item.nomor_telepon,
+						tanggal_bergabung: formatDatetoUI(item.tanggal_bergabung)
+					};
+				});
+				console.log('Fetched members:', anggotaList);
+				// Fetch user information for each member
 				// Process each member to add user information
-				const membersWithUserInfo = await Promise.all(
-					anggotaList
-						.filter(
-							(anggota) => !anggota.deleted_at || anggota.deleted_at === '0001-01-01T00:00:00Z'
-						)
-						.map(async (anggota) => {
-							let memberInfo = {
-								...anggota,
-								nama_anggota: 'Unknown User',
-								email: 'No Email',
-								nomor_telepon: 'No Phone',
-								tanggal_bergabung: formatDatetoUI(anggota.tanggal_bergabung)
-							};
 
-							// Fetch user details if id_user exists
-							if (anggota.id_user) {
-								try {
-									const userResponse = await fetch(
-										`${env.PUBLIC_PUB_PORT}/user/${anggota.id_user}`
-									);
-									if (userResponse.ok) {
-										const userData = await userResponse.json();
-										memberInfo = {
-											...memberInfo,
-											nama_anggota: userData.nama_lengkap || userData.nama || 'Unknown User',
-											email: userData.email || 'No Email',
-											nomor_telepon: userData.no_telp || 'No Phone'
-										};
-									}
-								} catch (error) {
-									console.error(`Error fetching user ${anggota.id_user}:`, error);
-								}
-							}
-
-							return memberInfo;
-						})
-				);
-
-				komunitasMembers = membersWithUserInfo;
+				komunitasMembers = anggotaList;
 			}
 		} catch (error) {
 			console.error('Error fetching organization members:', error);

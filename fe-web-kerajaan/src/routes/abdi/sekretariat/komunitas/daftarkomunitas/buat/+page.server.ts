@@ -28,7 +28,7 @@ export const load: PageServerLoad = async ({ cookies,locals }) => {
                 email: item.email
             }
         });
-        let situsResdata = await fetch(`${env.URL_KERAJAAN}/situs?limit=300`);
+        let situsResdata = await fetch(`${env.URL_KERAJAAN}/situs?limit=500`);
         if (!situsResdata.ok) {
             throw new Error(`HTTP Error! Status: ${situsResdata.status}`);
         }
@@ -50,6 +50,8 @@ export const load: PageServerLoad = async ({ cookies,locals }) => {
         return { data: "Failed" };
     }
 };
+let permohonanPelindung = false
+let permohonanPembina = false
 export const actions: Actions = {
     tambahSitus: async ({ request }) => {
         const data = await request.formData()
@@ -139,7 +141,7 @@ export const actions: Actions = {
 
 
         if (!verification.success) {
-            return fail(418, { errors: verification.error.flatten().fieldErrors, success: false, formData })
+            return fail(418, { errors: verification.error.flatten().fieldErrors, success: false, formData, permohonanPelindung, permohonanPembina })
         }
         // return { success: true, formData }
 
@@ -181,7 +183,7 @@ export const actions: Actions = {
             console.log("result : ", result)
             
             if (response.ok) {
-                return { success: true, message: "Data berhasil disimpan" };
+                return { success: true, message: "Data berhasil disimpan", permohonanPelindung, permohonanPembina };
             }
             
             return fail(400, { 
@@ -197,5 +199,138 @@ export const actions: Actions = {
                 formData 
             });
         }
-    }
+    },
+    permohonanPelindung: async ({ request, cookies }) => {
+        try {
+            const form = await request.formData();
+            console.log("Form data received:", form);
+
+            // Get user session and token
+            const dataCookies = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
+            const token = dataCookies.token;
+
+            // Extract fields from form
+            const id_pemohon = Number(form.get("id_pemohon"));
+            const id_pelindung = Number(form.get("pelindung_id"));
+            const asal_lembaga = form.get("nama_situs");
+            const jenis_lembaga = "Komunitas";
+            const jenis_permohonan = "Pelindung";
+            // Default waktu_berlaku: 3 days from now
+            const now = new Date();
+            now.setDate(now.getDate() + 3);
+            const waktu_berlaku = now.toLocaleDateString("en-GB").split('/').reverse().join('-'); // dd-mm-yyyy
+
+            // Error checking
+            const errors: Record<string, string[]> = {};
+            if (!id_pemohon) errors.id_pemohon = [" Pemohon wajib diisi"];
+            if (!id_pelindung) errors.id_pelindung = [" Pelindung wajib diisi"];
+            if (!asal_lembaga) errors.asal_lembaga = [" Nama Komunitas wajib diisi"];
+
+            if (Object.keys(errors).length > 0) {
+                return fail(400, { errors, success: false });
+            }
+
+            // Build payload
+            const payload = {
+                id_pemohon,
+                id_pelindung,
+                asal_lembaga,
+                jenis_lembaga,
+                jenis_permohonan,
+                waktu_berlaku
+            };
+
+            // Send to API
+            // const response = await fetch(`${env.URL_KERAJAAN}/permohonan`, {
+            //     method: "POST",
+            //     body: JSON.stringify(payload)
+            // });
+
+            // const result = await response.json();
+            // console.log("PermohonanPelindung result:", result);
+
+            permohonanPelindung = true;
+            return { success: true, message: "Permohonan pelindung berhasil dikirim",  permohonanPelindung };
+            if (response.ok) {
+            }
+
+            return fail(400, {
+                errors: { server: [`Error: ${response.status} - ${result.message || "Terjadi kesalahan"}`] },
+                success: false
+            });
+        } catch (error) {
+            console.error("Error saat mengirim permohonan pelindung:", error);
+            return fail(500, {
+                errors: { server: ["Terjadi kesalahan saat menghubungi server"] },
+                success: false
+            });
+        }
+    },
+    permohonanPembina: async ({ request, cookies }) => {
+        try {
+            const form = await request.formData();
+            console.log("Form data received:", form);
+
+            // Get user session and token
+            const dataCookies = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
+            const token = dataCookies.token;
+
+            // Extract fields from form
+            const id_pemohon = Number(form.get("id_pemohon"));
+            const id_pembina = Number(form.get("pembina_id"));
+            const asal_lembaga = form.get("nama_situs");
+            const jenis_lembaga = "Komunitas";
+            const jenis_permohonan = "Pembina";
+            // Default waktu_berlaku: 3 days from now
+            const now = new Date();
+            now.setDate(now.getDate() + 3);
+            const waktu_berlaku = now.toLocaleDateString("en-GB").split('/').reverse().join('-'); // dd-mm-yyyy
+
+            // Error checking
+            const errors: Record<string, string[]> = {};
+            if (!id_pemohon) errors.id_pemohon = [" Pemohon wajib diisi"];
+            if (!id_pembina) errors.id_pembina = [" Pembina wajib diisi"];
+            if (!asal_lembaga) errors.asal_lembaga = [" Nama Komunitas wajib diisi"];
+
+            if (Object.keys(errors).length > 0) {
+                return fail(400, { errors, success: false });
+            }
+
+            // Build payload
+            const payload = {
+                id_pemohon,
+                id_pembina,
+                asal_lembaga,
+                jenis_lembaga,
+                jenis_permohonan,
+                waktu_berlaku
+            };
+
+            // Send to API
+            // const response = await fetch(`${env.URL_KERAJAAN}/permohonan`, {
+            //     method: "POST",
+            //     body: JSON.stringify(payload)
+            // });
+
+            // const result = await response.json();
+            // console.log("PermohonanPembina result:", result);
+
+            permohonanPembina = true;
+            return { success: true, message: "Permohonan pembina berhasil dikirim",  permohonanPembina };
+            if (response.ok) {
+            }
+
+            return fail(400, {
+                errors: { server: [`Error: ${response.status} - ${result.message || "Terjadi kesalahan"}`] },
+                success: false
+            });
+        } catch (error) {
+            console.error("Error saat mengirim permohonan pembina:", error);
+            return fail(500, {
+                errors: { server: ["Terjadi kesalahan saat menghubungi server"] },
+                success: false
+            });
+        }
+    },
+
 };

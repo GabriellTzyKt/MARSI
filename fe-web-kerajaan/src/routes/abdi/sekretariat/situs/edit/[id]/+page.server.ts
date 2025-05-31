@@ -36,6 +36,7 @@ export let load: PageServerLoad = async ({ params, cookies }) => {
        
         
         // Process image URLs if foto_situs is available
+        let profileImage = '';
         let imageUrls = [];
         let fileDetails = [];
         if (situsData.foto_situs && situsData.foto_situs.trim() !== '') {
@@ -67,6 +68,26 @@ export let load: PageServerLoad = async ({ params, cookies }) => {
                 console.error("Error processing image URLs:", error);
             }
         }
+        if(situsData.profile){
+            try {
+                let profileRes = await fetch(`${env.URL_KERAJAAN}/doc/${situsData.profile}`);
+                if (profileRes.ok) {
+                    let profileData = await profileRes.json();
+                    if (profileData.file_dokumentasi) {
+                        let profileUrl = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(profileData.file_dokumentasi)}`;
+                        profileImage = {
+                            id: situsData.profile,
+                            url: profileUrl,
+                            name: profileData.nama_file || 'Profile Image'
+                        };
+                    }
+                } else {
+                    console.error(`Failed to fetch profile document: ${profileRes.statusText}`);
+                }
+            } catch (error) {
+                console.error("Error fetching profile document:", error);
+            }
+        }
         situsTypes = situsTypes.filter((item: any) => item && (item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at));
         console.log("Situs TYPES", situsTypes)
         // Fetch user data for pembina, pelindung, and juru_kunci if available
@@ -95,6 +116,7 @@ export let load: PageServerLoad = async ({ params, cookies }) => {
                 ...situsData,
                 imageUrls,
                 fileDetails,
+                profileImage,
                 // pembina,
                 // pelindung,
                 // juruKunci
@@ -303,7 +325,7 @@ export let actions: Actions = {
             let sendData = {
                  id_situs: parseInt(String(data.get("id_situs"))),
                  id_wisata:parseInt( String(data.get("id_wisata"))),    
-                 gambar_profile: profile ? String(profile) : '',
+                 profile: profile ? String(profile) : '',
                  id_jenis_situs: parseInt(String(data.get("jenis_situs"))),
                 foto_situs: '',
                 nama_situs: String(data.get("nama_situs")),

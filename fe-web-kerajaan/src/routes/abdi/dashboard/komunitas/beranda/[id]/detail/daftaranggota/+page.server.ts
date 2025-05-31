@@ -7,7 +7,8 @@ import { formatDate } from "$lib";
 
 export const load: PageServerLoad = async ({ params, cookies }) => {
     console.log("id komunitas", params.id)
-    const token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
+    let token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
+
     try {
         let komunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas/anggota/${params.id}`);
         if (!komunitasResponse.ok) {
@@ -50,7 +51,8 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
             data: filteredData,
             dataUser,
             komunitas_id: params.id,
-            komunitasList: komunitasList.filter(item => item && (item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at))
+            komunitasList: komunitasList.filter(item => item && (item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at)),
+            
         }
         
         // Array untuk menyimpan semua data anggota dari semua komunitas

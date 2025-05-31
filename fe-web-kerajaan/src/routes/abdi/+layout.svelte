@@ -7,6 +7,9 @@
 	import Sidebar from '$lib/sidebar/Sidebar.svelte';
 	import SidebarMenu from '$lib/sidebar/SidebarMenu.svelte';
 	import Loader from '$lib/loader/Loader.svelte';
+	import { redirect } from '@sveltejs/kit';
+	import { slide } from 'svelte/transition';
+	import { goto } from '$app/navigation';
 
 	const isActive = (path: string) => page.route.id == path;
 
@@ -14,7 +17,7 @@
 
 	let idAktif = $state('');
 	let pageAktif = $state(page.route.id);
-
+	let showLogout = $state(false);
 	$effect(() => {
 		idAktif = page.params.id;
 		console.log('ID : ', idAktif);
@@ -269,8 +272,11 @@
 		}
 	});
 
-	let { children } = $props();
-
+	function handleLogout() {
+		goto('/login');
+	}
+	let { children, data } = $props();
+	console.log('data : ', data);
 	let sidebarActive = writable(false);
 
 	const toggleSidebar = () => {
@@ -515,9 +521,34 @@
 	{/if}
 	<div class="width_head2 hidden items-center justify-between lg:flex lg:w-[83.3%]">
 		<p class="ml-5 p-5 text-3xl font-bold text-black">{pageTitle}</p>
-		<div class="mr-5 flex items-center rounded-md border-2 border-blue-600 p-2">
-			<span class="ml-5 text-black">Sriayu Mutiara</span>
-			<img src={imageprofile} alt="duar" class="ml-5 mr-5 h-10 w-10 rounded-full" />
+		<div class="relative mr-5 flex items-center rounded-md border-2 border-blue-600 py-2">
+			<span class="ml-5 text-black">{data?.user?.username}</span>
+			<img
+				src={imageprofile}
+				alt="profile"
+				class="ml-5 mr-5 h-10 w-10 cursor-pointer rounded-full border-2 border-blue-400"
+				onclick={() => (showLogout = !showLogout)}
+			/>
+			{#if showLogout}
+				<div
+					class="absolute right-0 top-14 z-50 flex w-56 flex-col items-center rounded-lg border bg-white p-4 shadow-lg"
+					style="min-width:180px"
+					transition:slide={{ duration: 200 }}
+				>
+					<p class="mb-3 text-center text-base">Apakah Anda yakin ingin keluar?</p>
+					<div class="flex w-full flex-row items-center justify-center gap-2">
+						<button class="rounded bg-red-500 px-4 py-1 text-white" onclick={handleLogout}>
+							Log Out
+						</button>
+						<button
+							class="rounded bg-gray-300 px-4 py-1 text-black"
+							onclick={() => (showLogout = false)}
+						>
+							Cancel
+						</button>
+					</div>
+				</div>
+			{/if}
 		</div>
 	</div>
 </header>

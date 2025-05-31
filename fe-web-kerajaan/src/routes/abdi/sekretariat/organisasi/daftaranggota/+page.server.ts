@@ -16,6 +16,9 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
             throw new Error(`HTTP Error! Status: ${userRes.status}`)
         }
         let userData = await userRes.json();
+        let allUser = userData.filter((item: any) => {
+            return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
+        });
         userData = userData.filter((item: any) => {
             return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
         }).map((item: any) => {
@@ -25,7 +28,6 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
                 email: item.email
             }
         });
-
         let res = await fetch(`${env.URL_KERAJAAN}/organisasi`)
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`)
@@ -37,7 +39,7 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
             tanggal_berdiri: item.tanggal_berdiri ? item.tanggal_berdiri.split('T')[0] : item.tanggal_berdiri
         }));
         console.log(finalData)
-        return { data: finalData, userData };
+        return { data: finalData, userData, allUser };
     } catch (error) {
         
     }
@@ -62,7 +64,7 @@ export const actions: Actions = {
 
        let  form = {
             namaanggota: String(data.get("namaanggota") || "").trim(),
-            id_anggota: String(data.get("id_anggota") || "").trim(),
+            id_anggota: String(data.get("id_user") || "").trim(),
             deskripsi: String(data.get("deskripsitugas") || "").trim(),
             jabatan: String(data.get("jabatan") || "").trim(),
         };
@@ -131,7 +133,7 @@ export const actions: Actions = {
         const data = await request.formData();
         
         const organisasiId = data.get("id_organisasi");
-        const userId = data.get("id_anggota");
+        const userId = data.get("id_user");
         console.log(data)
         console.log("Updating member with organisasi ID:", organisasiId, "and user ID:", userId);
         
@@ -154,7 +156,7 @@ export const actions: Actions = {
 
        let form = {
             namaanggota: String(data.get("namaanggota") || "").trim(),
-            id_user: String(data.get("id_anggota") || "").trim(),
+            id_user: String(data.get("id_user") || "").trim(),
             deskripsi: String(data.get("deskripsitugas") || "").trim(),
             jabatan: String(data.get("jabatan") || "").trim(),
         };

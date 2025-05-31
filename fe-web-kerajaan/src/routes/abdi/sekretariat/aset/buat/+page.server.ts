@@ -25,11 +25,13 @@ export const actions: Actions = {
         const nama_aset = data.get("nama_aset")
         const jenis_aset = data.get("jenis_aset")
         const deskripsi_aset = data.get("deskripsi_aset")
-        
+        console.log("Form data:", data);
+        console.log("Parsed form data:", obj);
         // Get all dokumentasi files, including videos and audios
         const dokumentasiFiles = data.getAll("dokumentasi")
             .filter(item => item instanceof File && item.size > 0) as File[];
-        
+        let file = data.getAll("fileee").filter(item => item instanceof File && item.size > 0) as File[];
+        console.log("Dokumentasi files grom fileee:", file)
         // Validate file types
         const validFileTypes = ['image/', 'video/', 'audio/'];
         const invalidFiles = dokumentasiFiles.filter(file => 

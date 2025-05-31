@@ -14,10 +14,13 @@
 	import { string } from 'zod';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	let { data } = $props();
-
+	let kategoriAsetOptions = $derived(
+		Array.from(new Set((data.data || []).map((item) => item.kategori_aset))).filter(Boolean)
+	);
+	let selectedKategoriAset = $state('');
 	let keyword = $state('');
 	let entries = $state(10);
-	console.log(dummyAsetKerajaan);
+	// console.log(dummyAsetKerajaan);
 	let currPage = $state(1);
 	let loading = $state(false);
 	let deleteD = $state(false);
@@ -25,9 +28,10 @@
 	function filterD(data: any[]) {
 		return data.filter(
 			(item) =>
-				item?.nama_aset.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.kategori_aset.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.deskripsi.toLowerCase().includes(keyword.toLowerCase())
+				(item?.nama_aset.toLowerCase().includes(keyword.toLowerCase()) ||
+					item?.kategori_aset.toLowerCase().includes(keyword.toLowerCase()) ||
+					item?.deskripsi.toLowerCase().includes(keyword.toLowerCase())) &&
+				(selectedKategoriAset === '' || item.kategori_aset === selectedKategoriAset)
 		);
 	}
 	function pagination(data: any[]) {
@@ -74,24 +78,28 @@
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col lg:flex-row lg:justify-between">
 		<button class="bg-badran-bt rounded-lg px-3 py-2 text-white" onclick={() => goto('aset/buat')}
-			>+Tambah Kunjungan</button
+			>+Tambah Aset</button
 		>
 		<div
 			class="mt-4 flex flex-col items-center justify-center gap-2 lg:mt-0 lg:flex-row lg:justify-start"
 		>
 			<!-- select -->
-			<select
-				name="Organisasi"
-				id=""
-				value="Organisasi"
-				placeholder="cari organisasi"
-				class="rounded-md border px-3 py-2 focus:outline-none"
-			>
-				<option value="organisasi">Organisasi</option>
-				<option value="Komunitas">Komunitas</option>
-				<option value="Abdi">Abdi</option>
-				<option value="organisasi">Organisasi</option>
-			</select>
+			<!-- Dropdown filter for jenis_aset -->
+			<div class="relative">
+				<input
+					type="text"
+					placeholder="Cari jenis aset..."
+					class="rounded-md border px-3 py-2 focus:outline-none"
+					bind:value={selectedKategoriAset}
+					list="kategoriAsetList"
+				/>
+				<datalist id="kategoriAsetList">
+					<option value="">Semua Kategori</option>
+					{#each kategoriAsetOptions as kategori}
+						<option value={kategori}>{kategori}</option>
+					{/each}
+				</datalist>
+			</div>
 			<!-- cari -->
 			<div class="flex items-center rounded-lg border px-2">
 				<input
