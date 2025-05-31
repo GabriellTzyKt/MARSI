@@ -1,44 +1,47 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	let { value = $bindable(), name = '', errors = null, header = "" } = $props();
+	let { value = $bindable(), name = '', errors = null, header = '' } = $props();
 	let namagelar = $state('');
 	let singkatan = $state('');
 	let daftarGelar: any = $state([]);
 
-	console.log("Modal name prop:", name);
-	
+	console.log('Modal name prop:', name);
+
 	function generateSingkatan(nama: string): string {
 		if (!nama) return '';
-		
+
 		// Split kalo ada spasi
 		const words = nama.trim().split(/\s+/);
-		
+
 		// Ambil huruf pertama terus digabung
-		return words.map(word => word.charAt(0).toUpperCase()).join('');
+		return words.map((word) => word.charAt(0).toUpperCase()).join('');
 	}
-	
+
 	// $effect(() => {
 	// 	if (name === 'nama_gelar') {
 	// 		singkatan = generateSingkatan(namagelar);
 	// 	}
 	// });
-	
+
 	function tambahGelar() {
 		if (namagelar.trim() !== '') {
 			if (name === 'nama_gelar') {
 				// Pastikan singkatan diupdate terlebih dahulu
 				const updatedSingkatan = generateSingkatan(namagelar.trim());
 				singkatan = updatedSingkatan;
-				console.log("Singkatan : ", updatedSingkatan);
-				
-				daftarGelar = [...daftarGelar, {
-					nama: namagelar.trim(),
-					singkatan: updatedSingkatan // Gunakan singkatan yang baru diupdate
-				}];
+				console.log('Singkatan : ', updatedSingkatan);
+
+				daftarGelar = [
+					...daftarGelar,
+					{
+						nama: namagelar.trim(),
+						singkatan: updatedSingkatan // Gunakan singkatan yang baru diupdate
+					}
+				];
 			} else {
 				daftarGelar = [...daftarGelar, namagelar.trim()];
 			}
-			namagelar = ''; 
+			namagelar = '';
 			singkatan = ''; // Reset supaya balik kosong
 		}
 	}
@@ -52,8 +55,8 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
 	class="fixed inset-0 flex items-center justify-center bg-black/90"
-	onclick={() => {
-		value = false;
+	onclick={(e) => {
+		e.stopPropagation();
 	}}
 >
 	<div
@@ -85,7 +88,7 @@
 					Add
 				</button>
 			</div>
-			
+
 			<!-- {#if name === 'nama_gelar'}
 				<div class="mt-2">
 					<label for="singkatan">Singkatan:</label>
@@ -106,7 +109,7 @@
 								<div class="w-full max-w-[200px] truncate break-words">
 									{#if typeof gelar === 'string'}
 										<p>{gelar}</p>
-										<input type="hidden" name={name} value={gelar} />
+										<input type="hidden" {name} value={gelar} />
 									{:else if name === 'nama_gelar'}
 										<p>{gelar.nama}</p>
 										<p class="text-sm text-gray-500">Singkatan: {gelar.singkatan}</p>

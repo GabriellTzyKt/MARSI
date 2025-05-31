@@ -12,21 +12,21 @@
 
 	console.log('Value : ', value);
 	console.log('Header : ', header);
-	
+
 	// Fungsi untuk menghasilkan singkatan dari nama gelar
 	function generateSingkatan(nama: string): string {
 		if (!nama) return '';
-		
+
 		// Split nama berdasarkan spasi
 		const words = nama.trim().split(/\s+/);
-		
+
 		// Ambil huruf pertama dari setiap kata dan gabungkan
-		return words.map(word => word.charAt(0).toUpperCase()).join('');
+		return words.map((word) => word.charAt(0).toUpperCase()).join('');
 	}
-	
+
 	// Variabel untuk menyimpan singkatan yang dihasilkan
 	let generatedSingkatan = $state('');
-	
+
 	// Update singkatan saat nama gelar berubah
 	$effect(() => {
 		if (tipe === 'gelar' && value?.nama_gelar) {
@@ -42,7 +42,6 @@
 <div
 	class=" fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black/90"
 	onclick={(e) => {
-		input = false;
 		e.stopPropagation();
 	}}
 	transition:fade={{ duration: 200 }}
@@ -140,7 +139,7 @@
 					placeholder="Silahkan diinput!"
 					id=""
 				/>
-				
+
 				<!-- Tambahkan input untuk singkatan yang readonly -->
 				<p class="mt-3 text-start">Singkatan :</p>
 				<input
