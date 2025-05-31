@@ -25,11 +25,27 @@
 	let errMsgA = $state('');
 	let errMsgB = $state('');
 	let err = form?.errors;
+	let user = data?.allUsers;
+	let ayahkeyword = $state(data?.data?.nama_ayah || '');
+	let dropDownAyah = $state(false);
+	let filterAyah = $derived(filterAbdi(ayahkeyword));
 
+	let ibuKeyword = $state(data?.data?.nama_ibu || '');
+	let dropDownIbu = $state(false);
+
+	let dropAyah = $state(false);
+	let filterIbu = $derived(filterAbdi(ibuKeyword));
+	function filterAbdi(key: any) {
+		return user.filter((item: any) => item?.name?.toLowerCase().includes(key.toLowerCase()));
+	}
+
+	let ibukeyword = $state('');
 	// Profile picture handling
 	let pictUrl = $state(data.data.profileUrl || jd);
 	let pictUrlFiles = $state(null);
-
+	function selectAyah(data) {
+		ayahkeyword = data.name;
+	}
 	function handleFiles(event) {
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files[0]) {
@@ -82,6 +98,7 @@
 		barcodeData = data?.data?.id_user?.toString() || 'User ID';
 		showBarcode = true;
 	}
+	$inspect(filterAyah);
 </script>
 
 <Navbar></Navbar>
@@ -426,8 +443,41 @@
 					</div>
 				</div>
 			</div>
-			<div class="mt-2">
-				<Input type="text" name="nama_ayah" value={accounts[0].ayah}></Input>
+			<div class="relative mt-2">
+				<input
+					type="text"
+					name="nama_ayah"
+					bind:value={ayahkeyword}
+					onfocus={() => {
+						dropDownAyah = true;
+					}}
+					onblur={() => {
+						setTimeout(() => {
+							dropDownAyah = false;
+						}, 200);
+					}}
+					class="w-full rounded-lg border border-gray-500 bg-white py-2 ps-2 text-gray-500 focus:outline-none"
+				/>
+				{#if dropDownAyah && ayahAbdi === 'ayah_yes'}
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<div class="max-h-50 absolute top-full gap-2 overflow-auto rounded-lg bg-white">
+						{#each filterAyah as data}
+							<!-- svelte-ignore a11y_click_events_have_key_events -->
+							<div
+								class="cursor-pointer rounded-lg p-2 hover:bg-gray-200"
+								onclick={() => {
+									ayahkeyword = data.name;
+									setTimeout(() => {
+										dropDownAyah = false;
+									}, 200);
+								}}
+							>
+								<p class="text-sm">{data.name}</p>
+								<p class="text-sm text-gray-500">{data.email}</p>
+							</div>
+						{/each}
+					</div>
+				{/if}
 				{#if form?.errors}
 					{#each form?.errors.nama_ayah as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -459,8 +509,42 @@
 					</div>
 				</div>
 			</div>
-			<div class="mt-2">
-				<Input type="text" name="nama_ibu" value={accounts[0].ibu}></Input>
+
+			<div class="relative mt-2">
+				<input
+					type="text"
+					name="nama_ibu"
+					bind:value={ibuKeyword}
+					onblur={() => {
+						setTimeout(() => {
+							dropDownIbu = false;
+						}, 200);
+					}}
+					onfocus={() => {
+						dropDownIbu = true;
+					}}
+					class="w-full rounded-lg border border-gray-500 bg-white py-2 ps-2 text-gray-500 focus:outline-none"
+				/>
+				{#if dropDownIbu && ibuAbdi === 'ibu_yes'}
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<div class="max-h-50 absolute top-full gap-2 overflow-auto rounded-lg bg-white">
+						{#each filterIbu as data}
+							<!-- svelte-ignore a11y_click_events_have_key_events -->
+							<div
+								class="cursor-pointer rounded-lg p-2 hover:bg-gray-200"
+								onclick={() => {
+									ayahkeyword = data.name;
+									setTimeout(() => {
+										dropDownIbu = false;
+									}, 200);
+								}}
+							>
+								<p class="text-sm">{data.name}</p>
+								<p class="text-sm text-gray-500">{data.email}</p>
+							</div>
+						{/each}
+					</div>
+				{/if}
 				{#if form?.errors}
 					{#each form?.errors.nama_ibu as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -477,14 +561,4 @@
 <Footer></Footer>
 {#if open}
 	<SuccessModal text="Akun Sudah Aktif!"></SuccessModal>
-{/if}
-
-<!-- Tambahkan tombol untuk menampilkan barcode -->
-<button class="rounded-lg border border-gray-500 px-3 py-2 shadow-2xl" onclick={openBarcode}>
-	Tampilkan Barcode
-</button>
-
-<!-- Tambahkan komponen Bracode -->
-{#if showBarcode}
-	<Bracode bind:value={showBarcode} data={barcodeData} />
 {/if}

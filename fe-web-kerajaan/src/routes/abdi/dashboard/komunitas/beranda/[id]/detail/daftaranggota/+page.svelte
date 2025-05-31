@@ -62,20 +62,24 @@
 			if (anggotaResponse.ok) {
 				let anggotaList = await anggotaResponse.json();
 
-				anggotaList = anggotaList.map((item: any) => {
-					return {
-						...item,
-						nama_anggota:
-							data.dataUser.find((user: any) => user.id_user === item.id_user)?.nama_lengkap ||
-							item.nama_anggota,
-						email:
-							data.dataUser.find((user: any) => user.id_user === item.id_user)?.email || item.email,
-						nomor_telepon:
-							data.dataUser.find((user: any) => user.id_user === item.id_user)?.no_telp ||
-							item.nomor_telepon,
-						tanggal_bergabung: formatDatetoUI(item.tanggal_bergabung)
-					};
-				});
+				anggotaList = anggotaList
+
+					.filter((item) => item.deleted_at == '0001-01-01T00:00:00Z')
+					.map((item: any) => {
+						return {
+							...item,
+							nama_anggota:
+								data.dataUser.find((user: any) => user.id_user === item.id_user)?.nama_lengkap ||
+								item.nama_anggota,
+							email:
+								data.dataUser.find((user: any) => user.id_user === item.id_user)?.email ||
+								item.email,
+							nomor_telepon:
+								data.dataUser.find((user: any) => user.id_user === item.id_user)?.no_telp ||
+								item.nomor_telepon,
+							tanggal_bergabung: formatDatetoUI(item.tanggal_bergabung)
+						};
+					});
 				console.log('Fetched members:', anggotaList);
 				// Fetch user information for each member
 				// Process each member to add user information
@@ -157,6 +161,7 @@
 		} else open = false;
 		console.log(open);
 	};
+	let totalFiltered = $derived(() => filterD(komunitasMembers).length);
 </script>
 
 {#if loading}
@@ -261,7 +266,7 @@
 				<SimpleLoader></SimpleLoader>
 			</div>
 		{/if}
-		<Pagination bind:currPage bind:entries totalItems={filterD(data.data).length}></Pagination>
+		<Pagination bind:currPage bind:entries totalItems={totalFiltered()}></Pagination>
 	</div>
 </div>
 {#if open}
