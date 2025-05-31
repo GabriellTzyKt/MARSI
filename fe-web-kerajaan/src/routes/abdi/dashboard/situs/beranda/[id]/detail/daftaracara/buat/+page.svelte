@@ -35,7 +35,7 @@
 	console.log('Data : ', data);
 	console.log('form data', form);
 
-	let selectedAcara = null;
+	let selectedAcara : any = $state(null);
 
 	$effect(() => {
 		if (activeTab === 'completed' && namaacara) {

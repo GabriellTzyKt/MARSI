@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { navigating } from '$app/state';
+	import { navigating, page } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
 	import TambahArray from '$lib/tambah/TambahArray.svelte';
 	import { fade } from 'svelte/transition';
@@ -10,6 +10,7 @@
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 
+	
 	let input_radio = $state('');
 	let namaacara = $state('');
 	let lokasiacara: any = $state('');
@@ -36,36 +37,38 @@
 	console.log('Data : ', data.acara);
 	console.log('form data', form);
 
-	let selectedAcara = null;
+	let nama_acara = $state("")
 
-	$effect(() => {
-		if (activeTab === 'completed' && namaacara) {
-			selectedAcara = data.acara.find((a: any) => a.Acara.nama_acara === namaacara) ?? null;
-			lokasiacara = Number(selectedAcara.Acara.id_lokasi);
-			penanggungjawab = Number(selectedAcara.Acara.id_penanggung_jawab);
-			alamatacara = selectedAcara.Acara.alamat_acara;
-			kapasitasacara = selectedAcara.Acara.kapasitas_acara;
-			penyelenggaraacara = selectedAcara.id_organisasi;
-			deskripsiacara = selectedAcara.Acara.deskripsi_acara;
-			tujuanacara = selectedAcara.Acara.tujuan_acara;
-			input_radio = selectedAcara.Acara.jenis_acara;
-			if (input_radio.toLowerCase() === 'tertutup') {
-				input_radio = 'private';
-			} else {
-				input_radio = 'public';
-			}
+	let selectedAcara: any = null;
+	function handleNamaAcaraChange(event: any) {
+		const nama = event.target.value;
+		console.log("nama : ", nama)
+		const found = data.acara.find((a: any) => a.Acara.id_acara == nama);
+		console.log("found : ", found)
+		if (found) {
+			selectedAcara = found;
+			lokasiacara = Number(found.Acara.id_lokasi);
+			penanggungjawab = Number(found.Acara.id_penanggung_jawab);
+			alamatacara = found.Acara.alamat_acara;
+			kapasitasacara = found.Acara.kapasitas_acara;
+			penyelenggaraacara = found.id_organisasi;
+			deskripsiacara = found.Acara.deskripsi_acara;
+			nama_acara = found.Acara.nama_acara;
+			tujuanacara = found.Acara.tujuan_acara;
+			input_radio = found.Acara.jenis_acara.toLowerCase() === 'tertutup' ? 'private' : 'public';
+			console.log("SELECTED : ", selectedAcara)
 		} else {
 			selectedAcara = null;
-			namaacara = '';
 			lokasiacara = '';
 			penanggungjawab = '';
 			alamatacara = '';
 			kapasitasacara = '';
+			penyelenggaraacara = '';
 			deskripsiacara = '';
 			tujuanacara = '';
 			input_radio = '';
 		}
-	});
+	}
 
 	if (form?.formData) {
 		buttonselect = form.formData.buttonselect;
@@ -85,6 +88,13 @@
 	let activeTab = $state('upcoming');
 	let open = $state(false);
 	let timer: number;
+
+	let idAktif = $state("")
+
+	$effect(() => {
+		idAktif = page.params.id;
+		console.log('ID : ', idAktif);
+	});
 
 	let invitations: { id: number; panggilan: string; nama: string; notelepon: string }[] = $state(
 		[]
@@ -236,6 +246,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
+						goto(`/abdi/dashboard/organisasi/beranda/${idAktif}/detail/acara`)
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
@@ -311,11 +322,12 @@
 							<select
 								name="namaacara"
 								bind:value={namaacara}
+								onchange={handleNamaAcaraChange}
 								class="w-full rounded-lg border px-2 py-1"
 							>
 								<option value="" disabled selected>Pilih Acara Lama</option>
 								{#each data.acara as acara}
-									<option value={acara.Acara.nama_acara}>{acara.Acara.nama_acara}</option>
+									<option value={acara.Acara.id_acara}>{acara.Acara.nama_acara}</option>
 								{/each}
 							</select>
 						{:else}
@@ -333,6 +345,8 @@
 							{/each}
 						{/if}
 					</div>
+
+					<input type="hidden" name="nama_acara" value={nama_acara} />
 
 					<div class="col-span-2 mt-2 w-full">
 						<p class="mt-2">Penanggung Jawab:</p>

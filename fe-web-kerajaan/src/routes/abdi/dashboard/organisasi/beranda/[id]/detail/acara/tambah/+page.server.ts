@@ -119,7 +119,7 @@ export const actions: Actions = {
         form = {
             buttonselect: data.get("buttonselect") ?? "",
             inputradio: data.get("default-radio") ?? "",
-            namaacara: data.get("namaacara") ?? "",
+            namaacara: data.get("nama_acara") ?? "",
             lokasiacara: data.get("lokasiacara") ?? "",
             alamatacara: data.get("alamatacara") ?? "",
             tujuanacara: data.get("tujuanacara") ?? "",

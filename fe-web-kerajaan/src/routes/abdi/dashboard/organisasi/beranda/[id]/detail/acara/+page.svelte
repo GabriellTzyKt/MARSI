@@ -19,7 +19,7 @@
 		organisasi_nama: item.organisasi_nama,
 		nama_penanggung_jawab: item.nama_penanggung_jawab
 	}));
-	console.log('DATA AMBIL : ', dataambil);
+	console.log('DATA AMBIL : ', dataacara);
 	let id_org = data.id_org;
 
 	// // Check if allEvents exists and process it
@@ -183,7 +183,7 @@
 								label: 'Ubah',
 								action: () =>
 									goto(
-										`/abdi/dashboard/organisasi/beranda/${id_org}/detail/acara/ubah/${data.id_organisasi}`
+										`/abdi/dashboard/organisasi/beranda/${id_org}/detail/acara/ubah/${data.id_acara}`
 									)
 							},
 							{

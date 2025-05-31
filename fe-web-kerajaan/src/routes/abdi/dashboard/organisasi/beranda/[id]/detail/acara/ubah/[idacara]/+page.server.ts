@@ -1,6 +1,50 @@
-import { fail } from "@sveltejs/kit";
-import { error, type Actions } from "@sveltejs/kit";
+import { env } from "$env/dynamic/private";
+import { fail, error, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
+
+export const load = async ({ params, fetch }) => {
+    const id_situs = params.id;
+    const id_acaraorganisasi = params.idacara;
+    console.log("id orgn : ", id_acaraorganisasi)
+    console.log("id situs : ", id_situs)
+
+    // Ambil semua data yang dibutuhkan secara paralel
+    const [usersRes, situsRes, organisasiRes, acaraRes] = await Promise.all([
+        fetch(`${env.BASE_URL}/users?limit=2000`),
+        fetch(`${env.BASE_URL_8008}/situs?limit=200`),
+        fetch(`${env.BASE_URL_8008}/organisasi?limit=200`),
+        fetch(`${env.BASE_URL_8008}/acara/organisasi/${id_situs}?limit=200`)
+    ]);
+
+    if (!usersRes.ok || !situsRes.ok || !organisasiRes.ok || !acaraRes.ok) {
+        throw error(500, "Gagal mengambil data users, situs, komunitas, organisasi, atau acara");
+    }
+
+    const users = await usersRes.json();
+    const situs = await situsRes.json();
+    const organisasi = await organisasiRes.json();
+    const acaraList = await acaraRes.json();
+
+    console.log("acaraList : ", acaraList)
+    // Cari acara yang id-nya sama dengan id_acarasitus
+    let acara = null;
+    for (const item of acaraList) {
+        if (item.Acara.id_acara == Number(id_acaraorganisasi)) {
+            acara = item;
+            break;
+        }
+    }
+    if (!acara) throw error(404, "Acara tidak ditemukan");
+
+    return {
+        users,
+        situs,
+        organisasi,
+        acaraList,
+        acara
+    };
+};
+
 
 export const actions: Actions = {
     edit: async ({ request }) => {
@@ -9,7 +53,7 @@ export const actions: Actions = {
         const ids = data.getAll("id").map(String);
         const ids2 = data.getAll("id2").map(String);
 
-        let form : any = {
+        let form: any = {
             namaacara: "",
             lokasiacara: "",
             tujuanacara: "",
@@ -75,7 +119,7 @@ export const actions: Actions = {
             namabawah: {},
             notelpbawah: {},
             namalengkapbawah: {},
-            namajabatan : {},
+            namajabatan: {},
         };
 
 
