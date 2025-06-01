@@ -58,8 +58,48 @@ export const load: PageServerLoad = async ({ fetch }) => {
         });
 
         // Format kerajaan data and add jenis_kerajaan name directly
-        const kerajaanFormatted = kerajaanData.map((item: any) => {
+        const kerajaanFormatted = await Promise.all(kerajaanData.map(async (item: any) => {
             const jenisDetail = jenisKerajaanMap.get(item.jenis_kerajaan);
+
+            // Helper untuk ambil url file dari id dokumen
+            async function getFileUrlFromDocId(docId: string) {
+                if (!docId) return null;
+                // Ambil data dokumen
+                const docRes = await fetch(env.PUB_PORT + `/doc/${docId}`, {
+                    method: "GET",
+                    headers: { "Accept": "application/json" }
+                });
+                if (!docRes.ok) {
+                    console.log("Doc not found for id:", docId);
+                    return null;
+                }
+                const docData = await docRes.json();
+                const fileDok = docData.file_dokumentasi;
+                if (!fileDok) {
+                    console.log("No file_dokumentasi for doc id:", docId);
+                    return null;
+                }
+                // Return url endpoint file, tidak perlu fetch lagi
+                return `${env.PUB_PORT}/file?file_path=${encodeURIComponent(fileDok)}`;
+            }
+
+            // Cek dan ambil url bendera
+            let url_bendera = null;
+            if (item.bendera_kerajaan && typeof item.bendera_kerajaan === "string" && !item.bendera_kerajaan.startsWith("http")) {
+                const idBendera = item.bendera_kerajaan.trim();
+                console.log("Fetch bendera id:", idBendera);
+                url_bendera = await getFileUrlFromDocId(idBendera);
+                console.log("Result url_bendera:", url_bendera);
+            }
+
+            // Cek dan ambil url lambang
+            let url_lambang = null;
+            if (item.lambang_kerajaan && typeof item.lambang_kerajaan === "string" && !item.lambang_kerajaan.startsWith("http")) {
+                const idLambang = item.lambang_kerajaan.trim();
+                console.log("Fetch lambang id:", idLambang);
+                url_lambang = await getFileUrlFromDocId(idLambang);
+                console.log("Result url_lambang:", url_lambang);
+            }
 
             return {
                 ...item,
@@ -68,9 +108,11 @@ export const load: PageServerLoad = async ({ fetch }) => {
                     item.tanggal_berakhir !== '0001-01-01T00:00:00Z'
                         ? formatDate(item.tanggal_berakhir)
                         : '-',
-                jenis_kerajaan_nama: jenisDetail ? jenisDetail.nama_jenis_kerajaan : '-'
+                jenis_kerajaan_nama: jenisDetail ? jenisDetail.nama_jenis_kerajaan : '-',
+                url_bendera_kerajaan: url_bendera,
+                url_lambang_kerajaan: url_lambang
             };
-        });
+        }));
 
         const limit = pLimit(5);
 

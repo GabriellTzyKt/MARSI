@@ -10,7 +10,7 @@
 	import SModal from '$lib/popup/SModal.svelte';
 	import { onMount } from 'svelte';
 	import logolagu from '../../../asset/logolagu.jpg';
-	import logovidio from '../../../asset/video-player-line-black-icon-vector.jpg'
+	import logovidio from '../../../asset/video-player-line-black-icon-vector.jpg';
 
 	let currPage = $state(1);
 	let entries = $state(10);
@@ -18,9 +18,9 @@
 	let deleteD = $state(false);
 	let success = $state(false);
 
-	let { data } = $props();
-	const dataArsip = data.dataArsip;
-	console.log("data arsip : ", dataArsip);
+	let { data } : any = $props();
+	let dataArsip : any = data.dataArsip;
+	console.log('data arsip : ', dataArsip);
 
 	function filterData(data: any[]) {
 		return data.filter((item) => item?.nama_arsip?.toLowerCase().includes(keyword.toLowerCase()));
@@ -35,7 +35,7 @@
 
 	// Memastikan datanya dalam bentuk array
 	let arsipArray = $state(Array.isArray(data.dataArsip) ? data.dataArsip : []);
-	let resData = $derived(pagination(data.dataArsip));
+	let resData : any = $derived(pagination(data.dataArsip));
 	let total_pages = $derived(Math.ceil(filterData(data.dataArsip).length / entries));
 
 	$effect(() => {
@@ -48,9 +48,9 @@
 	$effect(() => {
 		const urlParams = new URLSearchParams(page.url.search);
 		const deleteId = urlParams.get('delete');
-		
+
 		if (deleteId) {
-			console.log("Found delete ID in URL:", deleteId);
+			console.log('Found delete ID in URL:', deleteId);
 			deleteD = true;
 			// Store the ID for the delete operation
 			selectedItemId = deleteId;
@@ -63,7 +63,6 @@
 	function handleCloseDeleteModal() {
 		deleteD = false;
 		goto('/admin/suratDokumen', { replaceState: true });
-
 	}
 </script>
 
@@ -137,7 +136,7 @@
 					{index}
 					items={[
 						['Ubah', `/admin/suratDokumen/ubah/${data.id_arsip}`],
-						['Arsipkan', `/admin/suratDokumen?delete=${data.id_arsip}`],
+						['Arsipkan', `/admin/suratDokumen?delete=${data.id_arsip}`]
 						// ['children', 'Arsipkan']
 					]}
 					tipe="acara"
@@ -158,23 +157,27 @@
 		{#snippet custom({ header, data })}
 			{#if header === 'Dokumentasi'}
 				{#if data.files && Array.isArray(data.files) && data.files.length > 0}
-					<div class="flex flex-row gap-2">
+					<div class="flex max-w-[200px] flex-row flex-nowrap gap-2 overflow-x-auto">
 						{#each data.files as file}
 							{#if file && typeof file === 'object' && file.url}
-								{#if file.url.toLowerCase().endsWith('.mp3') || file.url.toLowerCase().endsWith('.wav')}
+								{#if file.url.toLowerCase().endsWith('.mp3') || file.url
+										.toLowerCase()
+										.endsWith('.wav')}
 									<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
 										<img
 											src={logolagu}
 											alt={file.name || 'Audio File'}
-											class="h-10 w-10 rounded object-cover"
+											class="h-10 w-10 rounded object-cover flex-shrink-0"
 										/>
 									</a>
-								{:else if file.url.toLowerCase().endsWith('.mp4') || file.url.toLowerCase().endsWith('.webm')}
+								{:else if file.url.toLowerCase().endsWith('.mp4') || file.url
+										.toLowerCase()
+										.endsWith('.webm')}
 									<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
 										<img
 											src={logovidio}
 											alt={file.name || 'Video File'}
-											class="h-10 w-10 rounded object-cover"
+											class="h-10 w-10 rounded object-cover flex-shrink-0"
 										/>
 									</a>
 								{:else}
@@ -182,7 +185,7 @@
 										<img
 											src={file.url}
 											alt={file.name || 'Document'}
-											class="h-10 w-10 rounded object-cover"
+											class="h-10 w-10 rounded object-cover flex-shrink-0"
 										/>
 									</a>
 								{/if}
@@ -237,11 +240,11 @@
 		method="post"
 		use:enhance={() => {
 			const idToDelete = selectedItemId;
-			console.log("Form submitted with ID from URL:", idToDelete);
-			
+			console.log('Form submitted with ID from URL:', idToDelete);
+
 			return async ({ result }) => {
 				if (result.type === 'success') {
-					console.log("Success deleting ID:", idToDelete);
+					console.log('Success deleting ID:', idToDelete);
 					success = true;
 					deleteD = false;
 					// Remove the delete parameter from URL
@@ -251,13 +254,13 @@
 						invalidateAll();
 					}, 3000);
 				} else {
-					console.error("Failed to delete ID:", idToDelete, result);
+					console.error('Failed to delete ID:', idToDelete, result);
 				}
 			};
 		}}
 	>
-		<input type="hidden" name="id_arsip" value={selectedItemId}>
-		
+		<input type="hidden" name="id_arsip" value={selectedItemId} />
+
 		<DeleteModal
 			text="Apakah yakin ingin menghapus dokumen ini?"
 			successText="Dokumen berhasil dihapus!"

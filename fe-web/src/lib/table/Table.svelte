@@ -19,7 +19,7 @@
 	console.log("Data table : ", table_data)
 </script>
 
-<div class="mt-4 flex w-full flex-col overflow-x-auto rounded-xl">
+<div class="mt-4 flex w-full flex-col flex-nowrap overflow-x-auto rounded-xl">
 	<table class="w-full table-auto border-separate border-spacing-0 rounded-xl border">
 		<thead class="marsi rounded-xl">
 			<tr class="rounded-xl">

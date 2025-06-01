@@ -125,11 +125,10 @@
 			['nama_kerajaan', 'Nama Kerajaan'],
 			['alamat_kerajaan', 'Alamat Kerajaan'],
 			['tanggal_berdiri', 'Tanggal Berdiri'],
-			['era', 'Era'],
+			['nama_era', 'Era'],
 			['jenis_kerajaan_nama', 'Jenis Kerajaan'],
 			['raja_sekarang', 'Nama Raja'],
-			['bendera_kerajaan', 'Bendera & Lambang Kerajaan'],
-
+			['bendera_kerajaan', 'Bendera & Lambang Kerajaan', 'custom'],
 			['children', 'Aksi']
 		]}
 		table_data={resData}
@@ -152,6 +151,28 @@
 				></DropDown>
 			{/if}
 		{/snippet}
+
+		{#snippet custom({ header, data })}
+			{#if header === 'Bendera & Lambang Kerajaan'}
+				<div class="flex items-center gap-2">
+					{#if data.url_bendera_kerajaan}
+						<img
+							src={data.url_bendera_kerajaan}
+							alt="Bendera"
+							class="h-12 w-12 rounded border object-cover"
+						/>
+					{/if}
+					{#if data.url_lambang_kerajaan}
+						<img
+							src={data.url_lambang_kerajaan}
+							alt="Lambang"
+							class="h-12 w-12 rounded border object-cover"
+						/>
+					{/if}
+				</div>
+			{/if}
+		{/snippet}
+
 		{#snippet details({ data })}
 			<div class=" me-4 ms-4 mt-4 flex flex-col" transition:slide={{ duration: 300 }}>
 				<div class="flex justify-between">

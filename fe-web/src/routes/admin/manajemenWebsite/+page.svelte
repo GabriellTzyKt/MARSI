@@ -659,56 +659,50 @@
 				<p class="ml-5">Asal Kerajaan : {selectedItem?.asal_kerajaan || '-'}</p>
 				<p class="ml-5">Tanggal Request Dibuat : {selectedItem?.tanggal_buat || '-'}</p>
 				<div class="ml-5 mt-4 w-full">
-					<div>
-						<p>Upload Link Website Kerajaan</p>
-						<input
-							type="text"
-							class="mt-2 w-full max-w-[90%] rounded-lg border border-gray-400 py-2 pe-2 ps-2 focus:border-gray-400 focus:outline-none focus:ring-0"
-							name=""
-							placeholder="https://kerajaan.com"
-							id=""
-						/>
-					</div>
-					{#if selectedItem?.mobileFeatures !== null}
-						<div class="w-full flex-col">
-							<p class="mt-5">Upload Aplikasi Mobile Kerajaan</p>
-							<div
-								class="upload-container relative mt-4 h-[44px] w-full max-w-[90%] flex-shrink-0 overflow-hidden rounded-lg border-2 border-black bg-gray-200"
-							>
-								<input
-									type="file"
-									id="fileVideo"
-									class="hidden"
-									name="inputvideo"
-									accept="video/*"
-									onchange={(e) => handleFileChange(e, 'video')}
-								/>
-								<label
-									for="fileVideo"
-									class="absolute left-0 top-0 flex h-full w-full cursor-pointer flex-col items-center justify-center"
-								>
-								</label>
-								<div class="flex h-full w-full items-center justify-between">
-									<p class="max-w-[60%] truncate px-2">{videoName}</p>
-									<button class="bg-customOrange2 h-full px-4 font-semibold text-white">
-										Choose file
-									</button>
-								</div>
-							</div>
-							<p class="text-md text-red-600">
-								Pastikan Link atau FIle yang anda masukan sudah benar karena tidak akan bisa di edit
-								atau diubah!
-							</p>
+					<form
+						action="?/processRequest2"
+						method="post"
+						use:enhance={() => {
+							return async ({ result }) => {
+								if (result.type === 'success') {
+									// Tampilkan pesan sukses
+									success = true;
+									diajukanOpen = false;
+
+									// Tutup modal setelah berhasil
+									setTimeout(() => {
+										success = false;
+										invalidateAll();
+										sedangDiprosesOpen2 = false
+									}, 1500);
+								} else if (result.type === 'failure') {
+									// Tampilkan pesan error
+									// processError = result.data?.error || "Gagal memproses permintaan";
+								}
+							};
+						}}
+					>
+						<div>
+							<p>Upload Link Website Kerajaan</p>
+							<input
+								type="text"
+								class="mt-2 w-full max-w-[90%] rounded-lg border border-gray-400 py-2 pe-2 ps-2 focus:border-gray-400 focus:outline-none focus:ring-0"
+								name="linkkerajaan"
+								placeholder="https://kerajaan.com"
+								id=""
+							/>
 						</div>
-					{/if}
-					<div class="mt-8 flex w-full justify-end">
-						<button
-							class="bg-customGold mr-5 w-auto rounded-lg px-12 py-1 text-center text-white"
-							type="submit"
-						>
-							Selesaikan
-						</button>
-					</div>
+						<!-- Hidden inputs untuk mengirim data ke server -->
+						<input type="hidden" name="id_permintaan" value={selectedItem?.id_permintaan || ''} />
+						<div class="mt-8 flex w-full justify-end">
+							<button
+								class="bg-customGold mr-5 w-auto rounded-lg px-12 py-1 text-center text-white"
+								type="submit"
+							>
+								Selesaikan
+							</button>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>

@@ -44,7 +44,7 @@
 	);
 	let newafiliasi = $state(formValues.afiliasi);
 	let newroleadmin = $state(formValues.admin_role);
-
+	let selectedKerajaanName = $state('');
 	// Update isRadioYa berdasarkan radioValue
 	// $effect(() => {
 	// 	isRadioYa = radioValue === 'ya';
@@ -163,23 +163,18 @@
 		radioValue = value;
 
 		if (value === 'ya') {
-			// When "Ya" is selected, force MARSI affiliation with admin kerajaan role
-			newafiliasi = 'marsi';
+			// Tidak perlu set newafiliasi = 'marsi'
 			newroleadmin = 'admin kerajaan';
 			formValues.id_kerajaan = 0;
 			isRadioYa = true;
 		} else {
-			// When "Tidak" is selected
 			isRadioYa = false;
-
-			// Reset based on current affiliation
 			if (newafiliasi === 'marsi' || formValues.afiliasi === 'marsi') {
 				newroleadmin = 'super admin';
 			} else {
 				newroleadmin = 'admin kerajaan';
 			}
 		}
-
 		console.log(
 			'Radio changed to:',
 			value,
@@ -396,7 +391,6 @@
 
 			<input type="hidden" name="id_admin" value={formValues.id_admin} />
 			<input type="hidden" name="id_user" value={formValues.id_user} />
-			<input type="hidden" name="id_kerajaan" value={formValues.id_kerajaan} />
 			<input type="hidden" name="status_aktif" value={formValues.status_aktif} />
 
 			<!-- No Telp -->
@@ -464,7 +458,6 @@
 					{/if}
 				</div>
 			</div>
-			<!-- Afiliasi -->
 			<div class="flex flex-col md:col-span-full">
 				<div class="">
 					<p>Jenis Kelamin</p>
@@ -494,10 +487,9 @@
 						name="afiliasi"
 						class="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none"
 						value={newafiliasi}
-						onclick={(e) => handleAfiliasiChange(e)}
+						onchange={handleAfiliasiChange}
 						disabled={radioValue === 'ya'}
 					>
-						{console.log('ayayay:', newafiliasi)}
 						<option value="marsi">MARSI</option>
 						{#if datakerajaan && Array.isArray(datakerajaan)}
 							{#each datakerajaan as kerajaan}
@@ -550,6 +542,8 @@
 						{/if}
 					{/if}
 				</div>
+
+				<input type="hidden" name="afiliasi8008" value={displayKerajaanName}>
 
 				<div>
 					<select

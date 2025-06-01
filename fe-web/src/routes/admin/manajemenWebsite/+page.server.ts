@@ -157,27 +157,27 @@ export const actions: Actions = {
             return fail(500, { error: "Server error when deleting record" });
         }
     },
-    
+
     // Tambahkan action baru untuk memproses permintaan
     processRequest: async ({ request, fetch }) => {
         try {
             const data = await request.formData();
             const idPermintaan = data.get("id_permintaan");
-            
+
             console.log(`Processing website request for ID: ${idPermintaan}`);
-            
+
             if (!idPermintaan) {
                 return fail(400, { error: "ID permintaan tidak ditemukan" });
             }
-            
+
             // Buat payload sederhana dengan id_request dan status_permintaan
             const payload = {
                 id_request: Number(idPermintaan),
                 status_permintaan: "Diproses"
             };
-            
+
             console.log("Sending payload:", payload);
-            
+
             // Kirim update ke API
             const updateEndpoint = `${env.BASE_URL}/fitur/website`;
             const updateResponse = await fetch(updateEndpoint, {
@@ -187,20 +187,70 @@ export const actions: Actions = {
                 },
                 body: JSON.stringify(payload)
             });
-            
+
             if (!updateResponse.ok) {
                 console.log("error")
                 const errorText = await updateResponse.text();
-                return fail(updateResponse.status, { 
-                    error: `Gagal memperbarui status: ${updateResponse.status} ${errorText}` 
+                return fail(updateResponse.status, {
+                    error: `Gagal memperbarui status: ${updateResponse.status} ${errorText}`
                 });
             }
-            
+
             const result = await updateResponse.json();
             console.log("Update successful:", result);
-            
+
             return { success: true, message: "Permintaan berhasil diproses" };
-            
+
+        } catch (error) {
+            console.error("Error processing request:", error);
+            return fail(500, { error: "Terjadi kesalahan saat memproses permintaan" });
+        }
+    },
+
+    processRequest2: async ({ request, fetch }) => {
+        try {
+            const data = await request.formData();
+            const idPermintaan = data.get("id_permintaan");
+            const linkkerajaan = data.get("linkkerajaan")
+
+            console.log(`Processing website request for ID: ${idPermintaan}`);
+
+            if (!idPermintaan) {
+                return fail(400, { error: "ID permintaan tidak ditemukan" });
+            }
+
+            // Buat payload sederhana dengan id_request dan status_permintaan
+            const payload = {
+                id_request: Number(idPermintaan),
+                status_permintaan: "Selesai",
+                url_website : linkkerajaan,
+            };
+
+            console.log("Sending payload:", payload);
+
+            // Kirim update ke API
+            const updateEndpoint = `${env.BASE_URL}/fitur/website`;
+            const updateResponse = await fetch(updateEndpoint, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!updateResponse.ok) {
+                console.log("error")
+                const errorText = await updateResponse.text();
+                return fail(updateResponse.status, {
+                    error: `Gagal memperbarui status: ${updateResponse.status} ${errorText}`
+                });
+            }
+
+            const result = await updateResponse.json();
+            console.log("Update successful:", result);
+
+            return { success: true, message: "Permintaan berhasil diproses" };
+
         } catch (error) {
             console.error("Error processing request:", error);
             return fail(500, { error: "Terjadi kesalahan saat memproses permintaan" });

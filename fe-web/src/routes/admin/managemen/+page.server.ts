@@ -220,6 +220,40 @@ export const actions: Actions = {
                 });
             }
             
+            // --- Tambahan pengecekan superadmin ---
+            const superadmin = data.get("superadmin");
+            let response8008Data = null;
+            let response8008Success = null;
+
+            if (superadmin === "ya") {
+                // Kirim juga ke BASE_URL_8008
+                const response8008 = await fetch(`${env.BASE_URL_8008}/admin`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(adminPayload)
+                });
+
+                response8008Success = response8008.ok;
+                try {
+                    response8008Data = await response8008.json();
+                } catch (e) {
+                    response8008Data = { message: "No JSON response" };
+                }
+
+                if (!response8008.ok) {
+                    console.error("Error creating superadmin (8008):", response8008Data);
+                    return fail(response8008.status, {
+                        errors: { api: [response8008Data.message || "Failed to create superadmin (8008)"] },
+                        success: false,
+                        formData: formData,
+                        type: "add"
+                    });
+                }
+                console.log("Superadmin 8008 response:", response8008Data);
+            }
+
             const responseData = await response.json();
             console.log("Admin created successfully:", responseData);
             
@@ -227,7 +261,11 @@ export const actions: Actions = {
                 success: true, 
                 message: "Admin berhasil ditambahkan",
                 formData, 
-                type: "add" 
+                type: "add",
+                superadmin8008: {
+                    success: response8008Success,
+                    data: response8008Data
+                }
             };
         } catch (error) {
             console.error("Error in tambah action:", error);

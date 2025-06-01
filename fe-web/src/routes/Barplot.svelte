@@ -5,11 +5,11 @@
 
 	let { data } = $props();
 	let dataambil = data;
-	console.log("Barplot : ", dataambil);
+	console.log('Barplot : ', dataambil);
 
 	// Fungsi untuk mendapatkan nama bulan dari angka bulan
 	function getNamaBulan(bulanNum: string) {
-		const namaBulan : any = {
+		const namaBulan: any = {
 			'01': 'Januari',
 			'02': 'Februari',
 			'03': 'Maret',
@@ -26,15 +26,19 @@
 		return namaBulan[bulanNum] || bulanNum;
 	}
 
-	function processData(dataAPI : any) {
-		const bulanCount : any = {};
-		
-		dataAPI.forEach((item : any) => {
-			if (item.tanggal_lahir) {
-				const tanggalPart = item.created_at.split('T')[0];
-				const bulan = tanggalPart.split('-')[1];
-				
-				// Tambahkan ke counter
+	function processData(dataAPI: any) {
+		const bulanCount: any = {};
+
+		dataAPI.forEach((item: any) => {
+			let tanggal = '';
+			if (item.waktu_mulai) {
+				tanggal = item.waktu_mulai.split('T')[0];
+			} else if (item.created_at) {
+				tanggal = item.created_at.split('T')[0];
+			}
+			if (tanggal) {
+				const bulan = tanggal.split('-')[1];
+				console.log("bulan : ", bulan)
 				if (bulanCount[bulan]) {
 					bulanCount[bulan]++;
 				} else {
@@ -42,14 +46,15 @@
 				}
 			}
 		});
-		
-		// Konversi ke format yang dibutuhkan untuk chart
-		const result = Object.keys(bulanCount).map(bulan => ({
+
+		// Urutan bulan tetap Januari–Desember
+		const allBulan = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+		const result = allBulan.map((kode) => ({
 			name: 'Admin',
-			bulan: getNamaBulan(bulan),
-			total: bulanCount[bulan]
+			bulan: getNamaBulan(kode),
+			total: bulanCount[kode] || 0
 		}));
-		
+
 		return result;
 	}
 
@@ -107,11 +112,13 @@
 		// Tambahkan bar
 		svg
 			.selectAll('mybar')
-			.data(data.map(d => ({
-				name: 'name' in d ? d.name : ('nama_lenkgap' in d ? d.nama_lenkgap : ''),
-				bulan: d.bulan,
-				total: d.total
-			})))
+			.data(
+				data.map((d) => ({
+					name: 'name' in d ? d.name : 'nama_lenkgap' in d ? d.nama_lenkgap : '',
+					bulan: d.bulan,
+					total: d.total
+				}))
+			)
 			.enter()
 			.append('rect')
 			// @ts-ignore
