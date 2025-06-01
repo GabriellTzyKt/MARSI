@@ -66,7 +66,15 @@ export const load = async ({ params, fetch }) => {
                 console.error("Error fetching profile image:", err);
             }
         }
+        let situsData = await fetch(`${env.URL_KERAJAAN}/situs?limit=700`);
+        let situs = await situsData.json();
 
+        situs = situs.filter((item: any) => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at).map((item: any) => ({
+            id_situs: item.id_situs,
+            nama_situs: item.nama_situs,
+           
+        }));
+        console.log("situs", situs)
         // Update the organization object with the actual member count
         komunitas.jumlah_anggota = memberCount;
 
@@ -75,7 +83,8 @@ export const load = async ({ params, fetch }) => {
             profileUrl,
             profileId,
             usersList,
-            memberCount
+            memberCount,
+            situs
         };
     } catch (err) {
         console.error("Error in load function:", err);
@@ -103,6 +112,7 @@ export const actions: Actions = {
         const notelepon = data.get("notelepon")?.toString() ?? "";
         const jumlahanggota = data.get("jumlahanggota")?.toString() ?? "";
         const tanggalBerdiri = data.get("tanggal_berdiri")?.toString() ?? " ";
+        const id_situs = data.get("id_situs")?.toString() ?? " ";
 
 
         // Get the profile picture file and existing ID
@@ -121,6 +131,7 @@ export const actions: Actions = {
             notelepon,
             jumlahanggota,
             tanggalBerdiri,
+            id_situs
         };
 
         console.log("Parsed form data:", form);
@@ -154,7 +165,8 @@ export const actions: Actions = {
                     const date = new Date(dateStr);
                     const today = new Date();
                     return date >= today;
-                }, { message: "Tanggal tidak boleh kurang dari hari ini" })
+                }, { message: "Tanggal tidak boleh kurang dari hari ini" }),
+            id_situs: z.string().min(1,"Harus Select")
 
         });
 
@@ -217,7 +229,7 @@ export const actions: Actions = {
                 pelindung: form.pelindung,
                 profile: profileId || null,
                 tanggal_berdiri: form.tanggalBerdiri,
-                lokasi: "4",
+                lokasi: form.id_situs,
                 foto_komunitas: existingFotoKomunitasId || null,
             };
 

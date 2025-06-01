@@ -85,7 +85,7 @@
 					<input
 						type="text"
 						readonly
-						bind:value={dataambil.penanggung_jawab}
+						value={data?.penanggungjawab}
 						placeholder="Masukkan Penanggung Jawab"
 					/>
 				</div>
@@ -93,23 +93,13 @@
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Pembina :</p>
-					<input
-						type="text"
-						readonly
-						bind:value={dataambil.pembina}
-						placeholder="Masukkan Pembina"
-					/>
+					<input type="text" readonly value={data?.pembina} placeholder="Masukkan Pembina" />
 				</div>
 				<div
 					class="mt-5 flex h-fit flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 				>
 					<p>Pelindung :</p>
-					<input
-						type="text"
-						readonly
-						bind:value={dataambil.pelindung}
-						placeholder="Masukkan Pelindung"
-					/>
+					<input type="text" readonly value={data?.pelindung} placeholder="Masukkan Pelindung" />
 				</div>
 
 				<!-- No Telp + Anggota -->

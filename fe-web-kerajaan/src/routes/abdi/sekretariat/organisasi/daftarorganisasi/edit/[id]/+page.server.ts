@@ -118,7 +118,7 @@ export const actions: Actions = {
     ubahOrganisasi: async ({request}) => {
         const data = await request.formData()
         console.log(data)   
-        let orgpp = data.get("profile_image") as File;
+        let orgpp:any = data.get("profile_image") as File;
        const ver = z.object({
             nama_organisasi:
                 z.string({ message: "Field Nama Situs Harus diisi" })
@@ -231,7 +231,7 @@ export const actions: Actions = {
         }
         try {
             if ( typeof(orgpp) === 'object') {
-                    orgpp = '0'                
+                    orgpp = data.get("profile")              
             }
             let senData = {
                 id_organisasi: parseInt(String(data.get("id_organisasi"))),

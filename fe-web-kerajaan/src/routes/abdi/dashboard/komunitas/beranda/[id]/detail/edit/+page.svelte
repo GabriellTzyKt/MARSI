@@ -8,6 +8,7 @@
 	import { enhance } from '$app/forms';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
+	import DropDown from '$lib/dropdown/DropDown.svelte';
 
 	let namakomunitas = $state('');
 	let alamat = $state('');
@@ -30,8 +31,26 @@
 	let pembina = $state(Number(dataambil.pembina));
 	let penanggungjawab = $state(Number(dataambil.penanggung_jawab));
 	let pelindung = $state(Number(dataambil.pelindung));
-	let loading = $state(false)
+	let loading = $state(false);
 
+	let tempatKeyWord = $state(
+		data?.situs.find((item) => item?.id_situs == data?.komunitas?.lokasi)?.nama_situs || ''
+	);
+	let selectedTempat = $state(
+		data?.situs?.find((item) => item?.id_situs == data?.komunitas?.lokasi) || null
+	);
+	let filterTempat = $derived(() => {
+		return data.situs.filter((item) =>
+			item.nama_situs.toLowerCase().includes(tempatKeyWord.toLowerCase())
+		);
+	});
+	let tempatDropdown = $state(false);
+
+	function selectTempat(item) {
+		tempatKeyWord = item.nama_situs;
+		selectedTempat = item;
+		tempatDropdown = false;
+	}
 	let showEditIcon = $state(true);
 
 	let selectedFile = $state<File | null>(null);
@@ -62,7 +81,6 @@
 	let timer: any;
 	let error: any = $state('');
 </script>
-
 
 {#if navigating.to}
 	<Loader text="Navigating..."></Loader>
@@ -303,10 +321,37 @@
 					<input
 						type="text"
 						name="tempat_operasional"
-						bind:value={dataambil.tempat_operasional}
+						bind:value={tempatKeyWord}
+						onfocus={() => {
+							tempatDropdown = true;
+						}}
+						onblur={() => {
+							setTimeout(() => {
+								tempatDropdown = false;
+							}, 200);
+						}}
 						placeholder="Masukkan nama"
 						class="mt-2 w-full rounded-lg border-2 border-black bg-slate-500 px-2 py-2 text-start"
 					/>
+					<input type="hidden" name="id_situs" value={selectedTempat?.id_situs || ''} />
+					{#if tempatDropdown && filterTempat().length > 0}
+						<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+							<ul class="max-h-60 overflow-y-auto">
+								{#each filterTempat() as item}
+									<!-- svelte-ignore a11y_click_events_have_key_events -->
+									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+									<li
+										class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+										onclick={() => selectTempat(item)}
+									>
+										<div class="flex flex-col">
+											<span class="font-medium">{item.nama_situs}</span>
+										</div>
+									</li>
+								{/each}
+							</ul>
+						</div>
+					{/if}
 					{#if error}
 						{#each error.tempat_operasional as a}
 							<p class="text-left text-red-500">{a}</p>

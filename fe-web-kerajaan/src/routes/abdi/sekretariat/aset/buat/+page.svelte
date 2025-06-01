@@ -16,49 +16,65 @@
 	let fileTypes = $state<Record<number, string>>({});
 	console.log(data.data);
 	let success = $state(false);
-	function handleFileSelect(event: Event) {
-		const input = event.target as HTMLInputElement;
-		if (input.files && input.files?.length > 0) {
-			const file = Array.from(input.files);
-			const newIndex = fileinput.length;
 
-			// Track file types
-			file.forEach((f, i) => {
-				if (f.type.startsWith('video/')) {
-					fileTypes[newIndex + i] = 'video';
-				} else if (f.type.startsWith('audio/')) {
-					fileTypes[newIndex + i] = 'audio';
-				} else {
-					fileTypes[newIndex + i] = 'image';
-				}
-			});
+	let uploadedFiles: File[] = $state([]);
+	let uploadedFileUrls: string[] = $state([]);
+	let uploadedFileIds: (number | null)[] = $state([]);
 
-			fileinput = [...fileinput, ...file];
-			const newurl = file.map((file) => URL.createObjectURL(file));
-			preview = [...preview, ...newurl];
+	// Handle file selection
+	function handleFileChange(event: Event) {
+		const target = event.target as HTMLInputElement;
+		if (target.files && target.files.length > 0) {
+			const newFiles = Array.from(target.files);
+
+			// Add new files to our arrays
+			uploadedFiles = [...uploadedFiles, ...newFiles];
+
+			// Create URLs for preview
+			const newUrls = newFiles.map((file) => URL.createObjectURL(file));
+			uploadedFileUrls = [...uploadedFileUrls, ...newUrls];
+
+			// Add null IDs for new files (they don't have IDs yet)
+			uploadedFileIds = [...uploadedFileIds, ...newFiles.map(() => null)];
+
+			console.log(
+				'Updated files:',
+				uploadedFiles.map((f) => f.name)
+			);
+
+			// Reset input to allow selecting the same file again
+			target.value = '';
 		}
 	}
-	function removeFile(index: number) {
-		URL.revokeObjectURL(preview[index]);
 
-		// Also remove from fileTypes
-		const newFileTypes = { ...fileTypes };
-		delete newFileTypes[index];
+	// Remove a file from the list
+	function removeImage(index: number) {
+		// Release object URL to prevent memory leaks
+		URL.revokeObjectURL(uploadedFileUrls[index]);
 
-		// Reindex remaining files
-		const updatedFileTypes: Record<number, string> = {};
-		fileinput
-			.filter((_, i) => i !== index)
-			.forEach((_, i) => {
-				if (newFileTypes[i < index ? i : i + 1]) {
-					updatedFileTypes[i] = newFileTypes[i < index ? i : i + 1];
-				}
-			});
-
-		fileTypes = updatedFileTypes;
-		fileinput = fileinput.filter((_, i) => i !== index);
-		preview = preview.filter((_, i) => i !== index);
+		// Remove file from all arrays
+		uploadedFiles = uploadedFiles.filter((_, i) => i !== index);
+		uploadedFileUrls = uploadedFileUrls.filter((_, i) => i !== index);
+		uploadedFileIds = uploadedFileIds.filter((_, i) => i !== index);
 	}
+	let previewModal = $state(false);
+	let previewType = $state('');
+	let previewUrl = $state('');
+	let previewName = $state('');
+
+	function openPreview(file: File, url: string) {
+		previewType = file.type;
+		previewUrl = url;
+		previewName = file.name;
+		previewModal = true;
+	}
+	function closePreview() {
+		previewModal = false;
+		previewType = '';
+		previewUrl = '';
+		previewName = '';
+	}
+
 	function filter() {
 		if (!keyword.trim()) return [];
 		return data.data.filter((item) =>
@@ -75,6 +91,79 @@
 			selectedItem = '';
 		}
 	});
+	// Handle form submission
+	async function handleSubmit(event: SubmitEvent) {
+		event.preventDefault();
+		loading = true;
+		errors = null; // Reset error state
+
+		try {
+			const form = event.target as HTMLFormElement;
+			const formData = new FormData(form);
+
+			// Remove any existing file inputs
+			formData.delete('uploadfile');
+
+			// Add each file to the form data
+			uploadedFiles.forEach((file, index) => {
+				if (file) {
+					console.log(`Adding file: ${file.name} (${file.size} bytes)`);
+					formData.append('uploadfile', file);
+				}
+			});
+
+			// Send the form data
+			const response = await fetch(form.action, {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = await response.json();
+			console.log('Response:', result);
+
+			// Set loading to false after getting a response
+			loading = false;
+
+			// Check for success in various formats
+			if (
+				result.type === 'success' ||
+				(result.data && result.data.success) ||
+				result.success === true ||
+				(result.message && result.message.includes('success'))
+			) {
+				console.log('Form submission successful, showing modal');
+				success = true;
+
+				// Set a timer to hide the success message after 3 seconds
+
+				setTimeout(() => {
+					success = false;
+					goto('/abdi/sekretariat/aset');
+				}, 3000);
+			} else if (result.type === 'failure' && result.data?.errors) {
+				// Handle SvelteKit formatted errors
+				console.error('Form submission error:', result.data.errors);
+				errors = result.data.errors;
+				success = false;
+			} else if (result.errors) {
+				// Handle direct API errors
+				console.error('Form submission error:', result.errors);
+				errors = result.errors;
+				success = false;
+			} else if (!response.ok) {
+				// Handle HTTP errors
+				console.error('Form submission HTTP error:', response.status);
+				errors = { general: [`Error: ${response.status} - ${result.message || 'Unknown error'}`] };
+				success = false;
+			}
+		} catch (err) {
+			console.error('Error submitting form:', err);
+			errors = { general: ['Terjadi kesalahan saat mengirim data'] };
+			loading = false;
+			success = false;
+		}
+	}
+	// $inspect();
 </script>
 
 {#if navigating.to}
@@ -87,33 +176,7 @@
 	<SuccessModal text="berhasil ditambahkan"></SuccessModal>
 {/if}
 <div class="flex w-full flex-col">
-	<form
-		action="?/buat"
-		method="post"
-		enctype="multipart/form-data"
-		use:enhance={() => {
-			loading = true;
-			return async ({ result }) => {
-				loading = false;
-				if (result.type === 'success') {
-					success = true;
-					preview = [];
-					fileinput = [];
-					keyword = '';
-					selectedItem = '';
-					errors = null;
-					setTimeout(() => {
-						success = false;
-						goto('/abdi/sekretariat/aset');
-					}, 3000);
-				}
-				if (result.type === 'failure') {
-					errors = result?.data?.errors;
-					console.log(errors);
-				}
-			};
-		}}
-	>
+	<form action="?/buat" method="post" enctype="multipart/form-data" onsubmit={handleSubmit}>
 		<div class="grid w-full grid-cols-1 gap-2 lg:grid-cols-2">
 			<!-- Nama Aset -->
 			<div class="flex w-full flex-col gap-1">
@@ -123,6 +186,7 @@
 				<div class="flex">
 					<input
 						type="text"
+						required
 						placeholder="Nama Aset"
 						class="w-full rounded-xl border bg-white px-2 py-2 shadow-sm focus:outline-none"
 						name="nama_aset"
@@ -143,6 +207,7 @@
 					<input
 						type="text"
 						placeholder="Jenis Aset"
+						required
 						bind:value={keyword}
 						onfocus={() => {
 							dropdown = true;
@@ -204,6 +269,7 @@
 				<div class="flex">
 					<textarea
 						name="deskripsi_aset"
+						required
 						placeholder="Masukkan Deskripsi Aset"
 						class="w-full rounded-xl border bg-white px-2 py-2 shadow-sm focus:outline-none"
 						rows="5"
@@ -234,67 +300,65 @@
 						type="file"
 						class="hidden"
 						accept="image/*,video/*,audio/*"
-						onchange={handleFileSelect}
+						onchange={handleFileChange}
 						multiple
 						name="dokumentasi"
 					/>
 				</label>
 			</div>
 		</div>
-		{#if preview.length > 0}
+		{#if uploadedFileUrls.length > 0}
 			<div class="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-				{#each preview as url, i}
-					<div class="relative h-40 w-full overflow-hidden rounded-lg border">
-						{#if fileTypes[i] === 'video'}
-							<video class="h-full w-full object-cover" controls>
-								<source src={url} type={fileinput[i].type} />
-								Browser tidak mendukung video.
-							</video>
-						{:else if fileTypes[i] === 'audio'}
-							<div class="flex h-full w-full flex-col items-center justify-center bg-gray-100 p-2">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="h-12 w-12 text-gray-500"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
-									/>
-								</svg>
-								<audio controls class="mt-2 w-full">
-									<source src={url} type={fileinput[i].type} />
-									Browser tidak mendukung audio.
-								</audio>
-							</div>
+				{#each uploadedFileUrls as url, index}
+					<div class="relative w-full flex-shrink-0">
+						{#if uploadedFiles[index]?.type.startsWith('image/')}
+							<!-- Display image preview for image files -->
+							<img
+								src={url}
+								alt="Uploaded file"
+								class="h-[250px] w-full rounded-lg border object-cover"
+							/>
 						{:else}
-							<img src={url} alt="preview" class="h-full w-full object-cover" />
+							<!-- Display file icon for non-image files -->
+							<div
+								class=" flex h-auto w-full flex-col items-center justify-center rounded-lg border bg-gray-100"
+							>
+								<div class="mb-2 text-4xl">
+									{#if uploadedFiles[index]?.type.includes('pdf')}
+										📄
+									{:else if uploadedFiles[index]?.type.includes('word') || uploadedFiles[index]?.type.includes('doc')}
+										<a href={url}> 📝 </a>
+									{:else if uploadedFiles[index]?.type.includes('sheet') || uploadedFiles[index]?.type.includes('excel') || uploadedFiles[index]?.type.includes('xls')}
+										<a href={url}> 📊 </a>
+									{:else if uploadedFiles[index]?.type.startsWith('audio/') || uploadedFiles[index]?.type.includes('mp3')}
+										<div class="flex w-full flex-col items-center justify-between p-2">
+											<audio src={url} controls class="w-30 mx-4 lg:w-60"> 📁 </audio>
+										</div>
+									{:else if uploadedFiles[index]?.type.startsWith('video/') || uploadedFiles[index]?.type.includes('mp3')}
+										<div class="flex w-full flex-col items-center justify-between p-2">
+											<video src={url} controls class=""></video>
+										</div>
+									{/if}
+								</div>
+								<p class="w-full truncate px-2 text-center text-sm">
+									{uploadedFiles[index]?.name || 'File'}
+								</p>
+								<div class="mt-2 rounded-full bg-blue-100 px-3 py-1 text-xs text-blue-800">
+									{uploadedFiles[index]?.type.split('/')[1] || 'File'}
+								</div>
+							</div>
 						{/if}
-						<button
-							type="button"
-							class="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white"
-							onclick={() => removeFile(i)}
-						>
-							×
-						</button>
+						<button type="button" class="remove-btn" onclick={() => removeImage(index)}>✕</button>
 					</div>
 				{/each}
 			</div>
 		{/if}
-		{#each fileinput as file, index}
-			<input hidden value={file} id="file-{index}" />
-		{/each}
-		<div>
-			{#if errors}
-				{#each errors.dokumentasi as e}
-					<p class="text-sm text-red-500">{e}</p>
-				{/each}
-			{/if}
-		</div>
+		{#if errors && errors.urlfoto}
+			{#each errors.urlfoto as errorMsg}
+				<p class="text-left text-red-500">{errorMsg}</p>
+			{/each}
+		{/if}
+
 		<div class="flex justify-center lg:justify-end">
 			<button class="bg-badran-bdg w-full rounded-lg px-6 py-2 text-white lg:w-auto"
 				>Tambah Data</button
@@ -302,3 +366,19 @@
 		</div>
 	</form>
 </div>
+
+<style>
+	.remove-btn {
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		background: red;
+		color: white;
+		border: none;
+		border-radius: 50%;
+		width: 25px;
+		height: 25px;
+		cursor: pointer;
+		z-index: 10;
+	}
+</style>

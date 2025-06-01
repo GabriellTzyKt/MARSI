@@ -25,6 +25,10 @@ export const actions: Actions = {
         const nama_aset = data.get("nama_aset")
         const jenis_aset = data.get("jenis_aset")
         const deskripsi_aset = data.get("deskripsi_aset")
+          // Get all uploaded files
+            const uploadedFiles = data.getAll('uploadfile')
+            .filter(item => item instanceof File && item.size > 0) as File[];
+        console.log("Uploaded files:", uploadedFiles)
         console.log("Form data:", data);
         console.log("Parsed form data:", obj);
         // Get all dokumentasi files, including videos and audios
@@ -65,26 +69,15 @@ export const actions: Actions = {
                         message: "Jenis aset tidak valid, pilih dari daftar yang tersedia"
                     }),
             deskripsi_aset: z.string({message:"Deskripsi Aset harus diisi"}).min(1, "Deskripsi harus diisi"),
-            dokumentasi: z.array(z.any())
-                .refine(files => files.length > 0, {
-                    message: "Minimal satu dokumentasi harus diunggah"
-                })
-                .refine(files => files.every(file => file instanceof File), {
-                    message: "File dokumentasi tidak valid"
-                })
+     
         });
-        const dokumentasii = data.getAll("dokumentasi").filter(item => item instanceof File && item.size > 0).map(item => item as File)
-         console.log("Dokumentasi files:", dokumentasii.map(file => ({
-            name: file.name,
-            type: file.type,
-            size: file.size
-        })));
+       
         console.log("Dokumentasi: ",dokumentasiFiles)
          const validation = schema.safeParse({
         nama_aset,
          jenis_aset,
           deskripsi_aset,
-            dokumentasi: dokumentasiFiles
+         
          });
         // const files = dokumentasiFiles.map((files)=> files.name)
         
@@ -101,12 +94,15 @@ export const actions: Actions = {
         console.log(id_jenis_aset)
         formData.append("id_kerajaan", String("3"))
         formData.append("id_jenis_aset", String(id_jenis_aset.id_jenis_aset))
-        for(const file of dokumentasiFiles){
-            formData.append("dokumentasi", file)
-        }
+          uploadedFiles.forEach((file, index) => {
+                console.log(`Adding file ${index + 1}/${uploadedFiles.length} to API request: ${file.name}`);
+                formData.append("dokumentasi", file);
+            });
         formData.append("nama_aset", String(nama_aset))
         formData.append("deskripsi_aset", String(deskripsi_aset))
         formData.append("kategori_aset", String(jenis_aset))
+
+        console.log("Send the data : ", formData)
         try {
             const res = await fetch(`${env.URL_KERAJAAN}/aset`, { method: "POST", body: formData })
             if(!res.ok){

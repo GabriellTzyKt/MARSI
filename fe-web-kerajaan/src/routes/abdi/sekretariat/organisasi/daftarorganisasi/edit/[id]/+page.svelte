@@ -128,7 +128,7 @@
 				</div>
 			</div>
 		</div>
-
+		<input type="text" name="profile" value={data?.data?.profile} hidden />
 		<input type="text" name="id_organisasi" value={data?.data.id_organisasi} hidden />
 		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<!-- 1 -->

@@ -2,10 +2,10 @@ import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types"; 
 import { env } from "$env/dynamic/private";
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, cookies }) => {
     try {
         const id = params.id;
-
+        let cookie = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
         // Fetch komunitas data
         const komunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas/${id}`);
         if (!komunitasResponse.ok) {
@@ -20,7 +20,31 @@ export const load: PageServerLoad = async ({ params }) => {
             throw error(dataanggota.status, `Failed to fetch komunitas anggota: ${dataanggota.statusText}`);
         }
         const dataanggotajson = await dataanggota.json();
-        
+        let [ppRes, pbRes, plRes] = await Promise.all([
+            fetch(`${env.PUB_PORT}/user/${komunitasData.penanggung_jawab}`, {
+                
+                headers: {
+                    "Authorization": `Bearer ${cookie?.token}`
+                }
+            }),
+            fetch(`${env.PUB_PORT}/user/${komunitasData.pelindung}`, {
+                
+                headers: {
+                    "Authorization": `Bearer ${cookie?.token}`
+                }
+            }),
+            fetch(`${env.PUB_PORT}/user/${komunitasData.pembina}`,{
+                
+                headers: {
+                    "Authorization": `Bearer ${cookie?.token}`
+                }
+            }),
+
+        ])
+        let ppData = await ppRes.json()
+        let pbData = await pbRes.json();
+        let plData = await plRes.json();
+
         // Fetch profile image if available
         let fileDetails = null;
         if (komunitasData.profile) {
@@ -82,7 +106,10 @@ export const load: PageServerLoad = async ({ params }) => {
             komunitas: komunitasData,
             dataanggota: dataanggotajson,
             fileDetails,
-            fotoKomunitasDetails
+            fotoKomunitasDetails,
+            pelindung: plData.nama_lengkap || "-",
+            penanggungjawab: ppData.nama_lengkap || "-",
+            pembina: pbData.nama_lengkap || "-"
         };
     } catch (err) {
         console.error("Error in load function:", err); 
