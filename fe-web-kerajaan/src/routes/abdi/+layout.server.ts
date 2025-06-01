@@ -10,6 +10,6 @@ export const load: PageServerLoad = async ({ cookies }) => {
     const tes = cookies.get('userSession') ? JSON.parse(cookies.get('userSession') as string) : "Haslo"
     // console.log(hasil)
     
-    return {hasil : hasil.nama, id : tes.user_data.id_user, username: tes.username}
+    return {hasil : hasil.nama, id : tes?.user_data?.id_user ||false, username: tes.username}
 }
 

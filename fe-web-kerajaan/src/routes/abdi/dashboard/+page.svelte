@@ -50,7 +50,7 @@
 	<div
 		class="mt-4 grid items-center justify-center gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
 	>
-		<a href="/abdi/dashboard/organisasi/beranda">
+		<!-- <a href="/abdi/dashboard/organisasi/beranda">
 			<div
 				class="an border-badran-bt mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer"
 			>
@@ -88,7 +88,6 @@
 				</div>
 			</div>
 		</a>
-
 		<a href="/abdi/sekretariat/anggota/daftaranggota" class="">
 			<div
 				class="an border-badran-bdg mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer"
@@ -100,7 +99,64 @@
 					<p class="px-3 py-2 text-center text-xl text-white">Sekretariat</p>
 				</div>
 			</div>
-		</a>
+		</a> -->
+		{#if data?.data?.status_admin_aktif === 0}
+			<div class=" flex justify-center text-center">
+				<p class="text-red-500">Anda di Non-aktifkan</p>
+			</div>
+		{:else if data?.data?.jenis_admin === 'Admin Organisasi'}
+			<a href="/abdi/dashboard/organisasi/beranda">
+				<div
+					class="an border-badran-bt mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer"
+				>
+					<div class=" mb-3 flex items-center justify-center">
+						<img src={org} alt="" />
+					</div>
+					<div class="bg-badran-bt flex items-center justify-center rounded-full">
+						<p class="px-3 py-2 text-center text-xl text-white">Manajemen Organisasi</p>
+					</div>
+				</div>
+			</a>
+		{:else if data?.data?.jenis_admin === 'Admin Komunitas'}
+			<a href="/abdi/dashboard/komunitas/beranda">
+				<div
+					class="an border-badran-bdr mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer"
+				>
+					<div class=" mb-3 flex items-center justify-center">
+						<img src={kom} alt="" />
+					</div>
+					<div class=" bg-badran-bdr flex items-center justify-center rounded-full">
+						<p class="px-3 py-2 text-center text-xl text-white">Manajemen Komunitas</p>
+					</div>
+				</div>
+			</a>
+		{:else if data?.data?.jenis_admin === 'Admin Situs'}
+			<a href="/abdi/dashboard/situs/beranda">
+				<div
+					class="an border-badran-bdy mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer"
+				>
+					<div class=" mb-3 flex items-center justify-center">
+						<img src={situs} alt="" />
+					</div>
+					<div class="bg-badran-bdy flex items-center justify-center rounded-full">
+						<p class="px-3 py-2 text-center text-xl text-white">Manajemen Situs</p>
+					</div>
+				</div>
+			</a>
+		{:else if data?.data?.jenis_admin === 'Super Admin'}
+			<a href="/abdi/sekretariat/anggota/daftaranggota" class="">
+				<div
+					class="an border-badran-bdg mx-2 flex flex-col rounded-lg border p-8 hover:cursor-pointer"
+				>
+					<div class=" mb-3 flex items-center justify-center">
+						<img src={sekre} alt="" />
+					</div>
+					<div class="bg-badran-bdg flex items-center justify-center rounded-full">
+						<p class="px-3 py-2 text-center text-xl text-white">Sekretariat</p>
+					</div>
+				</div>
+			</a>
+		{/if}
 	</div>
 </div>
 

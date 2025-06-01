@@ -5,23 +5,28 @@ export const handle = async ({ event, resolve}) => {
     const auth = event.cookies.get('userSession') ? JSON.parse(event.cookies.get("userSession") as string) : false
     console.log(auth)
     // Set up public routes that don't require authentication
-    const publicRoutes = ['/login', '/signup', '/beranda',"/acara","/situs"];
+    const publicRoutes = ['/login', '/signup', '/beranda',"/acara","/situs","/aset", "/sabdi"];
     const isPublicRoute = publicRoutes.some(route => event.url.pathname.startsWith(route));
     
     // Handle authentication
     if (auth) {
         // User is authenticated
         event.locals.token = auth.token;
-        
-        // If user is authenticated and trying to access login page, redirect to dashboard
-        if (event.url.pathname === '/login') {
-            // throw redirect(302, '/abdi/dashboard');
+        if (event.url.pathname.startsWith("/abdi/dashboard")) {
+            if (!auth?.id_admin || auth.jenis_admin === 0 || auth.status_admin_aktif === 0) {
+                throw redirect(302, '/beranda');
+            }
         }
+        if (event.url.pathname.startsWith("/abdi/sekretariat")) {
+            if (!auth?.id_admin || auth.jenis_admin === 0 || auth.status_admin_aktif === 0) {
+                throw redirect(302, '/beranda');
+            }
+        }
+        // If user is authenticated and trying to access login page, redirect to dashboard
+        
     } else {
         // User is not authenticated
-        if (event.url.pathname !== '/login') {
-            throw redirect(302, '/login');
-        }
+        
         event.locals.token = null;
         
         // Only redirect to login if not accessing a public route

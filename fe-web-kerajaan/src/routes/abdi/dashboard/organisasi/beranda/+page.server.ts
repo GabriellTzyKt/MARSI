@@ -4,7 +4,7 @@ import { env } from "$env/dynamic/private";
 
 export const load: PageServerLoad = async ({ }) => {
     try {
-        const organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi`);
+        const organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi?limit=1000`);
         if (!organisasiResponse.ok) {
             throw error(organisasiResponse.status, `Failed to fetch Organisasi: ${organisasiResponse.statusText}`);
         }

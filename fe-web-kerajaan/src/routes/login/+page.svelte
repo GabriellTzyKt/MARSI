@@ -23,6 +23,7 @@
 		// 	temp.push('password harus minimal 8 kata');
 		// }
 	});
+	let apierror = $state();
 </script>
 
 <Nav></Nav>
@@ -53,13 +54,21 @@
 							if (result.type === 'success') {
 								success = true;
 								let timer: number;
+								let admin: any = result.data?.userCookie;
+								console.log('admin', admin);
 								timer = setTimeout(() => {
 									success = false;
-									goto('/abdi/dashboard');
+									if (!admin?.id_admin) {
+										goto('/beranda');
+									} else {
+										goto('/abdi/dashboard');
+									}
 								}, 3000);
 							}
 							if (result.type === 'failure') {
 								errors = result.data?.errors;
+								apierror = result?.data?.apierror;
+								console.log(apierror);
 							}
 						};
 					}}
@@ -103,7 +112,9 @@
 					<p class="block text-left text-xl text-red-500">{t}</p>
 				{/each}
 			</div>
-
+			{#if apierror}
+				<p class="block text-left text-xl text-red-500">{apierror}</p>
+			{/if}
 			<div class="flex items-center justify-center">
 				<p class="me-2">Belum punya akun?</p>
 				<a href="/signup" class=" text-badran-bt">Daftar</a>

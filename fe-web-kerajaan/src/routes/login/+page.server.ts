@@ -1,4 +1,4 @@
-import { fail, redirect, type Actions } from "@sveltejs/kit";
+import { error, fail, redirect, type Actions } from "@sveltejs/kit";
 import { schema } from "./schema";
 import { env } from "$env/dynamic/private";
 import { jwtDecode } from "jwt-decode";
@@ -27,24 +27,44 @@ export const actions: Actions = {
             });
             
             const data = await res.json();
-            
+            console.log(data)
+            let Admin = await fetch(`${env.URL_KERAJAAN}/admin?limit=600`, {
+                method: "GET",
+               
+            });
+            if (!Admin.ok) {
+                throw error(Admin.status, `Failed to fetch admin: ${Admin.statusText}`);
+            }
+            let dataAdmin = await Admin.json();
             if (res.ok) {
                 try {
                     const decode = jwtDecode(data.jwt_token);
                     console.log("Login response data:", data);
                     console.log("Decoded token:", decode);
-                    
+                    let dataAdminuser = dataAdmin.filter((item)=> item.deleted_at === "0001-01-01T00:00:00Z" || !item.deleted_at).find((item) => item.id_user === decode?.id_user)
+                    let userCookie = {
+                         username: data.username, 
+                        user_data: decode, 
+                        token: data.jwt_token,
+                        id_admin: dataAdminuser?.id_admin,
+                        jenis_admin: dataAdminuser?.jenis_admin|| false,
+                        status_admin_aktif : dataAdminuser?.status_aktif||0
+                    }
+                    console.log("Found Admin:", dataAdminuser);
                     cookies.set("userSession", JSON.stringify({ 
                         username: data.username, 
                         user_data: decode, 
-                        token: data.jwt_token 
+                        token: data.jwt_token,
+                        id_admin: dataAdminuser?.id_admin ||0,
+                        jenis_admin: dataAdminuser?.jenis_admin|| false,
+                        status_admin_aktif : dataAdminuser?.status_aktif||0
                     }), {
                         path: "/",
                         maxAge: 60 * 60 * 24,
                         sameSite: "strict"
                     });
                     
-                    return { success: true };
+                    return { success: true, userCookie  };
                 } catch (tokenError) {
                     console.error("Error decoding token:", tokenError);
                     return fail(500, { errors: "Token tidak valid" });
@@ -52,7 +72,7 @@ export const actions: Actions = {
             } else {
                 console.error("Login failed:", data);
                 return fail(res.status, { 
-                    errors: data.message || "Username atau password salah" 
+                    apierror: "Login gagal"
                 });
             }
         } catch (error) {

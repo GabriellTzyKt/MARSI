@@ -4,7 +4,7 @@ import { env } from "$env/dynamic/private";
 
 export const load: PageServerLoad = async ({ }) => {
     try {
-        const komunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas?limit=200`);
+        const komunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas?limit=1000`);
         if (!komunitasResponse.ok) {
             throw error(komunitasResponse.status, `Failed to fetch komunitas: ${komunitasResponse.statusText}`);
         }
