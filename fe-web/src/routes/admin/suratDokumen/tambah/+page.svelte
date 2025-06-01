@@ -23,6 +23,7 @@
 	let success = $state(false);
 	let showModal = $state(false);
 	let timer: any;
+	let selectedId : any = $state("");
 
 	// File handling variables
 	let uploadedFiles: File[] = [];
@@ -37,9 +38,11 @@
 		}
 	});
 
-	function selectKeterkaitan(value: string) {
+	function selectKeterkaitan(value: string, id: number) {
 		keterkaitan = value;
 		showDropdown = false;
+		selectedId = id;
+		console.log("select id : ", selectedId)
 	}
 
 	function filter(data: any[]) {
@@ -232,7 +235,7 @@
 								<!-- svelte-ignore a11y_click_events_have_key_events -->
 								<li
 									class="cursor-pointer p-2 hover:bg-gray-300"
-									onmousedown={() => selectKeterkaitan(item.nama_kerajaan)}
+									onmousedown={() => selectKeterkaitan(item.nama_kerajaan, item.id_kerajaan)}
 								>
 									{item.nama_kerajaan}
 								</li>
@@ -246,6 +249,8 @@
 					{/if}
 				</div>
 			</div>
+
+			<input type="hidden" name="id_kerajaan" value={selectedId}>
 
 			<div class="mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="jenisDokumen">Jenis Dokumen</label>
