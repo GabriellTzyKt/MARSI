@@ -27,7 +27,7 @@
 				<div class="mx-auto flex w-full items-center justify-center">
 					<img src={situs.profileUrl || gambartemp} class="h-20 w-20 rounded-full" alt="" />
 				</div>
-				<h5 class="mb-8 mt-4 text-center text-lg font-bold tracking-tight text-black">
+				<h5 class="mb-8 mt-4 text-center text-lg font-bold tracking-tight text-black max-w-[300px] overflow-hidden text-ellipsis">
 					{situs.nama_situs || 'Nama Situs'}
 				</h5>
 				<div class="mt-auto flex w-full justify-end">

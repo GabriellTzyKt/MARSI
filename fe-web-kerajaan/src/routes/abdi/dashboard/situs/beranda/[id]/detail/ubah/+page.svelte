@@ -181,7 +181,7 @@
 					<label for="upload-photo" class="relative ml-5 mr-5 cursor-pointer hover:opacity-25">
 						<img
 							id="preview-image"
-							src={dataambil.profile || ''}
+							src={dataambil.imageUrls}
 							class="h-20 w-20 rounded-full object-cover"
 							alt="Profile"
 						/>
