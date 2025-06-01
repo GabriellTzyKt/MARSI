@@ -29,12 +29,6 @@
 			</div>
 			<div class="grid grid-cols-1 gap-8 p-4 px-4 md:grid-cols-2 md:px-10">
 				<div>
-					<img
-						src={imageUrls[0] ? imageUrls[0] : 'https://picsum.photos/200/300'}
-						class="mx-auto h-auto w-full max-w-[500px] self-center rounded-lg object-cover"
-						alt="foto 1"
-					/>
-
 					<!-- Video Section -->
 					{#if videoUrls && videoUrls.length > 0}
 						<div class="mt-4">
@@ -47,6 +41,13 @@
 								Your browser does not support the video tag.
 							</video>
 						</div>
+						{#if imageUrls.length !== 0}
+							<img
+								src={imageUrls[0] ? imageUrls[0] : 'https://picsum.photos/200/300'}
+								class="mx-auto mt-3 h-auto w-full max-w-[500px] self-center rounded-lg object-cover"
+								alt="foto 1"
+							/>
+						{/if}
 					{/if}
 
 					<!-- Audio Section -->
@@ -90,7 +91,11 @@
 										<div
 											class="relative col-span-1 m-1 h-auto w-[200px] overflow-hidden rounded-lg"
 										>
-											<video src={videoUrl} class="h-full w-full object-cover" preload="metadata"
+											<video
+												src={videoUrl}
+												controls
+												class="h-full w-full object-cover"
+												preload="metadata"
 											></video>
 											<div
 												class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30"
@@ -107,6 +112,7 @@
 											class="relative col-span-1 m-1 h-auto w-[200px] rounded-lg bg-gray-100 p-2"
 										>
 											<div class="flex h-full items-center justify-center">
+												<audio src={audioUrl} controls></audio>
 												<span class="text-4xl">🎵</span>
 											</div>
 										</div>
