@@ -150,6 +150,7 @@
 				</div>
 			</div>
 		</div>
+		<input type="text" name="profile" hidden value={data?.komunitas?.profile} id="" />
 		<div class="w-full items-center text-center">
 			{#if errors}
 				{#each errors.image_name as e}

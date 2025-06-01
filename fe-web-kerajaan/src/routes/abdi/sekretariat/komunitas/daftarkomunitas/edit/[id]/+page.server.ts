@@ -139,7 +139,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 export const actions: Actions = {
     ubahKomunitas: async ({ request, params }) => {
         const data = await request.formData()
-        let pp = data.get("profile_image") as File;
+        let pp:any = data.get("profile_image") as File;
         console.log("komunitas : ", data)
         const ver = z.object({
             nama_situs:
@@ -257,6 +257,9 @@ export const actions: Actions = {
             }
         }   
         try {
+            if (typeof(pp) === 'object') {
+                pp = data.get("profile")
+            }
             let formDataToSend = {
                 id_komunitas: parseInt(String(data.get("id_komunitas"))),
                 penanggung_jawab: parseInt(formData.penanggungjawab_id),
