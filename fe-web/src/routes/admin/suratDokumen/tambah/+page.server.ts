@@ -8,7 +8,7 @@ import type { PageServerLoad } from "../$types";
 export const load: PageServerLoad = async () => {
     try {
         const [kerajaanRes, arsipRes] = await Promise.all([
-            fetch(`${env.PUB_PORT}/kerajaan`, {
+            fetch(`${env.PUB_PORT}/kerajaan?limit=200`, {
                 method: 'GET',
                 headers: {
                     Accept: 'application/json'

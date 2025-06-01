@@ -21,6 +21,7 @@
 	let { data } : any = $props();
 	let dataArsip : any = data.dataArsip;
 	console.log('data arsip : ', dataArsip);
+	console.log("data kerajaan : ", data.kerajaan)
 
 	function filterData(data: any[]) {
 		return data.filter((item) => item?.nama_arsip?.toLowerCase().includes(keyword.toLowerCase()));

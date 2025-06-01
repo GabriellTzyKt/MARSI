@@ -22,7 +22,7 @@
 				console.error(`Failed to fetch image: ${response.statusText}`);
 				return null;
 			}
-			
+
 			const blob = await response.blob();
 			// Determine file type from blob or URL
 			const fileType = blob.type || 'image/jpeg';
@@ -37,23 +37,23 @@
 	// Load existing images and convert to File objects
 	onMount(async () => {
 		console.log('onMount: Starting to process datagambar:', datagambar);
-		
+
 		if (datagambar && datagambar.length > 0) {
 			// Initialize arrays with the correct IDs
 			uploadedFileUrls = datagambar.map((file: any) => file.url);
-			
+
 			// Use the docId from each file as the existingFileId
 			uploadedFileIds = datagambar.map((file: any) => file.docId || null);
-			
+
 			console.log('onMount: Initial uploadedFileUrls:', uploadedFileUrls);
 			console.log('onMount: Initial uploadedFileIds:', uploadedFileIds);
-			
+
 			// Convert URLs to File objects
 			const filePromises = datagambar.map(async (file: any, index: any) => {
 				const filename = file.name || `file-${index}.${file.url.split('.').pop()}`;
 				return await urlToFile(file.url, filename);
 			});
-			
+
 			// Wait for all conversions to complete
 			uploadedFiles = await Promise.all(filePromises);
 			console.log('onMount: Converted existing files to File objects:', uploadedFiles);
@@ -79,13 +79,13 @@
 	let kategori_arsip = $state(dataambil.kategori_arsip.toLowerCase());
 	let keterkaitan = $state('');
 	let showDropdown = $state(false);
-	
+
 	function filter(data: any[]) {
 		return data.filter((item) =>
 			item?.nama_kerajaan?.toLowerCase().includes(keterkaitan.toLowerCase())
 		);
 	}
-	let searchRes = $derived(filter(data.data));
+	let searchRes = $derived(filter(data.kerajaanData));
 
 	function selectKeterkaitan(value: string) {
 		keterkaitan = value;
@@ -104,7 +104,7 @@
 			uploadedFiles = [...uploadedFiles, ...newFiles];
 
 			// Add URLs for preview
-			const newUrls = newFiles.map(file => URL.createObjectURL(file));
+			const newUrls = newFiles.map((file) => URL.createObjectURL(file));
 			uploadedFileUrls = [...uploadedFileUrls, ...newUrls];
 
 			// Add null IDs for new files
@@ -112,7 +112,7 @@
 
 			console.log('Updated file list:', uploadedFiles);
 			console.log('Updated file id', uploadedFileIds);
-			
+
 			// Reset file input to allow selecting the same file again
 			target.value = '';
 		}
@@ -128,15 +128,23 @@
 		uploadedFileIds = uploadedFileIds.filter((_, i) => i !== index);
 	}
 
+	$effect(() => {
+		if (!keterkaitan || data.kerajaanData.some((item: any) => item.nama_kerajaan === keterkaitan)) {
+			showDropdown = false;
+		} else {
+			showDropdown = true;
+		}
+	});
+
 	// Function to get file type from URL or File object
 	function getFileType(file: File | null, url: string): string {
 		if (file) {
 			return file.type;
 		}
-		
+
 		// Try to determine type from URL extension
 		const extension = url.toLowerCase().split('.').pop() || '';
-		
+
 		if (extension === 'pdf') return 'application/pdf';
 		if (['doc', 'docx'].includes(extension)) return 'application/msword';
 		if (['xls', 'xlsx'].includes(extension)) return 'application/vnd.ms-excel';
@@ -144,14 +152,14 @@
 		if (['mp4'].includes(extension)) return 'video/mp4';
 		if (['jpg', 'jpeg'].includes(extension)) return 'image/jpeg';
 		if (['png'].includes(extension)) return 'image/png';
-		
+
 		return 'application/octet-stream';
 	}
 
 	// Add these helper functions to determine file type
 	function getFileTypeFromUrl(url: string): string {
 		const extension = url.toLowerCase().split('.').pop() || '';
-		
+
 		if (extension === 'pdf') return 'PDF';
 		if (['doc', 'docx'].includes(extension)) return 'Word';
 		if (['xls', 'xlsx'].includes(extension)) return 'Excel';
@@ -159,20 +167,28 @@
 		if (['mp3', 'wav', 'ogg'].includes(extension)) return 'Audio';
 		if (['mp4', 'webm', 'mov'].includes(extension)) return 'Video';
 		if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) return 'Image';
-		
+
 		return 'Document';
 	}
 
 	function getFileIconForType(type: string): string {
 		switch (type) {
-			case 'PDF': return '📄';
-			case 'Word': return '📝';
-			case 'Excel': return '📊';
-			case 'PowerPoint': return '📺';
-			case 'Audio': return '🎵';
-			case 'Video': return '🎬';
-			case 'Image': return '🖼️';
-			default: return '📁';
+			case 'PDF':
+				return '📄';
+			case 'Word':
+				return '📝';
+			case 'Excel':
+				return '📊';
+			case 'PowerPoint':
+				return '📺';
+			case 'Audio':
+				return '🎵';
+			case 'Video':
+				return '🎬';
+			case 'Image':
+				return '🖼️';
+			default:
+				return '📁';
 		}
 	}
 
@@ -180,22 +196,22 @@
 		const parts = url.split('/');
 		return parts[parts.length - 1].split('?')[0];
 	}
-	
+
 	// Custom form submission to handle multiple files
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
 		loading = true;
-		
+
 		try {
 			const form = event.target as HTMLFormElement;
 			const formData = new FormData(form);
-			
+
 			// Hapus input file kosong yang mungkin ada
 			formData.delete('uploadfile');
-			
+
 			// Clear any existing existingFileId entries to avoid duplicates
 			formData.delete('existingFileId');
-			
+
 			// Add each docId as an existingFileId
 			uploadedFileIds.forEach((docId, index) => {
 				if (docId) {
@@ -203,18 +219,18 @@
 					formData.append('existingFileId', docId.toString());
 				}
 			});
-			
+
 			// Add new files
 			const newFiles = uploadedFiles.filter((file, index) => file && !uploadedFileIds[index]);
 			console.log(`Adding ${newFiles.length} new files to form`);
-			
+
 			newFiles.forEach((file, index) => {
 				if (file) {
 					console.log(`Adding new file: ${file.name} (${file.size} bytes)`);
 					formData.append('uploadfile', file);
 				}
 			});
-			
+
 			// Log all form data
 			console.log('Form data to be submitted:');
 			for (const [key, value] of formData.entries()) {
@@ -224,21 +240,21 @@
 					console.log(`${key}: ${value}`);
 				}
 			}
-			
+
 			// Send the form data
 			const response = await fetch(form.action, {
 				method: 'POST',
 				body: formData
 			});
-			
+
 			const result = await response.json();
 			console.log('Server response:', result);
-			
+
 			if (response.ok) {
 				loading = false;
 				success = true;
 				clearTimeout(timer);
-				invalidateAll()
+				invalidateAll();
 				timer = setTimeout(() => {
 					success = false;
 					goto('/admin/suratDokumen');
@@ -256,18 +272,13 @@
 </script>
 
 <div class="test flex w-full flex-col">
-	<div class="flex flex-row">
-		<a href="/admin/suratDokumen"><button class="custom-button bg-customRed">⭠ Kembali</button></a>
-		<p class="ml-5 mt-6 text-3xl font-bold underline">Ubah Dokumen</p>
+	<div class="flex flex-row ml-5 mt-6 gap-3">
+		<a href="/admin/suratDokumen" class="mt-2">⭠ Kembali</a>
+		<p class="text-3xl font-bold underline">Ubah Dokumen</p>
 	</div>
 
 	<div class="form-container flex flex-col">
-		<form
-			method="post"
-			action="?/submit"
-			enctype="multipart/form-data"
-			onsubmit={handleSubmit}
-		>
+		<form method="post" action="?/submit" enctype="multipart/form-data" onsubmit={handleSubmit}>
 			<div class="flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="nama">Nama Dokumen</label>
 				<input
@@ -412,29 +423,33 @@
 									/>
 								{:else}
 									<!-- Non-image file preview -->
-									<div class="flex h-[200px] w-[270px] flex-col items-center justify-center rounded-lg border bg-gray-100">
+									<div
+										class="flex h-[200px] w-[270px] flex-col items-center justify-center rounded-lg border bg-gray-100"
+									>
 										<!-- File type icon -->
 										<div class="text-5xl">{getFileIconForType(getFileTypeFromUrl(fileUrl))}</div>
-										
+
 										<!-- File name -->
-										<p class="mt-2 max-w-[250px] overflow-hidden text-ellipsis px-3 text-center text-sm">
+										<p
+											class="mt-2 max-w-[250px] overflow-hidden text-ellipsis px-3 text-center text-sm"
+										>
 											{uploadedFiles[index]?.name || getFileNameFromUrl(fileUrl)}
 										</p>
-										
+
 										<!-- File type label -->
 										<div class="mt-2 rounded-full bg-blue-100 px-3 py-1 text-xs text-blue-800">
 											{getFileTypeFromUrl(fileUrl)}
 										</div>
 									</div>
 								{/if}
-								
+
 								<!-- Remove button -->
-								<button 
-									type="button" 
-									class="remove-btn absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white" 
-									onclick={() => removeImage(index)}
-								>✕</button>
-								
+								<button
+									type="button"
+									class="remove-btn absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white"
+									onclick={() => removeImage(index)}>✕</button
+								>
+
 								<!-- Hidden input to store file ID if exists -->
 								{#if uploadedFileIds[index]}
 									<input type="hidden" name="existingFileId" value={uploadedFileIds[index]} />
@@ -451,10 +466,7 @@
 			</div>
 
 			<div class="flex w-full justify-end">
-				<button
-					class="bg-customGold mt-2 rounded-lg border px-6 py-2 text-white"
-					type="submit"
-				>
+				<button class="bg-customGold mt-2 rounded-lg border px-6 py-2 text-white" type="submit">
 					Simpan
 				</button>
 			</div>

@@ -9,8 +9,7 @@
 	import Search from '$lib/table/Search.svelte';
 
 	const { data } = $props();
-	console.log(data.data);
-	data.a
+	console.log('data kerajaan : ', data.kerajaanData);
 	let showDropdown = $state(false);
 
 	let nama = $state('');
@@ -48,26 +47,29 @@
 			item?.nama_kerajaan?.toLowerCase().includes(keterkaitan.toLowerCase())
 		);
 	}
-	let searchRes = $derived(filter(data.data));
+	let searchRes = $derived(filter(data.kerajaanData));
 
 	// Handle file selection
 	function handleFileChange(event: Event) {
 		const target = event.target as HTMLInputElement;
 		if (target.files && target.files.length > 0) {
 			const newFiles = Array.from(target.files);
-			
+
 			// Add new files to our arrays
 			uploadedFiles = [...uploadedFiles, ...newFiles];
-			
+
 			// Create URLs for preview
-			const newUrls = newFiles.map(file => URL.createObjectURL(file));
+			const newUrls = newFiles.map((file) => URL.createObjectURL(file));
 			uploadedFileUrls = [...uploadedFileUrls, ...newUrls];
-			
+
 			// Add null IDs for new files (they don't have IDs yet)
 			uploadedFileIds = [...uploadedFileIds, ...newFiles.map(() => null)];
-			
-			console.log('Updated files:', uploadedFiles.map(f => f.name));
-			
+
+			console.log(
+				'Updated files:',
+				uploadedFiles.map((f) => f.name)
+			);
+
 			// Reset input to allow selecting the same file again
 			target.value = '';
 		}
@@ -77,26 +79,34 @@
 	function removeImage(index: number) {
 		// Release object URL to prevent memory leaks
 		URL.revokeObjectURL(uploadedFileUrls[index]);
-		
+
 		// Remove file from all arrays
 		uploadedFiles = uploadedFiles.filter((_, i) => i !== index);
 		uploadedFileUrls = uploadedFileUrls.filter((_, i) => i !== index);
 		uploadedFileIds = uploadedFileIds.filter((_, i) => i !== index);
 	}
 
+	$effect(() => {
+		if (!keterkaitan || data.kerajaanData.some((item : any) => item.nama_kerajaan === keterkaitan)) {
+			showDropdown = false;
+		} else {
+			showDropdown = true;
+		}
+	});
+
 	// Handle form submission
 	async function handleSubmit(event: SubmitEvent) {
 		event.preventDefault();
 		loading = true;
 		error = null; // Reset error state
-		
+
 		try {
 			const form = event.target as HTMLFormElement;
 			const formData = new FormData(form);
-			
+
 			// Remove any existing file inputs
 			formData.delete('uploadfile');
-			
+
 			// Add each file to the form data
 			uploadedFiles.forEach((file, index) => {
 				if (file) {
@@ -104,28 +114,29 @@
 					formData.append('uploadfile', file);
 				}
 			});
-			
+
 			// Send the form data
 			const response = await fetch(form.action, {
 				method: 'POST',
 				body: formData
 			});
-			
+
 			const result = await response.json();
 			console.log('Response:', result);
-			
+
 			// Set loading to false after getting a response
 			loading = false;
-			
+
 			// Check for success in various formats
-			if (result.type === 'success' || 
-				(result.data && result.data.success) || 
-				result.success === true || 
-				(result.message && result.message.includes('success'))) {
-				
+			if (
+				result.type === 'success' ||
+				(result.data && result.data.success) ||
+				result.success === true ||
+				(result.message && result.message.includes('success'))
+			) {
 				console.log('Form submission successful, showing modal');
 				success = true;
-				
+
 				// Set a timer to hide the success message after 3 seconds
 				clearTimeout(timer);
 				timer = setTimeout(() => {
@@ -167,12 +178,7 @@
 	</div>
 
 	<div class="form-container flex flex-col">
-		<form
-			method="post"
-			action="?/submit"
-			enctype="multipart/form-data"
-			onsubmit={handleSubmit}
-		>
+		<form method="post" action="?/submit" enctype="multipart/form-data" onsubmit={handleSubmit}>
 			{#if error && error.general}
 				<div class="mb-4 rounded-md bg-red-50 p-4">
 					<div class="flex">
@@ -226,7 +232,7 @@
 								<!-- svelte-ignore a11y_click_events_have_key_events -->
 								<li
 									class="cursor-pointer p-2 hover:bg-gray-300"
-									onclick={() => selectKeterkaitan(item.nama_kerajaan)}
+									onmousedown={() => selectKeterkaitan(item.nama_kerajaan)}
 								>
 									{item.nama_kerajaan}
 								</li>
@@ -248,7 +254,7 @@
 					name="jenisDokumen"
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 					required
-					>
+				>
 					<option value="" disabled>None</option>
 					<option value="1">1 </option>
 					<option value="2">2</option>
@@ -267,7 +273,7 @@
 					name="kategori"
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 					required
-					>
+				>
 					<option value="" disabled>None</option>
 					<option value="masuk">Masuk </option>
 					<option value="keluar">Keluar</option>
@@ -337,8 +343,10 @@
 									/>
 								{:else}
 									<!-- Display file icon for non-image files -->
-									<div class="flex h-[200px] w-[270px] flex-col items-center justify-center rounded-lg border bg-gray-100">
-										<div class="text-4xl mb-2">
+									<div
+										class="flex h-[200px] w-[270px] flex-col items-center justify-center rounded-lg border bg-gray-100"
+									>
+										<div class="mb-2 text-4xl">
 											{#if uploadedFiles[index]?.type.includes('pdf')}
 												📄
 											{:else if uploadedFiles[index]?.type.includes('word') || uploadedFiles[index]?.type.includes('doc')}
@@ -349,7 +357,7 @@
 												📁
 											{/if}
 										</div>
-										<p class="text-sm px-2 truncate w-full text-center">
+										<p class="w-full truncate px-2 text-center text-sm">
 											{uploadedFiles[index]?.name || 'File'}
 										</p>
 										<div class="mt-2 rounded-full bg-blue-100 px-3 py-1 text-xs text-blue-800">
@@ -357,11 +365,9 @@
 										</div>
 									</div>
 								{/if}
-								<button 
-									type="button"
-									class="remove-btn" 
-									onclick={() => removeImage(index)}
-								>✕</button>
+								<button type="button" class="remove-btn" onclick={() => removeImage(index)}
+									>✕</button
+								>
 							</div>
 						{/each}
 					</div>
@@ -374,10 +380,7 @@
 			</div>
 
 			<div class="flex w-full justify-end">
-				<button
-					class="bg-customGold mt-2 rounded-lg border px-6 py-2 text-white"
-					type="submit"
-				>
+				<button class="bg-customGold mt-2 rounded-lg border px-6 py-2 text-white" type="submit">
 					Tambah
 				</button>
 			</div>
