@@ -53,7 +53,7 @@
 					/>
 					<div class="mt-5">
 						<Marquee>
-							<div class="grid grid-cols-3 items-center">
+							<div class="flex items-center">
 								{#if imageUrls.length > 0}
 									{#each imageUrls as imageUrl (imageUrl)}
 										<img src={imageUrl} class="col-span-1 m-1 h-auto w-[200px]" alt="foto" />

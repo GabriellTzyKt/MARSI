@@ -32,13 +32,34 @@ export let load: PageServerLoad = async ({ params, cookies }) => {
         
         // Fetch users for pembina, pelindung, and juru kunci dropdowns
           console.log("situs data:", situsData);
+          console.log("ini profile situs: ", situsData.profile)
           let final = userData.filter((item: any) => item && (item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at));
        
         
         // Process image URLs if foto_situs is available
-        let profileImage = '';
+        let profileImage:any ;
         let imageUrls = [];
-        let fileDetails = [];
+          let fileDetails = [];
+          if(situsData.profile){
+            try {
+                let profileRes = await fetch(`${env.URL_KERAJAAN}/doc/${situsData.profile}`);
+                if (profileRes.ok) {
+                    let profileData = await profileRes.json();
+                    if (profileData.file_dokumentasi) {
+                        let profileUrl = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(profileData.file_dokumentasi)}`;
+                        profileImage = {
+                            id: situsData.profile,
+                            url: profileUrl,
+                            name: profileData.nama_file || 'Profile Image'
+                        };
+                    }
+                } else {
+                    console.error(`Failed to fetch profile document: ${profileRes.statusText}`);
+                }
+            } catch (error) {
+                console.error("Error fetching profile document:", error);
+            }
+        }
         if (situsData.foto_situs && situsData.foto_situs.trim() !== '') {
             try {
                 let docIds = situsData.foto_situs.split(',').map(id => id.trim());
@@ -67,27 +88,9 @@ export let load: PageServerLoad = async ({ params, cookies }) => {
             } catch (error) {
                 console.error("Error processing image URLs:", error);
             }
-        }
-        if(situsData.profile){
-            try {
-                let profileRes = await fetch(`${env.URL_KERAJAAN}/doc/${situsData.profile}`);
-                if (profileRes.ok) {
-                    let profileData = await profileRes.json();
-                    if (profileData.file_dokumentasi) {
-                        let profileUrl = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(profileData.file_dokumentasi)}`;
-                        profileImage = {
-                            id: situsData.profile,
-                            url: profileUrl,
-                            name: profileData.nama_file || 'Profile Image'
-                        };
-                    }
-                } else {
-                    console.error(`Failed to fetch profile document: ${profileRes.statusText}`);
-                }
-            } catch (error) {
-                console.error("Error fetching profile document:", error);
-            }
-        }
+          }
+          console.log("ini profile situs: ", situsData.profile)
+        
         situsTypes = situsTypes.filter((item: any) => item && (item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at));
         console.log("Situs TYPES", situsTypes)
         // Fetch user data for pembina, pelindung, and juru_kunci if available

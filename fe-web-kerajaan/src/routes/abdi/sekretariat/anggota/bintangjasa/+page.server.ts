@@ -8,9 +8,9 @@ import { AbdiListSchema } from "./BJScheme";
 export const load: PageServerLoad = async () => {
     try {
         let [anggotaRes, penghargaanRes, acaraRes] = await Promise.all([
-            fetch(`${env.URL_KERAJAAN}/anggota`),
+            fetch(`${env.URL_KERAJAAN}/anggota?limit=500`),
             fetch(`${env.URL_KERAJAAN}/penghargaan`),
-            fetch(`${env.URL_KERAJAAN}/acara`)
+            fetch(`${env.URL_KERAJAAN}/acara?limit=600`)
         ]);
         if (!anggotaRes.ok || !penghargaanRes.ok) {
             throw new Error(`HTTP Error! Status: ${anggotaRes.status} ${penghargaanRes.status}`);

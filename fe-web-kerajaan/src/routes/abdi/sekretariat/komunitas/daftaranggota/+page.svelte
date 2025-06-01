@@ -46,26 +46,29 @@
 		try {
 			console.log('Fetching members for organization:', komId);
 			// Fetch members for the selected organization
-			const aR = await fetch(`${env.PUBLIC_URL_KERAJAAN}/komunitas/anggota/${komId}?limit=200`);
+			const aR = await fetch(`${env.PUBLIC_URL_KERAJAAN}/komunitas/anggota/${komId}?limit=600`);
 			if (aR.ok) {
 				let anggotaList = await aR.json();
 
 				// Process each member to add user information
 
-				anggotaList = anggotaList.map((item: any) => {
-					return {
-						...item,
-						nama_anggota:
-							data.fullUser.find((user: any) => user.id_user === item.id_user)?.nama_lengkap ||
-							item.nama_anggota,
-						email:
-							data.fullUser.find((user: any) => user.id_user === item.id_user)?.email || item.email,
-						nomor_telepon:
-							data.fullUser.find((user: any) => user.id_user === item.id_user)?.no_telp ||
-							item.nomor_telepon,
-						tanggal_bergabung: formatDatetoUI(item.tanggal_bergabung)
-					};
-				});
+				anggotaList = anggotaList
+					.filter((item) => item.deleted_at === '0001-01-01T00:00:00Z')
+					.map((item: any) => {
+						return {
+							...item,
+							nama_anggota:
+								data.fullUser.find((user: any) => user.id_user === item.id_user)?.nama_lengkap ||
+								item.nama_anggota,
+							email:
+								data.fullUser.find((user: any) => user.id_user === item.id_user)?.email ||
+								item.email,
+							nomor_telepon:
+								data.fullUser.find((user: any) => user.id_user === item.id_user)?.no_telp ||
+								item.nomor_telepon,
+							tanggal_bergabung: formatDatetoUI(item.tanggal_bergabung)
+						};
+					});
 				console.log('Fetched members:', anggotaList);
 				// Fetch user information for each member
 				// Process each member to add user information

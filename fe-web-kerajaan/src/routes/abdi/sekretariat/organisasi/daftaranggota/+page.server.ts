@@ -28,7 +28,7 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
                 email: item.email
             }
         });
-        let res = await fetch(`${env.URL_KERAJAAN}/organisasi`)
+        let res = await fetch(`${env.URL_KERAJAAN}/organisasi?limit=600`)
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`)
         }

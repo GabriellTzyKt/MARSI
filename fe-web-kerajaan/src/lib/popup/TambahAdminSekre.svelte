@@ -191,6 +191,7 @@
 	);
 	function handleAfiliasiSelection(afiliasi: any) {
 		selectedaf = afiliasi;
+
 		afiliasiKeyword =
 			afiliasi.nama_komunitas || afiliasi.nama_organisasi || afiliasi.nama_situs || '';
 		showAfiliasiDropdown = false;

@@ -24,7 +24,7 @@
 	let success = $state(false);
 
 	// Profile picture handling
-	let pictUrl = $state(situs.profileImage.url || gambardefault);
+	let pictUrl = $state(situs?.profileImage.url || gambardefault);
 	let pictUrlFiles = $state(null);
 
 	function handleFiles(event) {

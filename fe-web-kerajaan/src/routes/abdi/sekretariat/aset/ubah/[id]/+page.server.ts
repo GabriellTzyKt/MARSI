@@ -142,9 +142,9 @@ export const actions: Actions = {
         let gambarf;
        
             let sendData = {
-                    id_aset: id_aset,
-                    id_kerajaan: id_kerajaan,
-                    id_jenis_aset: String(id_jenis_aset.id_jenis_aset),
+                    id_aset: Number(id_aset),
+
+                    id_jenis_aset: Number(String(id_jenis_aset.id_jenis_aset)),
                     dokumentasi: gambar.join(","),
                     nama_aset: nama_aset,
                     deskripsi: deskripsi_aset,

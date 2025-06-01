@@ -20,14 +20,14 @@
 	let open = $state(false);
 	let valo = $state(false);
 	let edit = $state(false);
-	let selected = $state('ASitus');
+	let selected = $state('SA');
 	let error = $state();
 	let timer: number;
 	let editData = $state<any>(null);
 	let deleteID = $state<any>(null);
 	let deleteModal = $state(false);
 	let editmodal = $state(false);
-	let activeTab = $state('ASitus');
+	let activeTab = $state('SA');
 	let nonAktifkanData = $state<any>(null);
 	let nonAktifkanModal = $state(false);
 	console.log(data.data);
@@ -55,6 +55,7 @@
 		if (tab === 'ASitus') tipeField = 'Admin Situs';
 		if (tab === 'AOrganisasi') tipeField = 'Admin Organisasi';
 		if (tab === 'AKomunitas') tipeField = 'Admin Komunitas';
+		if (tab === 'SA') tipeField = 'Super Admin';
 
 		let filtered = user.filter((item: any) => item.jenis_admin === tipeField);
 
@@ -101,6 +102,22 @@
 	<div class="col-span-2 flex w-full flex-col lg:flex-row">
 		<div class="col-span-1">
 			<div class="border-1 mb-3 mt-2 flex w-full gap-2 rounded-full px-3 py-2 lg:text-nowrap">
+				<button
+					onclick={() => setActive('SA')}
+					class="relative w-full overflow-hidden rounded-full border-2 px-5 py-1 font-semibold"
+				>
+					<span
+						class="absolute left-0 top-0 h-full bg-blue-600 transition-all duration-300"
+						style:width={activeTab === 'SA' ? '100%' : '0%'}
+					></span>
+					<span
+						class="text-md relative transition-colors duration-300"
+						class:text-white={activeTab === 'SA'}
+						class:text-black={activeTab !== 'SA'}
+					>
+						Super Admin
+					</span>
+				</button>
 				<button
 					onclick={() => setActive('ASitus')}
 					class="relative w-full overflow-hidden rounded-full border-2 px-5 py-1 font-semibold"
@@ -174,6 +191,28 @@
 	</div>
 	<div class="grid w-full auto-rows-min grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
 		<!-- container -->
+		{#if selected === 'SA'}
+			{#each filteredUserByTab('SA') as data}
+				<DropDownAdmin
+					{data}
+					editAction={{
+						action: () => {
+							editAction(data);
+						}
+					}}
+					hapusAction={{
+						action: () => {
+							hapusAction(data);
+						}
+					}}
+					nonAktifAction={{
+						action: () => {
+							nonAktifkan(data);
+						}
+					}}
+				></DropDownAdmin>
+			{/each}
+		{/if}
 		{#if selected === 'ASitus'}
 			{#each filteredUserByTab('ASitus') as data}
 				<DropDownAdmin

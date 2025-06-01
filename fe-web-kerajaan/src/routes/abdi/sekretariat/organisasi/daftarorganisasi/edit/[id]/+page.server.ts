@@ -230,6 +230,9 @@ export const actions: Actions = {
             }
         }
         try {
+            if ( typeof(orgpp) === 'object') {
+                    orgpp = '0'                
+            }
             let senData = {
                 id_organisasi: parseInt(String(data.get("id_organisasi"))),
                 penanggung_jawab: parseInt(formData.penanggungjawab_id),

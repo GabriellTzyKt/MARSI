@@ -108,23 +108,23 @@
 			return async ({ result, update }) => {
 				loading = false;
 				if (result.type === 'success') {
-					if (result?.data?.permohonanPembina) {
-						sPb = true;
-					}
-					if (result?.data?.permohonanPelindung) {
-						sPl = true;
-					}
+					// if (result?.data?.permohonanPembina) {
+					// 	sPb = true;
+					// }
+					// if (result?.data?.permohonanPelindung) {
+					// 	sPl = true;
+					// }
 
-					if (sPb && sPl) {
-						open = true;
-						clearTimeout(timer);
-						timer = setTimeout(() => {
-							open = false;
-							goto('/abdi/sekretariat/komunitas/daftarkomunitas');
-						}, 3000);
-					} else {
-						errorppp = true;
-					}
+					// if (sPb && sPl) {
+					open = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						open = false;
+						goto('/abdi/sekretariat/komunitas/daftarkomunitas');
+					}, 3000);
+					// } else {
+					errorppp = true;
+					// }
 				}
 				if (result.type === 'failure') {
 					errors = result.data?.errors;
@@ -322,10 +322,7 @@
 						</div>
 						<input type="hidden" name="pembina_id" value={selectedPb?.id || ''} />
 					</div>
-					<button
-						class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white"
-						formaction="?/permohonanPembina"
-					>
+					<button class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white">
 						Permohonan
 					</button>
 				</div>
@@ -386,10 +383,7 @@
 						</div>
 					</div>
 
-					<button
-						class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white"
-						formaction="?/permohonanPelindung"
-					>
+					<button class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white">
 						Permohonan
 					</button>
 				</div>
@@ -530,16 +524,15 @@
 			<button
 				class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
 				type="submit"
-				disabled={!sPb || !sPl}
 			>
 				Simpan Data
 			</button>
 		</div>
-		{#if !sPb || !sPl}
+		<!-- {#if !sPb || !sPl}
 			<p class="mt-2 text-center text-red-500">
 				Permohonan Pembina dan Pelindung harus diajukan terlebih dahulu.
 			</p>
-		{/if}
+		{/if} -->
 		<input type="text" hidden name="id_pemohon" value={data?.user?.id_user} id="" />
 	</form>
 	{#if errors?.server}
@@ -551,9 +544,9 @@
 	{#if errors?.permohonanPelindung}
 		<p class="text-red-500">{errors?.permohonanPelindung}</p>
 	{/if}
-	{#if errorppp}
+	<!-- {#if errorppp}
 		<p class="text-red-500">Permohonan Pembina atau Pelindung blm diaajukan</p>
-	{/if}
+	{/if} -->
 </div>
 {#if open}
 	<SuccessModal text="Komunitas Berhasil Dibuat"></SuccessModal>

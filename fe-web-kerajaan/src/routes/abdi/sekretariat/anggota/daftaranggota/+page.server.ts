@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({cookies}) => {
     try {
         // Fetch anggota and gelar data in parallel
         let [anggotaRes, gelarRes] = await Promise.all([
-            fetch(`${env.URL_KERAJAAN}/anggota`, {
+            fetch(`${env.URL_KERAJAAN}/anggota?limit=300`, {
                 headers: {
                     'Authorization': `Bearer ${token?.token}`
                 }

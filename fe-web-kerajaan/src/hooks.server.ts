@@ -19,6 +19,9 @@ export const handle = async ({ event, resolve}) => {
         }
     } else {
         // User is not authenticated
+        if (event.url.pathname !== '/login') {
+            throw redirect(302, '/login');
+        }
         event.locals.token = null;
         
         // Only redirect to login if not accessing a public route

@@ -15,7 +15,7 @@
 <div class="h-full w-full">
 	<div class="block h-fit rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="group relative mx-auto h-[100px] w-[100px] items-center justify-center">
-			<img src={gambardefault} class="h-full w-full rounded-full" alt="" />
+			<img src={data?.data.profileUrl || gambardefault} class="h-full w-full rounded-full" alt="" />
 
 			<div
 				class="absolute inset-0 flex items-center justify-center rounded-full bg-black bg-opacity-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"

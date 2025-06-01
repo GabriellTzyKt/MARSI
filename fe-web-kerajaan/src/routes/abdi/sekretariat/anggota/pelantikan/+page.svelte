@@ -50,7 +50,7 @@
 					console.log('Success');
 					timer = setTimeout(() => {
 						open = false;
-						// goto('/abdi/sekretariat/anggota/pelantikan');
+						goto('/abdi/sekretariat/anggota/daftaranggota');
 					}, 3000);
 				}
 				if (result.type === 'failure') {

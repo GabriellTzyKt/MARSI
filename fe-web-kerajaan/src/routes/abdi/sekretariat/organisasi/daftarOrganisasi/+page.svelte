@@ -6,6 +6,7 @@
 	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
 	import { dummyAnggota, dummyOrganisasi } from '$lib/dummy';
 	import Loader from '$lib/loader/Loader.svelte';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
@@ -42,6 +43,7 @@
 		return d.slice(start, end);
 	}
 	let resData = $derived(pagination(data?.finalwithuser || []));
+	let dataPagination = $derived(filterD(data?.finalwithuser).length || []);
 	$effect(() => {
 		if (keyword || entries) {
 			currPage = 1;
@@ -158,8 +160,7 @@
 				{/if}
 			{/snippet}
 		</Table>
-		<Pagination bind:currPage bind:entries totalItems={filterD(dummyOrganisasi).length}
-		></Pagination>
+		<Pagination bind:currPage bind:entries totalItems={dataPagination}></Pagination>
 	</div>
 </div>
 {#if deleteModal}
@@ -194,4 +195,7 @@
 		></DeleteModal>
 		<input type="text" name="id_organisasi" value={idNonAktif} hidden />
 	</form>
+{/if}
+{#if success}
+	<SuccessModal text="Berhasil Dihapus"></SuccessModal>
 {/if}

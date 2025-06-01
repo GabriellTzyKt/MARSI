@@ -269,9 +269,11 @@
 			return 'Edit Organisasi';
 		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/edit') {
 			return 'Edit Organisasi';
-		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/acara/ubah/[idacara]') {
+		} else if (
+			page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/acara/ubah/[idacara]'
+		) {
 			return 'Edit Acara Organisasi';
-		} 
+		}
 	});
 
 	function handleLogout() {
@@ -539,7 +541,12 @@
 				>
 					<p class="mb-3 text-center text-base">Apakah Anda yakin ingin keluar?</p>
 					<div class="flex w-full flex-row items-center justify-center gap-2">
-						<button class="rounded bg-red-500 px-4 py-1 text-white" onclick={handleLogout}>
+						<button
+							class="rounded bg-red-500 px-4 py-1 text-white"
+							onclick={() => {
+								goto('/logout');
+							}}
+						>
 							Log Out
 						</button>
 						<button

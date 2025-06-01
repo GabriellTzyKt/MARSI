@@ -64,9 +64,7 @@ export const actions: Actions = {
                     .nonempty("Field Tidak Boleh Kosong")
                     .max(255, "Max 255 Kata")
                     .trim(),
-            afiliasi:
-                z.array(z.string().nonempty("Tidak Boleh Kosong"))
-                    .min(1, { message: "Minimal 1 Afiliasi" })
+           
         })
         const ver = z.object({
             nama_lengkap:
@@ -118,9 +116,7 @@ export const actions: Actions = {
                     .max(255, "Input hanya bisa sampai 255 kata")
                     .trim(),
 
-            afiliasi:
-                z.array(z.string().nonempty("Tidak Boleh Kosong"))
-                    .min(1, { message: "Minimal 1 Afiliasi" }),
+        
 
             admin_role:
                 z.string({ message: "Harus diisi" })
@@ -134,7 +130,7 @@ export const actions: Actions = {
             const dt = {
                 nama_lengkap: data.get("nama_lengkap"),
                 admin_role: data.get("admin_role"),
-                afiliasi: data.getAll("afiliasi").filter((item) => item !== "")
+                afiliasi: data.get("afiliasi")||"-"
             }
             const verif = accVer.safeParse({...dt})
 
@@ -164,8 +160,8 @@ export const actions: Actions = {
             const no_telp = data.get("no_telp")
             const tgl_lahir = data.get("tgl_lahir")
             const kota_lahir = data.get("kota_lahir")
-            const afiliasi = data.getAll("afiliasi");
-            const afiliasiSingle = data.get("afiliasi");
+            const afiliasi = data.getAll("afiliasi") ||"-";
+            const afiliasiSingle = data.get("afiliasi") ||"-";
             const admin_role = data.get("admin_role")
             const formData = {
                 nama_lengkap,
@@ -176,7 +172,7 @@ export const actions: Actions = {
                 tgl_lahir,
                 kota_lahir,
                 jenis_kelamin,
-                afiliasi,
+          
                 admin_role
             }
             const verif = ver.safeParse({ ...formData })
@@ -208,7 +204,7 @@ export const actions: Actions = {
                     password,
                     email,
                     no_telp,
-                    afiliasi : data.get("afiliasi_nama") || "Afiliasi Tidak Ada",
+                    afiliasi : data.get("afiliasi") || "Afiliasi Tidak Ada",
                     jenis_admin: admin_role
                 }
                 console.log(sendData)

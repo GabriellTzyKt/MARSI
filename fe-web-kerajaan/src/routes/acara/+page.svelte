@@ -7,49 +7,6 @@
 	import Loader from '$lib/loader/Loader.svelte';
 	let { data } = $props();
 
-	const events = [
-		{
-			id: 1,
-			header: 'Keraton Surakarta Hadiningrat',
-			isi: `Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
-				  Dikenal karena kejernihan airnya yang memukau, tempat ini menjadi salah satu tujuan
-				  wisata populer bagi penduduk lokal maupun wisatawan. Dengan suasana yang tenang dan
-				  pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
-				  menyegarkan. In the name of the wind`,
-			situs: situs1,
-			status: 'upcoming'
-		},
-		{
-			id: 2,
-			header: 'Candi Prambanan',
-			isi: `Candi Prambanan adalah kompleks candi Hindu terbesar di Indonesia dan diakui
-				  sebagai situs warisan dunia UNESCO. Tempat ini menawarkan sejarah dan keindahan
-				  arsitektur yang memukau.`,
-			situs: situs1,
-			status: 'upcoming'
-		},
-		{
-			id: 3,
-			header: 'Keraton Surakarta Hadiningrat',
-			isi: `Umbul Tirtomulyo adalah sebuah mata air alami yang terletak di Surakarta, Jawa Tengah.
-				  Dikenal karena kejernihan airnya yang memukau, tempat ini menjadi salah satu tujuan
-				  wisata populer bagi penduduk lokal maupun wisatawan. Dengan suasana yang tenang dan
-				  pemandangan alam yang indah, Umbul Tirtomulyo menawarkan pengalaman rekreasi yang
-				  menyegarkan.`,
-			situs: situs1,
-			status: 'upcoming'
-		},
-		{
-			id: 4,
-			header: 'Candi Borobudur',
-			isi: `Candi Borobudur merupakan candi Buddha terbesar di dunia dan menjadi ikon
-				  kebudayaan Indonesia. Tempat ini tidak hanya menawarkan nilai sejarah tetapi juga
-				  pemandangan alam yang luar biasa.`,
-			situs: situs1,
-			status: 'completed'
-		}
-	];
-
 	let activeTab = $state('upcoming');
 
 	function setActive(tab: string) {
@@ -109,14 +66,16 @@
 	<div class="mb-10 ml-5 mr-5 mt-10 flex h-full justify-center">
 		<div class="mx-auto grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 			{#each data.data as event}
-				<Card2
-					situs={event.imageUrls[0] || ''}
-					header={event.nama_acara}
-					isi={event.deskripsi_acara || 'No Description'}
-					icon=""
-					href="/acara/{event.id_acara}"
-					id={event.id_acara}
-				/>
+				<div class="h-auto">
+					<Card2
+						situs={event.imageUrls[0] || ''}
+						header={event.nama_acara}
+						isi={event.deskripsi_acara || 'No Description'}
+						icon=""
+						href="/acara/{event.id_acara}"
+						id={event.id_acara}
+					/>
+				</div>
 			{/each}
 		</div>
 	</div>
