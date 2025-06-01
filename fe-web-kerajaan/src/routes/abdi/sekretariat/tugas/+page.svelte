@@ -261,7 +261,7 @@
 	</form>
 {/if}
 {#if success}
-	<SuccessModal text="Tugas Berhasil Ditambah"></SuccessModal>
+	<SuccessModal text="Berhasil"></SuccessModal>
 {/if}
 {#if modalDetail}
 	<BuktiLaporan bind:value={modalDetail} data={detailData} text="Detail Tugas"></BuktiLaporan>
