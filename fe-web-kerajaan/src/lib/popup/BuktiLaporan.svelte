@@ -198,11 +198,11 @@
 			</div>
 		</div>
 		<div class="mt-2 flex w-full flex-col">
-			<div>
+			<!-- <div>
 				<p class="text-sm">Foto Bukti</p>
 			</div>
 			<!-- nama Tugas -->
-			<div class="mt-1 w-full overflow-x-auto rounded-lg bg-white p-2">
+			<!-- <div class="mt-1 w-full overflow-x-auto rounded-lg bg-white p-2">
 				<div class="flex min-w-max gap-4">
 					<div class="h-auto min-w-[200px] rounded-xl">
 						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
@@ -220,7 +220,7 @@
 						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
 					</div>
 				</div>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </div>

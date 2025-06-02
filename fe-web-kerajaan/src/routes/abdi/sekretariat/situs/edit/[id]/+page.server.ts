@@ -98,7 +98,16 @@ export let load: PageServerLoad = async ({ params, cookies }) => {
         //     fetchUserData(situsData.pembina),
         //     fetchUserData(situsData.pelindung),
         //     fetchUserData(situsData.juru_kunci)
-        // ]);
+          // ]);
+          
+          let [resjk, respl, respb] = await Promise.all([
+                fetch(`${env.PUB_PORT}/user/${situsData.juru_kunci}`),
+                fetch(`${env.PUB_PORT}/user/${situsData.pelindung}`),
+                fetch(`${env.PUB_PORT}/user/${situsData.pembina}`),
+          ])
+          let jk = await resjk.json()
+          let pl = await respl.json()
+          let pb = await respb.json()
         let resWisata = await fetch(`${env.URL_KERAJAAN}/situs/wisata?limit=500`);
         if (!resWisata.ok) {
             throw new Error(`HTTP Error! Status: ${resWisata.status}`);
@@ -120,6 +129,9 @@ export let load: PageServerLoad = async ({ params, cookies }) => {
                 imageUrls,
                 fileDetails,
                 profileImage,
+                pelindung_nama: pl.nama_lengkap||"-",
+                pembina_nama: pb.nama_lengkap||"-",
+                juru_kunci_nama: jk.nama_lengkap||"-",
                 // pembina,
                 // pelindung,
                 // juruKunci
@@ -164,7 +176,7 @@ export let actions: Actions = {
     editSitus: async ({request}) => {
         let data = await request.formData()
         console.log(data)
-        let profile_picture = data.get("profile_picture") as File;
+        let profile_picture:any = data.get("profile_picture") as File;
         let ver = z.object({
             nama_situs:
                 z.string({ message: "Field Nama Situs harus diisi" })
@@ -324,11 +336,11 @@ export let actions: Actions = {
             }
         }
         try {
-
+           
             let sendData = {
                  id_situs: parseInt(String(data.get("id_situs"))),
                  id_wisata:parseInt( String(data.get("id_wisata"))),    
-                 profile: profile ? String(profile) : '',
+                 profile: profile !== "" ? String(profile): data.get("profile"),
                  id_jenis_situs: parseInt(String(data.get("jenis_situs"))),
                 foto_situs: '',
                 nama_situs: String(data.get("nama_situs")),

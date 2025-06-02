@@ -6,6 +6,7 @@
 	interface Anggota {
 		id_anggota: string | number; // Adjust type as needed
 		nama_lengkap: string;
+		panggilan: string;
 		email?: string; // Optional as it's used in display but not critical for ID
 	}
 
@@ -88,11 +89,12 @@
 			v.nama_gelar.toLowerCase().includes(key.toLowerCase())
 		);
 	}
-
+	let panggilan = $state('');
 	function selectAbdi(user: Anggota) {
 		selectedAbdi = user;
 		abdiKeyword = user.nama_lengkap;
 		showAbdiDropdown = false;
+		panggilan = user.panggilan;
 	}
 	function selectAcara(user: AcaraItem) {
 		selectedAcara = user;
@@ -410,6 +412,8 @@
 						type="text"
 						name={`abdi[${index}][gelar_lama]`}
 						placeholder="Nama Abdi Dalam Yang Lama"
+						value={panggilan ? panggilan : '-'}
+						readonly
 						class="w-full rounded-lg py-2 pe-2 ps-2 focus:outline-none"
 						id=""
 					/>

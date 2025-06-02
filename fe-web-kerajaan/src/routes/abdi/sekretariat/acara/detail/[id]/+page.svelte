@@ -34,7 +34,7 @@
 					<p>Penanggung Jawab:</p>
 					<input
 						type="text"
-						value={data.data.nama_penanggung_jawab}
+						value={data.data.nama_penanggungjawab}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 						disabled

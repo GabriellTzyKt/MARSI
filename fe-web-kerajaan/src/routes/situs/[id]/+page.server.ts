@@ -2,16 +2,22 @@ import { env } from "$env/dynamic/private";
 import type { PageServerLoad } from "./$types";
 import { formatTime } from "$lib";
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, cookies }) => {
     const id = params.id;
-    
+    let cookie = JSON.parse(cookies.get("userSession") as string)
     try {
         const res = await fetch(`${env.URL_KERAJAAN}/situs/${id}`);
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }
-        
         const data = await res.json();
+        let juRes = await fetch(`${env.PUB_PORT}/user/${data.juru_kunci}`, {
+            method: "GET",
+            headers: {
+                "Authorization" :`Bearer ${cookie.token}`
+            }
+        })
+        let juru = await juRes.json()
         console.log(data);
         // Format time fields from HH:MM:SS to HH:MM
         const formatTimeField = (timeString) => {
@@ -27,6 +33,7 @@ export const load: PageServerLoad = async ({ params }) => {
             jam_buka: formatTimeField(data.jam_buka),
             jam_tutup: formatTimeField(data.jam_tutup),
             jenis_situs: '',
+            juru_kunci_nama: juru.nama_lengkap,
             imageUrls: []
         };
 

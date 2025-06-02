@@ -23,7 +23,7 @@
 	let loading = $state(false);
 
 	// Profile picture handling
-	let pictUrl = $state(jd);
+	let pictUrl = $state(gambardefault);
 	let pictUrlFiles = $state();
 
 	function handleFiles(event) {
@@ -508,7 +508,7 @@
 							}}
 							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 						/>
-						<input type="hidden" name="juru_kunci" value={selectedJuruKunci?.name || ''} />
+						<input type="hidden" name="juru_kunci" value={selectedJuruKunci?.id || ''} />
 
 						{#if showJuruKunciDropdown && filteredJuruKunciUsers.length > 0}
 							<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
@@ -557,7 +557,7 @@
 								}}
 								class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 							/>
-							<input type="hidden" name="pembina" value={selectedPembina?.name || ''} />
+							<input type="hidden" name="pembina" value={selectedPembina?.id || ''} />
 
 							{#if showPembinaDropdown && filteredPembinaUsers.length > 0}
 								<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
@@ -615,7 +615,7 @@
 								}}
 								class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 							/>
-							<input type="hidden" name="pelindung" value={selectedPelindung?.name || ''} />
+							<input type="hidden" name="pelindung" value={selectedPelindung?.id || ''} />
 
 							{#if showPelindungDropdown && filteredPelindungUsers.length > 0}
 								<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
@@ -702,6 +702,9 @@
 							{#each errors.jenis_situs as e}
 								<p class="text-left text-red-500">- {e}</p>
 							{/each}
+							{#each errors.id_jenis_situs as e}
+								<p class="text-left text-red-500">- {e}</p>
+							{/each}
 						{/if}
 					</div>
 				</div>
@@ -748,6 +751,26 @@
 							{/each}
 						{/if}
 					</div>
+				</div>
+				<div class="relative col-span-full w-full">
+					<p>Tahun Berdiri:</p>
+					<input
+						type="number"
+						placeholder="1990"
+						name="tahun_berdiri"
+						required
+						class="mt-2 flex w-full rounded-lg border-2 px-2 py-2 text-start"
+					/>
+				</div>
+				<div class="relative col-span-full w-full">
+					<p>Dibangun Oleh:</p>
+					<input
+						type="number"
+						placeholder="nama pembangun"
+						name="dibangun_oleh"
+						required
+						class="mt-2 flex w-full rounded-lg border-2 px-2 py-2 text-start"
+					/>
 				</div>
 				<div class="mt-5 grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
 					<div class="w-full">

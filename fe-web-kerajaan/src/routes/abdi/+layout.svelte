@@ -269,6 +269,8 @@
 			return 'Edit Organisasi';
 		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/edit') {
 			return 'Edit Organisasi';
+		} else if (page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/acara/buat') {
+			return 'Tambah Acara Komunitas';
 		} else if (
 			page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/acara/ubah/[idacara]'
 		) {
@@ -525,7 +527,9 @@
 	{/if}
 	<div class="width_head2 hidden items-center justify-between lg:flex lg:w-[83.3%]">
 		<p class="ml-5 p-5 text-3xl font-bold text-black">{pageTitle}</p>
-		<div class="relative mr-5 w-56 flex justify-between items-center rounded-t-lg border-2 border-blue-600 py-2">
+		<div
+			class="relative mr-5 flex w-56 items-center justify-between rounded-t-lg border-2 border-blue-600 py-2"
+		>
 			<span class="ml-5 text-black">{data?.username}</span>
 			<img
 				src={imageprofile}
@@ -535,7 +539,7 @@
 			/>
 			{#if showLogout}
 				<div
-					class="absolute right-0 top-14 z-50 flex w-55 flex-col items-center rounded-b-lg border bg-white p-4 shadow-lg"
+					class="w-55 absolute right-0 top-14 z-50 flex flex-col items-center rounded-b-lg border bg-white p-4 shadow-lg"
 					style="min-width:180px"
 					transition:slide={{ duration: 200 }}
 				>

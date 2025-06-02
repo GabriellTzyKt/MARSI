@@ -10,18 +10,18 @@ export const load: PageServerLoad = async ({params, cookies}) => {
         let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
         let res = await fetch(`${env.URL_KERAJAAN}/acara/detail/${params.id}`);
         if (!res.ok) {
-             return fail(404, { error: "Acara not found" })
+            //  throw error(404, "Acara not found");
         }
          let resSitus = await fetch(`${env.URL_KERAJAAN}/situs?limit=600`);
         if (!resSitus.ok) {
-            return fail(404, { error: "Situs not found" })
+            // throw error(404, "Situs not found");
         }
         let data = await res.json()
         let situs = await resSitus.json()
         situs = situs.filter((doc: any) => {
             return doc.deleted_at == '0001-01-01T00:00:00Z' || !doc.deleted_at;
         });
-        console.log("SITUS FILTERED: ", situs);
+        // console.log("SITUS FILTERED: ", situs);
         let formatDate = (isoString) => {
                 if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
                 let date = new Date(isoString);
@@ -39,10 +39,10 @@ export const load: PageServerLoad = async ({params, cookies}) => {
         };
         let resLocFromSitus = await fetch(`${env.URL_KERAJAAN}/situs/${data.id_lokasi}`);
         if (!resLocFromSitus.ok) {
-            return fail(404, { error: "Lokasi not found" })
+            // throw error(404, "Lokasi not found");
         }
         let locDataFromSitus = await resLocFromSitus.json();
-        console.log("Found Lokasi : ", locDataFromSitus)
+        // console.log("Found Lokasi : ", locDataFromSitus)
         let formattedData = {
                     ...data,
                     nama_lokasi: locDataFromSitus.nama_situs,
@@ -60,7 +60,7 @@ export const load: PageServerLoad = async ({params, cookies}) => {
             }
         });
         if (!resuser.ok) {
-            return fail(404, { error: "User not found" })
+            // throw error(404, "Acara not found");
         }
         let userData = await resuser.json();
         userData = userData.filter((item: any) => {
@@ -91,12 +91,17 @@ export const load: PageServerLoad = async ({params, cookies}) => {
                 }
             })
         ]);
-
+        if (!resUndangan.ok && !resPanit.ok) {
+            
+        }
+        let dataUndangan = await resUndangan.json()
+        let dataPanit = await resPanit.json()
         console.log(formattedData)
-        return { data: formattedData, situs,    user: userData };
+        return { data: formattedData, situs,dataUndangan,dataPanit,  user: userData };
     }
     catch (error) {
         console.log(error)
+        return { error: "Terjadi kesalahan mengambil data" };
     }
 };
 
@@ -159,10 +164,11 @@ export const actions: Actions = {
         });
 
         form = {
-            buttonselect: data.get("buttonselect") ?? "",
+            // buttonselect: data.get("buttonselect") ?? "",
             inputradio: data.get("default-radio") ?? "",
             jenis_acara: data.get("jenisacara") ?? "",
             namaacara: data.get("namaacara") ?? "",
+            id_lokasi: data.get("id_lokasi") ?? "",
             lokasiacara: data.get("lokasi_acara") ?? "",
             tujuanacara: data.get("tujuanacara") ?? "",
             deskripsiacara: data.get("deskripsi_acara") ?? "",

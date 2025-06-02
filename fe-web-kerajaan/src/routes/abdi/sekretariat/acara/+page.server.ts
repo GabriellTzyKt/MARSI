@@ -6,15 +6,17 @@ import {
     
  } from "$lib";
 
-export const load: PageServerLoad = async ({cookies}) => {
+export const load: PageServerLoad = async ({ cookies }) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000); // timeout dalam 5 detik
     try {
         let token = JSON.parse(cookies.get("userSession") as string);
-        let res = await fetch(`${env.URL_KERAJAAN}/acara?limit=500`);
+        let res = await fetch(`${env.URL_KERAJAAN}/acara?limit=400`);
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }
         let data = await res.json();
-        // console.log("acara",data)
+        console.log("acara",data)
      data = data.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
         let formatDateTime = (isoString) => {
     if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
@@ -31,8 +33,14 @@ export const load: PageServerLoad = async ({cookies}) => {
     let seconds = String(date.getSeconds()).padStart(2, '0');
     
     return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
-};
-
+        };
+        let userRes = await fetch(`${env.PUB_PORT}/users`,{
+            headers: {
+                "Authorization": `Bearer ${token.token}`
+            }
+        })
+        let user = await userRes.json()
+        
          let formatDate = (isoString) => {
             if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
             let date = new Date(isoString);
@@ -46,57 +54,35 @@ export const load: PageServerLoad = async ({cookies}) => {
             waktu_mulai: formatDate(event.waktu_mulai),
                 waktu_selesai: formatDate(event.waktu_selesai),
                 waktu_mulai_full: formatDateTime(event.waktu_mulai),
-                waktu_selesai_full: formatDateTime(event.waktu_selesai),
-            // lokasi_detail: locationMap.get(event.lokasi_acara) || { nama_lokasi: 'Lokasi tidak ditemukan' },
-            // penanggungjawab_detail: personMap.get(event.penanggung_jawab) || { nama: 'PJ tidak ditemukan' }
+            waktu_selesai_full: formatDateTime(event.waktu_selesai),
+                penanggungjawab_nama: user.find((item)=> item.id_user === event.id_penanggung_jawab).nama_lengkap
+           
         }));
-        // let finalData = await Promise.all(mergedData.map(async (item) => {
-        //     let resLoc = await fetch(`${env.URL_KERAJAAN}/situs/${item.id_lokasi}`);
-        //     if (!resLoc.ok) {
-        //     }
-        //     let locData = await resLoc.json();
-        //     // console.log("Found Lokasi : ", locData)
-              
-
-        //     const formattedItem = {
-        //         ...item,
-        //         tanggal_mulai: formatDate(item.waktu_mulai),
-        //         tanggal_selesai: formatDate(item.waktu_selesai),
-        //         waktu_mulai: formatTime(item.waktu_mulai),
-        //         waktu_selesai: formatTime(item.waktu_selesai),
-        //         waktu_mulai_full: formatDateTime(item.waktu_mulai),
-        //         waktu_selesai_full: formatDateTime(item.waktu_selesai),
-        //         waktu_mulai_original: item.waktu_mulai,
-        //         waktu_selesai_original: item.waktu_selesai,
-        //     };
-        //     return formattedItem;
-        // }));
+        
 
         // console.log("Merged Data:",mergedData)
         let finalData = await Promise.all(
             mergedData.map(async (item) => {
                 // Example: fetch additional d etails if needed
-                let userDetails = await fetch(`${env.PUB_PORT}/user/${item.id_penanggung_jawab}`, {
-                    headers: {
-                        "Authorization": `Bearer ${token?.token}`
-                    }
-                });
-                let resuser = await userDetails.json();
-                console.log("User Details:", resuser)
-                if (!resuser.ok) {
-                    console.error("Failed to fetch user details:", item.id_penanggung_jawab);
-                   
+                let nama_penanggung_jawab = '-'
+                try {
+                    const userDetails = await fetch(`${env.PUB_PORT}/user/${item.id_penanggung_jawab}`, { signal: controller.signal });
+                    const resuser = await userDetails.json();
+                    nama_penanggung_jawab = resuser?.nama_lengkap || '';
+                } catch (e) {
+                    console.error(`Gagal mengambil data user: ${item.id_penanggung_jawab}`, e);
                 }
                 return {
                     ...item,
-                    nama_penanggung_jawab: resuser.nama_lengkap || ''
+                    nama_penanggung_jawab: nama_penanggung_jawab
                 }
             })
         )
-        return { data: finalData };
+        console.log("Data acata + user", finalData)
+        return { data: mergedData };
     }
     catch (error) {
-        console.error("Error fetching data:", error);
+        // console.error("Error fetching data:", error);
         return { errors: "Error fetching data" };
     }
 };

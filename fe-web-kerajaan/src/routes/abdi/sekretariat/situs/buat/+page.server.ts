@@ -140,6 +140,9 @@ export const actions: Actions = {
             wisata_id: 
                 z.string({ message: "Field Wisata Harus dipilih" })
                     .nonempty("Field ini tidak boleh kosong"),
+            id_jenis_situs: 
+                z.string({ message: "Field Wisata Harus dipilih" })
+                    .nonempty("Field ini tidak boleh kosong"),
             phone:
                 z.string({ message: "Field Nomer Telepon Harus diisi" })
                     .min(10, "Nomer telpon minimal 10 digit")
@@ -194,7 +197,7 @@ export const actions: Actions = {
             pelindung: String(data.get("pelindung")),
             phone: String(data.get("phone")),
             latitude: latitude ? String(latitude) : "",
-            
+            id_jenis_situs: String(data.get("jenis_situs")),
             longitude: longitude ? String(longitude) : "",
             jam_buka: String(data.get("jam_buka")),
             jam_tutup: String(data.get("jam_tutup")),
@@ -219,9 +222,9 @@ export const actions: Actions = {
             formDataToSend.append("nama_situs", formData.nama_situs);
             formDataToSend.append("deskripsi_situs", formData.deskripsi_situs);
             formDataToSend.append("alamat", formData.alamat);
-            formDataToSend.append("nama_pendiri", "Pemilik Susuhunan");
+            formDataToSend.append("nama_pendiri", data.get("dibangun_oleh") as string);
             formDataToSend.append("pemilik_situs", "Pemilik Susuhunan");
-            formDataToSend.append("tahun_berdiri", "2025");
+            formDataToSend.append("tahun_berdiri", data.get("tahun_berdiri") as string);
             formDataToSend.append("pelindung", formData.pelindung);
             formDataToSend.append("pembina", formData.pembina);
             formDataToSend.append("juru_kunci", formData.juru_kunci);

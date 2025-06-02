@@ -1,76 +1,121 @@
 import { env } from "$env/dynamic/private";
-import { fail } from "@sveltejs/kit";
+import { error, fail } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { z } from "zod";
 
-export const load: PageServerLoad = async ({params}) => {
+export const load = async ({ params, fetch }) => {
+    const id = params.id;
+    
     try {
-        const res = await fetch(`${env.URL_KERAJAAN}/aset/${params.id}`, {
-            method: "GET"
-        });
-
-        if (!res.ok) {
-            throw new Error(`Gagal fetch aset: ${res.status}`);
+        // Fetch semua arsip
+        const response = await fetch(`${env.URL_KERAJAAN}/aset/${id}`);
+        
+        if (!response.ok) {
+            throw error(response.status, `Failed to fetch documents`);
         }
-
-        const data = await res.json();
-
-        const getD = typeof data.dokumentasi === "string"
-            ? data.dokumentasi.split(",").map((id: string) => id.trim())
-            : [];
-
-        const result = await Promise.all(
-            getD.map(async (id) => {
-                try {
-                    const res = await fetch(`${env.URL_KERAJAAN}/doc/${id}`);
-                    if (!res.ok) {
-                        console.error(`Failed to fetch doc/${id}: ${res.status}`);
-                        return null;
-                    }
-                    const docData = await res.json();
-                    const filePaths = docData.file_dokumentasi || docData;
-                    const pathsArray = Array.isArray(filePaths) ? filePaths : [filePaths];
-
-                    return pathsArray.map((path) =>
-                        typeof path === "string"
-                            ? `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(path)}`
-                            : null
-                    );
-                } catch (e) {
-                    console.error("Fetch doc error:", e);
-                    return null;
-                }
-            })
-        );
         
-        // Flatten and clean null
-        const imageUrls = result
-            .filter((url) => url !== null)
-            .flat()
-            .filter((url) => url !== null);
+        let dataAset = await response.json()
 
-        // Gabungkan ke dalam data
-        const dataWithImages = {
-            ...data,
-            dokumentasi: data.dokumentasi ? data.dokumentasi.split(",") : [],
-            gambarUrls: imageUrls
-        };
+
+        // Konversi id dari string ke number untuk perbandingan
         
-        try {
-            const res = await fetch(`${env.URL_KERAJAAN}/aset/jenis`);
-            if (!res.ok) {
-                throw new Error(`HTTP Error! Status: ${res.status}`);
-            }
-            const dataJenis = await res.json();
+
+        console.log("document sesuai ID : ", dataAset);
+
+        // Check if dokumentasi contains multiple IDs
+        const dokumentasiValue = dataAset.dokumentasi?.toString() || '';
+        const docIds = dokumentasiValue.includes(',') 
+            ? dokumentasiValue.split(',').map((id : any) => id.trim()).filter(Boolean)
+            : [dokumentasiValue];
+
+        console.log(`Document has ${docIds.length} dokumentasi IDs:`, docIds);
+
+        let fileDetails : any = [];
+
+        // Process each document ID separately
+        for (const docId of docIds) {
+            if (!docId) continue;
             
-            return {data: dataWithImages, jenis_aset: dataJenis};
-        } catch (error) {
-            console.log(error);
-            return {data: "Failed"};
+            console.log(`Fetching doc/${docId}`);
+            const filePathsRequest = await fetch(`${env.URL_KERAJAAN}/doc/${docId}`, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+            
+            if (!filePathsRequest.ok) {
+                console.error(`Failed to fetch doc/${docId}: ${filePathsRequest.status}`);
+                continue;
+            }
+            
+            const filePathsData = await filePathsRequest.json();
+            console.log(`File paths data for doc ${docId}:`, filePathsData);
+            
+            // Extract file paths
+            const filePaths = Array.isArray(filePathsData.file_dokumentasi) 
+                ? filePathsData.file_dokumentasi 
+                : [filePathsData.file_dokumentasi];
+            
+            // Process each file path
+            const docFileDetails = await Promise.all(filePaths.map(async (path : any) => {
+                if (!path) return null;
+                
+                const actualPath = path;
+                console.log(`Processing file path from doc ${docId}:`, actualPath);
+                
+                try {
+                    const fileDataRequest = await fetch(`${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(actualPath)}`, {
+                        method: "GET"
+                    });
+                    
+                    if (!fileDataRequest.ok) {
+                        console.error(`Failed to fetch file data for path ${actualPath}:`, fileDataRequest.status);
+                        return {
+                            path: actualPath,
+                            url: null,
+                            error: `Failed to load file: ${fileDataRequest.status}`,
+                            docId: docId
+                        };
+                    }
+                    
+                    return {
+                        path: actualPath,
+                        url: `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(actualPath)}`,
+                        type: fileDataRequest.headers.get("content-type") || "unknown",
+                        name: actualPath.split('/').pop(),
+                        size: fileDataRequest.headers.get("content-length") || "unknown",
+                        docId: docId
+                    };
+                } catch (error) {
+                    console.error(`Error processing file path ${actualPath}:`, error);
+                    return {
+                        path: actualPath,
+                        url: null,
+                        error: error instanceof Error ? error.message : "Unknown error",
+                        docId: docId
+                    };
+                }
+            }));
+            
+            // Add files from this document to the main list
+            fileDetails = [...fileDetails, ...docFileDetails.filter(file => file !== null)];
         }
-    } catch (error) {
-        console.error("Load error:", error);
-        return { data: null };
+
+        console.log("File details final:", fileDetails);
+        
+        const jenisResponse = await fetch(`${env.URL_KERAJAAN}/aset/jenis?limit=500`);
+        const jenisArsip = jenisResponse.ok ? await jenisResponse.json() : [];
+        
+        // Return semua data yang diperlukan
+        return {
+            
+            jenisArsip,
+            files: fileDetails
+        };
+    } catch (e) {
+        console.error(`Error loading document ${id}:`, e);
+        throw error(500, "Failed to load document data");
     }
 };
 export const actions: Actions = {

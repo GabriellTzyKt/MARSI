@@ -99,7 +99,7 @@ export const actions: Actions = {
             // Process each entry
             for (const abdi of abdiList) {
                 const form = new FormData()
-                form.append('id_gelar', abdi.id_gelar || '2')
+                form.append('id_gelar', abdi.gelar_id || '2')
                 form.append('id_anggota', abdi.abdi_id)
                 form.append('dokumentasi', abdi.bukti_gelar)
                 form.append('pemberi_gelar', abdi.pemberi_id)

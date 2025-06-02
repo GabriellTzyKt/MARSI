@@ -52,13 +52,13 @@
 			console.log('Fetching members for organization:', organizationId);
 			// Fetch members for the selected organization
 			let anggotaResponse = await fetch(
-				`${env.PUBLIC_URL_KERAJAAN}/organisasi/anggota/${organizationId}?limit=300`
+				`${env.PUBLIC_URL_KERAJAAN}/organisasi/anggota/${organizationId}?limit=400`
 			);
 			if (anggotaResponse.ok) {
 				let anggotaList = await anggotaResponse.json();
 
 				anggotaList = anggotaList
-					.filter((item) => item.deleted_at == '0001-01-01T00:00:00Z')
+					// .filter((item) => item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at)
 					.map((item: any) => {
 						return {
 							...item,
@@ -285,8 +285,7 @@
 			<SimpleLoader></SimpleLoader>
 		</div>
 	{/if}
-	<Pagination bind:currPage bind:entries totalItems={filterD(organizationMembers).length}
-	></Pagination>
+	<Pagination bind:currPage bind:entries totalItems={filterD(resdata).length}></Pagination>
 </div>
 {#if open}
 	<form

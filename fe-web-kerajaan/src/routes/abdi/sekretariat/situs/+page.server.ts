@@ -5,13 +5,15 @@ import type { Actions, PageServerLoad } from "./$types";
 import type { late } from "zod";
 
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({cookies}) => {
     try {
+        let cookie = JSON.parse(cookies.get("userSession") as string)
         let res = await fetch(`${env.URL_KERAJAAN}/situs?limit=1000`);
         if (!res.ok) {
-            throw new Error(`HTTP Error! Status: ${res.status}`);
+            // throw new Error(`HTTP Error! Status: ${res.status}`);
         }
         let data = await res.json();
+        console.log(data)
         let formattedData = data.filter(item => item.deleted_at === "0001-01-01T00:00:00Z")
         let resWisata = await fetch(`${env.URL_KERAJAAN}/situs/wisata?limit=1000`);
         if (!resWisata.ok) {
@@ -31,6 +33,19 @@ export const load: PageServerLoad = async () => {
                 tanggal_berdiri: item.tanggal_berdiri ? new Date(item.tanggal_berdiri).toLocaleDateString() : "Tidak Tersedia"
             };
         });
+        formattedData = await Promise.all(formattedData.map(async (item) => {
+            let useres = await fetch(`${env.PUB_PORT}/user/${item.juru_kunci}`, {
+                method: "GET",
+                                headers: {
+                                    "Authorization": `Bearer ${cookie.token}`
+                                }
+            })
+            let j = await useres.json()
+            return {
+                ...item,
+                juru_kunci: j.nama_lengkap|| "-"
+            }
+        }))
         // const processedData = await Promise.all(data.map(async (item: any) => {
         //     if (item.id_lokasi) {
         //         try {

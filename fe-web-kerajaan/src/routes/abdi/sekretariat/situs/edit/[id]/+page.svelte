@@ -24,7 +24,7 @@
 	let success = $state(false);
 
 	// Profile picture handling
-	let pictUrl = $state(situs?.profileImage.url || gambardefault);
+	let pictUrl = $state(situs?.profileImage?.url || gambardefault);
 	let pictUrlFiles = $state(null);
 
 	function handleFiles(event) {
@@ -39,21 +39,25 @@
 		return users.filter((item) => item?.name.toLowerCase().includes(searchTerm.toLowerCase()));
 	}
 	// User selection for pembina and pelindung
-	let pembinaSearchTerm = $state(situs?.pembina || '');
-	let pelindungSearchTerm = $state(situs?.pelindung || '');
-	let selectedPembina = $state(searchUser(situs?.pembina) || null);
-	let selectedPelindung = $state(searchUser(situs?.pelindung) || null);
+	let pembinaSearchTerm = $state(situs?.pembina_nama || '');
+	let pelindungSearchTerm = $state(situs?.pelindung_nama || '');
+	let selectedPembina = $state(users.find((item) => item.id == situs?.pembina) || null);
+	// console.log(selectedPelindung)
+	let selectedPelindung = $state(users.find((item) => item.id == situs?.pelindung) || null);
 	let showPembinaDropdown = $state(false);
 	let showPelindungDropdown = $state(false);
 	let showJuruKunciDropdown = $state(false);
-	let selectedJuruKunci = $state(searchUser(situs?.juru_kunci) || null);
-	let juruKunciSearchTerm = $state(situs?.juru_kunci || '');
+	let selectedJuruKunci = $state(users.find((item) => item.id == situs?.juru_kunci) || null);
+	let juruKunciSearchTerm = $state(situs?.juru_kunci_nama || '');
 	let find = situsTypes.find((item) => item.id === situs?.id_jenis_situs);
 	let situsSearchTerm = $state(find?.name || '');
 	console.log('find', find);
 	let selectedSitus = $state(find || null);
 	let showSitusDropdown = $state(false);
 
+	$inspect(selectedPelindung);
+	$inspect(selectedPembina);
+	$inspect(selectedJuruKunci);
 	// Filter users based on search term
 	function filterUser(searchTerm: string) {
 		return users.filter(
@@ -286,7 +290,7 @@
 						</label>
 					</div>
 				</div>
-
+				<input type="text" hidden name="profile" value={data?.situs?.profile} />
 				<div>
 					<p>Nama Situs:</p>
 					<div class="relative">
@@ -519,7 +523,7 @@
 							}}
 							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 						/>
-						<input type="hidden" name="juru_kunci" value={selectedJuruKunci?.name || ''} />
+						<input type="hidden" name="juru_kunci" value={selectedJuruKunci?.id || ''} />
 
 						{#if showJuruKunciDropdown && filteredJuruKunciUsers.length > 0}
 							<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
@@ -596,7 +600,7 @@
 							}}
 							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 						/>
-						<input type="hidden" name="pembina" value={selectedPembina?.name || ''} />
+						<input type="hidden" name="pembina" value={selectedPembina?.id || ''} />
 
 						{#if showPembinaDropdown && filteredPembinaUsers.length > 0}
 							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
@@ -638,7 +642,7 @@
 							}}
 							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 						/>
-						<input type="hidden" name="pelindung" value={selectedPelindung?.name || ''} />
+						<input type="hidden" name="pelindung" value={selectedPelindung?.id || ''} />
 
 						{#if showPelindungDropdown && filteredPelindungUsers.length > 0}
 							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">

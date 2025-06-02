@@ -42,7 +42,7 @@
 	});
 
 	function filterD(data: any[]) {
-		return data.filter(
+		return data?.filter(
 			(item) =>
 				(item?.nama_acara?.toLowerCase().includes(keyword.toLowerCase()) ||
 					item?.tanggal?.toLowerCase().includes(keyword.toLowerCase()) ||
@@ -70,9 +70,9 @@
 		}
 	});
 
-	let resData = $derived(pagination(data.data));
+	let resData = $derived(pagination(data?.data));
 	// Add this derived value to track the total filtered items
-	let filteredTotal = $derived(filterD(data.data).length);
+	let filteredTotal = $derived(filterD(data?.data).length);
 </script>
 
 {#if navigating.to}
@@ -152,7 +152,7 @@
 				['nama_acara', 'Nama Acara'],
 				['waktu_mulai', 'Tanggal Acara'],
 				['alamat_acara', 'Lokasi'],
-				['nama_penanggung_jawab', 'Penanggung Jawab'],
+				['penanggungjawab_nama', 'Penanggung Jawab'],
 				['jenis_acara', 'Jenis Acara'],
 				['kapasitas_acara', 'Kapasitas'],
 				['children', 'Status'],

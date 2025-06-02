@@ -388,7 +388,7 @@
 					<div class="relative">
 						<input
 							type="text"
-							placeholder="Masukkan Juru Kunci"
+							placeholder="Masukkan Penanggung Jawab"
 							bind:value={penanggungjawabSearchTerm}
 							onfocus={() => (showPenanggungjawabDropdown = true)}
 							onblur={() => {
@@ -442,7 +442,7 @@
 						type="text"
 						name="tujuan_acara"
 						bind:value={tujuanacara}
-						placeholder="Masukkan Alamat Acara"
+						placeholder="Masukkan Tujuan Acara"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
 				</div>
@@ -700,11 +700,7 @@
 </div>
 {#if success}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
-		<SucessModal
-			open={success}
-			text="Tamu Berhasil Di Undang!"
-			to="/abdi/sekretariat/acara"
-			on:close={toggle}
+		<SucessModal open={success} text="Berhasil!" to="/abdi/sekretariat/acara" on:close={toggle}
 		></SucessModal>
 	</div>
 {/if}

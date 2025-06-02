@@ -77,7 +77,7 @@
 
 					<div class="mt-5 flex items-center">
 						<span class="clarity--key-line flex-shrink-0"></span>
-						<p class="text-md ml-6">{detil.juru_kunci || '-'}</p>
+						<p class="text-md ml-6">{detil.juru_kunci_nama || '-'}</p>
 					</div>
 
 					<div class="ml-1 mt-5 flex items-center">

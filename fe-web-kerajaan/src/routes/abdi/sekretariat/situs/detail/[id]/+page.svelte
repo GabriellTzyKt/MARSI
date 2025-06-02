@@ -98,7 +98,12 @@
 						class="flex h-fit w-full flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
 					>
 						<p>Pembina :</p>
-						<input type="text" placeholder="Masukkan Nama" disabled value={situs.pembina || '-'} />
+						<input
+							type="text"
+							placeholder="Masukkan Nama"
+							disabled
+							value={situs.pembina_nama || '-'}
+						/>
 					</div>
 					<div
 						class="flex h-fit w-full flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm"
@@ -108,7 +113,7 @@
 							type="text"
 							placeholder="Masukkan Nama"
 							disabled
-							value={situs.pelindung || '-'}
+							value={situs.pelindung_nama || '-'}
 						/>
 					</div>
 				</div>
@@ -121,7 +126,7 @@
 						type="text"
 						placeholder="Masukkan Alamat"
 						disabled
-						value={situs.juru_kunci || '-'}
+						value={situs.juru_kunci_nama || '-'}
 					/>
 				</div>
 

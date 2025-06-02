@@ -1,8 +1,10 @@
 import { env } from "$env/dynamic/private";
 import type { PageServerLoad } from "../../$types";
 
-export const load: PageServerLoad = async ({params}) => {
+export const load: PageServerLoad = async ({params, cookies}) => {
     console.log(params)
+    let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
+
     try {
         let res = await fetch(`${env.URL_KERAJAAN}/situs/${params.id}`);
         let resW = await fetch(`${env.URL_KERAJAAN}/situs/wisata?limit=600`);
@@ -71,11 +73,22 @@ export const load: PageServerLoad = async ({params}) => {
                 console.error("Error processing image URLs:", error);
             }
         }
+        let [resjk, respl, respb] = await Promise.all([
+            fetch(`${env.PUB_PORT}/user/${situsData.juru_kunci}`),
+            fetch(`${env.PUB_PORT}/user/${situsData.pelindung}`),
+            fetch(`${env.PUB_PORT}/user/${situsData.pembina}`),
+      ])
+      let jk = await resjk.json()
+      let pl = await respl.json()
+      let pb = await respb.json()
         let final = {
             ...situsData,
             wisata,
             imageUrls,
-            profileUrl
+            profileUrl,
+            juru_kunci_nama: jk.nama_lengkap||"-",
+            pelindung_nama: pl.nama_lengkap||"-",
+            pembina_nama: pb.nama_lengkap||"-"
         }
         console.log(final)
         return { data: final };

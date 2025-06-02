@@ -127,11 +127,11 @@
 		<Table
 			table_header={[
 				['nama_lengkap', 'Nama Lengkap'],
-				['panggilan', 'Asma Dalem'],
+				// ['panggilan', 'Asma Dalem'],
 				['tempat_lahir', 'Tempat Lahir'],
 				['tanggal_lahir', 'Tanggal Lahir'],
 				['jabatan', 'Jabatan'],
-				['nama_gelar', 'Gelar'],
+				// ['nama_gelar', 'Gelar'],
 				['no_telp', 'Nomer Telepon'],
 				['children', 'Aksi']
 			]}

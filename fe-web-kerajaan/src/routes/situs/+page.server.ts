@@ -8,8 +8,8 @@ export const load: PageServerLoad = async () => {
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }
-        const data = await res.json();
-        
+        let data = await res.json();
+        data = data.filter((item)=>item.deleted_at === '0001-01-01T00:00:00Z')
         const formattedData = await Promise.all(data.map(async (item: any) => {
             const formattedItem = {
                 ...item,

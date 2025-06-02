@@ -480,7 +480,7 @@
 							<option value="Raja">Raja</option>
 							<option value="Wakil Raja">Wakil Raja</option>
 							<option value="Ratu">Ratu</option>
-							<option value="Hokage">Hokage</option>
+							<!-- <option value="Hokage">Hokage</option> -->
 							<option value="Pangeran">Pangeran</option>
 							<option value="Putri">Putri</option>
 							<option value="Bangsawan">Bangsawan</option>
@@ -515,7 +515,7 @@
 							<option value="Hindu">Hindu</option>
 							<option value="Buddha">Buddha</option>
 							<option value="Kong Hu Cu">Kong Hu Cu</option>
-							<option value="Prefer Not To Say">Prefer Not To Say</option>
+							<!-- <option value="Prefer Not To Say">Prefer Not To Say</option> -->
 						</select>
 						<!-- <span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span> -->
 					</div>
@@ -545,7 +545,7 @@
 
 {#if open}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 100 }}>
-		<SuccessModal text="Berhasil menambah abdi"></SuccessModal>
+		<SuccessModal text="Berhasil mengubah abdi"></SuccessModal>
 	</div>
 {/if}
 
