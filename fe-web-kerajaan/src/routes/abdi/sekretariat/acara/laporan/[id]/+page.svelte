@@ -244,7 +244,7 @@
 					<p>Nama Acara:</p>
 					<input
 						type="text"
-						value={data.data.nama_acara}
+						value={data?.data?.nama_acara || '-'}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 						disabled
@@ -254,7 +254,7 @@
 					<p>Penanggung Jawab:</p>
 					<input
 						type="text"
-						value={data.data.nama_penanggungjawab}
+						value={data?.data?.nama_penanggungjawab}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 						disabled
@@ -264,7 +264,7 @@
 					<p>Lokasi Acara:</p>
 					<input
 						type="text"
-						value={data.data.alamat_acara}
+						value={data?.data?.alamat_acara}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 						disabled
@@ -274,7 +274,7 @@
 					<p>Tujuan Acara:</p>
 					<input
 						type="text"
-						value={data.data.tujuan_acara}
+						value={data?.data?.tujuan_acara}
 						placeholder="Masukkan Nama"
 						disabled
 						class="w-full rounded-lg border px-2 py-1"
@@ -285,7 +285,7 @@
 					<textarea
 						placeholder="Masukkan Deskripsi Acara"
 						disabled
-						value={data.data.deskripsi_acara}
+						value={data?.data?.deskripsi_acara}
 						class="h-32 w-full resize-none rounded-md border px-3 py-3 text-lg"
 					></textarea>
 				</div>
@@ -298,7 +298,7 @@
 						<input
 							type="text"
 							placeholder="Masukkan Nama"
-							value={data.data.jenis_acara}
+							value={data?.data?.jenis_acara}
 							class="w-full rounded-lg border px-2 py-1"
 							disabled
 						/>
@@ -308,7 +308,7 @@
 						<input
 							type="text"
 							placeholder="Masukkan Nama"
-							value={data.data.kapasitas_acara}
+							value={data?.data?.kapasitas_acara}
 							class="w-full rounded-lg border px-2 py-1"
 							disabled
 						/>
@@ -319,7 +319,7 @@
 					<p>Lokasi Acara:</p>
 					<input
 						type="text"
-						value={data.data.alamat_acara}
+						value={data?.data?.alamat_acara}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 						disabled
@@ -331,7 +331,7 @@
 						<p>Tanggal Mulai:</p>
 						<input
 							type="text"
-							value={data.data.tanggal_mulai}
+							value={data?.data?.tanggal_mulai}
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
 							disabled
@@ -341,7 +341,7 @@
 						<p>Tanggal Selesai:</p>
 						<input
 							type="text"
-							value={data.data.tanggal_selesai}
+							value={data?.data?.tanggal_selesai}
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
 							disabled
@@ -354,7 +354,7 @@
 						<p>Jam Mulai:</p>
 						<input
 							type="text"
-							value={data.data.waktu_mulai}
+							value={data?.data?.waktu_mulai}
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
 							disabled
@@ -364,7 +364,7 @@
 						<p>Jam Selesai:</p>
 						<input
 							type="text"
-							value={data.data.waktu_selesai}
+							value={data?.data?.waktu_selesai}
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
 							disabled
@@ -383,16 +383,16 @@
 			{#each data?.undangan as undangan, i}
 				<div class="col-span-1 w-full">{i + 1}</div>
 				<div class="col-span-2 w-full rounded-lg border px-2 py-1">
-					<p class="w-full py-2 text-center">{undangan.jenis_kelamin || 'No Data'}</p>
+					<p class="w-full py-2 text-center">{undangan?.jenis_kelamin || 'No Data'}</p>
 				</div>
 				<div class="col-span-3 w-full rounded-lg border px-2 py-1">
-					<p class="w-full py-2 text-center">{undangan.nama_penerima}</p>
+					<p class="w-full py-2 text-center">{undangan?.nama_penerima}</p>
 				</div>
 				<div class="col-span-3 w-full rounded-lg border px-2 py-1">
-					<p class="w-full py-2 text-center">{undangan.nomer_telepon || 'No Phone'}</p>
+					<p class="w-full py-2 text-center">{undangan?.nomer_telepon || 'No Phone'}</p>
 				</div>
 			{/each}
-			{#if data?.undangan.length === 0}
+			{#if data?.undangan?.length === 0}
 				<div class="col-span-full items-center justify-center py-2">
 					<p>No Panitia Yet</p>
 				</div>

@@ -161,7 +161,8 @@ export const load: PageServerLoad = async ({params, cookies}) => {
             
             // Add files from this document to the main list
             fileDetails = [...fileDetails, ...docFileDetails.filter(file => file !== null)];
-        }
+            }
+            console.log("Formatted Data",formattedData)
                 return { data: formattedData, undangan: undanganWithUser, panit: panit, situs: situs, files: fileDetails};
            
         }
