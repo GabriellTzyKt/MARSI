@@ -13,6 +13,7 @@
 	import Table from '$lib/table/Table.svelte';
 	import { string } from 'zod';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
+	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
 	let { data } = $props();
 	let kategoriAsetOptions = $derived(
 		Array.from(new Set((data.data || []).map((item) => item.kategori_aset))).filter(Boolean)
@@ -24,6 +25,7 @@
 	let currPage = $state(1);
 	let loading = $state(false);
 	let deleteD = $state(false);
+	let itemDelete = $state();
 	let selectedItem = $state();
 	function filterD(data: any[]) {
 		return data.filter(
@@ -52,21 +54,12 @@
 	let resData = $derived(pagination(data.data || []));
 	let tableData = $derived(data.data || []);
 	let success = $state(false);
+
 	// Check for delete parameter in URL
-	$effect(() => {
-		const deleteId = page.url.searchParams.get('delete');
-		if (deleteId) {
-			// Find the item with this ID
-			const itemToDelete = data.data.find((item) => item.id_aset.toString() === deleteId);
-			if (itemToDelete) {
-				selectedItem = itemToDelete;
-				deleteD = true;
-				// console.log('Found item to delete from URL:', selectedItem);
-			}
-		} else {
-			// console.error('Item with ID', deleteId, 'not found');
-		}
-	});
+	function nonAktifkan(data: any) {
+		deleteD = true;
+		itemDelete;
+	}
 </script>
 
 {#if navigating.to}
@@ -156,15 +149,21 @@
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
-					<DropDown
-						text={`Apakah yakin ingin mengarsipkan aset ini?`}
+					<DropDownNew
 						items={[
-							['Ubah', `/abdi/sekretariat/aset/ubah/${data.id_aset}`],
-							['children', 'Arsipkan', `/abdi/sekretariat/aset/?delete=${data.id_aset}`]
+							{
+								label: 'Edit',
+								action: () => goto(`/abdi/sekretariat/aset/ubah/${data.id_aset}`)
+							},
+
+							{
+								label: 'Non Aktifkan',
+								action: () => nonAktifkan(data.id_aset)
+							}
 						]}
 						id={`id-${index}`}
 						{data}
-					></DropDown>
+					></DropDownNew>
 				{/if}
 			{/snippet}
 			{#snippet picture({ header, data, index })}
@@ -176,7 +175,7 @@
 		<Pagination bind:currPage bind:entries totalItems={filterD(data.data).length}></Pagination>
 	</div>
 </div>
-{#if deleteD && selectedItem}
+{#if deleteD}
 	<form
 		action="?/delete"
 		method="post"
@@ -189,13 +188,13 @@
 					success = true;
 
 					// Clear URL parameter
-					goto('/abdi/sekretariat/aset', { replaceState: true });
 
 					// Show success message for 3 seconds
-					setTimeout(() => {
-						success = false;
-						invalidateAll(); // Refresh data
-					}, 3000);
+					await invalidateAll().then(() => {
+						setTimeout(() => {
+							success = false; // Refresh data
+						}, 3000);
+					});
 				} else if (result.type === 'failure') {
 					loading = false;
 					// Handle error - you could add an error state here

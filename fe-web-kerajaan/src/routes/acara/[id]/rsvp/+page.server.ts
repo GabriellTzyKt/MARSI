@@ -27,7 +27,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         let allUsers = [];
         if (usersResponse.ok) {
             allUsers = await usersResponse.json();
-            console.log("All users:", allUsers);
+            // console.log("All users:", allUsers);
         } else {
             console.error(`Failed to fetch users: ${usersResponse.statusText}`);
         }
@@ -156,7 +156,7 @@ export const actions: Actions = {
                 // Add valid guest to the array
                 if (guestName && guestGender && guestPhone) {
                     allAttendees.push({
-                        id_user: Number(getId),
+                        id_user:  null,
                         id_acara: Number(id),
                         nama: guestName,
                         no_telp: guestPhone,
@@ -185,6 +185,7 @@ export const actions: Actions = {
         console.log("Final data to submit:", allAttendees);
 
         try {
+          
             const response = await fetch(`${env.URL_KERAJAAN}/acara/rsvp`, {
                 method: "POST",
                 headers: {

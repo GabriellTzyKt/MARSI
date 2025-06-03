@@ -3,8 +3,230 @@
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
-
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
+	let { data } = $props();
 	let total = $state(8);
+	let error = $state();
+	let uploadedFiles: (File | null)[] = $state([]);
+	let uploadedFileUrls: string[] = $state([]);
+	let uploadedFileIds: (number | null)[] = $state([]);
+	let fileinput = $state<File[]>([]);
+	let loading = $state(false);
+	let success = $state(false);
+	function handleFileChange(event: Event) {
+		const target = event.target as HTMLInputElement;
+		console.log('File input changed:', target.files);
+
+		if (target.files && target.files.length > 0) {
+			const newFiles = Array.from(target.files);
+			console.log('New files selected:', newFiles);
+
+			// Add new files to the list
+			uploadedFiles = [...uploadedFiles, ...newFiles];
+
+			// Add URLs for preview
+			const newUrls = newFiles.map((file) => URL.createObjectURL(file));
+			uploadedFileUrls = [...uploadedFileUrls, ...newUrls];
+
+			// Add null IDs for new files
+			uploadedFileIds = [...uploadedFileIds, ...Array(newFiles.length).fill(null)];
+
+			console.log('Updated file list:', uploadedFiles);
+			console.log('Updated file id', uploadedFileIds);
+
+			// Reset file input to allow selecting the same file again
+			target.value = '';
+		}
+	}
+	function removeImage(index: number) {
+		// Simpan ID gambar yang dihapus untuk dikirim ke server
+		const deletedId = uploadedFileIds[index];
+
+		// Hapus dari array
+		uploadedFiles = uploadedFiles.filter((_, i) => i !== index);
+		uploadedFileUrls = uploadedFileUrls.filter((_, i) => i !== index);
+		uploadedFileIds = uploadedFileIds.filter((_, i) => i !== index);
+	}
+
+	// Function to get file type from URL or File object
+	function getFileType(file: File | null, url: string): string {
+		if (file) {
+			return file.type;
+		}
+
+		// Try to determine type from URL extension
+		const extension = url.toLowerCase().split('.').pop() || '';
+
+		if (extension === 'pdf') return 'application/pdf';
+		if (['doc', 'docx'].includes(extension)) return 'application/msword';
+		if (['xls', 'xlsx'].includes(extension)) return 'application/vnd.ms-excel';
+		if (['mp3'].includes(extension)) return 'audio/mpeg';
+		if (['mp4'].includes(extension)) return 'video/mp4';
+		if (['jpg', 'jpeg'].includes(extension)) return 'image/jpeg';
+		if (['png'].includes(extension)) return 'image/png';
+
+		return 'application/octet-stream';
+	}
+	// Add these helper functions to determine file type
+	function getFileTypeFromUrl(url: string): string {
+		const extension = url.toLowerCase().split('.').pop() || '';
+
+		if (extension === 'pdf') return 'PDF';
+		if (['doc', 'docx'].includes(extension)) return 'Word';
+		if (['xls', 'xlsx'].includes(extension)) return 'Excel';
+		if (['ppt', 'pptx'].includes(extension)) return 'PowerPoint';
+		if (['mp3', 'wav', 'ogg'].includes(extension)) return 'Audio';
+		if (['mp4', 'webm', 'mov'].includes(extension)) return 'Video';
+		if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) return 'Image';
+
+		return 'Document';
+	}
+	function getFileIconForType(type: string): string {
+		switch (type) {
+			case 'PDF':
+				return '📄';
+			case 'Word':
+				return '📝';
+			case 'Excel':
+				return '📊';
+			case 'PowerPoint':
+				return '📺';
+			case 'Audio':
+				return '🎵';
+			case 'Video':
+				return '🎬';
+			case 'Image':
+				return '🖼️';
+			default:
+				return '📁';
+		}
+	}
+	function getFileNameFromUrl(url: string): string {
+		const parts = url.split('/');
+		return parts[parts.length - 1].split('?')[0];
+	}
+	async function handleSubmit(event: Event) {
+		event.preventDefault();
+		loading = true;
+
+		try {
+			const form = event.target as HTMLFormElement;
+			const formData = new FormData(form);
+
+			// Hapus input file kosong yang mungkin ada
+			formData.delete('uploadfile');
+
+			// Clear any existing existingFileId entries to avoid duplicates
+			formData.delete('existingFileId');
+
+			// Add each docId as an existingFileId
+			uploadedFileIds.forEach((docId, index) => {
+				if (docId) {
+					console.log(`Adding existingFileId ${index}:`, docId);
+					formData.append('existingFileId', docId.toString());
+				}
+			});
+
+			// Add new files
+			const newFiles = uploadedFiles.filter((file, index) => file && !uploadedFileIds[index]);
+			console.log(`Adding ${newFiles.length} new files to form`);
+
+			newFiles.forEach((file, index) => {
+				if (file) {
+					console.log(`Adding new file: ${file.name} (${file.size} bytes)`);
+					formData.append('uploadfile', file);
+				}
+			});
+
+			// Log all form data
+			console.log('Form data to be submitted:');
+			for (const [key, value] of formData.entries()) {
+				if (value instanceof File) {
+					console.log(`${key}: File - ${value.name} (${value.size} bytes)`);
+				} else {
+					console.log(`${key}: ${value}`);
+				}
+			}
+
+			// Send the form data
+			const response = await fetch(form.action, {
+				method: 'POST',
+				body: formData
+			});
+
+			const result = await response.json();
+			console.log('Server response:', result);
+
+			if (response.ok) {
+				loading = false;
+				success = true;
+				if (result.type === 'success') {
+					setTimeout(() => {
+						success = false;
+						goto('/abdi/sekretariat/acara');
+					}, 3000);
+				} else {
+					error = result.errors;
+					loading = false;
+				}
+			} else {
+				error = result.errors;
+				loading = false;
+			}
+		} catch (err) {
+			console.error('Error submitting form:', err);
+			loading = false;
+			error = { general: ['An unexpected error occurred'] };
+		}
+	}
+	// Function to convert URL to File object
+	async function urlToFile(url: string, filename: string): Promise<File | null> {
+		try {
+			const response = await fetch(url);
+			if (!response.ok) {
+				console.error(`Failed to fetch image: ${response.statusText}`);
+				return null;
+			}
+
+			const blob = await response.blob();
+			// Determine file type from blob or URL
+			const fileType = blob.type || 'image/jpeg';
+			// Create a File object from the blob
+			return new File([blob], filename, { type: fileType });
+		} catch (error) {
+			console.error('Error converting URL to File:', error);
+			return null;
+		}
+	}
+	let datagambar = data.files;
+	let dataambil = data.dataAset;
+	onMount(async () => {
+		console.log('onMount: Starting to process datagambar:', datagambar);
+
+		if (datagambar && datagambar.length > 0) {
+			// Initialize arrays with the correct IDs
+			uploadedFileUrls = datagambar.map((file: any) => file.url);
+
+			// Use the docId from each file as the existingFileId
+			uploadedFileIds = datagambar.map((file: any) => file.docId || null);
+
+			console.log('onMount: Initial uploadedFileUrls:', uploadedFileUrls);
+			console.log('onMount: Initial uploadedFileIds:', uploadedFileIds);
+
+			// Convert URLs to File objects
+			const filePromises = datagambar.map(async (file: any, index: any) => {
+				const filename = file.name || `file-${index}.${file.url.split('.').pop()}`;
+				return await urlToFile(file.url, filename);
+			});
+
+			// Wait for all conversions to complete
+			uploadedFiles = await Promise.all(filePromises);
+			console.log('onMount: Converted existing files to File objects:', uploadedFiles);
+		} else {
+			console.log('onMount: No datagambar found or empty array');
+		}
+	});
 </script>
 
 {#if navigating.to}
@@ -16,37 +238,45 @@
 			<p class="mt-2">Informasi Acara</p>
 		</div>
 
-		<div class="mt-5 grid grid-cols-2 gap-12 lg:grid-cols-4">
-			<div class="col-span-2">
+		<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-2">
+			<div class="col-span-1">
 				<div class="mt-2 w-full">
 					<p>Nama Acara:</p>
 					<input
 						type="text"
+						value={data.data.nama_acara}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
+						disabled
 					/>
 				</div>
 				<div class="mt-2 w-full">
 					<p>Penanggung Jawab:</p>
 					<input
 						type="text"
+						value={data.data.nama_penanggungjawab}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
+						disabled
 					/>
 				</div>
 				<div class="mt-2 w-full">
 					<p>Lokasi Acara:</p>
 					<input
 						type="text"
+						value={data.data.alamat_acara}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
+						disabled
 					/>
 				</div>
 				<div class="mt-2 w-full">
 					<p>Tujuan Acara:</p>
 					<input
 						type="text"
+						value={data.data.tujuan_acara}
 						placeholder="Masukkan Nama"
+						disabled
 						class="w-full rounded-lg border px-2 py-1"
 					/>
 				</div>
@@ -54,62 +284,92 @@
 					<p>Deskripsi Acara:</p>
 					<textarea
 						placeholder="Masukkan Deskripsi Acara"
+						disabled
+						value={data.data.deskripsi_acara}
 						class="h-32 w-full resize-none rounded-md border px-3 py-3 text-lg"
 					></textarea>
 				</div>
 			</div>
 
-			<div class="col-span-2 lg:col-span-1">
-				<div class="mt-2 w-full">
-					<p>Jenis Acara:</p>
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="w-full rounded-lg border px-2 py-1"
-					/>
+			<div class="col-span-1">
+				<div class="flexcoba flex gap-2">
+					<div class="mt-2 w-full">
+						<p>Jenis Acara:</p>
+						<input
+							type="text"
+							placeholder="Masukkan Nama"
+							value={data.data.jenis_acara}
+							class="w-full rounded-lg border px-2 py-1"
+							disabled
+						/>
+					</div>
+					<div class="mt-2 w-full">
+						<p>Kapasitas Acara:</p>
+						<input
+							type="text"
+							placeholder="Masukkan Nama"
+							value={data.data.kapasitas_acara}
+							class="w-full rounded-lg border px-2 py-1"
+							disabled
+						/>
+					</div>
 				</div>
-				<div class="mt-2 w-full">
-					<p>Tanggal Mulai:</p>
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="w-full rounded-lg border px-2 py-1"
-					/>
-				</div>
-				<div class="mt-2 w-full">
-					<p>Jam Mulai:</p>
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="w-full rounded-lg border px-2 py-1"
-					/>
-				</div>
-			</div>
 
-			<div class="col-span-2 lg:col-span-1">
 				<div class="mt-2 w-full">
-					<p>Kapasitas Acara:</p>
+					<p>Lokasi Acara:</p>
 					<input
 						type="text"
+						value={data.data.alamat_acara}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
+						disabled
 					/>
 				</div>
-				<div class="mt-2 w-full">
-					<p>Tanggal Selesai:</p>
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="w-full rounded-lg border px-2 py-1"
-					/>
+
+				<div class="flexcoba flex gap-2">
+					<div class="mt-2 w-full">
+						<p>Tanggal Mulai:</p>
+						<input
+							type="text"
+							value={data.data.tanggal_mulai}
+							placeholder="Masukkan Nama"
+							class="w-full rounded-lg border px-2 py-1"
+							disabled
+						/>
+					</div>
+					<div class="mt-2 w-full">
+						<p>Tanggal Selesai:</p>
+						<input
+							type="text"
+							value={data.data.tanggal_selesai}
+							placeholder="Masukkan Nama"
+							class="w-full rounded-lg border px-2 py-1"
+							disabled
+						/>
+					</div>
 				</div>
-				<div class="mt-2 w-full">
-					<p>Jam Selesai:</p>
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="w-full rounded-lg border px-2 py-1"
-					/>
+
+				<div class="flexcoba flex gap-2">
+					<div class="mt-2 w-full">
+						<p>Jam Mulai:</p>
+						<input
+							type="text"
+							value={data.data.waktu_mulai}
+							placeholder="Masukkan Nama"
+							class="w-full rounded-lg border px-2 py-1"
+							disabled
+						/>
+					</div>
+					<div class="mt-2 w-full">
+						<p>Jam Selesai:</p>
+						<input
+							type="text"
+							value={data.data.waktu_selesai}
+							placeholder="Masukkan Nama"
+							class="w-full rounded-lg border px-2 py-1"
+							disabled
+						/>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -119,13 +379,24 @@
 		<!-- bawah -->
 
 		<p class="mb-5 mt-5 text-start text-xl font-bold text-blue-600">Daftar Undangan</p>
-		<div class="grid grid-cols-8 gap-2">
-			{#each Array(total) as _, i}
+		<div class="mt-10 grid grid-cols-9 gap-2">
+			{#each data?.undangan as undangan, i}
 				<div class="col-span-1 w-full">{i + 1}</div>
-				<div class="col-span-1 w-full rounded-lg border px-1 py-1 lg:px-2">Tn</div>
-				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
-				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
+				<div class="col-span-2 w-full rounded-lg border px-2 py-1">
+					<p class="w-full py-2 text-center">{undangan.jenis_kelamin || 'No Data'}</p>
+				</div>
+				<div class="col-span-3 w-full rounded-lg border px-2 py-1">
+					<p class="w-full py-2 text-center">{undangan.nama_penerima}</p>
+				</div>
+				<div class="col-span-3 w-full rounded-lg border px-2 py-1">
+					<p class="w-full py-2 text-center">{undangan.nomer_telepon || 'No Phone'}</p>
+				</div>
 			{/each}
+			{#if data?.undangan.length === 0}
+				<div class="col-span-full items-center justify-center py-2">
+					<p>No Panitia Yet</p>
+				</div>
+			{/if}
 		</div>
 
 		<div class="mt-5 h-1 w-full bg-slate-300"></div>

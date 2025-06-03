@@ -189,15 +189,17 @@
 					></audio>
 				</div>
 			{:else}
-				<div class="inline-block h-40 w-40 min-w-[10rem] overflow-hidden rounded-xl">
-					<img
-						src={file}
-						class="h-full w-full object-cover"
-						alt=""
-						on:load={() => handleI(i)}
-						on:error={() => handleI(i)}
-					/>
-				</div>
+				<a href={file}>
+					<div class="inline-block h-40 w-40 min-w-[10rem] overflow-hidden rounded-xl">
+						<img
+							src={file}
+							class="h-full w-full object-cover"
+							alt=""
+							on:load={() => handleI(i)}
+							on:error={() => handleI(i)}
+						/>
+					</div>
+				</a>
 			{/if}
 		{/each}
 	{:else if imageUrls.length === 0 && !loading}

@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         }
         
         const detil_acara = await acara.json();
-        console.log("Raw API response:", detil_acara);
+        // console.log("Raw API response:", detil_acara);
         
         // Pastikan detil_acara adalah array
         const acaraArray = Array.isArray(detil_acara) ? detil_acara : [detil_acara];
@@ -78,7 +78,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
             }
         })
         let user = await userData.json();
-        console.log(`user : ${detil_acara.id_penanggung_jawab} adalah ${user.nama_lengkap}`)
+        // console.log(`user : ${detil_acara.id_penanggung_jawab} adalah ${user.nama_lengkap}`)
         // console.log("Final processed data:", processedData[0]);
         const final = {
             ...processedData[0],

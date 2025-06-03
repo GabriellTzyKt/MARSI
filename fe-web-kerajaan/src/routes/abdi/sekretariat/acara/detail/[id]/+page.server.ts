@@ -83,7 +83,8 @@ export const load: PageServerLoad = async ({params, cookies}) => {
             }))
                 console.log(formattedData)
                 console.log(undangan)
-                console.log(panit)
+            console.log(panit)
+            
                 return { data: formattedData, undangan: undanganWithUser, panit: panit, situs: situs };
            
         }

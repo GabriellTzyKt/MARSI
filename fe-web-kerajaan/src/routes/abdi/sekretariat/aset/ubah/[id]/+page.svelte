@@ -266,7 +266,7 @@
 	<Loader></Loader>
 {/if}
 {#if success}
-	<SuccessModal text="berhasil ditambahkan"></SuccessModal>
+	<SuccessModal text="Berhasil!"></SuccessModal>
 {/if}
 <div class="flex w-full flex-col">
 	<form action="?/edit" method="post" enctype="multipart/form-data" onsubmit={handleSubmit}>
@@ -462,7 +462,7 @@
 		</div>
 		<div class="flex justify-center lg:justify-end">
 			<button class="bg-badran-bdg w-full rounded-lg px-6 py-2 text-white lg:w-auto"
-				>Tambah Data</button
+				>Update Data</button
 			>
 		</div>
 	</form>

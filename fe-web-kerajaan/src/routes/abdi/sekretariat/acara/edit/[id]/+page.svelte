@@ -579,7 +579,7 @@
 					<div class="col-span-1">{i + 1}</div>
 
 					<div class="col-span-1 w-full rounded-lg border px-2 py-1">
-						<p class="w-full text-center">{undangan.jenis_kelamin}</p>
+						<p class="w-full text-center">{undangan.jenis_kelamin || 'No Data'}</p>
 					</div>
 					<div class="col-span-3 w-full rounded-lg border px-2 py-1">
 						<p class="w-full text-center">{undangan.nama}</p>
@@ -601,6 +601,10 @@
 						</span>
 					</div>
 				{/each}
+			</div>
+		{:else}
+			<div>
+				<p class="text-center">No Panitia Yet</p>
 			</div>
 		{/if}
 
@@ -768,7 +772,7 @@
 
 		<div class="mt-8 flex w-full justify-center lg:justify-end">
 			<button class="w-50 text-nowrap rounded-lg bg-green-400 px-2 py-2 text-white" type="submit">
-				Buat acara
+				Update Acara
 			</button>
 		</div>
 	</form>
