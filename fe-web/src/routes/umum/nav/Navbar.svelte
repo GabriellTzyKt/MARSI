@@ -40,7 +40,7 @@
 				<a href="/umum/daftarkerajaan" class="nav-link whitespace-nowrap">Daftar Kerajaan</a>
 				<a href="/umum/daftarsitus" class="nav-link whitespace-nowrap">Situs Kerajaan</a>
 				<a href="/umum/daftaraset" class="nav-link whitespace-nowrap">Aset Kerajaan</a>
-				<a href="/umum/daftaracara" class="nav-link whitespace-nowrap">Acara</a>
+				<!-- <a href="/umum/daftaracara" class="nav-link whitespace-nowrap">Acara</a> -->
 			</div>
 		</div>
 

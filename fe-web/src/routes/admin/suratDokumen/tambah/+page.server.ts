@@ -3,11 +3,12 @@ import { fail } from "@sveltejs/kit";
 import { error, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
 import type { PageServerLoad } from "../$types";
+import { filter } from 'd3';
 
 
 export const load: PageServerLoad = async () => {
     try {
-        const [kerajaanRes, arsipRes] = await Promise.all([
+        const [kerajaanRes, arsipRes, jenisRes] = await Promise.all([
             fetch(`${env.PUB_PORT}/kerajaan?limit=200`, {
                 method: 'GET',
                 headers: {
@@ -19,13 +20,24 @@ export const load: PageServerLoad = async () => {
                 headers: {
                     Accept: 'application/json'
                 }
+            }),
+            fetch(`${env.PUB_PORT}/jenis-arsip?limit=200`, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json'
+                }
             })
         ]);
         if (kerajaanRes.ok && arsipRes.ok) {
             const kerajaanData = await kerajaanRes.json();
+            const filteredKerajaanData = kerajaanData.filter((item : any) => item.deleted_at === "0001-01-01T00:00:00Z")
             const arsipData = await arsipRes.json();
-            console.log(kerajaanData, arsipData);
-            return { kerajaanData, arsipData };
+            console.log("Arsip data : ", arsipData)
+            const filteredArsipData = arsipData.filter((item : any) => item.deleted_at === "0001-01-01T00:00:00Z")
+             const jenisData = await jenisRes.json();
+            const filteredJenisData = jenisData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z");
+           
+            return { filteredKerajaanData, filteredArsipData, filteredJenisData };
         }
     } catch (error) { }
 };
@@ -113,7 +125,7 @@ export const actions: Actions = {
                     const arsipData = await arsipResponse.json();
                     const lastArsip = arsipData[arsipData.length - 1]; // Ambil data terakhir
                     const idArsip = lastArsip.id_arsip;
-                    console.log("ID : ", idArsip)
+                    console.log("ID Last arsip : ", idArsip)
 
                     // Send id_arsip and id_kerajaan to /arsip/kerajaan
                     const kerajaanResponse = await fetch(`${env.PUB_PORT}/arsip/kerajaan`, {

@@ -254,8 +254,8 @@ export const actions: Actions = {
             forum: data.get("fitur-forum") === "ya" ? 1 : 0,
             warna_utama: data.get("warna_mobile_utama") as string,
             warna_sekunder: data.get("warna_mobile_secondary") as string,
-            warna_aksen1: data.get("warna_mobile_aksen1") as string,
-            warna_aksen2: data.get("warna_mobile_aksen2") as string,
+            warna_aksen_1: data.get("warna_mobile_aksen1") as string,
+            warna_aksen_2: data.get("warna_mobile_aksen2") as string,
             permohonan: permohonan
         } : null;
 

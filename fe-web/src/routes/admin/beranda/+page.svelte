@@ -9,10 +9,12 @@
 	let hex = '#878272ed';
 
 	let { data } = $props();
+	console.log("Data ", data)
 	let dataambil = data.adminCount;
 	let datadetail = data.adminData
 	let dataambil2 = data.arsipCount
 	let dataambil3 = data.kerajaanCount
+	let dataambil4 = data.acaraCount
 
 	let rgb = {
 		r: 135,
@@ -71,7 +73,7 @@
 									: 'Jumlah Total Kerajaan:'}
 					</p>
 					<p class="text-3xl font-bold">
-						{i === 0 ? dataambil : i === 1 ? dataambil2 : i === 2 ? 240 : dataambil3}
+						{i === 0 ? dataambil : i === 1 ? dataambil2 : i === 2 ? dataambil4 : dataambil3}
 					</p>
 				</div>
 			</div>

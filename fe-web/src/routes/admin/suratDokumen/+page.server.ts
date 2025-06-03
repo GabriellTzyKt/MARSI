@@ -19,24 +19,54 @@ export const load: PageServerLoad = async ({ fetch }) => {
         }
 
         const arsipData = await arsipRequest.json();
-        
+
         // Log all document IDs
         console.log("All document IDs:");
         arsipData.forEach((doc: any) => {
             console.log(`ID: ${doc.id_arsip}, Dokumentasi ID: ${doc.dokumentasi}, Name: ${doc.nama_arsip}`);
         });
-        
+
         // Filter out deleted items
         const filteredArsipData = arsipData.filter((doc: any) => {
             return doc.deleted_at === '0001-01-01T00:00:00Z' && doc.deleted_at !== null;
         });
-        
-        // Log filtered document IDs
-        // console.log("Filtered document IDs (non-deleted):");
-        filteredArsipData.forEach((doc: any) => {
-            console.log(`ID: ${doc.id_arsip}, Dokumentasi ID: ${doc.dokumentasi}, Name: ${doc.nama_arsip}`);
+
+        // 2. Ambil data arsip/kerajaan (linking data)
+        const kerajaanResponse = await fetch(env.PUB_PORT + "/arsip/kerajaan", {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
         });
-        
+        if (!kerajaanResponse.ok) {
+            console.error("Failed to fetch arsip/kerajaan data:", kerajaanResponse.status);
+            return { dataArsip: "Failed" };
+        }
+        const arsipKerajaanData = await kerajaanResponse.json();
+
+        // 3
+        const documentsWithKerajaanInfo = filteredArsipData.map((doc: any) => {
+            const matchingKerajaan = arsipKerajaanData.find(
+                (item: any) =>
+                    item.Arsip && Number(item.Arsip.id_arsip) === Number(doc.id_arsip)
+            );
+            // Jika ada, tambahkan properti "arsipKerajaan" ke dokumen tersebut
+            return {
+                ...doc,
+                arsipKerajaan: matchingKerajaan || null
+            };
+        });
+
+        // 4. (Opsional) Log hasilnya untuk debugging
+        console.log("Documents with linked arsip/kerajaan info:");
+        documentsWithKerajaanInfo.forEach((doc: any) => {
+            console.log(`ID: ${doc.id_arsip}, Name: ${doc.nama_arsip}`);
+            if (doc.arsipKerajaan) {
+                console.log("  Linked arsipKerajaan:", doc.arsipKerajaan);
+            }
+        });
+
+
         // ngambil jenis arsip data
         const jenisArsipRequest = await fetch(env.PUB_PORT + "/jenis-arsip?limit=1000", {
             method: "GET",
@@ -86,7 +116,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 
                     const docId = doc.dokumentasi;
                     // Handle multiple document IDs separated by commas
-                    const docIds = typeof docId === 'string' 
+                    const docIds = typeof docId === 'string'
                         ? docId.split(',').map(id => id.trim()).filter(id => id)
                         : [docId].filter(id => id);
 
@@ -142,32 +172,32 @@ export const load: PageServerLoad = async ({ fetch }) => {
                                             const encodedPath = encodeURIComponent(actualPath);
                                             const rawUrl = `${env.BASE_URL}/file?file_path=${actualPath}`;
                                             const encodedUrl = `${env.BASE_URL}/file?file_path=${encodedPath}`;
-                                            
+
                                             console.log(`[${index}] Raw URL (for manual testing): ${rawUrl}`);
                                             console.log(`[${index}] Encoded URL (used in fetch): ${encodedUrl}`);
 
                                             // Buat FormData untuk request
                                             const formData = new FormData();
                                             formData.append("file_path", actualPath);
-                                            
+
                                             // First try with encoded URL and FormData
                                             let fileDataRequest = await fetch(encodedUrl, {
                                                 method: "GET"
                                             });
-                                            
+
                                             // If encoded URL fails, try with raw URL
                                             if (!fileDataRequest.ok) {
                                                 console.log(`[${index}] Encoded URL failed, trying raw URL...`);
                                                 const rawFormData = new FormData();
                                                 rawFormData.append("file_path", actualPath);
-                                                
+
                                                 fileDataRequest = await fetch(rawUrl, {
                                                     method: "POST",
                                                     body: rawFormData
                                                 });
                                                 console.log(`[${index}] Raw URL response status: ${fileDataRequest.status} ${fileDataRequest.statusText}`);
                                             }
-                                            
+
                                             if (!fileDataRequest.ok) {
                                                 console.error(`[${index}] Both URLs failed for path ${actualPath}:`, fileDataRequest.status);
                                                 return {
@@ -182,7 +212,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
                                             // Use whichever URL worked
                                             const workingUrl = fileDataRequest.url || (fileDataRequest.ok ? (fileDataRequest === await fetch(encodedUrl) ? encodedUrl : rawUrl) : null);
                                             console.log(`[${index}] Successfully fetched file using URL: ${workingUrl}`);
-                                            
+
                                             return {
                                                 path: actualPath,
                                                 url: workingUrl,
@@ -213,7 +243,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
                     // console.log("Files with data:", filesWithData);
                     return {
                         ...docWithJenisArsip,
-                        files: filesWithData
+                        files: filesWithData,
                     };
                 } catch (error: unknown) {
                     // console.error(`Error processing document ${doc.id_arsip}:`, error);
@@ -231,6 +261,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 
         return {
             dataArsip: documentsWithFiles,
+            arsip : documentsWithKerajaanInfo
             // jenisArsip: jenisArsipData 
         };
     } catch (e) {
@@ -245,7 +276,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 export const actions: Actions = {
     delete: async ({ request }) => {
         const data = await request.formData()
-        console.log("data id : " , data)
+        console.log("data id : ", data)
         try {
             const del = await fetch(`${env.PUB_PORT}/arsip/${data.get("id_arsip")}`, {
                 method: "DELETE"

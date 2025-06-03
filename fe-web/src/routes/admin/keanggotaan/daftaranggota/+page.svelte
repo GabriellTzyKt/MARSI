@@ -126,9 +126,10 @@
 			['alamat_kerajaan', 'Alamat Kerajaan'],
 			['tanggal_berdiri', 'Tanggal Berdiri'],
 			['nama_era', 'Era'],
+			['deskripsi_kerajaan', 'Detail'],
 			['jenis_kerajaan_nama', 'Jenis Kerajaan'],
 			['raja_sekarang', 'Nama Raja'],
-			['bendera_kerajaan', 'Bendera & Lambang Kerajaan', 'custom'],
+			// ['bendera_kerajaan', 'Bendera & Lambang Kerajaan', 'custom'],
 			['children', 'Aksi']
 		]}
 		table_data={resData}
@@ -142,7 +143,6 @@
 					link="/admin/keanggotaan/daftaranggota"
 					{index}
 					items={[
-						['Detail', `/admin/keanggotaan/daftaranggota/ubahanggota/${data.id_kerajaan}`],
 						['children', 'Arsipkan']
 					]}
 					tipe="anggota"

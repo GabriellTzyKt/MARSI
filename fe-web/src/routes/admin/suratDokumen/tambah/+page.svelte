@@ -9,7 +9,9 @@
 	import Search from '$lib/table/Search.svelte';
 
 	const { data } = $props();
-	console.log('data kerajaan : ', data.kerajaanData);
+	console.log('data : ', data);
+	console.log('data filter jenis : ', data.filteredJenisData);
+	console.log('data kerajaan : ', data.filteredKerajaanData);
 	let showDropdown = $state(false);
 
 	let nama = $state('');
@@ -23,7 +25,7 @@
 	let success = $state(false);
 	let showModal = $state(false);
 	let timer: any;
-	let selectedId : any = $state("");
+	let selectedId: any = $state('');
 
 	// File handling variables
 	let uploadedFiles: File[] = [];
@@ -42,7 +44,7 @@
 		keterkaitan = value;
 		showDropdown = false;
 		selectedId = id;
-		console.log("select id : ", selectedId)
+		console.log('select id : ', selectedId);
 	}
 
 	function filter(data: any[]) {
@@ -50,7 +52,7 @@
 			item?.nama_kerajaan?.toLowerCase().includes(keterkaitan.toLowerCase())
 		);
 	}
-	let searchRes = $derived(filter(data.kerajaanData));
+	let searchRes = $derived(filter(data.filteredKerajaanData));
 
 	// Handle file selection
 	function handleFileChange(event: Event) {
@@ -90,7 +92,10 @@
 	}
 
 	$effect(() => {
-		if (!keterkaitan || data.kerajaanData.some((item : any) => item.nama_kerajaan === keterkaitan)) {
+		if (
+			!keterkaitan ||
+			data.filteredKerajaanData.some((item: any) => item.nama_kerajaan === keterkaitan)
+		) {
 			showDropdown = false;
 		} else {
 			showDropdown = true;
@@ -250,7 +255,7 @@
 				</div>
 			</div>
 
-			<input type="hidden" name="id_kerajaan" value={selectedId}>
+			<input type="hidden" name="id_kerajaan" value={selectedId} />
 
 			<div class="mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="jenisDokumen">Jenis Dokumen</label>
@@ -261,8 +266,9 @@
 					required
 				>
 					<option value="" disabled>None</option>
-					<option value="1">1 </option>
-					<option value="2">2</option>
+					{#each data.filteredJenisData as jenis}
+						<option value={jenis.id_jenis_arsip}>{jenis.nama_jenis}</option>
+					{/each}
 				</select>
 				{#if error && error.jenisDokumen}
 					{#each error.jenisDokumen as errorMsg}
@@ -297,10 +303,9 @@
 						bind:value={subkategori}
 						name="subkategori"
 						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-						required
 					>
 						<option value="" disabled>None</option>
-						{#each data.arsipData as item}
+						{#each data.filteredArsipData as item}
 							<option value={item.id_arsip}>{item.nama_arsip}</option>
 						{/each}
 					</select>

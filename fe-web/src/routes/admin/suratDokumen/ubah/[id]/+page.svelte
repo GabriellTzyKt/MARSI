@@ -64,8 +64,10 @@
 
 	let { data } = $props();
 	console.log('data 1: ', data);
+	let dataaarsip = data.arsipKerajaan;
 	let dataambil = data.document;
 	let datagambar = data.files;
+	let dataarsipdropdown = data.filteredjenisarsip2
 
 	// Debug URL gambar
 	console.log('Data gambar:', datagambar);
@@ -77,8 +79,11 @@
 	let jenisdokumen = $state(dataambil.jenis_arsip);
 	let sub_kategori_arsip = $state(dataambil.sub_kategori_arsip);
 	let kategori_arsip = $state(dataambil.kategori_arsip.toLowerCase());
-	let keterkaitan = $state('');
+	let keterkaitan = $state(data && data.namaKerajaan ? data.namaKerajaan : ' ');
 	let showDropdown = $state(false);
+
+	let id_arsip_kerajaan = $state(dataaarsip ? dataaarsip.id_arsip_kerajaan : '');
+	let id_kerajaan = $state(dataaarsip ? dataaarsip.id_kerajaan : '');
 
 	function filter(data: any[]) {
 		return data.filter((item) =>
@@ -87,9 +92,11 @@
 	}
 	let searchRes = $derived(filter(data.kerajaanData));
 
-	function selectKeterkaitan(value: string) {
+	function selectKeterkaitan(value: string, id: number) {
 		keterkaitan = value;
 		showDropdown = false;
+		id_kerajaan = id;
+		console.log('ID : ', id_kerajaan);
 	}
 
 	function handleFileChange(event: Event) {
@@ -241,6 +248,8 @@
 				}
 			}
 
+			console.log("Form data : ", formData)
+
 			// Send the form data
 			const response = await fetch(form.action, {
 				method: 'POST',
@@ -272,7 +281,7 @@
 </script>
 
 <div class="test flex w-full flex-col">
-	<div class="flex flex-row ml-5 mt-6 gap-3">
+	<div class="ml-5 mt-6 flex flex-row gap-3">
 		<a href="/admin/suratDokumen" class="mt-2">⭠ Kembali</a>
 		<p class="text-3xl font-bold underline">Ubah Dokumen</p>
 	</div>
@@ -314,7 +323,7 @@
 								<!-- svelte-ignore a11y_click_events_have_key_events -->
 								<li
 									class="cursor-pointer p-2 hover:bg-gray-300"
-									onclick={() => selectKeterkaitan(item.nama_kerajaan)}
+									onclick={() => selectKeterkaitan(item.nama_kerajaan, item.id_kerajaan)}
 								>
 									{item.nama_kerajaan}
 								</li>
@@ -329,6 +338,11 @@
 				</div>
 			</div>
 
+			{#if dataaarsip}
+				<input type="hidden" name="id_arsip_kerajaan" value={dataaarsip.id_arsip_kerajaan || ''} />
+			{/if}
+				<input type="hidden" name="id_kerajaan" value={id_kerajaan} />
+
 			<div class="mt-2 flex flex-col gap-1">
 				<label class="text-md self-start text-left" for="jenisDokumen">Jenis Dokumen</label>
 				<select
@@ -336,8 +350,10 @@
 					name="jenisDokumen"
 					class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
-					<option value={1}>1 </option>
-					<option value={2}>2</option>
+				<option value="" disabled>None</option>
+				{#each dataarsipdropdown as jenis}
+					<option value={jenis.id_jenis_arsip}>{jenis.nama_jenis}</option>
+				{/each}
 				</select>
 				{#if error && error.jenisDokumen}
 					{#each error.jenisDokumen as errorMsg}
@@ -370,7 +386,6 @@
 						bind:value={sub_kategori_arsip}
 						name="subkategori"
 						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-						required
 					>
 						<option value="" disabled>None</option>
 						{#each data.arsipData as item}

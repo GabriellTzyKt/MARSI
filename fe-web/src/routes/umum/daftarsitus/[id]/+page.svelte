@@ -45,7 +45,7 @@
 	<div class="relative h-screen w-full overflow-hidden">
 		<img src={gambar} alt="" class="min-h-screen min-w-full object-cover" />
 		<div class="absolute inset-0 flex items-center justify-center">
-			<p class="absolute left-10 top-[15%] text-white">
+			<p class="absolute left-10 top-[15%] text-black">
 				<a href="/umum/daftarsitus">
 					<span class="ph--arrow-bend-up-left-bold mt-3"></span>
 					Kembali Ke Daftar Situs

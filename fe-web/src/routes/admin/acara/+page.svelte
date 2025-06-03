@@ -71,7 +71,7 @@
 		</div>
 		<div
 			class="flex-shrink-1 h-fit flex-grow rounded-md border border-gray-500 bg-white p-5 lg:h-full"
-		>
+		> 
 			<p class="mb-3 text-center text-xl font-bold">Jumlah Acara yang Berlangsung di 2025</p>
 			<Barplot data={dataacara} />
 		</div>
@@ -107,7 +107,7 @@
 					['nama_acara', 'Nama Acara'],
 					['tanggalmulai', 'Tanggal Acara'],
 					['alamat_acara', 'Lokasi Acara'],
-					['penyelenggara', 'Penyelenggara Acara'],
+					// ['penyelenggara', 'Penyelenggara Acara'],
 					['jenis_acara', 'Jenis Acara'],
 					['status', 'Status']
 				]}

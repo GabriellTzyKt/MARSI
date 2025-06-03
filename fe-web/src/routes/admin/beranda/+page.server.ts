@@ -5,7 +5,7 @@ export const load: PageServerLoad = async () => {
     try {
 
         // Fetch admin and arsip data in parallel
-        const [adminResponse, arsipResponse, kerajaanResponse, jenisResponse] = await Promise.all([
+        const [adminResponse, arsipResponse, kerajaanResponse, jenisResponse, acaraResponse] = await Promise.all([
             fetch(`${env.BASE_URL}/admin?limit=200`, {
                 method: "GET",
                 headers: { "Accept": "application/json" }
@@ -22,7 +22,10 @@ export const load: PageServerLoad = async () => {
                 method: "GET",
                 headers: { "Accept": "application/json" }
             }),
-
+            fetch(`${env.BASE_URL_8008}/acara?limit=200`, {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            }),
         ]);
 
         let kerajaanData: any = [];
@@ -105,6 +108,17 @@ export const load: PageServerLoad = async () => {
             console.error(`Error fetching admin data: ${adminResponse.status}`);
         }
 
+        let acaraData = [];
+        if (acaraResponse.ok) {
+            const rawData = await acaraResponse.json();
+            acaraData = rawData.filter((acara: any) =>
+                acara.deleted_at === "0001-01-01T00:00:00Z" || !acara.deleted_at
+            );
+            console.log("Acara data for dashboard:", acaraData);
+        } else {
+            console.error(`Error fetching acara data: ${acaraResponse.status}`);
+        }
+
         // Process arsip response
         let arsipData = [];
         if (arsipResponse.ok) {
@@ -117,6 +131,7 @@ export const load: PageServerLoad = async () => {
             console.error(`Error fetching arsip data: ${arsipResponse.status}`);
         }
 
+        console.log("Acara data  : ", acaraData)
 
         return {
             adminData,
@@ -125,6 +140,8 @@ export const load: PageServerLoad = async () => {
             arsipCount: arsipData.length,
             kerajaanData,
             kerajaanCount: kerajaanData.length,
+            acaraData, 
+            acaraCount: acaraData.length
         };
     } catch (error) {
         console.error("Error in beranda load function:", error);

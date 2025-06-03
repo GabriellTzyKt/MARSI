@@ -98,7 +98,7 @@
 		<img src={gambar} alt="" class="absolute inset-0 h-full w-full object-cover" />
 		<div class="absolute inset-0 flex items-center justify-center">
 			<p class="absolute left-10 top-[15%] z-10">
-				<a href="/umum/daftarkerajaan" class="flex items-center text-white">
+				<a href="/umum/daftarkerajaan" class="flex items-center text-black">
 					<span class="ph--arrow-bend-up-left-bold mt-3"></span>
 					Kembali Ke Daftar Kerajaan
 				</a>
@@ -360,7 +360,7 @@
 	<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
 		<div class="max-h-[90vh] w-[70%] overflow-y-auto rounded-lg bg-white p-5 shadow-lg">
 			<div class="mb-5 flex justify-between">
-				<h2 class="font-bold lg:text-xl">List Raja Keraton Kasunanan Sarukarta</h2>
+				<h2 class="font-bold lg:text-xl">List Raja</h2>
 				<!-- svelte-ignore a11y_consider_explicit_label -->
 				<button onclick={closeModal}>
 					<span class="carbon--close-outline items-center"></span>

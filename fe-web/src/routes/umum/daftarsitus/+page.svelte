@@ -283,8 +283,8 @@
 				<option value="lokasi">Lokasi</option>
 				<option value="tahun-asc">Tahun ( Ascending )</option>
 				<option value="tahun-desc">Tahun ( Descending )</option>
-				<option value="era">Era</option>
-				<option value="popularity">Popularity</option>
+				<!-- <option value="era">Era</option>
+				<option value="popularity">Popularity</option> -->
 			</select>
 		</div>
 		<div class="relative flex items-center gap-x-2">

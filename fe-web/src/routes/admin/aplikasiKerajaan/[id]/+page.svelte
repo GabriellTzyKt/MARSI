@@ -60,7 +60,7 @@
 					<div class="connecting-line">
 						<div
 							class="progress-line"
-							style="width: {data.websiteFeatures?.status_permintaan === 'Diproses'
+							style="width: {data.websiteFeatures?.status_permintaan === 'Diproses' || data.websiteFeatures?.status_permintaan === 'Selesai'
 								? '100%'
 								: '0%'};"
 						></div>
@@ -118,13 +118,9 @@
 	{/if}
 
 	{#if data.websiteFeatures?.status_permintaan === 'Selesai'}
-		<p>Link Website Kerajaan :</p>
+		<p class="mt-12">Link Website Kerajaan :</p>
 		<div class="rounded-lg border-2 border-black bg-slate-300 px-2 py-2">
-			<p>https://kerajaan.com</p>
-		</div>
-		<p>Upload aplikasi kerajaan :</p>
-		<div class="rounded-lg border-2 border-black bg-slate-300 px-2 py-2">
-			<p>aplikasi.apk</p>
+			<p>{data.websiteFeatures.url_website}</p>
 		</div>
 	{/if}
 

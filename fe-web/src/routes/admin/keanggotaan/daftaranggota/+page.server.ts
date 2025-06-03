@@ -43,6 +43,11 @@ export const load: PageServerLoad = async ({ fetch }) => {
         const jenisKerajaanData = await jenisKerajaanResponse.json();
         const gelarData = await gelarResponse.json();
 
+        const filteredGelarData = gelarData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
+
+        const filteredKerajaanData = kerajaanData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z");
+
+
         const formatDate = (iso: string) => {
             const date = new Date(iso);
             const day = String(date.getDate()).padStart(2, '0');
@@ -58,7 +63,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
         });
 
         // Format kerajaan data and add jenis_kerajaan name directly
-        const kerajaanFormatted = await Promise.all(kerajaanData.map(async (item: any) => {
+        const kerajaanFormatted = await Promise.all(filteredKerajaanData.map(async (item: any) => {
             const jenisDetail = jenisKerajaanMap.get(item.jenis_kerajaan);
 
             // Helper untuk ambil url file dari id dokumen
@@ -156,7 +161,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
         return {
             dataKerajaan: kerajaanFormatted,
             jenisKerajaan: jenisKerajaanData,
-            gelar: gelarData,
+            gelar: filteredGelarData,
             anggotaKerajaan: anggotaResults
         };
     }

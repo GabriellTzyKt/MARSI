@@ -8,8 +8,10 @@
 
 	// Tentukan field mana yang dipakai (jenis_kerajaan_nama atau lokasi)
 	let pieField = 'jenis_kerajaan_nama';
-	if (dataambil && dataambil.length > 0 && dataambil[0].lokasi !== undefined) {
-		pieField = 'lokasi';
+	if (dataambil && dataambil.length > 0 && dataambil[0].tempat_lahir) {
+		pieField = 'tempat_lahir';
+	} else if (dataambil && dataambil.length > 0 && dataambil[0].lokasi) {
+		pieField = 'lokasi'
 	}
 
 	function processDataForPieChart(data: any[], field: string) {

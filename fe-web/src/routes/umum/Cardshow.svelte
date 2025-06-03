@@ -18,14 +18,15 @@
 	});
 
 	let { judul, lokasi, gambar, id, tahun = null } = $props();
+	console.log("Gamar : ", gambar)
 </script>
 
 <div class="grid grid-cols-1 gap-6">
 	<div class="w-xl flex h-full min-h-[350px] flex-col justify-between rounded shadow-lg">
-		{#if gambar}
+		{#if gambar[0]}
 			<img
 				class="h-64 w-full object-cover text-center"
-				src={gambar[0]}
+				src={gambar || gambar[0]}
 				alt="Sunset in the mountains"
 			/>
 		{:else}

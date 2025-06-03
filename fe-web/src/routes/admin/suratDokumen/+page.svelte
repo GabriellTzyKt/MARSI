@@ -20,6 +20,7 @@
 
 	let { data } : any = $props();
 	let dataArsip : any = data.dataArsip;
+	console.log("Data : ", data)
 	console.log('data arsip : ', dataArsip);
 	console.log("data kerajaan : ", data.kerajaan)
 
@@ -119,7 +120,6 @@
 	<Table
 		table_header={[
 			['nama_arsip', 'Nama Dokumen'],
-			['asal_kerajaan', 'Asal Kerajaan'],
 			['jenis_arsip_detail', 'Jenis Dokumen'],
 			['kategori_arsip', 'Kategori'],
 			['sub_kategori_arsip', 'Sub Kategori'],
@@ -156,60 +156,64 @@
 		{/snippet}
 
 		{#snippet custom({ header, data })}
-			{#if header === 'Dokumentasi'}
-				{#if data.files && Array.isArray(data.files) && data.files.length > 0}
-					<div class="flex max-w-[200px] flex-row flex-nowrap gap-2 overflow-x-auto">
-						{#each data.files as file}
-							{#if file && typeof file === 'object' && file.url}
-								{#if file.url.toLowerCase().endsWith('.mp3') || file.url
+		<div class="max-w-[200px] gap-2 flex flex-row overflow-x-auto">
+		{#if header === 'Dokumentasi'}
+		{#if data.files && Array.isArray(data.files) && data.files.length > 0}
+		{#each data.files as file}
+		<div class="flex w-50 h-auto">
+
+			{#if file && typeof file === 'object' && file.url}
+			{#if file.url.toLowerCase().endsWith('.mp3') || file.url
 										.toLowerCase()
 										.endsWith('.wav')}
 									<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
 										<img
-											src={logolagu}
-											alt={file.name || 'Audio File'}
-											class="h-10 w-10 rounded object-cover flex-shrink-0"
+										src={logolagu}
+										alt={file.name || 'Audio File'}
+										class="h-10 w-10  rounded object-fill "
 										/>
 									</a>
-								{:else if file.url.toLowerCase().endsWith('.mp4') || file.url
+									{:else if file.url.toLowerCase().endsWith('.mp4') || file.url
 										.toLowerCase()
 										.endsWith('.webm')}
 									<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
 										<img
-											src={logovidio}
-											alt={file.name || 'Video File'}
-											class="h-10 w-10 rounded object-cover flex-shrink-0"
+										src={logovidio}
+										alt={file.name || 'Video File'}
+										class="h-10 w-10 rounded  object-fill "
 										/>
 									</a>
-								{:else}
-									<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
-										<img
+									{:else}
+										<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
+											<img
 											src={file.url}
 											alt={file.name || 'Document'}
-											class="h-10 w-10 rounded object-cover flex-shrink-0"
-										/>
-									</a>
-								{/if}
-							{/if}
-						{/each}
-					</div>
-				{:else}
-					<span>No files</span>
-				{/if}
-			{/if}
-		{/snippet}
-	</Table>
-
-	<div class="mt-4 flex flex-col lg:flex-row lg:justify-between">
-		<div>
-			<p>
-				Showing {(currPage - 1) * entries + 1}
-				to {Math.min(currPage * entries, filterData(data.dataArsip).length)}
-				of {filterData(data.dataArsip).length}
-			</p>
-		</div>
-		<div class="flex flex-row gap-3">
-			<button
+											class="h-10 w-10 rounded object-fill  "
+											/>
+										</a>
+										{/if}
+										{/if}
+									</div>
+										{/each}
+										
+										{:else}
+										<span>No files</span>
+										{/if}
+										{/if}
+									</div>
+									{/snippet}
+								</Table>
+								
+								<div class="mt-4 flex flex-col lg:flex-row lg:justify-between">
+									<div>
+										<p>
+											Showing {(currPage - 1) * entries + 1}
+											to {Math.min(currPage * entries, filterData(data.dataArsip).length)}
+											of {filterData(data.dataArsip).length}
+										</p>
+									</div>
+									<div class="flex flex-row gap-3">
+										<button
 				class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
 				disabled={currPage === 1}
 				onclick={() => {
