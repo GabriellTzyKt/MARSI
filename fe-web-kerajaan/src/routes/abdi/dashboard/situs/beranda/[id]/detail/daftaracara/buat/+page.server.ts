@@ -20,18 +20,37 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
         throw error(500, "Gagal mengambil data users, situs, komunitas, organisasi, atau acara");
     }
 
-    const users = await usersRes.json();
-    const situs = await situsRes.json();
-    const komunitas = await komunitasRes.json();
-    const organisasi = await organisasiRes.json();
-    const acara = await acaraRes.json();
+    const usersData = await usersRes.json();
+    const filteredUsers = Array.isArray(usersData)
+        ? usersData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null) 
+        : usersData;
+
+    const situsData = await situsRes.json();
+    const filteredSitus = Array.isArray(situsData)
+        ? situsData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
+        : situsData;
+
+    const komunitasData = await komunitasRes.json();
+    const filteredKomunitas = Array.isArray(komunitasData)
+        ? komunitasData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
+        : komunitasData;
+
+    const organisasiData = await organisasiRes.json();
+    const filteredOrganisasi = Array.isArray(organisasiData)
+        ? organisasiData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
+        : organisasiData;
+
+    const acaraData = await acaraRes.json();
+    const filteredAcara = Array.isArray(acaraData)
+        ? acaraData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
+        : acaraData;
 
     return {
-        users,
-        situs,
-        komunitas,
-        organisasi,
-        acara
+        users: filteredUsers,
+        situs: filteredSitus,
+        komunitas: filteredKomunitas,
+        organisasi: filteredOrganisasi,
+        acara: filteredAcara
     };
 };
 
@@ -159,7 +178,7 @@ export const actions: Actions = {
 
         try {
             let penyelenggarahasil: any = data.get("penyelenggaraacara") ?? "";
-            let id_user : any = data.get("id_user")
+            let id_user: any = data.get("id_user")
             if (penyelenggarahasil.startsWith("komunitas-")) {
                 // Ambil id komunitas
                 const id_komunitas = penyelenggarahasil.split('-')[1];
@@ -201,6 +220,8 @@ export const actions: Actions = {
                         type: "add"
                     });
                 }
+
+                console.log("Rawr")
 
                 return {
                     success: true,
@@ -249,11 +270,15 @@ export const actions: Actions = {
                     });
                 }
 
+                console.log("Organisasi jaya")
+
+
                 return {
                     success: true,
                     apiResult
                 };
-            }           } catch (e) {
+            }
+        } catch (e) {
             return fail(500, {
                 errors: { api: ["Terjadi kesalahan saat mengirim ke API"] },
                 success: false,

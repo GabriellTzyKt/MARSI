@@ -1,10 +1,73 @@
 import { error, fail, type Actions } from "@sveltejs/kit";
 import { any, z } from "zod";
+import type { PageServerLoad } from "../$types";
+import { env } from "$env/dynamic/private";
+
+export const load: PageServerLoad = async ({ fetch, params, cookies }) => {
+    // Ambil id dari params
+    const id = params.id;
+    let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
+    console.log("Params", id)
+    // Fetch users, situs, komunitas, organisasi, dan acara
+    const [usersRes, situsRes, organisasiRes, acaraRes] = await Promise.all([
+        fetch(`${env.PUB_PORT}/users`, {
+            headers: {
+               "Authorization": `Bearer ${token?.token}`
+            }
+        }),
+        fetch(`${env.BASE_URL_8008}/situs?limit=200`),
+        fetch(`${env.BASE_URL_8008}/komunitas?limit=200`),
+        fetch(`${env.BASE_URL_8008}/acara/komunitas/${id}?limit=200`)
+    ]);
+
+    if (!usersRes.ok || !situsRes.ok || !organisasiRes.ok || !acaraRes.ok) {
+        console.log("Error", usersRes, situsRes, organisasiRes, acaraRes)
+        throw error(500, "Gagal mengambil data users, situs, komunitas, organisasi, atau acara");
+    }
+
+    const usersData = await usersRes.json();
+    const filteredUsers = Array.isArray(usersData)
+        ? usersData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null) 
+        : usersData;
+
+    const situsData = await situsRes.json();
+    const filteredSitus = Array.isArray(situsData)
+        ? situsData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
+        : situsData;
+
+    const organisasiData = await organisasiRes.json();
+    const filteredOrganisasi = Array.isArray(organisasiData)
+        ? organisasiData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
+        : organisasiData;
+
+    const acaraData = await acaraRes.json();
+    const filteredAcara = Array.isArray(acaraData)
+        ? acaraData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
+        : acaraData;
+
+
+    const processedAcara = filteredAcara.map((acara: any) => {
+        return {
+            ...filteredAcara,
+            organisasi_id: id,
+            nama_acara: acara.Acara.nama_acara
+        };
+    });
+
+    return {
+        users : filteredUsers,
+        situs : filteredSitus,
+        organisasi : filteredOrganisasi,
+        acara: processedAcara
+    };
+};
 
 
 export const actions: Actions = {
     tambah: async ({ request }) => {
         const data = await request.formData();
+
+        console.log("Data : ", data)
 
         const ids = data.getAll("id").map(String);
         const ids2 = data.getAll("id2").map(String);
@@ -15,9 +78,11 @@ export const actions: Actions = {
         let form: any = {
             namaacara: "",
             lokasiacara: "",
+            alamatacara: "",
             tujuanacara: "",
             deskripsiacara: "",
             penanggungjawab: "",
+            penyelenggaraacara: "",
             kapasitasacara: "",
             tanggalmulai: "",
             tanggalselesai: "",
@@ -36,10 +101,12 @@ export const actions: Actions = {
             buttonselect: z.string().trim().min(1, "Minimal 1!"),
             inputradio: z.string().trim().min(1, "Minimal 1!"),
             namaacara: z.string().trim().min(1, "Isi Nama acara"),
-            lokasiacara: z.string().trim().min(1, "Alamat harus diisi!"),
+            lokasiacara: z.string().trim().min(1, "Lokasi harus diisi!"),
+            alamatacara: z.string().trim().min(1, "Alamat harus diisi!"),
             tujuanacara: z.string().trim().min(1, "Tujuan harus diisi!"),
             deskripsiacara: z.string().trim().min(1, "Deskripsi harus terisi!"),
             penanggungjawab: z.string().trim().min(1, "Isi penanggungjawab!"),
+            penyelenggaraacara: z.string().trim().min(1, "Isi penyelenggara!"),
             kapasitasacara: z.string()
                 .trim()
                 .min(1, "Kapasitas harus terisi!")
@@ -68,9 +135,11 @@ export const actions: Actions = {
             inputradio: data.get("default-radio") ?? "",
             namaacara: data.get("namaacara") ?? "",
             lokasiacara: data.get("lokasiacara") ?? "",
+            alamatacara: data.get("alamatacara") ?? "",
             tujuanacara: data.get("tujuanacara") ?? "",
             deskripsiacara: data.get("deskripsiacara") ?? "",
             penanggungjawab: data.get("penanggungjawab") ?? "",
+            penyelenggaraacara: data.get("penyelenggaraacara") ?? "",
             kapasitasacara: data.get("kapasitasacara") ?? "",
             tanggalmulai: data.get("tanggalmulai") ?? "",
             tanggalselesai: data.get("tanggalselesai") ?? "",
@@ -80,7 +149,7 @@ export const actions: Actions = {
             namabawah: {},
             notelpbawah: {},
             namalengkapbawah: {},
-            namajabatan : {},
+            namajabatan: {},
         };
 
         for (const id of ids) {
@@ -102,8 +171,8 @@ export const actions: Actions = {
         if (!validation.success) {
             const fieldErrors = validation.error.flatten().fieldErrors;
 
-            console.log("errors : " , fieldErrors)
-            
+            console.log("errors : ", fieldErrors)
+
             return fail(406, {
                 errors: fieldErrors,
                 success: false,
@@ -112,6 +181,64 @@ export const actions: Actions = {
             });
         }
 
-        return { errors: "Success", success: true, formData: form, type: "add" };
+        // return { errors: "Success", success: true, formData: form, type: "add" };
+
+
+
+        try {
+            let id_user: any = data.get("id_user")
+            const formData = new FormData();
+            formData.append("id_komunitas", form.penyelenggaraacara);
+            formData.append("id_pemohon", id_user); // atau field lain sesuai kebutuhan
+            formData.append("penanggung_jawab", form.penanggungjawab);
+            formData.append("lokasi_acara", form.lokasiacara);
+            formData.append("nama_acara", form.namaacara);
+            formData.append("deskripsi_acara", form.deskripsiacara);
+            formData.append("tujuan_acara", form.tujuanacara);
+            formData.append("alamat_acara", form.alamatacara);
+            formData.append("waktu_mulai", `${form.tanggalmulai} ${form.waktumulai}:00`)
+            formData.append("waktu_selesai", `${form.tanggalselesai} ${form.waktuselesai}:00`);
+            formData.append("jenis_acara", form.inputradio);
+            formData.append("kapasitas_acara", form.kapasitasacara);
+
+            console.log("Form : ", formData)
+
+            // Jika ada file foto
+            const foto = data.get("foto_acara");
+            if (foto && typeof foto !== "string") {
+                formData.append("foto_acara", foto);
+            }
+
+            // Kirim ke API eksternal
+            const res = await fetch(`${env.BASE_URL_8008}/acara/komunitas`, {
+                method: "POST",
+                body: formData,
+            });
+
+            const apiResult = await res.json();
+
+            if (!res.ok) {
+                console.log("OI")
+                return fail(500, {
+                    errors: { api: [apiResult.message || "Gagal mengirim ke API komunitas"] },
+                    success: false,
+                    formData: form,
+                    type: "add"
+                });
+            }
+
+            console.log("success")
+
+            return {
+                success: true,
+                apiResult
+            };
+        } catch (e) {
+            return fail(500, {
+                errors: { api: ["Terjadi kesalahan saat mengirim ke API"] },
+                success: false,
+                type: "add"
+            });
+        }
     }
-};
+}

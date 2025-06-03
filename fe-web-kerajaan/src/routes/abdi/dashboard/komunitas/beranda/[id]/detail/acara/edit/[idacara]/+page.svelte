@@ -7,10 +7,8 @@
 	import { fade } from 'svelte/transition';
 	import { number } from 'zod';
 	import { writable } from 'svelte/store';
-	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 
-	
 	let input_radio = $state('');
 	let namaacara = $state('');
 	let lokasiacara: any = $state('');
@@ -35,16 +33,17 @@
 
 	let { form, data } = $props();
 	console.log('Data : ', data);
+	console.log('Data : ', data.acaraList);
 	console.log('form data', form);
 
-	let nama_acara = $state("")
+	let nama_acara = $state('');
 
 	let selectedAcara: any = null;
 	function handleNamaAcaraChange(event: any) {
 		const nama = event.target.value;
-		console.log("nama : ", nama)
+		console.log('nama : ', nama);
 		const found = data.acara.find((a: any) => a.Acara.id_acara == nama);
-		console.log("found : ", found)
+		console.log('found : ', found);
 		if (found) {
 			selectedAcara = found;
 			lokasiacara = Number(found.Acara.id_lokasi);
@@ -56,7 +55,7 @@
 			nama_acara = found.Acara.nama_acara;
 			tujuanacara = found.Acara.tujuan_acara;
 			input_radio = found.Acara.jenis_acara.toLowerCase() === 'tertutup' ? 'private' : 'public';
-			console.log("SELECTED : ", selectedAcara)
+			console.log('SELECTED : ', selectedAcara);
 		} else {
 			selectedAcara = null;
 			lokasiacara = '';
@@ -85,15 +84,32 @@
 		waktuselesai = form.formData.waktuselesai;
 	}
 
-	let activeTab = $state('upcoming');
+	let activeTab = $state('completed');
 	let open = $state(false);
 	let timer: number;
 
-	let idAktif = $state("")
+	let idAktif = $state('');
 
 	$effect(() => {
 		idAktif = page.params.id;
 		console.log('ID : ', idAktif);
+
+		console.log("id acara : ", data.acara.Acara.id_acara)
+		namaacara = data.acara.Acara.id_acara
+		penanggungjawab = data.acara.Acara.id_penanggung_jawab
+		penyelenggaraacara = data.acara.id_komunitas
+		lokasiacara = Number(data.acara.Acara.id_lokasi)
+		tujuanacara = data.acara.Acara.tujuan_acara
+		kapasitasacara = data.acara.Acara.kapasitas_acara
+		input_radio = data.acara.Acara.jenis_acara.toLowerCase() === "tertutup" ? "private" : "public";
+		tanggalmulai = data.acara.Acara.waktu_mulai.split("T")[0]
+		tanggalselesai = data.acara.Acara.waktu_selesai.split("T")[0]
+		waktumulai = data.acara.Acara.waktu_mulai.split("T")[1].slice(0, 5); // hasil: "12:30"
+ 		waktuselesai = data.acara.Acara.waktu_selesai.split("T")[1].slice(0,5)
+		alamatacara = data.acara.Acara.alamat_acara
+		deskripsiacara = data.acara.Acara.deskripsi_acara
+
+		console.log("waktu : ", data.acara.Acara.waktu_mulai.split("T")[0])
 	});
 
 	let invitations: { id: number; panggilan: string; nama: string; notelepon: string }[] = $state(
@@ -234,7 +250,7 @@
 <div class="min-h-screen w-full">
 	<form
 		method="post"
-		action="?/tambah"
+		action="?/edit"
 		use:enhance={() => {
 			loading = true;
 			return async ({ result }) => {
@@ -246,7 +262,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						goto(`/abdi/dashboard/organisasi/beranda/${idAktif}/detail/acara`)
+						goto(`/abdi/dashboard/komunitas/beranda/${idAktif}/detail/acara`);
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
@@ -257,62 +273,7 @@
 		}}
 	>
 		<div class="min-h-screen rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-			<div class="mt-2 flex w-fit gap-2 rounded-full border-2 px-5 py-2">
-				<input type="hidden" name="buttonselect" bind:value={buttonselect} />
-
-				<!-- Tombol 'Baru' -->
-				<button
-					type="button"
-					onclick={(e) => {
-						e.preventDefault();
-						setActiveTab('upcoming');
-					}}
-					value="baru"
-					class="relative overflow-hidden rounded-full border-2 px-5 py-1 font-semibold"
-				>
-					<span
-						class="absolute left-0 top-0 h-full bg-blue-600 transition-all duration-300"
-						style:width={activeTab === 'upcoming' ? '100%' : '0%'}
-					></span>
-					<span
-						class="relative z-10 transition-colors duration-300"
-						class:text-white={activeTab === 'upcoming'}
-						class:text-blue-600={activeTab !== 'upcoming'}
-					>
-						Baru
-					</span>
-				</button>
-
-				<!-- Tombol 'Selesai' -->
-				<button
-					type="button"
-					value="lama"
-					onclick={(e) => {
-						e.preventDefault();
-						setActiveTab('completed');
-					}}
-					class="relative overflow-hidden rounded-full border-2 px-5 py-1 font-semibold"
-				>
-					<span
-						class="absolute left-0 top-0 h-full bg-blue-600 transition-all duration-300"
-						style:width={activeTab === 'completed' ? '100%' : '0%'}
-					></span>
-					<span
-						class="relative z-10 transition-colors duration-300"
-						class:text-white={activeTab === 'completed'}
-						class:text-blue-600={activeTab !== 'completed'}
-					>
-						Lama
-					</span>
-				</button>
-				{#if error}
-					{#each error.buttonselect as a}
-						<p class="text-left text-red-500">{a}</p>
-					{/each}
-				{/if}
-			</div>
-
-			<input type="hidden" name="id_user" bind:value={data.id} />
+			<input type="hidden" name="id_user" bind:value={data.id_admin} />
 
 			<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 				<div class="col-span-2">
@@ -326,7 +287,7 @@
 								class="w-full rounded-lg border px-2 py-1"
 							>
 								<option value="" disabled selected>Pilih Acara Lama</option>
-								{#each data.acara as acara}
+								{#each data.acaraList as acara}
 									<option value={acara.Acara.id_acara}>{acara.Acara.nama_acara}</option>
 								{/each}
 							</select>
@@ -375,9 +336,9 @@
 							class="w-full rounded-lg border px-2 py-1"
 						>
 							<option value="" disabled selected>Pilih Penyelenggara</option>
-							<optgroup label="Organisasi">
+							<optgroup label="Komunitas">
 								{#each data.organisasi as organisasi}
-									<option value={organisasi.id_organisasi}>{organisasi.nama_organisasi}</option>
+									<option value={organisasi.id_komunitas}>{organisasi.nama_komunitas}</option>
 								{/each}
 							</optgroup>
 						</select>
@@ -550,31 +511,21 @@
 					</div>
 					<div class="w-full" style="position:relative">
 						<p>Alamat acara:</p>
-						{#if activeTab === 'completed'}
-							<input
-								type="text"
-								name="alamatacara"
-								bind:value={alamatacara}
-								placeholder="Masukkan alamat"
-								class="w-full rounded-lg border px-2 py-1"
-							/>
-						{:else}
-							<input
-								class="input-field w-full rounded-lg border p-2 pr-8"
-								type="text"
-								name="alamatacara"
-								bind:value={alamatacara}
-								onkeydown={handleLokasiKeyDown}
-								placeholder="Cari alamat..."
-								autocomplete="off"
-							/>
-							{#if $showLokasiDropdown && alamatacara !== ''}
-								<ul class="dropdown">
-									{#each $lokasiDropdown as name}
-										<li onclick={() => selectLokasi(name)}>{name}</li>
-									{/each}
-								</ul>
-							{/if}
+						<input
+							class="input-field w-full rounded-lg border p-2 pr-8"
+							type="text"
+							name="alamatacara"
+							bind:value={alamatacara}
+							onkeydown={handleLokasiKeyDown}
+							placeholder="Cari alamat..."
+							autocomplete="off"
+						/>
+						{#if $showLokasiDropdown && alamatacara !== ''}
+							<ul class="dropdown">
+								{#each $lokasiDropdown as name}
+									<li onclick={() => selectLokasi(name)}>{name}</li>
+								{/each}
+							</ul>
 						{/if}
 						{#if error}
 							{#each error.lokasiacara as a}

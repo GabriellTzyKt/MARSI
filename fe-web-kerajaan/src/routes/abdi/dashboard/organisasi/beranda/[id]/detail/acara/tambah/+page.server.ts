@@ -25,25 +25,39 @@ export const load: PageServerLoad = async ({ fetch, params, cookies }) => {
         throw error(500, "Gagal mengambil data users, situs, komunitas, organisasi, atau acara");
     }
 
-    const users = await usersRes.json();
-    const situs = await situsRes.json();
-    const organisasi = await organisasiRes.json();
-    const acara = await acaraRes.json();
+    const usersData = await usersRes.json();
+    const filteredUsers = Array.isArray(usersData)
+        ? usersData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null) 
+        : usersData;
 
-    const processedAcara = acara.map((acara: any) => {
+    const situsData = await situsRes.json();
+    const filteredSitus = Array.isArray(situsData)
+        ? situsData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
+        : situsData;
+
+    const organisasiData = await organisasiRes.json();
+    const filteredOrganisasi = Array.isArray(organisasiData)
+        ? organisasiData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
+        : organisasiData;
+
+    const acaraData = await acaraRes.json();
+    const filteredAcara = Array.isArray(acaraData)
+        ? acaraData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
+        : acaraData;
+
+
+    const processedAcara = filteredAcara.map((acara: any) => {
         return {
-            ...acara,
+            ...filteredAcara,
             organisasi_id: id,
             nama_acara: acara.Acara.nama_acara
         };
     });
 
-    console.log("Acara : ", acara)
-
     return {
-        users,
-        situs,
-        organisasi,
+        users : filteredUsers,
+        situs : filteredSitus,
+        organisasi : filteredOrganisasi,
         acara: processedAcara
     };
 };
@@ -119,7 +133,7 @@ export const actions: Actions = {
         form = {
             buttonselect: data.get("buttonselect") ?? "",
             inputradio: data.get("default-radio") ?? "",
-            namaacara: data.get("nama_acara") ?? "",
+            namaacara: data.get("namaacara") ?? "",
             lokasiacara: data.get("lokasiacara") ?? "",
             alamatacara: data.get("alamatacara") ?? "",
             tujuanacara: data.get("tujuanacara") ?? "",

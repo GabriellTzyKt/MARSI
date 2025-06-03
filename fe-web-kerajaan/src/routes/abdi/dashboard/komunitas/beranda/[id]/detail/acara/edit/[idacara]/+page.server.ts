@@ -24,8 +24,8 @@ export const load = async ({ params, fetch, cookies }) => {
     const [usersRes, situsRes, organisasiRes, acaraRes] = await Promise.all([
         fetch(`${env.BASE_URL}/users?limit=2000`),
         fetch(`${env.BASE_URL_8008}/situs?limit=200`),
-        fetch(`${env.BASE_URL_8008}/organisasi?limit=200`),
-        fetch(`${env.BASE_URL_8008}/acara/organisasi/${id_situs}?limit=200`)
+        fetch(`${env.BASE_URL_8008}/komunitas?limit=200`),
+        fetch(`${env.BASE_URL_8008}/acara/komunitas/${id_situs}?limit=200`)
     ]);
 
     if (!usersRes.ok || !situsRes.ok || !organisasiRes.ok || !acaraRes.ok) {

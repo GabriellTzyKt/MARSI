@@ -32,23 +32,38 @@ export const load: PageServerLoad = async ({fetch, params, depends}) => {
         }
         const acaraNestedData = await acaraResponse.json();
         
-        // Process acara data - extract from nested structure
-        const processedAcara = acaraNestedData.map((item : any) => {
-            if (item.Acara) {
-                return {
-                    ...item.Acara,
-                    id_komunitas: item.id_komunitas,
-                    komunitas_nama: currentKomunitas.nama_komunitas || 'Unknown Komunitas'
-                };
-            } else {
-                return {
-                    ...item,
-                    id_komunitas: currentKomId,
-                    komunitas_nama: currentKomunitas.nama_komunitas || 'Unknown Komunitas'
-                };
-            }
+        // Fetch user profiles
+        const userProfileRes = await fetch(`${env.BASE_URL}/users?limit=2000`, { cache: 'no-store' });
+        let userProfiles: any[] = [];
+        if (userProfileRes.ok) {
+            const allProfiles = await userProfileRes.json();
+            userProfiles = Array.isArray(allProfiles)
+                ? allProfiles.filter(
+                    (user: any) =>
+                        user.deleted_at === null ||
+                        user.deleted_at === "0001-01-01T00:00:00Z"
+                )
+                : [];
+        }
+        console.log("user : ", userProfiles)
+
+        // Process acara data - extract from nested structure and attach penanggung jawab profile
+        const processedAcara = acaraNestedData.map((item: any) => {
+            let acaraObj = item.Acara ? item.Acara : item;
+            // Cari user profile yang id-nya sama dengan id_penanggung_jawab
+            const penanggungJawab = userProfiles.find(
+                (user: any) => Number(user.id_user) === Number(acaraObj.id_penanggung_jawab)
+            );
+            return {
+                ...acaraObj,
+                id_komunitas: item.id_komunitas ?? currentKomId,
+                komunitas_nama: currentKomunitas.nama_komunitas || 'Unknown Komunitas',
+                penanggung_jawab_profile: penanggungJawab.nama_lengkap || null
+            };
         });
         
+        console.log("[Processed : ", processedAcara)
+
         // Handle all komunitas response
         let komunitasList = [];
         if (allKomunitasResponse.ok) {

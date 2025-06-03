@@ -19,22 +19,41 @@ export const load = async ({ params, fetch }) => {
         throw error(500, "Gagal mengambil data users, situs, komunitas, organisasi, atau acara");
     }
 
-    const users = await usersRes.json();
-    const situs = await situsRes.json();
-    const komunitas = await komunitasRes.json();
-    const organisasi = await organisasiRes.json();
-    const acaraList = await acaraRes.json();
+    const usersData = await usersRes.json();
+    const filteredUsers = Array.isArray(usersData)
+        ? usersData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null) 
+        : usersData;
+
+    const situsData = await situsRes.json();
+    const filteredSitus = Array.isArray(situsData)
+        ? situsData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
+        : situsData;
+
+    const komunitasData = await komunitasRes.json();
+    const filteredKomunitas = Array.isArray(komunitasData)
+        ? komunitasData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
+        : komunitasData;
+
+    const organisasiData = await organisasiRes.json();
+    const filteredOrganisasi = Array.isArray(organisasiData)
+        ? organisasiData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
+        : organisasiData;
+
+    const acaraData = await acaraRes.json();
+    const filteredAcara = Array.isArray(acaraData)
+        ? acaraData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
+        : acaraData;
 
     // Cari acara yang id-nya sama dengan id_acarasitus
-    const acara = acaraList.find((a: any) => String(a.id_acara) === String(id_acarasitus));
+    const acara = filteredAcara.find((a: any) => String(a.id_acara) === String(id_acarasitus));
     if (!acara) throw error(404, "Acara tidak ditemukan");
 
     return {
-        users,
-        situs,
-        komunitas,
-        organisasi,
-        acaraList,
+        users : filteredUsers,
+        situs : filteredSitus,
+        komunitas : filteredKomunitas,
+        organisasi : filteredOrganisasi ,
+        acaraList : filteredAcara,
         acara
     };
 };

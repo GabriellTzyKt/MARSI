@@ -33,7 +33,7 @@
 	let notelpbawah: any = $state([]);
 
 	let { form, data } = $props();
-	console.log('Data : ', data.acara);
+	console.log('Data : ', data);
 	console.log('Data : ', data.acaraList);
 	console.log('form data', form);
 
@@ -274,7 +274,7 @@
 		}}
 	>
 		<div class="min-h-screen rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-			<input type="hidden" name="id_user" bind:value={data.id} />
+			<input type="hidden" name="id_user" bind:value={data.id_admin} />
 
 			<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 				<div class="col-span-2">

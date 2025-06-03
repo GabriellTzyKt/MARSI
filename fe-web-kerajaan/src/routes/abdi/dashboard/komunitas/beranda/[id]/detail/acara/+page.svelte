@@ -69,7 +69,7 @@
 	<div class="flex flex-col xl:flex-row xl:justify-between">
 		<button
 			class="bg-badran-bt cursor-pointer rounded-lg px-3 py-2 text-white"
-			onclick={() => goto(`/abdi/dashboard/komunitas/beranda/${idKomunitas}/detail/acara/tambah`)}
+			onclick={() => goto(`/abdi/dashboard/komunitas/beranda/${idKomunitas}/detail/acara/buat`)}
 			>+Tambah Data</button
 		>
 		<div
@@ -133,9 +133,9 @@
 		<Table
 			table_header={[
 				['nama_acara', 'Nama Acara'],
-				['tanggal_mulai', 'Tanggal'],
+				['waktu_mulai', 'Tanggal'],
 				['alamat_acara', 'Lokasi'],
-				['nama_penanggung_jawab', 'Penanggung Jawab'],
+				['penanggung_jawab_profile', 'Penanggung Jawab'],
 				['jenis_acara', 'Jenis Acara'],
 				['kapasitas_acara', 'Kapasitas'],
 				['children', 'Status'],
@@ -144,6 +144,7 @@
 			table_data={resdata}
 		>
 			{#snippet children({ header, data, index })}
+			{console.log(data)}
 				{#if header === 'Aksi'}
 					<DropDown
 						text={`Apakah yakin ingin mengarsipkan ${data.nama_acara || 'acara ini'}?`}
@@ -156,7 +157,7 @@
 							],
 							[
 								'Ubah',
-								`/abdi/dashboard/komunitas/beranda/${idKomunitas}/detail/acara/ubah/${data.id_acara}`
+								`/abdi/dashboard/komunitas/beranda/${idKomunitas}/detail/acara/edit/${data.id_acara}`
 							],
 							[
 								'Laporan',
