@@ -12,7 +12,9 @@ export const load: PageServerLoad = async ({params, cookies}) => {
         if (res.ok && resUndangan.ok && resPanit.ok && resSitus.ok) {
             let data = await res.json()
             let undangan = await resUndangan.json()
+            undangan = undangan.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at)
             let panit = await resPanit.json()
+             panit = panit.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at)
             let situs = await resSitus.json()
 
             let resUser = await fetch(`${env.PUB_PORT}/user/${data?.id_penanggung_jawab}`, {
@@ -50,11 +52,39 @@ export const load: PageServerLoad = async ({params, cookies}) => {
                     nama_penanggungjawab : user.nama_lengkap
                 };
                 
-            
+            let undanganWithUser = await Promise.all(undangan.map(async (item) => { 
+                try {
+                    let resUser = await fetch(`${env.PUB_PORT}/user/${item.id_penerima}`, {
+                        headers: {
+                            "Authorization" : `Bearer ${cook?.token}`
+                        }
+                    })
+                    if(resUser.ok) {
+                        let user = await resUser.json()
+                        return {
+                            ...item,
+                            nama_penerima: user.nama_lengkap,
+                            nomer_telepon: user.no_telp,
+                            jenis_kelamin: user.jenis_kelamin
+                        }
+                    }
+                    
+                    else {
+                       return {
+                            ...item,
+                            nama_penerima: "No User Found",
+                            nomer_telepon: "-",
+                            jenis_kelamin: "-"
+                        }
+                    }
+                } catch (error) {
+                    
+                }
+            }))
                 console.log(formattedData)
                 console.log(undangan)
                 console.log(panit)
-                return { data: formattedData, undangan: undangan, panit: panit, situs: situs };
+                return { data: formattedData, undangan: undanganWithUser, panit: panit, situs: situs };
            
         }
     }

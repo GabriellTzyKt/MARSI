@@ -111,6 +111,7 @@ export const load = async ({ params, fetch }) => {
         return {
             
             jenisArsip,
+            dataAset,
             files: fileDetails
         };
     } catch (e) {
@@ -119,93 +120,147 @@ export const load = async ({ params, fetch }) => {
     }
 };
 export const actions: Actions = {
-    edit: async ({request}) => {
+    edit: async ({ request, params }) => {
+        let id = params.id;
        const data = await request.formData()
                const obj = Object.fromEntries(data)
                const nama_aset = data.get("nama_aset")
                const id_kerajaan = data.get("id_kerajaan")
                const id_aset = data.get("id_aset")
-               const jenis_aset = data.get("jenis_aset")
+                const jenis_aset = data.get("jenis_aset")
+                let id_jenis_aset = data.get("id_jenis_aset")
                const deskripsi_aset = data.get("deskripsi_aset")
                const gambar = data.getAll("gambar")
-              
+               const existingFileIds = data.getAll('existingFileId')
+                .map(id => id?.toString())
+                .filter(id => id && id !== 'null' && id !== 'undefined');
+
+            console.log('Existing file IDs from form:', existingFileIds);
+
                 const dokumentasiFiles = data.getAll("dokumentasi")
                    .filter(item => item instanceof File && item.size > 0) as File[];
-               
-               const jenisres = await fetch(`${env.URL_KERAJAAN}/aset/jenis`)
-                if (!jenisres.ok) {
-                       throw new Error(`Failed to fetch jenis aset: ${jenisres.status}`);
-               }
-               const jenisList = await jenisres.json();
-               console.log(data)
-               console.log(jenisList)
-               const validationJenis = jenisList.map(item => {
-                   return item.nama_jenis
-               })
-               console.log("Valid jenis values:", validationJenis);
-                 // Define validation schema
-               const schema = z.object({
-                   nama_aset: z.string().min(1, "Nama aset harus diisi"),
-                    jenis_aset: z.string()
-                           .min(1, "Jenis aset harus dipilih")
-                           .refine(val => validationJenis.includes(val), {
-                               message: "Jenis aset tidak valid, pilih dari daftar yang tersedia"
-                           }),
-                   deskripsi_aset: z.string({message:"Deskripsi Aset harus diisi"}).min(1, "Deskripsi harus diisi"),
-                //    dokumentasi: z.array(z.any())
-                //        .refine(files => files.length > 0, {
-                //            message: "Minimal satu dokumentasi harus diunggah"
-                //        })
-                //        .refine(files => files.every(file => file instanceof File), {
-                //            message: "File dokumentasi tidak valid"
-                //        })
-               });
-               const dokumentasii = data.getAll("dokumentasi").filter(item => item instanceof File && item.size > 0).map(item => item as File)
-                console.log("Dokumentasi files:", dokumentasii.map(file => ({
-                   name: file.name,
-                   type: file.type,
-                   size: file.size
-               })));
-               console.log("Dokumentasi: ",dokumentasiFiles)
-                const validation = schema.safeParse({
-                     nama_aset,
-                    jenis_aset,
-                    deskripsi_aset,
-                   dokumentasi: dokumentasiFiles
-                });
-               // const files = dokumentasiFiles.map((files)=> files.name)
-               
-               if (!validation.success) {
-                   console.log(validation.error.flatten().fieldErrors)
-                   return fail(406,{
-                       errors: validation.error.flatten().fieldErrors,
-                       success: false,
-                       // formData: Object.fromEntries(data)
-                   });
-        }
-        const id_jenis_aset = jenisList.find(item => item.nama_jenis === jenis_aset)
+                // Get new files from the form
+            const newFiles = data.getAll('uploadfile').filter(file => file instanceof File && file.size > 0) as File[];
+        console.log('New files from form:', newFiles.map(f => f.name));
+         console.log(data)
+             
+          
+        let newFileIds: string[] = [];
+                    if (newFiles.length > 0) {
+                try {
+                    // Upload each file individually to ensure all are processed
+                    for (const file of newFiles) {
+                        console.log(`Processing file: ${file.name} (${file.size} bytes)`);
+                        
+                        const singleFileFormData = new FormData();
+                        singleFileFormData.append('nama_aset', data.get("nama_aset")as string);
+                        singleFileFormData.append('dokumentasi', file);
+                        
+                        console.log(`Uploading file: ${file.name}`);
+                        const uploadResponse = await fetch(`${env.URL_KERAJAAN}/file/aset`, {
+                            method: 'POST',
+                            body: singleFileFormData
+                        });
+                        
+                        if (!uploadResponse.ok) {
+                            console.error(`Upload failed for ${file.name}:`, uploadResponse.status);
+                            const responseText = await uploadResponse.text();
+                            console.error('Upload response body:', responseText);
+                            continue; // Skip this file but continue with others
+                        }
+                        
+                        const uploadResult = await uploadResponse.json();
+                        console.log(`Upload result for ${file.name}:`, uploadResult);
+                        
+                        // Extract ID from response
+                        let fileId = null;
+                        
+                        if (uploadResult.id_path) {
+                            if (typeof uploadResult.id_path === 'string') {
+                                fileId = uploadResult.id_path;
+                            } else if (uploadResult.id_path.data) {
+                                fileId = uploadResult.id_path.data;
+                            }
+                        } else if (uploadResult.id_dokumentasi) {
+                            if (typeof uploadResult.id_dokumentasi === 'string') {
+                                fileId = uploadResult.id_dokumentasi;
+                            } else if (Array.isArray(uploadResult.id_dokumentasi)) {
+                                fileId = uploadResult.id_dokumentasi[0]; // Take first if array
+                            }
+                        } else if (Array.isArray(uploadResult) && uploadResult.length > 0) {
+                            fileId = uploadResult[0];
+                        } else if (uploadResult.data) {
+                            if (typeof uploadResult.data === 'string') {
+                                fileId = uploadResult.data;
+                            } else if (Array.isArray(uploadResult.data) && uploadResult.data.length > 0) {
+                                fileId = uploadResult.data[0];
+                            }
+                        }
+                        
+                        if (fileId) {
+                            console.log(`File ${file.name} uploaded with ID: ${fileId}`);
+                            newFileIds.push(fileId);
+                        } else {
+                            console.warn(`Could not extract ID for file ${file.name}:`, uploadResult);
+                        }
+                    }
+                    
+                    console.log('All new files uploaded with IDs:', newFileIds);
+                } catch (uploadError) {
+                    console.error('Error in file upload process:', uploadError);
+                    return fail(500, {
+                        errors: `Error uploading files: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`,
+                        success: false
+                    });
+                }
+            }
+
+              const existingDocResponse = await fetch(`${env.URL_KERAJAAN}/aset/${id}`);
+            const existingDoc = existingDocResponse.ok ? await existingDocResponse.json() : { dokumentasi: '' };
+             
+              
+        // const id_jenis_aset = jenisList.find(item => item.nama_jenis === jenis_aset)
         let gambarf;
        
-            let sendData = {
-                    id_aset: Number(id_aset),
-
-                    id_jenis_aset: Number(String(id_jenis_aset.id_jenis_aset)),
-                    dokumentasi: gambar.join(","),
-                    nama_aset: nama_aset,
-                    deskripsi: deskripsi_aset,
-                    kategori_aset: jenis_aset
-        }
-        console.log(sendData)
+              
+            // Combine existing and new file IDs
+            let allFileIds = [...existingFileIds];
+            
+            // Add new file IDs if any
+            if (newFileIds.length > 0) {
+                allFileIds = [...allFileIds, ...newFileIds];
+            }
+            
+            // If no files provided at all, use existing dokumentasi from document
+            let finalDokumentasi = allFileIds.length > 0 
+                ? allFileIds.join(',') 
+                : (existingDoc.dokumentasi || '');
+                
+            console.log('Final dokumentasi value:', finalDokumentasi);
+            
+            // data-data yg akan dikirim ke api ( untuk edit )
+        const payload = {
+            id_aset: Number(data.get("id_aset")),
+            id_jenis_aset: Number(data.get("id_jenis_aset")),
+            nama_aset : data.get("nama_aset"),
+            dokumentasi: finalDokumentasi,
+            deskripsi: data.get("deskripsi_aset"),
+            kategori_aset: data.get("jenis_aset"),
+                  
+            };
+        console.log(payload)
                try {
                    const res = await fetch(`${env.URL_KERAJAAN}/aset`, {
                        headers: {
                            "Content-Type": "application/json"
                        }
-                   , method: "PUT", body: JSON.stringify(sendData) })
+                       , method: "PUT", body: JSON.stringify(payload)
+                   })
+                   let msg = await res.json()
+                   console.log(msg)
                    if(!res.ok){
                        throw new Error(`HTTP Error! Status: ${res.status}`)
                    }
-                   console.log(res)
                    return {data: "berhasil", success: true}
                }
                catch (error) {

@@ -4,6 +4,8 @@ import { z } from "zod";
 import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
 import { dummyAcara } from "$lib/dummy";
+let hapusUndangan = false
+let acara = false
 
 export const load: PageServerLoad = async ({params, cookies}) => {
     try {
@@ -80,22 +82,21 @@ export const load: PageServerLoad = async ({params, cookies}) => {
         };
 
         let [resUndangan, resPanit] = await Promise.all([
-            fetch(`${env.URL_KERAJAAN}/undangan/${data.id}`, {
-                headers: {
-                    "Authorization": `Bearer ${token?.token}`
-                }
+            fetch(`${env.URL_KERAJAAN}/undangan/${params.id}`, {
+                method:"GET",
             }),
-            fetch(`${env.URL_KERAJAAN}/acara/panit/${data.id}`, {
-                headers: {
-                    "Authorization": `Bearer ${token?.token}`
-                }
+            fetch(`${env.URL_KERAJAAN}/acara/panit/${params.id}`, {
+                 method:"GET",   
             })
         ]);
         if (!resUndangan.ok && !resPanit.ok) {
             
         }
         let dataUndangan = await resUndangan.json()
+        dataUndangan = dataUndangan.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at)
+        console.log("DAta Undangan", dataUndangan)
         let dataPanit = await resPanit.json()
+        // dataPanit = dataPanit?.filter(item => item?.deleted_at === '0001-01-01T00:00:00Z' || !item?.deleted_at)
         console.log(formattedData)
         return { data: formattedData, situs,dataUndangan,dataPanit,  user: userData };
     }
@@ -106,11 +107,12 @@ export const load: PageServerLoad = async ({params, cookies}) => {
 };
 
 export const actions: Actions = {
-    editAcara: async ({ request }) => {
+    editAcara: async ({ request, cookies }) => {
         const data = await request.formData();
+        let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
 
-        const ids = data.getAll("id").map(String);
-        const ids2 = data.getAll("id2").map(String);
+        const ids = data.getAll("id").map(String); // undangan
+        const ids2 = data.getAll("id2").map(String); //panit
         console.log(data)
         let form : any = {
             namaacara: "",
@@ -135,7 +137,7 @@ export const actions: Actions = {
             namaacara: z.string().trim().min(1, "Isi Nama Acara!"),
             lokasiacara: z.string().trim().min(1, "Lokasi harus diisi!"),
             tujuanacara: z.string().trim().min(1, "Tujuan harus diisi!"),
-            jenis_acara: z.enum(["Terbuka", "Tertutup"], {
+            jenis_acara: z.enum(["private", "public"], {
                 errorMap: () => ({ message: "Pilih jenis acara!" }),
                 }),
             deskripsiacara: z.string().trim().min(1, "Deskripsi harus terisi!"),
@@ -154,13 +156,13 @@ export const actions: Actions = {
             }),
             panggilan: z.record(z.string().trim().min(1, "Panggilan gaboleh kosong!")),
             namabawah: z.record(z.string().min(1, "Masih ada input field yg kosong!")),
-            notelpbawah: z.record(
-                z.string()
-                    .min(10, "Nomor telepon harus diisi!")
-                    .regex(/^\d+$/, "Nomor telepon hanya boleh angka!")
-            ),
-            namajabatan: z.record(z.string().trim().min(1, "Silahkan Pilih Jabatan!")),
-            namalengkapbawah: z.record(z.string().min(1, "Tidak boleh kosong!")),
+            // notelpbawah: z.record(
+            //     z.string()
+            //         .min(10, "Nomor telepon harus diisi!")
+            //         .regex(/^\d+$/, "Nomor telepon hanya boleh angka!")
+            // ),
+            // namajabatan: z.record(z.string().trim().min(1, "Silahkan Pilih Jabatan!")),
+            // namalengkapbawah: z.record(z.string().min(1, "Tidak boleh kosong!")),
         });
 
         form = {
@@ -196,7 +198,7 @@ export const actions: Actions = {
             form.namalengkapbawah[id2] = data.get(`namalengkapbawah_${id2}`) ?? "";
             form.namajabatan[id2] = data.get(`namajabatan_${id2}`) ?? "";
         }
-
+        console.log("Extracted Form:", form);
 
         const validation = ver.safeParse({ ...form });
 
@@ -212,7 +214,124 @@ export const actions: Actions = {
                 type: "add"
             });
         }
+        const undanganArr = Object.keys(form.namabawah).map(id => ({
+            nama: form.namabawah[id],
+            notelp: form.notelpbawah[id],
+            panggilan: form.panggilan[id]
+        }));
+          const panitiaArr = Object.keys(form.namalengkapbawah).map(id => ({
+            nama: form.namalengkapbawah[id],
+            jabatan: form.namajabatan[id]
+          }));
+        if (undanganArr && panitiaArr) {
+            try {
+            await Promise.all(
+                undanganArr.map(async (undangan) => {
+                    let send = {
+                        id_acara: Number(data.get("id_acara")),
+                        id_pengirim: Number(token?.user_data?.id_user),
+                        id_penerima: Number(undangan.nama)
+                    }
+                    console.log("sending acara", send)
+                   let res = await fetch(`${env.URL_KERAJAAN}/undangan`, {    
+                        method: "POST",            
+                        headers: { "Content-Type": "application/json" }, 
+                        body: JSON.stringify(send)
+                   });
+                    let msg = await res.json()
+                    console.log(msg)
+                })
+            );
+            await Promise.all(
+                panitiaArr.map(async (panitia) => {
+                     let send = {
+                        id_acara: Number(data.get("id_acara")),
+                        id_user: Number(panitia.nama),
+                        jabatan_panitia: panitia.jabatan
+                    }
+                    console.log("sending panit", send)
+                    let res = await fetch(`${env.URL_KERAJAAN}/acara/panitia`, {    
+                        method: "POST",            
+                        headers: { "Content-Type": "application/json" }, 
+                        body: JSON.stringify(send)
+                    });
+                    let msg = await res.json()
+                    console.log(msg)
+                })
+            );
+            } catch (error) {
+                console.log(error)
+                return fail(406, {
+                    errors: "Terjadi kesalahan mengambil data",
+                    success: false,
+                    formData: form,
+                    type: "add"
+                });
+            
+            }
 
-        return { errors: "Success", success: true, formData: form };
+        
+        }
+        try {
+            let payload ={
+                id_acara: Number(data.get("id_acara")),
+                nama_acara: data.get("namaacara"),
+                deskripsi_acara: data.get("deskripsi_acara"),
+                tujuan_acara: data.get("tujuanacara"),
+                lokasi_acara: data.get("id_lokasi"),
+                alamat_acara: data.get("alamat_acara"),
+                waktu_mulai: `${data.get("tanggalmulai")} ${data.get("waktumulai")}`,
+                waktu_selesai: `${data.get("tanggalselesai")} ${data.get("waktuselesai")}`,
+                penanggung_jawab: Number(data.get("penanggungjawab_id")),
+                jenis_acara: data.get("jenisacara"),
+                kapasitas_acara: Number(data.get("kapasitasacara")),
+                status: "Diajukan",
+            }
+            console.log("PayLoad", payload)
+            let res = await fetch(`${env.URL_KERAJAAN}/acara`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+            let msg = await res.json()
+            console.log("Edit acara",msg)
+            if (!res.ok) {
+            }
+            return {success: true}
+        } catch (error) {
+            
+        }
+        
+        
+      
+        console.log("Undangan :", undanganArr )
+        console.log("Panit :", panitiaArr )
+        
+        
+        return { errors: "Success", success: true, acara: true };
+    },
+
+
+    hapusUndangan: async ({ request, cookies }) => {
+        const data = await request.formData();
+        let token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : ''
+        console.log(data)
+        try {
+            let res = await fetch(`${env.URL_KERAJAAN}/undangan/${data.get("id_undangan")}`, {
+                method: "DELETE",
+               
+            });
+            let msg = await res.json()
+            if (!res.ok) {
+                console.error(msg.message)
+            }
+
+            console.log(msg)
+            return { success: true, message: "Undangan berhasil dihapus", hapusUndangan :true };
+        } catch (error) {
+            
+        }
     }
 };

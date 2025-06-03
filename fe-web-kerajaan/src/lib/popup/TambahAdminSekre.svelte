@@ -3,6 +3,7 @@
 	import xbutton from '$lib/asset/icon/xbutton.png';
 	import { formatDate } from '$lib/index';
 	import { env } from '$env/dynamic/public';
+	import { onMount } from 'svelte';
 
 	let {
 		value = $bindable(),
@@ -17,7 +18,7 @@
 	let dataAfiliasi = $state<any>(null);
 	let afiliasiLoading = $state(false);
 	let afiliasiKeyword = $state(data?.jenis_admin || '');
-	let selectedAfiliasi = $state();
+
 	let showAfiliasiDropdown = $state(false);
 	console.log('data : ', data);
 	console.log('userData : ', userData);
@@ -113,6 +114,29 @@
 				.includes(afiliasiKeyword.toLowerCase())
 		)
 	);
+	let selectedAfiliasi = $state(null);
+	onMount(() => {
+		getAfiliasi(adminRole);
+	});
+	$effect(() => {
+		if (open && textM === 'Edit') {
+			// ...existing code...
+			if (
+				adminRole === 'Admin Komunitas' ||
+				adminRole === 'Admin Organisasi' ||
+				adminRole === 'Admin Situs'
+			) {
+				// Tunggu dataAfiliasi sudah terisi
+				if (dataAfiliasi && dataAfiliasi.length > 0 && data?.afiliasi_id) {
+					const found = dataAfiliasi.find((item) => item.id == data.afiliasi_id);
+					if (found) {
+						selectedAfiliasi = found;
+						afKeyword = found.nama;
+					}
+				}
+			}
+		}
+	});
 	let jenisAfiliasi = $state();
 	function handleAfiliasiSelect(opt: any) {
 		afKeyword = opt.nama;
@@ -124,7 +148,7 @@
 		daftarGelar = daftarGelar.filter((_: any, i: number) => i !== index);
 	}
 
-	let radioinput = $state(textM === 'Ubah' ? 'sekre_tidak' : 'sekre_ya');
+	let radioinput = $state(textM === 'Edit' ? 'sekre_tidak' : 'sekre_ya');
 
 	console.log('data : ', data);
 
@@ -184,7 +208,7 @@
 
 		return `${day} ${month} ${year}`;
 	}
-	let afKeyword = $state(data?.afiliasi || '');
+	let afKeyword = $state(data?.afiliasi_data || data?.afiliasi || '');
 	let selectedaf = $state<any>(null);
 	let filteredAfiliasi: any[] = $derived(
 		dataAfiliasi?.filter((item) => item.nama.toLowerCase().includes(afKeyword.toLowerCase()))
@@ -231,7 +255,7 @@
 			<div class="flex w-full flex-col md:col-span-full">
 				<div class="flex justify-between">
 					<p>Nama Lengkap</p>
-					{#if textM !== 'Ubah'}
+					{#if textM == 'Tambah'}
 						<div class="flex items-center justify-between gap-2">
 							<p>Apakah Sudah memiliki akun sebelumnya?</p>
 							<input
@@ -275,6 +299,7 @@
 						/>
 					</svg>
 				</div>
+				<input type="text" hidden name="id_user" value={selectedUser?.id} id="" />
 				<div class="relative">
 					{#if userDropdownOpen && filteredUserData.length > 0 && radioinput === 'sekre_ya'}
 						<div
@@ -300,20 +325,15 @@
 						</div>
 					{/if}
 				</div>
-				{#if selectedUser}
-					<input type="hidden" name="nama_lengkap" value={selectedUser.nama_lengkap} />
-					<input type="hidden" name="jenis_kelamin" value={selectedUser.jenis_kelamin} />
-					<input type="hidden" name="tempat_lahir" value={selectedUser.tempat_lahir} />
-					<input type="hidden" name="tanggal_lahir" value={selectedUser.tanggal_lahir} />
-					<input type="hidden" name="username" value={selectedUser.username} />
-					<input type="hidden" name="password" value={selectedUser.password} />
-					<input type="hidden" name="email" value={selectedUser.email} />
-					<input type="hidden" name="no_telp" value={selectedUser.no_telp} />
+				<!-- {#if selectedUser}
 					<input type="hidden" name="id_user" value={selectedUser.id_user} />
-				{/if}
+				{/if} -->
 
 				{#if errors}
 					{#each errors.nama_lengkap as a}
+						<p class="text-left text-red-500">{a}</p>
+					{/each}
+					{#each errors.id_user as a}
 						<p class="text-left text-red-500">{a}</p>
 					{/each}
 				{/if}
@@ -331,6 +351,7 @@
 								class="w-full rounded-lg border border-gray-300 px-2 py-2 pr-10 focus:outline-none"
 								name="username"
 								placeholder="Jane Doe"
+								readonly={textM === 'Edit' ? true : false}
 								id=""
 								value={data ? data.username : ''}
 							/>
@@ -385,52 +406,53 @@
 							{/each}
 						{/if}
 					</div>
-
-					<!-- password -->
-					<div class="relative flex flex-col md:col-span-full">
-						<div class="">
-							<p>Password</p>
-						</div>
-						<!-- svelte-ignore a11y_no_static_element_interactions -->
-						<input
-							{type}
-							class="grow rounded-lg border-none px-2 py-2 shadow-none focus:outline-none focus:ring-0"
-							name="password"
-							placeholder="password"
-							id=""
-							value={data ? data.password : '-'}
-						/>
-						<!-- svelte-ignore a11y_click_events_have_key_events -->
-						<!-- svelte-ignore a11y_no_static_element_interactions -->
-						<div
-							class="me-1 ms-1 flex cursor-pointer items-center"
-							onclick={() => {
-								if (type === 'password') {
-									type = 'text';
-								} else type = 'password';
-							}}
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								class="absolute right-3 top-1/2 size-6"
+					{#if textM !== 'Edit'}
+						<div class="relative flex flex-col md:col-span-full">
+							<div class="">
+								<p>Password</p>
+							</div>
+							<!-- svelte-ignore a11y_no_static_element_interactions -->
+							<input
+								{type}
+								class="grow rounded-lg border-none px-2 py-2 shadow-none focus:outline-none focus:ring-0"
+								name="password"
+								placeholder="password"
+								id=""
+								value={data ? data.password : '-'}
+							/>
+							<!-- svelte-ignore a11y_click_events_have_key_events -->
+							<!-- svelte-ignore a11y_no_static_element_interactions -->
+							<div
+								class="me-1 ms-1 flex cursor-pointer items-center"
+								onclick={() => {
+									if (type === 'password') {
+										type = 'text';
+									} else type = 'password';
+								}}
 							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-								/>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-								/>
-							</svg>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									class="absolute right-3 top-1/2 size-6"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+									/>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+									/>
+								</svg>
+							</div>
 						</div>
-					</div>
+					{/if}
+
 					<div>
 						{#if errors}
 							{#each errors.password as a}
@@ -565,7 +587,7 @@
 								}, 200);
 							}}
 							autocomplete="off"
-							readonly={afiliasiLoading || data ? true : false}
+							readonly={afiliasiLoading}
 						/>
 						{#if afiliasiLoading}
 							<div class="absolute right-3 top-1/2 -translate-y-1/2">
@@ -601,6 +623,11 @@
 							type="hidden"
 							name="afiliasi"
 							value={selectedAfiliasi ? selectedAfiliasi.nama : ''}
+						/>
+						<input
+							type="hidden"
+							name="afiliasi_id"
+							value={selectedAfiliasi ? selectedAfiliasi.id : ''}
 						/>
 						{#if showAfiliasiDropdown && filteredAfiliasi.length > 0}
 							<div

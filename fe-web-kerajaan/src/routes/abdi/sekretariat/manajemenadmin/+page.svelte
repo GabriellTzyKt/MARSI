@@ -10,6 +10,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import { formatDatetoUI } from '$lib';
+	import Table from '$lib/table/Table.svelte';
 
 	// import { load } from '../organisasi/daftaranggota/proxy+page.server.js';
 	let selectTipe = $state<string>('');
@@ -314,6 +315,7 @@
 					valo = true;
 					open = true;
 					await invalidateAll().then(() => {
+						filteredUserByTab(selected);
 						setTimeout(() => {
 							valo = false;
 							open = false;
@@ -350,6 +352,7 @@
 				if (result.type === 'success') {
 					nonAktifkanModal = false;
 					await invalidateAll().then(() => {
+						filteredUserByTab(selected);
 						setTimeout(() => {
 							goto('/abdi/sekretariat/manajemenadmin', { replaceState: true });
 						}, 1000);
@@ -382,6 +385,7 @@
 		method="post"
 		autocomplete="off"
 		use:enhance={() => {
+			filteredUserByTab(selected);
 			loading = true;
 			return async ({ result }) => {
 				loading = false;
@@ -397,7 +401,7 @@
 						}, 3000);
 					});
 				} else if (result.type === 'failure') {
-					error = result?.data?.errors;
+					error = result?.data?.errors || result?.data?.errors_api;
 				}
 			};
 		}}

@@ -40,6 +40,34 @@ export const load: PageServerLoad = async ({cookies}) => {
         );
         let data = await adminRes.json();
         data = data.filter(item => item.deleted_at === "0001-01-01T00:00:00Z");
+        data = await Promise.all(data.map(async (item) => {
+            try {
+                let afiliasiData = null;
+        if (item.jenis_admin.toLowerCase() === 'admin komunitas') {
+            // Fetch komunitas
+            const res = await fetch(`${env.URL_KERAJAAN}/komunitas/${item.afiliasi}`);
+            afiliasiData = res.ok ? await res.json() : item.afiliasi;
+        } else if (item.jenis_admin.toLowerCase() === 'admin organisasi') {
+            // Fetch organisasi
+            const res = await fetch(`${env.URL_KERAJAAN}/organisasi/${item.afiliasi}`);
+            afiliasiData = res.ok ? await res.json() : item.afiliasi
+        } else if (item.jenis_admin.toLowerCase() === 'admin situs') {
+            // Fetch situs
+            const res = await fetch(`${env.URL_KERAJAAN}/situs/${item.afiliasi}`);
+            afiliasiData = res.ok ? await res.json() : item.afiliasi;
+        } else if (item.jenis_admin.toLowerCase() === 'super admin') {
+            afiliasiData = item.afiliasi; // Super admin tidak punya afiliasi khusus
+            }
+                
+                return {
+            ...item,
+            afiliasi_data: afiliasiData.nama_organisasi||afiliasiData.nama_situs||afiliasiData.nama_komunitas||item.afiliasi
+                };
+                
+            } catch (error) {
+                
+            }
+        }))
         // console.log("User Data:", userData);
         return {data, user: userData, userSession: token};
     } catch (error) {
@@ -58,12 +86,13 @@ export const actions: Actions = {
                     .nonempty("Tidak Boleh kosong")
                     .max(300, "Nama Terlalu Panjang (max = 300)")
                     .trim(),
-            id: z.string().nonempty("Field Tidak Boleh Kosong"),
+            id_user: z.string().nonempty("Field Tidak Boleh Kosong"),
             admin_role:
                 z.string({ message: "Harus diisi / harus berupa string" })
                     .nonempty("Field Tidak Boleh Kosong")
                     .max(255, "Max 255 Kata")
                     .trim(),
+            
            
         })
         const ver = z.object({
@@ -129,8 +158,9 @@ export const actions: Actions = {
         if (akun === "sekre_ya") {
             const dt = {
                 nama_lengkap: data.get("nama_lengkap"),
+                id_user: data.get("id_user"),
                 admin_role: data.get("admin_role"),
-                afiliasi: data.get("afiliasi")||"-"
+                afiliasi: data.get("afiliasi_id")||"-"
             }
             const verif = accVer.safeParse({...dt})
 
@@ -148,6 +178,31 @@ export const actions: Actions = {
                 });
 
             }
+             try {
+                let role = ''
+             
+                let sendData = {
+                    id_user: Number(data.get("id_user")),
+                    afiliasi : data.get("afiliasi_id") || "Afiliasi Tidak Ada",
+                    jenis_admin: data.get("admin_role")
+                }
+                console.log(sendData)
+                const res = await fetch(`${env.URL_KERAJAAN}/admin/user`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(sendData)
+                })
+                if (!res.ok) {
+                    return fail(406, { errors_api: "Gagal menambahkan admin" })
+                    throw new Error(`HTTP Error! Status: ${res.status} ${res.statusText}`)
+                }
+                console.log(res)
+            } catch (error) {
+                console.log(error)
+                return fail(406, { errors_api: "Gagal menambahkan admin (username/email terpakai)" })
+            }
             return { success: true, type: "add" }
         }
         else {
@@ -160,19 +215,19 @@ export const actions: Actions = {
             const no_telp = data.get("no_telp")
             const tgl_lahir = data.get("tgl_lahir")
             const kota_lahir = data.get("kota_lahir")
-            const afiliasi = data.getAll("afiliasi") ||"-";
+            const afiliasi = data.get("afiliasi_id") ||"-";
             const afiliasiSingle = data.get("afiliasi") ||"-";
             const admin_role = data.get("admin_role")
             const formData = {
                 nama_lengkap,
+                jenis_kelamin,
                 username,
                 email,
                 no_telp,
                 password,
                 tgl_lahir,
                 kota_lahir,
-                jenis_kelamin,
-          
+                afiliasi: afiliasi,
                 admin_role
             }
             const verif = ver.safeParse({ ...formData })
@@ -204,7 +259,7 @@ export const actions: Actions = {
                     password,
                     email,
                     no_telp,
-                    afiliasi : data.get("afiliasi") || "Afiliasi Tidak Ada",
+                    afiliasi : data.get("afiliasi_id") || "0",
                     jenis_admin: admin_role
                 }
                 console.log(sendData)
@@ -215,8 +270,10 @@ export const actions: Actions = {
                     },
                     body: JSON.stringify(sendData)
                 })
+                let msh = await res.json()
                 if (!res.ok) {
-                    return fail(406, { errors_api: "Gagal menambahkan admin" })
+                    console.log(msh)
+                    return fail(406, { errors_api: msh.message })
                     throw new Error(`HTTP Error! Status: ${res.status} ${res.statusText}`)
                 }
                 console.log(res)
@@ -228,7 +285,8 @@ export const actions: Actions = {
         }
     },
 
-    ubahAdmin: async ({ request }) => {
+    ubahAdmin: async ({ request, cookies }) => {
+        let token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
         let sendData = {};
          const data = await request.formData()
          let obj = Object.fromEntries(data)
@@ -262,12 +320,7 @@ export const actions: Actions = {
                     .nonempty("Field Tidak Boleh Kosong")
                     .trim(),
 
-            username:
-                z.string({ message: "Harus diisi / harus berupa string" })
-                    .nonempty("Field Tidak Boleh Kosong")
-                    .max(255, "Max 255 Kata")
-                    .trim(),
-
+            
             no_telp:
                 z.string({ message: "Input Harus Ada" })
                     .min(10, { message: "nomer telepon minimal  10 angka" })
@@ -275,15 +328,7 @@ export const actions: Actions = {
                     .regex(/^\d+$/, "Harus berupa nomer")
                     .trim(),
 
-            password:
-                z.string({ message: "password bukan string" })
-                    .min(8, { message: "Password minimal 8 huruf" })
-                    .max(255, { message: "Password sudah maximal!" })
-                    .nonempty({ message: "Password tidak boleh kosong" })
-                    .regex(/[A-Z]/, { message: "Password Harus ada minimal 1 huruf Kapital" })
-                    .regex(/[0-9]/, { message: "Password Harus ada miniam 1 angka" })
-                    .regex(/[^A-Za-z0-9]/, { message: "Password harus ada simbol" }),
-
+           
             tgl_lahir:
                 z.coerce.date({ message: "Tanggal Tidak valid (YYYY-MM-DD)" }),
 
@@ -313,9 +358,9 @@ export const actions: Actions = {
         let dataVerif = {
             nama_lengkap: data.get("nama_lengkap"),
             email: data.get("email"),
-            username: data.get("username"),
+          
             no_telp: data.get("no_telp"),
-            password: data.get("password"),
+            
             tgl_lahir: data.get("tgl_lahir"),
             kota_lahir: data.get("kota_lahir"),
             jenis_kelamin: data.get("jenis_kelamin"),
@@ -323,7 +368,7 @@ export const actions: Actions = {
          
         }   
         const verif = ver.safeParse(dataVerif)
-
+        console.log("dataFerif",dataVerif)
         if (!verif.success) {
     
             const fieldErrors = verif.error.flatten().fieldErrors;
@@ -347,21 +392,24 @@ export const actions: Actions = {
                 tanggal_lahir: data.get("tgl_lahir"),
                 tempat_lahir: data.get("kota_lahir"),
                 jenis_kelamin: data.get("jenis_kelamin"),
-                id_kerajaan: 2,
+                afiliasi: data.get("afiliasi_id"),
                 jenis_admin: data.get("admin_role"),
-                status: 1
+                status_aktif: 1
             }
             console.log("Form Data: ", sendData)
             let res = await fetch(`${env.URL_KERAJAAN}/admin`, {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization" : `Bearer ${token?.token}`
                 },
                 body: JSON.stringify(sendData)
             })
+            let msg = await res.json()
             if (!res.ok) {
+                console.log(msg)
                 throw new Error(`HTTP Error! Status: ${res.status} ${res.statusText}`)
-            }
+           }
             console.log(res.statusText, res.status)
             return { success: true }
         } catch (error) {
@@ -408,9 +456,8 @@ export const actions: Actions = {
                 tanggal_lahir: formatDatetoUI(data.get("tanggal_lahir") as string),
                 tempat_lahir: data.get("tempat_lahir"),
                 jenis_kelamin: data.get("jenis_kelamin"),
-                id_kerajaan: 1,
                 jenis_admin: data.get("jenis_admin"),
-                status: resStatus,
+                status_aktif: resStatus,
         }
         console.log("Data yang dikirim: ",dataSend)
         try {

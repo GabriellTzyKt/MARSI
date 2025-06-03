@@ -6,10 +6,12 @@
 	import Marquee from 'svelte-fast-marquee';
 
 	let { data } = $props();
+	console.log(data);
+
 	let dataambil = $state(data.data);
-	let imageUrls = $state(dataambil.imageUrls || []);
-	let videoUrls = $state(dataambil.videoUrls || []);
-	let audioUrls = $state(dataambil.audioUrls || []);
+	let imageUrls = $state(dataambil?.imageUrls || []);
+	let videoUrls = $state(dataambil?.videoUrls || []);
+	let audioUrls = $state(dataambil?.audioUrls || []);
 	console.log('Data yang diterima:', data);
 </script>
 
@@ -25,7 +27,7 @@
 			<div
 				class="flex items-center justify-center self-center pt-10 text-center text-3xl font-bold"
 			>
-				<p class="max-w-full break-words px-4">{dataambil.nama_aset}</p>
+				<p class="max-w-full break-words px-4">{dataambil?.nama_aset || '-'}</p>
 			</div>
 			<div class="grid grid-cols-1 gap-8 p-4 px-4 md:grid-cols-2 md:px-10">
 				<div>
@@ -48,6 +50,12 @@
 								alt="foto 1"
 							/>
 						{/if}
+					{:else if imageUrls.length > 0}
+						<img
+							src={imageUrls[0] ? imageUrls[0] : 'https://picsum.photos/200/300'}
+							class="mx-auto mt-3 h-auto w-full max-w-[500px] self-center rounded-lg object-cover"
+							alt="foto 1"
+						/>
 					{/if}
 
 					<!-- Audio Section -->

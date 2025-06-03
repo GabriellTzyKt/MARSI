@@ -12,6 +12,7 @@
 	import { get } from 'svelte/store';
 	import { enhance } from '$app/forms';
 	import { createEventDispatcher } from 'svelte';
+	import { env } from '$env/dynamic/public';
 
 	const dispatch = createEventDispatcher();
 
@@ -26,12 +27,42 @@
 	} = $props();
 
 	let nama = $state('');
+	let levelOptions = $state<number[]>([]);
+	let singkatan = $state('');
+	let level = $state<number>(1);
 	console.log(type);
+	async function fetchPenghargaanLevels() {
+		try {
+			const res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/gelar?limit=1000`); // Ganti dengan endpoint yang benar
+			let penghargaanList = await res.json();
+			penghargaanList = penghargaanList.filter(
+				(item) => item.deleted_at == null || !item.deleted_at
+			);
+			const count = penghargaanList.length;
+			console.log('Gelar', penghargaanList);
+			console.log('Count:', count);
+			levelOptions = Array.from({ length: count + 1 }, (_, i) => i + 1);
+			// console.log('Level Option', levelOptions);
+			// console.log('Level', level);
+			// Saat edit, isi level sesuai currentItem, jika tidak default ke count+1
+			if (editMode && currentItem?.level) {
+				level = currentItem.level;
+			} else {
+				level = count + 1;
+			}
+		} catch (e) {
+			levelOptions = [1];
+			level = 1;
+		}
+	}
+
 	$effect(() => {
 		if (open && editMode && currentItem) {
 			// Set name based on item type
-			if (type === 'Penghargaan') {
-				nama = currentItem.nama_penghargaan || '';
+			if (type === 'Gelar') {
+				fetchPenghargaanLevels();
+				nama = currentItem.nama_gelar || '';
+				singkatan = currentItem.singkatan || '';
 			} else if (type === 'Jenis Situs') {
 				nama = currentItem.jenis_situs || '';
 			} else if (type === 'Jenis Aset') {
@@ -42,15 +73,22 @@
 				nama = currentItem.nama_wisata || '';
 			} else if (type === 'Gelar') {
 				nama = currentItem.nama_gelar || '';
+			} else if (type === 'Penghargaan') {
+				nama = currentItem.nama_penghargaan;
+			} else if (open && !editMode) {
+				if (type === 'Gelar') {
+					fetchPenghargaanLevels();
+				}
+				// Reset form for new item
+				nama = '';
 			}
-		} else if (open && !editMode) {
-			// Reset form for new item
-			nama = '';
 		}
 	});
 
 	function getTypeValue() {
 		switch (type) {
+			case 'Gelar':
+				return 'gelar';
 			case 'Penghargaan':
 				return 'penghargaan';
 			case 'Jenis Situs':
@@ -70,6 +108,8 @@
 
 	function getIdField() {
 		switch (type) {
+			case 'Gelar':
+				return 'id_gelar';
 			case 'Penghargaan':
 				return 'id_penghargaan';
 			case 'Jenis Situs':
@@ -164,6 +204,29 @@
 						required
 					/>
 				</div>
+				{#if type === 'Gelar'}
+					<label for="singkatan" class="mb-2 block font-medium">Singkatan {type}</label>
+					<input
+						type="text"
+						id="singkatan"
+						name="singkatan"
+						bind:value={singkatan}
+						class="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-[#FFA600] focus:outline-none"
+						required
+					/>
+					<label for="level" class="mb-2 block font-medium">Level</label>
+					<select
+						id="level"
+						name="level"
+						bind:value={level}
+						class="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-[#FFA600] focus:outline-none"
+						required
+					>
+						{#each levelOptions as opt}
+							<option value={opt}>{opt}</option>
+						{/each}
+					</select>
+				{/if}
 
 				<div class="flex justify-end gap-2">
 					<button

@@ -63,9 +63,7 @@
 						<button
 							type="submit"
 							class="btn-setuju rounded-xl px-8 py-3 font-[500] text-white hover:cursor-pointer hover:ring hover:ring-gray-600"
-							onclick={() => {
-								setTimer();
-							}}>Iya, arispkan</button
+							>Iya, arispkan</button
 						>
 					{:else if choose == 'delete'}
 						<button

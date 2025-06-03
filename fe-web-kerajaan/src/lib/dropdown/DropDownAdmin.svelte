@@ -109,7 +109,6 @@
 							if (result.type === 'success') {
 								await invalidateAll().then(() => {
 									setTimeout(() => {
-										isAktif = data.status_aktif;
 										console.log('Success', isAktif);
 									}, 3000);
 								});
@@ -119,16 +118,84 @@
 						};
 					}}
 				>
-					<input type="hidden" name="id_admin" value={data.id_admin} />
-					<input type="hidden" name="nama_lengkap" value={data.nama_lengkap} />
-					<input type="hidden" name="email" value={data.email} />
-					<input type="hidden" name="no_telp" value={data.no_telp} />
-					<input type="hidden" name="tanggal_lahir" value={formatDatetoUI(data.tanggal_lahir)} />
-					<input type="hidden" name="tempat_lahir" value={data.tempat_lahir} />
-					<input type="hidden" name="jenis_kelamin" value={data.jenis_kelamin} />
-					<input type="hidden" name="id_kerajaan" value={data.id_kerajaan} />
-					<input type="hidden" name="jenis_admin" value={data.jenis_admin} />
-					<input type="hidden" name="status_aktif" value={data.status_aktif} />
+					<input
+						type="text"
+						name="id_admin"
+						hidden
+						value={data?.id_admin || '10'}
+						class="my-2 w-full pe-2 ps-2 focus:outline-none"
+					/>
+					<input
+						type="text"
+						name="nama_lengkap"
+						hidden
+						value={data?.nama_lengkap || ''}
+						class="my-2 w-full pe-2 ps-2 focus:outline-none"
+					/>
+					<input
+						type="text"
+						name="email"
+						hidden
+						value={data?.email || ''}
+						class="my-2 w-full pe-2 ps-2 focus:outline-none"
+					/>
+					<input
+						type="text"
+						name="no_telp"
+						hidden
+						value={data?.no_telp || ''}
+						class="my-2 w-full pe-2 ps-2 focus:outline-none"
+					/>
+					<input
+						type="text"
+						name="tanggal_lahir"
+						hidden
+						value={data?.tanggal_lahir || ''}
+						class="my-2 w-full pe-2 ps-2 focus:outline-none"
+					/>
+					<input
+						type="text"
+						name="tanggal_lahir"
+						hidden
+						value={data?.tanggal_lahir || ''}
+						class="my-2 w-full pe-2 ps-2 focus:outline-none"
+					/>
+					<input
+						type="text"
+						name="tempat_lahir"
+						hidden
+						value={data?.tempat_lahir || ''}
+						class="my-2 w-full pe-2 ps-2 focus:outline-none"
+					/>
+					<input
+						type="text"
+						name="jenis_kelamin"
+						hidden
+						value={data?.jenis_kelamin || ''}
+						class="my-2 w-full pe-2 ps-2 focus:outline-none"
+					/>
+					<input
+						type="text"
+						name="afiliasi"
+						hidden
+						value={data?.afiliasi || ''}
+						class="my-2 w-full pe-2 ps-2 focus:outline-none"
+					/>
+					<input
+						type="text"
+						name="jenis_admin"
+						hidden
+						value={data?.jenis_admin || ''}
+						class="my-2 w-full pe-2 ps-2 focus:outline-none"
+					/>
+					<input
+						type="text"
+						name="status_aktif"
+						hidden
+						value={data?.status_aktif || ''}
+						class="my-2 w-full pe-2 ps-2 focus:outline-none"
+					/>
+
 					<button
 						class="status cursor-pointer rounded-md px-3 py-1 {isAktif == '1'
 							? 'aktif'
@@ -151,12 +218,17 @@
 	<div
 		class="flex w-full max-w-[800px] flex-col place-self-start rounded-lg border border-[#76768033] bg-white shadow-2xl"
 	>
-		{#if data && data.afiliasi}
-			{#each data.afiliasi.split(',') as dt}
+		{#if data && data.afiliasi_data}
+			<div class="flex rounded-full border border-[#76768033] p-2">
+				<p class="text-sm text-[#5B5B5B]">
+					{data.afiliasi_data == 0 ? 'No Afiliasi' : data.afiliasi_data || '-'}
+				</p>
+			</div>
+			<!-- {#each data.afiliasi.split(',') as dt}
 				<div class="flex rounded-full border border-[#76768033] p-2">
 					<p class="text-sm text-[#5B5B5B]">{dt}</p>
 				</div>
-			{/each}
+			{/each} -->
 		{/if}
 	</div>
 
@@ -205,7 +277,11 @@
 					<p class="font-[500]">Afiliasi</p>
 				</div>
 				<div>
-					<p class="text-sm text-[#5B5B5B]">{data?.afiliasi || '-'}</p>
+					<p class="text-sm text-[#5B5B5B]">
+						{(data?.afiliasi_data == 0 ? 'No Afiliasi' : data?.afiliasi_data) ||
+							data?.afiliasi ||
+							'-'}
+					</p>
 				</div>
 			</div>
 			<div class="flex w-full justify-end gap-4 p-4">

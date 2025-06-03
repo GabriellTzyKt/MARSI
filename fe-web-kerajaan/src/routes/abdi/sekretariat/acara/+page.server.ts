@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }
         let data = await res.json();
-        console.log("acara",data)
+        // console.log("acara",data)
      data = data.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
         let formatDateTime = (isoString) => {
     if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
@@ -78,7 +78,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
                 }
             })
         )
-        console.log("Data acata + user", finalData)
+        // console.log("Data acata + user", finalData)
         return { data: mergedData };
     }
     catch (error) {

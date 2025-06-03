@@ -86,16 +86,7 @@
 				return data.wisata || [];
 			case 'Gelar':
 				// Mock data for Gelar since API isn't ready
-				return [
-					{ id_gelar: 1, nama_gelar: 'Nama Gelar', level: 0 },
-					{ id_gelar: 2, nama_gelar: 'Nama Gelar', level: 1 },
-					{ id_gelar: 3, nama_gelar: 'Nama Gelar', level: 2 },
-					{ id_gelar: 4, nama_gelar: 'Nama Gelar', level: 3 },
-					{ id_gelar: 5, nama_gelar: 'Nama Gelar', level: 4 },
-					{ id_gelar: 6, nama_gelar: 'Nama Gelar', level: 5 },
-					{ id_gelar: 7, nama_gelar: 'Nama Gelar', level: 6 },
-					{ id_gelar: 8, nama_gelar: 'Nama Gelar', level: 7 }
-				];
+				return data.gelar || [];
 			case 'Bintang Jasa':
 				return [];
 			case 'Jabatan Acara':

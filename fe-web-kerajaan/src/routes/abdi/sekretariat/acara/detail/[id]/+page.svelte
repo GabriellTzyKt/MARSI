@@ -1,9 +1,43 @@
 <script lang="ts">
 	import { navigating, page } from '$app/state';
+	import { env } from '$env/dynamic/public';
 	import Loader from '$lib/loader/Loader.svelte';
 	let { data } = $props();
 	let total = $state(8);
 	console.log(data);
+	let loading = $state(false);
+	async function persetujuan(yes: boolean) {
+		try {
+			loading = true;
+			let payload = {
+				id_acara: Number(data.data.id_acara),
+				nama_acara: data.data.nama_acara,
+				deskripsi_acara: data.data.deskripsi_acara,
+				tujuan_acara: data.data.tujuan_acara,
+				lokasi_acara: data.data.id_lokasi,
+				alamat_acara: data.data.alamat_acara,
+				waktu_mulai: `${data.data.tanggal_mulai} ${data.data.waktu_mulai}`,
+				waktu_selesai: `${data.data.tanggal_selesai} ${data.data.waktu_selesai}`,
+				penanggung_jawab: Number(data.data.id_penanggung_jawab),
+				jenis_acara: data.data.jenis_acara,
+				kapasitas_acara: Number(data.data.kapasitas_acara),
+				status: yes ? 'Disetujui' : 'Ditolak'
+			};
+			console.log('Payload', payload);
+			// let res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/acara`, {
+			// 	method: 'PUT',
+			// 	headers: {
+			// 		'Content-Type': 'application/json'
+			// 	},
+			// 	body: JSON.stringify(payload)
+			// });
+			// let msg = await res.json();
+			// console.log(msg);
+		} catch (error) {
+		} finally {
+			loading = false;
+		}
+	}
 </script>
 
 {#if navigating.to}
@@ -151,6 +185,24 @@
 						/>
 					</div>
 				</div>
+				{#if data?.data.status.toLowerCase() === 'diajukan'}
+					<div class="  w-full gap-2">
+						<div class="mt-2 grid w-full grid-cols-1 gap-3 lg:grid-cols-2">
+							<div class="flex items-center justify-center">
+								<button
+									class="w-full cursor-pointer rounded-lg bg-green-500 py-2 text-lg font-[600] text-white"
+									onclick={() => persetujuan(true)}>Terima</button
+								>
+							</div>
+							<div class="flex items-center justify-center">
+								<button
+									class="w-full cursor-pointer rounded-lg bg-red-500 py-2 text-lg font-[600] text-white"
+									onclick={() => persetujuan(false)}>Tolak</button
+								>
+							</div>
+						</div>
+					</div>
+				{/if}
 
 				<div class="mt-12 flex gap-2 px-4">
 					<!-- <div class="mt-2 flex w-full">
@@ -210,17 +262,23 @@
 
 		<p class="mb-5 mt-5 text-start text-xl font-bold text-blue-600">Daftar Undangan</p>
 		<div class="mt-10 grid grid-cols-9 gap-2">
-			{#each Array(total) as _, i}
+			{#each data?.undangan as undangan, i}
 				<div class="col-span-1 w-full">{i + 1}</div>
 				<div class="col-span-2 w-full rounded-lg border px-2 py-1">
-					<select name="panggilan" id="panggilan" disabled class="w-full">
-						<option value="volvo">Tn</option>
-						<option value="saab">Ny</option>
-					</select>
+					<p class="w-full py-2 text-center">{undangan.jenis_kelamin}</p>
 				</div>
-				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
-				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
+				<div class="col-span-3 w-full rounded-lg border px-2 py-1">
+					<p class="w-full py-2 text-center">{undangan.nama_penerima}</p>
+				</div>
+				<div class="col-span-3 w-full rounded-lg border px-2 py-1">
+					<p class="w-full py-2 text-center">{undangan.nomer_telepon || 'No Phone'}</p>
+				</div>
 			{/each}
+			{#if data?.undangan.lengh === 0}
+				<div class="col-span-full items-center justify-center py-2">
+					<p>No Panitia Yet</p>
+				</div>
+			{/if}
 		</div>
 
 		<div class="mt-5 h-1 w-full bg-slate-300"></div>
@@ -237,6 +295,9 @@
 		</div>
 	</div>
 </div>
+{#if loading}
+	<Loader></Loader>
+{/if}
 
 <style>
 	.material-symbols--cancel {

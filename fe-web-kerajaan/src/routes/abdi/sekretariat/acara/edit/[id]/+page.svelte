@@ -1,14 +1,15 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { navigating } from '$app/state';
+	import { env } from '$env/dynamic/public';
 	import Loader from '$lib/loader/Loader.svelte';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	// import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import { Item } from '@radix-ui/react-dropdown-menu';
 	import { fade } from 'svelte/transition';
-	import type { AnymatchFn } from 'vite';
-	import { tuple } from 'zod';
 
 	let { data } = $props();
 	console.log('Acara: ', data.data);
@@ -53,6 +54,7 @@
 	function setActive(tab: string) {
 		activeTab = tab;
 	}
+
 	let errors: any = $state('');
 	let success = $state(false);
 	let lokasi_acara = $state(data?.data.nama_situs || '');
@@ -64,7 +66,7 @@
 			item.nama_situs.toLowerCase().includes(lokasi_acara.toLowerCase())
 		);
 	}
-
+	let dataUndangan = $state();
 	function filterUser(searchTerm: string) {
 		return users.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
 	}
@@ -122,7 +124,21 @@
 		console.log('Sesudah hapus:', invitations);
 		console.log('Sesudah hapus:', invitationIds);
 	}
-
+	$effect(() => {
+		if (data?.dataUndangan && data.dataUndangan.length > 0) {
+			dataUndangan = data.dataUndangan.map((und) => {
+				const user = data.user.find((u) => u.id == und.id_penerima);
+				return {
+					id: und.id_undangan,
+					jenis_kelamin: user.jenis_kelamin || '', // jika ada field panggilan di dataUndangan
+					nama: user ? user.name : '',
+					notelepon: user ? user.no_telp : '',
+					id_penerima: und.id_penerima
+				};
+			});
+		}
+	});
+	console.log('data undangan', dataUndangan);
 	function tambah2() {
 		// id nya dipakei date.now itu supaya pasti beda
 		const newId = Date.now();
@@ -185,6 +201,35 @@
 	let open = $state(false);
 	let timer: number;
 	let loading = $state(false);
+
+	let deleteModal = $state(false);
+	let deleteId = $state();
+
+	async function deleteUndangan(undangan: any) {
+		console.log('delete Undangan', undangan);
+		deleteModal = true;
+		// try {
+		// 	loading = true;
+		// 	let res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/undangan/${undangan.id}`, {
+		// 		method: 'DELETE'
+		// 	});
+		// 	let msg = await res.json();
+		// 	if (!res.ok) {
+		// 		console.error(msg.message);
+		// 	}
+
+		// 	console.log(msg);
+		// 	success = true;
+		// } catch (error) {
+		// } finally {
+		// 	loading = false;
+		// 	await invalidateAll().then(() => {
+		// 		setTimeout(() => {
+		// 			success = false;
+		// 		}, 1000);
+		// 	});
+		// }
+	}
 </script>
 
 {#if navigating.to}
@@ -205,8 +250,9 @@
 				loading = false;
 				if (result.type === 'success') {
 					success = true;
-					clearTimeout(timer);
-					timer = setTimeout(() => {
+					console.log(result);
+
+					setTimeout(() => {
 						success = false;
 						goto('/abdi/sekretariat/acara');
 					}, 3000);
@@ -217,7 +263,7 @@
 			};
 		}}
 	>
-		<input type="hidden" name="id" value={data?.data.id_acara} />
+		<input type="hidden" name="id_acara" value={data?.data.id_acara} />
 		<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 			<div class="col-span-2">
 				<div class="mt-2 w-full">
@@ -523,6 +569,40 @@
 				</div> -->
 			</div>
 		</div>
+		<div class="mt-4 flex justify-center">
+			<p class="text-lg font-[600]">Daftar Anggota yang Diundang</p>
+		</div>
+		{#if data.dataUndangan.length > 0}
+			<div class="mt-4 grid grid-cols-8 items-center gap-2">
+				<!-- Undangan dari backend -->
+				{#each dataUndangan as undangan, i}
+					<div class="col-span-1">{i + 1}</div>
+
+					<div class="col-span-1 w-full rounded-lg border px-2 py-1">
+						<p class="w-full text-center">{undangan.jenis_kelamin}</p>
+					</div>
+					<div class="col-span-3 w-full rounded-lg border px-2 py-1">
+						<p class="w-full text-center">{undangan.nama}</p>
+					</div>
+					<div class="col-span-2 w-full rounded-lg border px-2 py-1">
+						<p class="w-full text-center">{undangan.notelepon || 'No Phone'}</p>
+					</div>
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<div class="col-span-1">
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<span
+							class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-red-400 p-2"
+							onclick={() => {
+								deleteUndangan(undangan);
+							}}
+						>
+							<i class="gg--trash z-10 items-center text-2xl"></i>
+						</span>
+					</div>
+				{/each}
+			</div>
+		{/if}
 
 		<div class="mt-5 h-1 w-full bg-slate-300"></div>
 		<div class="mt-8 flex w-full">
@@ -607,7 +687,6 @@
 				</div>
 			{/each}
 		</div>
-
 		<!-- bawah -->
 
 		<div class="mt-8 flex w-full">
@@ -695,14 +774,7 @@
 	</form>
 </div>
 {#if success}
-	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
-		<SucessModal
-			open={success}
-			text="Tamu Berhasil Di Undang!"
-			to="/abdi/sekretariat/acara"
-			on:close={toggle}
-		></SucessModal>
-	</div>
+	<SuccessModal text="Berhasil!"></SuccessModal>
 {/if}
 
 <style>

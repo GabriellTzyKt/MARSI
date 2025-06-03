@@ -5,15 +5,17 @@ import type { Actions, PageServerLoad } from "./$types";
 export const load: PageServerLoad = async () => {
     try {
         // Fetch all data in parallel for better performance
-        const [penghargaanRes, jenisSitusRes, jenisAsetRes, kategoriSitusRes, wisataRes] = await Promise.all([
-            fetch(`${env.URL_KERAJAAN}/penghargaan`),
-            fetch(`${env.URL_KERAJAAN}/situs/jenis`),
-            fetch(`${env.URL_KERAJAAN}/aset/jenis`),
-            fetch(`${env.URL_KERAJAAN}/situs/kategori`),
-            fetch(`${env.URL_KERAJAAN}/situs/wisata`)
+        const [gelarRes,penghargaanRes, jenisSitusRes, jenisAsetRes, kategoriSitusRes, wisataRes] = await Promise.all([
+            fetch(`${env.URL_KERAJAAN}/gelar?limit=1000`),
+            fetch(`${env.URL_KERAJAAN}/penghargaan?limit=1000`),
+            fetch(`${env.URL_KERAJAAN}/situs/jenis?limit=1000`),
+            fetch(`${env.URL_KERAJAAN}/aset/jenis?limit=1000`),
+            fetch(`${env.URL_KERAJAAN}/situs/kategori?limit=1000`),
+            fetch(`${env.URL_KERAJAAN}/situs/wisata?limit=1000`)
         ]);
 
         // Process responses
+        const gelar = await processResponse(gelarRes);
         const penghargaan = await processResponse(penghargaanRes);
         const jenisSitus = await processResponse(jenisSitusRes);
         const jenisAset = await processResponse(jenisAsetRes);
@@ -21,6 +23,7 @@ export const load: PageServerLoad = async () => {
         const wisata = await processResponse(wisataRes);
         
         return {
+            gelar,
             penghargaan,
             jenisSitus,
             jenisAset,
@@ -65,6 +68,8 @@ export const actions: Actions = {
         const formData = await request.formData();
         const type = formData.get("type")?.toString();
         const nama = formData.get("nama")?.toString();
+        const singkatan = formData.get("singkatan")?.toString();
+        const level = formData.get("level")?.toString();
         console.log(formData)
         
         if (!type || !nama) {
@@ -76,6 +81,10 @@ export const actions: Actions = {
             let payload = {};
             
             switch (type) {
+                case "gelar":
+                    endpoint = `${env.URL_KERAJAAN}/gelar`;
+                    payload = { nama_gelar: nama, singkatan, level : Number(level) };
+                    break;
                 case "penghargaan":
                     endpoint = `${env.URL_KERAJAAN}/penghargaan`;
                     payload = { nama_penghargaan: nama };
@@ -130,6 +139,8 @@ export const actions: Actions = {
         const type = formData.get("type")?.toString();
         const id = formData.get("id")?.toString();
         const nama = formData.get("nama")?.toString();
+        const level = formData.get("level")?.toString();
+        const singkatan = formData.get("singkatan")?.toString();
         console.log("update",formData)
         if (!type || !id || !nama) {
             return fail(400, { error: "Missing required fields" });
@@ -140,9 +151,13 @@ export const actions: Actions = {
             let payload = {};
             
             switch (type) {
+                case "gelar":
+                    endpoint = `${env.URL_KERAJAAN}/gelar`;
+                    payload = {id_gelar: Number(id), nama_gelar: nama, singkatan, level: Number(level) };
+                    break;
                 case "penghargaan":
                     endpoint = `${env.URL_KERAJAAN}/penghargaan`;
-                    payload = {id_penghargaan: Number(id), nama_penghargaan: nama };
+                    payload = {id_penghargaan: Number(id), nama_penghargaan: nama};
                     break;
                 case "jenisSitus":
                     endpoint = `${env.URL_KERAJAAN}/situs/jenis`;
@@ -198,6 +213,9 @@ export const actions: Actions = {
             let endpoint = "";
             
             switch (type) {
+                case "gelar":
+                    endpoint = `${env.URL_KERAJAAN}/gelar/${id}`;
+                    break;
                 case "penghargaan":
                     endpoint = `${env.URL_KERAJAAN}/penghargaan/${id}`;
                     break;
