@@ -1,7 +1,18 @@
 import { env } from "$env/dynamic/private";
+import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ cookies }) => {
+
+    const userSession = cookies.get("userSession");
+    if (!userSession) {
+        throw redirect(302, '/login2');
+    }
+    const session = JSON.parse(userSession);
+    if (!session.adminData || session.adminData.jenis_admin !== 'super admin') {
+        throw redirect(302, '/admin/biodata');
+    }
+
     try {
 
         // Fetch admin and arsip data in parallel
@@ -140,7 +151,7 @@ export const load: PageServerLoad = async () => {
             arsipCount: arsipData.length,
             kerajaanData,
             kerajaanCount: kerajaanData.length,
-            acaraData, 
+            acaraData,
             acaraCount: acaraData.length
         };
     } catch (error) {

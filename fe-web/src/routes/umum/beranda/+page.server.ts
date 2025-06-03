@@ -24,13 +24,16 @@ export const load: PageServerLoad = async () => {
                 "Accept": "application/json"
             }
         });
-        
+
         if (request.ok) {
             const data = await request.json();
             // console.log("ini dari beranda: ", data)
-            
+
+            const filteredData = data.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z");
+
+
             // Format dates and extract place names
-            const kerajaanFormatted = await Promise.all(data.map(async (item: any) => {
+            const kerajaanFormatted = await Promise.all(filteredData.map(async (item: any) => {
                 const formatDate = (iso: string) => {
                     const date = new Date(iso);
                     const day = String(date.getDate()).padStart(2, '0');
@@ -38,11 +41,11 @@ export const load: PageServerLoad = async () => {
                     const year = date.getFullYear();
                     return `${day}-${month}-${year}`;
                 };
-                
+
                 const extractPlaceName = (address: string) => {
-                    const regions = ['sulawesi', 'bali', 'sumatera', 'papua', 'jawa', 'kalimantan', 
-                                    'maluku', 'nusa tenggara', 'jakarta', 'yogyakarta'];
-                    
+                    const regions = ['sulawesi', 'bali', 'sumatera', 'papua', 'jawa', 'kalimantan',
+                        'maluku', 'nusa tenggara', 'jakarta', 'yogyakarta'];
+
                     const addressLower = address.toLowerCase();
                     // console.log("address : ", addressLower)
                     for (const region of regions) {
@@ -51,12 +54,12 @@ export const load: PageServerLoad = async () => {
                             return region.charAt(0).toUpperCase() + region.slice(1);
                         }
                     }
-                    return address; 
+                    return address;
                 };
-                
+
                 let latitude = null;
                 let longitude = null;
-                
+
                 if (item.id_lokasi) {
                     try {
                         const locResponse = await fetch(`${env.PUB_PORT}/loc/${item.id_lokasi}`, {
@@ -65,7 +68,7 @@ export const load: PageServerLoad = async () => {
                                 "Accept": "application/json"
                             }
                         });
-                        
+
                         if (locResponse.ok) {
                             const locData = await locResponse.json();
                             latitude = locData.latitude;
@@ -76,7 +79,7 @@ export const load: PageServerLoad = async () => {
                         console.error(`Error fetching location for id ${item.id_lokasi}:`, locError);
                     }
                 }
-                
+
                 return {
                     ...item,
                     tanggal_berdiri: formatDate(item.tanggal_berdiri),
@@ -88,7 +91,7 @@ export const load: PageServerLoad = async () => {
                     longitude
                 };
             }));
-            
+
             console.log("ini dari beranda 1: ", kerajaanFormatted);
             return { dataKerajaan: kerajaanFormatted };
         }

@@ -1,4 +1,5 @@
 import { env } from "$env/dynamic/private";
+import { redirect } from "@sveltejs/kit";
 import { error, fail, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
 
@@ -228,7 +229,18 @@ export const actions: Actions = {
     }
 };
 
-export const load = async ({ params, fetch }) => {
+export const load = async ({ params, fetch, cookies }) => {
+
+
+    const userSession = cookies.get("userSession");
+    if (!userSession) {
+        throw redirect(302, '/login2');
+    }
+    const session = JSON.parse(userSession);
+    if (!session.adminData || session.adminData.jenis_admin !== 'super admin') {
+        throw redirect(302, '/admin/biodata');
+    }
+
     const id = params.id;
 
     try {
@@ -238,14 +250,14 @@ export const load = async ({ params, fetch }) => {
             throw error(response.status, `Failed to fetch documents`);
         }
         const documents = await response.json();
-        let filteredDocuments = documents.filter((item : any) => item.deleted_at === "0001-01-01T00:00:00Z" )
+        let filteredDocuments = documents.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
         console.log("documents : ", documents);
 
         // Fetch data kerajaan
         const dataambil = await fetch(`${env.PUB_PORT}/kerajaan?limit=1000`);
         const data = await dataambil.json();
 
-        const datafilter = data.filter((item : any) => item.deleted_at === "0001-01-01T00:00:00Z")
+        const datafilter = data.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
 
         // Fetch data arsip/kerajaan
         const arsipKerajaanResponse = await fetch(`${env.PUB_PORT}/arsip/kerajaan?limit=200`);
@@ -363,22 +375,22 @@ export const load = async ({ params, fetch }) => {
 
         console.log("File details final:", fileDetails);
 
-        
+
 
         const jenisResponse = await fetch(`${env.PUB_PORT}/jenis-arsip`);
         const jenisArsip = jenisResponse.ok ? await jenisResponse.json() : [];
-        const filteredjenisarsip = jenisArsip.filter((item : any) => item.deleted_at === "0001-01-01T00:00:00Z")
+        const filteredjenisarsip = jenisArsip.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
 
 
         const jenisResponse2 = await fetch(`${env.PUB_PORT}/jenis-arsip?limit=200`);
         const jenisArsip2 = jenisResponse2.ok ? await jenisResponse2.json() : [];
-        const filteredjenisarsip2 = jenisArsip2.filter((item : any) => item.deleted_at === "0001-01-01T00:00:00Z")
+        const filteredjenisarsip2 = jenisArsip2.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
 
 
         // Return semua data yang diperlukan
         return {
             document,
-            jenisArsip : filteredjenisarsip,
+            jenisArsip: filteredjenisarsip,
             kerajaanData: datafilter,
             arsipData: filteredDocuments,
             filteredjenisarsip2,

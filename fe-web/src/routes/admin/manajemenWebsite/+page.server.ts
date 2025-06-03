@@ -2,8 +2,20 @@ import { env } from "$env/dynamic/private";
 import { fail } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import type { Actions } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
 
-export const load: PageServerLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async ({ fetch, cookies }) => {
+
+    const userSession = cookies.get("userSession");
+    if (!userSession) {
+        throw redirect(302, '/login2');
+    }
+    const session = JSON.parse(userSession);
+    if (!session.adminData || session.adminData.jenis_admin !== 'super admin') {
+        throw redirect(302, '/admin/biodata');
+    }
+
+
     try {
         // Fetch all data in parallel
         const [websiteResponse, mobileResponse, kerajaanResponse] = await Promise.all([
@@ -223,7 +235,7 @@ export const actions: Actions = {
             const payload = {
                 id_request: Number(idPermintaan),
                 status_permintaan: "Selesai",
-                url_website : linkkerajaan,
+                url_website: linkkerajaan,
             };
 
             console.log("Sending payload:", payload);

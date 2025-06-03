@@ -2,8 +2,20 @@ import { error, fail, type Actions } from "@sveltejs/kit";
 import { string, z } from "zod";
 import { schema } from "./schema";
 import { env } from "$env/dynamic/private";
+import { redirect } from "@sveltejs/kit";
 
-export const load = async ({ fetch }) => {
+export const load = async ({ fetch, cookies }) => {
+
+    const userSession = cookies.get("userSession");
+    if (!userSession) {
+        throw redirect(302, '/login2');
+    }
+    const session = JSON.parse(userSession);
+    if (!session.adminData || session.adminData.jenis_admin !== 'super admin') {
+        throw redirect(302, '/admin/biodata');
+    }
+
+
     try {
         const [jenisKerajaanResponse, eraResponse, rumpunResponse] = await Promise.all([
             fetch(`${env.PUB_PORT}/kerajaan/jenis?limit=200`, {
@@ -35,25 +47,25 @@ export const load = async ({ fetch }) => {
             eraResponse.json(),
             rumpunResponse.json()
         ]);
-        
+
         console.log("Jenis kerajaan data:", jenisKerajaan);
         console.log("Era data:", eraData);
         console.log("Rumpun data:", rumpunData);
-        
+
         // Filter out deleted items
-        const filteredJenisKerajaan = Array.isArray(jenisKerajaan) 
+        const filteredJenisKerajaan = Array.isArray(jenisKerajaan)
             ? jenisKerajaan.filter((item) => item.deleted_at === "0001-01-01T00:00:00Z" || !item.deleted_at)
             : [];
-            
+
         const filteredEra = Array.isArray(eraData)
             ? eraData.filter((item) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
             : [];
-            
+
         const filteredRumpun = Array.isArray(rumpunData)
             ? rumpunData.filter((item) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
             : [];
 
-        return { 
+        return {
             jenisKerajaan: filteredJenisKerajaan,
             era: filteredEra,
             rumpun: filteredRumpun
@@ -67,9 +79,9 @@ export const load = async ({ fetch }) => {
 export const actions: Actions = {
     tambah: async ({ request }) => {
         const data = await request.formData()
-        console.log("data: " , data)
+        console.log("data: ", data)
         const res = Object.fromEntries(data)
-        console.log("RES: " , res)
+        console.log("RES: ", res)
         const verif = schema.safeParse(res)
 
         const nama_kerajaan = data.get('nama_kerajaan')
@@ -85,26 +97,26 @@ export const actions: Actions = {
 
 
 
-        
+
         if (!verif.success) {
-           
+
             return fail(418, { errors: verif.error.flatten().fieldErrors, success: false, form: res })
         }
         try {
             const send = await fetch(env.PUB_PORT + "/kerajaan", {
                 method: "POST",
-                headers : {"Content-Type" : "application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    longitude : Number(long),
-                    latitude : Number(lat),
-                    nama_kerajaan : nama_kerajaan,
-                    raja_sekarang : raja_sekarang,
-                    jenis_kerajaan : Number(jenis_kerajaan),
-                    deskripsi_kerajaan : deskripsi_kerajaan,
-                    alamat_kerajaan : alamat_kerajaan,
-                    tahun_berdiri : tanggal_berdiri,
-                    era : Number(era_kerajaan),
-                    rumpun : Number(rumpun_kerajaan),  
+                    longitude: Number(long),
+                    latitude: Number(lat),
+                    nama_kerajaan: nama_kerajaan,
+                    raja_sekarang: raja_sekarang,
+                    jenis_kerajaan: Number(jenis_kerajaan),
+                    deskripsi_kerajaan: deskripsi_kerajaan,
+                    alamat_kerajaan: alamat_kerajaan,
+                    tahun_berdiri: tanggal_berdiri,
+                    era: Number(era_kerajaan),
+                    rumpun: Number(rumpun_kerajaan),
                 })
             })
             const r = await send.json()
@@ -118,5 +130,5 @@ export const actions: Actions = {
             console.error("Fetch Error", e)
         }
     }
-       
+
 }

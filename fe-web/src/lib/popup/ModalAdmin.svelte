@@ -76,7 +76,10 @@
 	$effect(() => {
 		if (isRadioYa === true && formValues.afiliasi === 'marsi') {
 			formValues.admin_role = 'admin kerajaan';
-		} else {
+		} else if(data.superadmin == "ya" ){
+			radioValue = "ya"
+		} 	
+		else {
 			isRadioYa = false;
 			if (formValues.admin_role !== 'admin kerajaan') {
 				formValues.admin_role = formValues.afiliasi === 'marsi' ? 'super admin' : 'admin kerajaan';

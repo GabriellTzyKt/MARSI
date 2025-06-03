@@ -3,8 +3,7 @@
 
 	let { href, data } = $props();
 	console.log('Data : ', data);
-	let dataambil = data.dataKerajaan[0]
-	console.log("Data ambil : ", dataambil.imageUrl)
+    let dataambil = data?.dataKerajaan && data.dataKerajaan.length > 0 ? data.dataKerajaan[0] : {};
 </script>
 
 <a {href}>

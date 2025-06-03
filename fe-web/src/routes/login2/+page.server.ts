@@ -89,7 +89,7 @@ export const actions: Actions = {
                 
                 if (adminData) {
                     // Check if admin account is active
-                    if (adminData.status_aktif === 0) {
+                    if (adminData.status_aktif === 0 || (adminData.deleted_at !== "0001-01-01T00:00:00Z" && adminData.status_aktif === 1)) {
                         console.log(`Admin account is inactive (status_aktif = 0)`);
                         // Return specific error for inactive account
                         return fail(403, { 

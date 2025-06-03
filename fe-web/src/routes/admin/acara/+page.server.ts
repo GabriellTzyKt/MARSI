@@ -1,4 +1,5 @@
 import { env } from '$env/dynamic/private';
+import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types.js';
 
 const regionMap = [
@@ -24,7 +25,17 @@ function detectRegion(alamat: string) {
     return '-';
 }
 
-export const load: PageServerLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async ({ fetch, cookies }) => {
+
+    const userSession = cookies.get("userSession");
+    if (!userSession) {
+        throw redirect(302, '/login2');
+    }
+    const session = JSON.parse(userSession);
+    if (!session.adminData || session.adminData.jenis_admin !== 'super admin') {
+        throw redirect(302, `/admin/biodata`);
+    }
+
 
     try {
         const res = await fetch(env.BASE_URL_8008 + "/acara?limit=200");
@@ -34,16 +45,16 @@ export const load: PageServerLoad = async ({ fetch }) => {
         }
         const acaraData = await res.json();
         const filtered = acaraData
-        .filter(
-            (a: any) =>
-                !a.deleted_at ||
-                a.deleted_at === '0001-01-01T00:00:00Z'
-        )
-        .map((a: any) => ({
+            .filter(
+                (a: any) =>
+                    !a.deleted_at ||
+                    a.deleted_at === '0001-01-01T00:00:00Z'
+            )
+            .map((a: any) => ({
                 ...a,
-                tanggalmulai : a.waktu_mulai.split("T")[0] ,
+                tanggalmulai: a.waktu_mulai.split("T")[0],
                 lokasi: detectRegion(a.alamat_acara)
-        }));
+            }));
         return { acara: filtered };
     } catch (e: any) {
         return { acara: [], error: e.message };

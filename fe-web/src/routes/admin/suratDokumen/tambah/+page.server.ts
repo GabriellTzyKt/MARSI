@@ -4,9 +4,20 @@ import { error, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
 import type { PageServerLoad } from "../$types";
 import { filter } from 'd3';
+import { redirect } from "@sveltejs/kit";
 
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ cookies }) => {
+    const userSession = cookies.get("userSession");
+    if (!userSession) {
+        throw redirect(302, '/login2');
+    }
+    const session = JSON.parse(userSession);
+    if (!session.adminData || session.adminData.jenis_admin !== 'super admin') {
+        throw redirect(302, '/admin/biodata');
+    }
+
+
     try {
         const [kerajaanRes, arsipRes, jenisRes] = await Promise.all([
             fetch(`${env.PUB_PORT}/kerajaan?limit=200`, {
@@ -30,13 +41,13 @@ export const load: PageServerLoad = async () => {
         ]);
         if (kerajaanRes.ok && arsipRes.ok) {
             const kerajaanData = await kerajaanRes.json();
-            const filteredKerajaanData = kerajaanData.filter((item : any) => item.deleted_at === "0001-01-01T00:00:00Z")
+            const filteredKerajaanData = kerajaanData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
             const arsipData = await arsipRes.json();
             console.log("Arsip data : ", arsipData)
-            const filteredArsipData = arsipData.filter((item : any) => item.deleted_at === "0001-01-01T00:00:00Z")
-             const jenisData = await jenisRes.json();
+            const filteredArsipData = arsipData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
+            const jenisData = await jenisRes.json();
             const filteredJenisData = jenisData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z");
-           
+
             return { filteredKerajaanData, filteredArsipData, filteredJenisData };
         }
     } catch (error) { }
@@ -152,16 +163,16 @@ export const actions: Actions = {
 
                 return { success: true };
             } else {
-                return fail(400, { 
+                return fail(400, {
                     errors: { general: [`Error: ${response.status} - ${result.message || 'Unknown error'}`] },
-                    success: false 
+                    success: false
                 });
             }
         } catch (error) {
             console.error('Error processing request:', error);
-            return fail(500, { 
+            return fail(500, {
                 errors: { general: ['Terjadi kesalahan saat memproses permintaan'] },
-                success: false 
+                success: false
             });
         }
     }

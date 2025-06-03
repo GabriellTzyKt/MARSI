@@ -63,7 +63,7 @@
 	const initialView: LatLngExpression = [-2.5489, 118.0149]; // Pusat Indonesia (biar tampilan awal pas)
 
 	// Lokasi marker di beberapa wilayah Indonesia
-	const markerLocations: Array<{ latLng: LatLngExpression; text: string; location: string }> = [];
+	const markerLocations: Array<{ latLng: LatLngExpression; text: string; location: string; id: number }> = [];
 
 	if (data && data.dataKerajaan && Array.isArray(data.dataKerajaan)) {
 		data.dataKerajaan.forEach((kerajaan: any) => {
@@ -71,7 +71,8 @@
 				markerLocations.push({
 					latLng: [parseFloat(kerajaan.latitude), parseFloat(kerajaan.longitude)],
 					text: kerajaan.nama_kerajaan || 'Kerajaan',
-					location: kerajaan.place_name || 'Indonesia'
+					location: kerajaan.place_name || 'Indonesia',
+					id : kerajaan.id_kerajaan || 0
 				});
 			}
 		});
@@ -93,7 +94,8 @@
 			markerLocations.push({
 				latLng: [randomLat, randomLng],
 				text: 'Kesultanan Ngayogyakarta Hadiningrat',
-				location: 'Indonesia'
+				location: 'Indonesia',
+				id: 0
 			});
 		}
 	}
@@ -115,7 +117,7 @@
 		<div class="z-0 h-screen w-[80%] py-6" onmouseenter={showMarkers} onmouseleave={hideMarkers}>
 			<Leaflet view={initialView} zoom={4.5}>
 				{#if isMarker}
-					{#each markerLocations as { latLng, text, location }, i}
+					{#each markerLocations as { latLng, text, location, id }, i}
 						{#if visibleMarkers.includes(i)}
 							<div in:fly={{ y: -20, duration: 300 }} out:fade={{ duration: 200 }}>
 								<Marker {latLng} width={20} height={20}>
@@ -131,7 +133,7 @@
 										/></svg
 									>
 
-									<Popup {text} {location} link="" image={gambar} />
+									<Popup {text} {location} link="/umum/daftarkerajaan/{id}" image={gambar} />
 								</Marker>
 							</div>
 						{/if}

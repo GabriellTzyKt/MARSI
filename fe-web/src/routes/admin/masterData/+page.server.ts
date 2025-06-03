@@ -6,8 +6,19 @@ import { number, z } from "zod";
 import { invalidate, invalidateAll } from "$app/navigation";
 import { filter } from "d3";
 import pLimit from "p-limit";
+import { redirect } from "@sveltejs/kit";
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ cookies }) => {
+
+    const userSession = cookies.get("userSession");
+    if (!userSession) {
+        throw redirect(302, '/login2');
+    }
+    const session = JSON.parse(userSession);
+    if (!session.adminData || session.adminData.jenis_admin !== 'super admin') {
+        throw redirect(302, '/admin/biodata');
+    }
+
     try {
         // Membatasi maksimal 2 request paralel
         const limit = pLimit(2);
@@ -546,7 +557,7 @@ export const actions: Actions = {
             const req = await request.formData();
             const data = Object.fromEntries(req);
             console.log(
-                "Data " , data
+                "Data ", data
             )
 
             const ver = z.object({

@@ -2,8 +2,19 @@ import { env } from "$env/dynamic/private";
 import { fail } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import type { Actions } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
 
-export const load: PageServerLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async ({ fetch, cookies }) => {
+
+    const userSession = cookies.get("userSession");
+    if (!userSession) {
+        throw redirect(302, '/login2');
+    }
+    const session = JSON.parse(userSession);
+    if (!session.adminData || session.adminData.jenis_admin !== 'super admin') {
+        throw redirect(302, '/admin/biodata');
+    }
+
     try {
         // ngambil data arsip
         const arsipRequest = await fetch(env.PUB_PORT + "/arsip?limit=1000", {
@@ -261,7 +272,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 
         return {
             dataArsip: documentsWithFiles,
-            arsip : documentsWithKerajaanInfo
+            arsip: documentsWithKerajaanInfo
             // jenisArsip: jenisArsipData 
         };
     } catch (e) {

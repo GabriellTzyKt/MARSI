@@ -5,11 +5,23 @@ import type { Actions, PageServerLoad } from "./$types";
 import { schema } from "./schema";
 import { fail } from "@sveltejs/kit";
 import pLimit from 'p-limit';
+import { redirect } from "@sveltejs/kit";
 
 
 
 
-export const load: PageServerLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async ({ fetch, cookies }) => {
+
+    const userSession = cookies.get("userSession");
+    if (!userSession) {
+        throw redirect(302, '/login2');
+    }
+    const session = JSON.parse(userSession);
+    if (!session.adminData || session.adminData.jenis_admin !== 'super admin') {
+        throw redirect(302, '/admin/biodata');
+    }
+
+
     try {
         // Fetch both endpoints in parallel
         const [kerajaanResponse, jenisKerajaanResponse, gelarResponse] = await Promise.all([

@@ -1,12 +1,26 @@
 import { env } from "$env/dynamic/private";
 import Table from "$lib/table/Table.svelte";
-import {  z } from "zod";
+import { z } from "zod";
 import type { Actions, PageServerLoad } from "./$types";
 import { fail } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
 
 
 
-export const load: PageServerLoad = async ({ parent }) => {
+export const load: PageServerLoad = async ({ parent, cookies }) => {
+
+    const userSession = cookies.get("userSession");
+    if (!userSession) {
+        throw redirect(302, '/login2');
+    }
+    const session = JSON.parse(userSession);
+    console.log(
+        "se", session
+    )
+    if (!session.adminData || session.adminData.jenis_admin !== 'admin kerajaan') {
+        throw redirect(302, '/admin/beranda');
+    }
+
     try {
         const parentData = await parent();
         const id_kerajaan = parentData.id_kerajaan;
@@ -18,19 +32,19 @@ export const load: PageServerLoad = async ({ parent }) => {
                 "Accept": "application/json"
             }
         });
-        
+
         if (request.ok) {
             const data = await request.json();
-            
+
             // Filter data yang tidak dihapus (deleted_at = '0001-01-01T00:00:00Z')
             // dan yang memiliki id_kerajaan yang sama dengan parent data
-            const filteredData = data.filter((item: any) => 
+            const filteredData = data.filter((item: any) =>
                 (item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at) &&
                 item.id_kerajaan === id_kerajaan
             );
 
             console.log("Filtered data : ", filteredData)
-            
+
             // Format tanggal
             const formatDate = (iso: string) => {
                 const date = new Date(iso);
@@ -39,20 +53,20 @@ export const load: PageServerLoad = async ({ parent }) => {
                 const year = date.getFullYear();
                 return `${day}-${month}-${year}`;
             };
-            
+
             // Fungsi untuk ekstrak nama tempat dari alamat
             const extractPlaceName = (address: string) => {
                 if (!address) return '';
-                
+
                 // Daftar region yang ingin diambil
                 const regions = [
                     'sulawesi', 'bali', 'sumatera', 'papua', 'jawa', 'kalimantan', 'java',
                     'maluku', 'nusa tenggara', 'jakarta', 'yogyakarta', 'indonesia'
                 ];
-                
+
                 const addressLower = address.toLowerCase();
                 const extractedRegions = [];
-                
+
                 // Cari semua region yang ada dalam alamat
                 for (const region of regions) {
                     if (addressLower.includes(region)) {
@@ -60,7 +74,7 @@ export const load: PageServerLoad = async ({ parent }) => {
                         extractedRegions.push(region.charAt(0).toUpperCase() + region.slice(1));
                     }
                 }
-                
+
                 // Gabungkan region yang ditemukan dengan koma
                 return extractedRegions.join(', ');
             };
@@ -77,20 +91,20 @@ export const load: PageServerLoad = async ({ parent }) => {
                     imageUrl: '',
                     place_name: extractPlaceName(item.alamat_kerajaan || '')
                 };
-                
+
                 // Jika ada foto_umum, ambil ID pertama
                 if (item.foto_umum && item.foto_umum.trim() !== '') {
                     try {
                         const firstPhotoId = item.foto_umum.split(',')[0].trim();
-                        
+
                         if (firstPhotoId) {
                             // Ambil file path dari /doc/(id_dokumen)
                             const docRes = await fetch(`${env.PUB_PORT}/doc/${firstPhotoId}`);
-                            
+
                             if (docRes.ok) {
                                 const docData = await docRes.json();
                                 const filePath = docData.file_dokumentasi || docData;
-                                
+
                                 if (typeof filePath === 'string') {
                                     // Buat URL lengkap ke file
                                     formattedItem.imageUrl = `${env.PUB_PORT}/file?file_path=${encodeURIComponent(filePath)}`;
@@ -101,10 +115,10 @@ export const load: PageServerLoad = async ({ parent }) => {
                         console.error(`Error processing image for kerajaan ${item.id_kerajaan}:`, error);
                     }
                 }
-                
+
                 return formattedItem;
             }));
-            
+
             return { dataKerajaan: kerajaanWithImages };
         }
         else return { dataKerajaan: "Failed" };

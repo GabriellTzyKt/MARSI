@@ -3,8 +3,21 @@ import { fail, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { z } from "zod";
 import { env } from "$env/dynamic/private";
+import { redirect } from "@sveltejs/kit";
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, cookies }) => {
+
+    const userSession = cookies.get("userSession");
+    if (!userSession) {
+        throw redirect(302, '/login2');
+    }
+
+    const session = JSON.parse(userSession);
+    console.log("session : ", session)
+    if (!session.adminData || session.adminData.jenis_admin !== 'admin kerajaan') {
+        throw redirect(302, '/admin/beranda');
+    }
+
     try {
         // Ambil semua data kerajaan
         const response = await fetch(`${env.BASE_URL}/kerajaan?limit=200`, {
@@ -283,9 +296,9 @@ export const load: PageServerLoad = async ({ params }) => {
             jenisKerajaan: filteredJenisKerajaan,
             historyRaja: historyRajaWithImages,
             gelar: gelarKerajaan,
-            eraList,    
-            rumpunList   
-        
+            eraList,
+            rumpunList
+
         };
     } catch (error) {
         console.error("Error loading data:", error);

@@ -10,6 +10,8 @@
 	import Loader from '$lib/loader/Loader.svelte';
 	import { invalidateAll } from '$app/navigation';
 	let { form, data } = $props();
+
+	console.log("data :" , data)
 	let adminMarsi = data.adminMarsiData;
 	let dataKerajaan = data.kerajaanData;
 	// console.log("Base Admin Data: ", adminMarsi);
