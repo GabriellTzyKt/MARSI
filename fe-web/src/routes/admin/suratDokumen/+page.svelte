@@ -120,9 +120,10 @@
 	<Table
 		table_header={[
 			['nama_arsip', 'Nama Dokumen'],
+			['nama_kerajaan', 'Asal Kerajaan'],
 			['jenis_arsip_detail', 'Jenis Dokumen'],
 			['kategori_arsip', 'Kategori'],
-			['sub_kategori_arsip', 'Sub Kategori'],
+			['sub_kategori_nama_arsip', 'Sub Kategori'],
 			['files', 'Dokumentasi', 'custom'], // ada gambar, jadi perlu khusus
 			['children', 'Aksi']
 		]}

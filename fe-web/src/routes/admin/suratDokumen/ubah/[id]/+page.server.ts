@@ -250,8 +250,10 @@ export const load = async ({ params, fetch, cookies }) => {
             throw error(response.status, `Failed to fetch documents`);
         }
         const documents = await response.json();
-        let filteredDocuments = documents.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
-        console.log("documents : ", documents);
+        let filteredDocuments = documents.filter((item: any) =>
+            (item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null) &&
+            item.id_arsip != id
+        ); console.log("documents : ", documents);
 
         // Fetch data kerajaan
         const dataambil = await fetch(`${env.PUB_PORT}/kerajaan?limit=1000`);

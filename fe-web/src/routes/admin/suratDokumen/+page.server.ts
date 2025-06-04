@@ -42,8 +42,19 @@ export const load: PageServerLoad = async ({ fetch, cookies }) => {
             return doc.deleted_at === '0001-01-01T00:00:00Z' && doc.deleted_at !== null;
         });
 
+        const enrichedArsipData = filteredArsipData.map((doc: any) => {
+            // Cari dokumen lain yang id_arsip-nya sama dengan sub_kategori_arsip milik doc ini
+            const subKategoriDoc = filteredArsipData.find(
+                (d: any) => Number(doc.sub_kategori_arsip) === Number(d.id_arsip)
+            );
+            return {
+                id_arsip: doc.id_arsip,
+                sub_kategori_nama_arsip: subKategoriDoc.nama_arsip
+            };
+        });
+
         // 2. Ambil data arsip/kerajaan (linking data)
-        const kerajaanResponse = await fetch(env.PUB_PORT + "/arsip/kerajaan", {
+        const kerajaanResponse = await fetch(env.PUB_PORT + "/arsip/kerajaan?limit=2000", {
             method: "GET",
             headers: {
                 "Accept": "application/json"
@@ -61,11 +72,16 @@ export const load: PageServerLoad = async ({ fetch, cookies }) => {
                 (item: any) =>
                     item.Arsip && Number(item.Arsip.id_arsip) === Number(doc.id_arsip)
             );
-            // Jika ada, tambahkan properti "arsipKerajaan" ke dokumen tersebut
+
+            const matchingEnriched = enrichedArsipData.find(
+                (enriched: any) => Number(enriched.id_arsip) === Number(doc.id_arsip)
+            );
             return {
                 ...doc,
-                arsipKerajaan: matchingKerajaan || null
+                arsipKerajaan: matchingKerajaan || null,
+                ...(matchingEnriched ? matchingEnriched : {})
             };
+
         });
 
         // 4. (Opsional) Log hasilnya untuk debugging
@@ -251,10 +267,31 @@ export const load: PageServerLoad = async ({ fetch, cookies }) => {
                     // Flatten the array of arrays into a single array of files
                     const filesWithData = allFilesWithData.flat();
 
+
+
                     // console.log("Files with data:", filesWithData);
                     return {
                         ...docWithJenisArsip,
                         files: filesWithData,
+                        sub_kategori_nama_arsip: (() => {
+                            const match = enrichedArsipData.find(
+                                (enriched: any) => Number(enriched.id_arsip) === Number(doc.id_arsip)
+                            );
+                            return match ? match.sub_kategori_nama_arsip : null;
+                        })(),
+                        nama_kerajaan: (() => {
+                            const arsipKerajaan = arsipKerajaanData.find(
+                                (item: any) =>
+                                    item.Arsip && Number(item.Arsip.id_arsip) === Number(doc.id_arsip)
+                            );
+                            if (arsipKerajaan && arsipKerajaan.id_kerajaan) {
+                                const kerajaan = jenisKerajaanData.find(
+                                    (k: any) => Number(k.id_kerajaan) === Number(arsipKerajaan.id_kerajaan)
+                                );
+                                return kerajaan ? kerajaan.nama_kerajaan : null;
+                            }
+                            return null;
+                        })()
                     };
                 } catch (error: unknown) {
                     // console.error(`Error processing document ${doc.id_arsip}:`, error);
@@ -272,7 +309,7 @@ export const load: PageServerLoad = async ({ fetch, cookies }) => {
 
         return {
             dataArsip: documentsWithFiles,
-            arsip: documentsWithKerajaanInfo
+            arsip: documentsWithKerajaanInfo,
             // jenisArsip: jenisArsipData 
         };
     } catch (e) {

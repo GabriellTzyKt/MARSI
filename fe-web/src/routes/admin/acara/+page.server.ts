@@ -4,13 +4,28 @@ import type { PageServerLoad } from './$types.js';
 
 const regionMap = [
     { keyword: 'jawa', lokasi: 'Jawa' },
+    { keyword: 'java', lokasi: 'Jawa' },
+    { keyword: 'banten', lokasi: 'Banten' },
+    { keyword: 'aceh', lokasi: 'Aceh' },
+    { keyword: 'riau', lokasi: 'Riau' },
+    { keyword: 'jambi', lokasi: 'Jambi' },
+    { keyword: 'bengkulu', lokasi: 'Bengkulu' },
+    { keyword: 'bangka belitung', lokasi: 'Bangka Belitung' },
+    { keyword: 'yogyakarta', lokasi: 'Yogyakarta' },
+    { keyword: 'jakarta', lokasi: 'Jakarta' },
+    { keyword: 'gorontalo', lokasi: 'Gorontalo' },
+    { keyword: 'lampung', lokasi: 'Lampung' },
     { keyword: 'sumatera', lokasi: 'Sumatera' },
     { keyword: 'kalimantan', lokasi: 'Kalimantan' },
     { keyword: 'sulawesi', lokasi: 'Sulawesi' },
     { keyword: 'papua', lokasi: 'Papua' },
     { keyword: 'bali', lokasi: 'Bali' },
     { keyword: 'ntt', lokasi: 'Ntt' },
+    { keyword: 'nusa tenggara timur', lokasi: 'Ntt' },
+    { keyword: 'east nusa tenggara', lokasi: 'Ntt' },
     { keyword: 'ntb', lokasi: 'Ntb' },
+    { keyword: 'nusa tenggara barat', lokasi: 'Ntb' },
+    { keyword: 'west nusa tenggara', lokasi: 'Ntb' },
     { keyword: 'maluku', lokasi: 'Maluku' }
 ];
 
