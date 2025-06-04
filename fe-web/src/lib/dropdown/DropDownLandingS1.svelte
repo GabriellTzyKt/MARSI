@@ -8,6 +8,9 @@
 	let value = $state(false);
 	let open = $state(false);
 
+	let { dataambil } = $props()
+	console.log("d ambil : ", dataambil)
+
 	function toggle() {
 		if (!value) value = true;
 		else value = false;
@@ -59,6 +62,7 @@
 						class="w-full rounded-lg border border-gray-400 py-2 pe-2 ps-2 shadow-xl focus:border-gray-400 focus:outline-none focus:ring-0"
 						name="judulpage_section1"
 						maxlength=50
+						bind:value={dataambil.judul_section}
 						placeholder="MAJELIS AGUNG RAJA SULTAN INDONESIA"
 						id=""
 					/>

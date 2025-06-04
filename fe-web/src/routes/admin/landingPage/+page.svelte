@@ -10,6 +10,14 @@
 	let { data } = $props()
 	console.log("Data : ", data)
 
+	const section1 = data.sections.find((s : any) => s.id_section === 1) ?? {};
+	console.log("section 1 : ", section1)
+	const section2 = data.sections.find((s : any) => s.id_section === 2) ?? {};
+    const existingPreviewsS2_2 = section2.dokumentasi_files?.map((f : any) => ({
+        id: f.id,
+        url: f.url
+    })) ?? [];
+
 	let loading = $state(false);
 	let errors = $state();
 	let success = $state(false);
@@ -69,7 +77,8 @@
 
 		<div class="max-h-[700px] w-full overflow-y-auto rounded-xl bg-gray-300 p-4">
 			<div class="my-2">
-				<DropDownLandingS1></DropDownLandingS1>
+				<DropDownLandingS1
+				dataambil = {section1}></DropDownLandingS1>
 			</div>
 			<div class="my-2">
 				<DropDownLandingS2
@@ -78,6 +87,8 @@
 					judulSection="Section 2 - Tentang Kami"
 					name_gambar="gambar_section2"
 					bind:files={filesS2_2}
+					dataambil = {section2}
+					existingPreviews={existingPreviewsS2_2}
 				></DropDownLandingS2>
 			</div>
 			<div class="my-2">

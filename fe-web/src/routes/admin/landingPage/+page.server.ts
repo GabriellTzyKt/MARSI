@@ -32,7 +32,8 @@ export const load: PageServerLoad = async ({ cookies, fetch }) => {
                         // Simpan path file untuk digunakan di client
                         section.dokumentasi_files.push({
                             id,
-                            file_path: docData.file_dokumentasi // misal: "uploads/beranda/xxx.jpg"
+                            file_path: docData.file_dokumentasi, // misal: "uploads/beranda/xxx.jpg"
+                            url: `${env.BASE_URL}/file?file_path=${docData.file_dokumentasi}`
                         });
                     }
                 }
