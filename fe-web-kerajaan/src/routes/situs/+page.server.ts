@@ -4,12 +4,12 @@ import { detail_situs } from "$lib/dummy"
 
 export const load: PageServerLoad = async () => {
     try {
-        const res = await fetch(`${env.URL_KERAJAAN}/situs`);
+        const res = await fetch(`${env.URL_KERAJAAN}/situs?limit=500`);
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }
         let data = await res.json();
-        data = data.filter((item)=>item.deleted_at === '0001-01-01T00:00:00Z')
+        data = data.filter((item)=>item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at)
         const formattedData = await Promise.all(data.map(async (item: any) => {
             const formattedItem = {
                 ...item,

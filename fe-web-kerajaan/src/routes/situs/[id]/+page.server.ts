@@ -61,8 +61,37 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         } catch (error) {
             console.error(`Error fetching jenis situs list:`, error);
         }
-
+        let profilePict :any
         try {
+             if (data.profile) {
+                // Handle both string and array formats
+                const docIds = typeof data.profile === 'string' 
+                    ? data.profile.split(',').map(id => id.trim())
+                    : data.profile;
+                
+                if (docIds && docIds.length > 0) {
+                    for (const docId of docIds) {
+                        const res = await fetch(`${env.URL_KERAJAAN}/doc/${docId}`);
+                        if (!res.ok) {
+                            console.error(`Failed to fetch doc/${docId}: ${res.status}`);
+                            continue;
+                        }
+                        
+                        const docData = await res.json();
+                        const filePaths = docData.file_dokumentasi || docData;
+                        const pathsArray = Array.isArray(filePaths) ? filePaths : [filePaths];
+                        
+                        for (const path of pathsArray) {
+                            if (typeof path === 'string') {
+                                // formattedItem.imageUrls.push(
+                                //     `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(path)}`
+                                // );
+                                profilePict = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(path)}`
+                            }
+                        }
+                    }
+                }
+            }
             if (data.foto_situs) {
                 // Handle both string and array formats
                 const docIds = typeof data.foto_situs === 'string' 
@@ -95,7 +124,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
             console.error(`Error processing images for situs ${id}:`, error);
         }
         console.log(formattedItem)
-        return { detil_kelompok: formattedItem };
+        return { detil_kelompok: formattedItem, profilePict };
     } catch (error) {
         console.error(`Error fetching situs with ID ${id}:`, error);
         throw new Error(`Data tidak ditemukan untuk ID: ${id}`);

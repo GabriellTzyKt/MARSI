@@ -35,7 +35,7 @@
 			<div class="grid grid-cols-1 gap-8 px-10 py-10 md:grid-cols-2">
 				<div>
 					<img
-						src={data?.detil_kelompok?.imageUrls[0] || 'https://picsum.photos/200/300'}
+						src={data?.profilePict || 'https://picsum.photos/200/300'}
 						class="mt-12 h-[50%] w-[500px] self-center rounded-lg object-cover"
 						alt="foto 1"
 					/>
@@ -43,7 +43,7 @@
 						<Marquee>
 							<div class="flex items-center">
 								{#if data?.detil_kelompok?.imageUrls.length > 0}
-									{#each data.detil_kelompok.imageUrls as imageUrl (imageUrl)}
+									{#each data.detil_kelompok.imageUrls as imageUrl}
 										<img src={imageUrl} class="col-span-1 m-1 h-auto w-[200px]" alt="foto" />
 									{/each}
 								{/if}

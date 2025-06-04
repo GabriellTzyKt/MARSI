@@ -3,13 +3,19 @@ import { any, z } from "zod";
 import type { PageServerLoad } from "../$types";
 import { env } from "$env/dynamic/private";
 
-export const load: PageServerLoad = async ({ fetch, params }) => {
+export const load: PageServerLoad = async ({ fetch, params,cookies }) => {
     // Ambil id dari params
     const { id } = params;
+    let token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
 
     // Fetch users, situs, komunitas, organisasi, dan acara
     const [usersRes, situsRes, komunitasRes, organisasiRes, acaraRes] = await Promise.all([
-        fetch(`${env.BASE_URL}/users?limit=2000`),
+        fetch(`${env.BASE_URL}/users?limit=2000`, {
+            method: 'GET',
+            headers: { 
+                "Authorization": `Bearer ${token?.token}`
+            }
+        }),
         fetch(`${env.BASE_URL_8008}/situs?limit=200`),
         fetch(`${env.BASE_URL_8008}/komunitas?limit=200`),
         fetch(`${env.BASE_URL_8008}/organisasi?limit=200`),

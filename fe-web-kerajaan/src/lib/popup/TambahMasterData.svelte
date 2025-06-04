@@ -71,17 +71,15 @@
 				nama = currentItem.nama_kategori || '';
 			} else if (type === 'Wisata') {
 				nama = currentItem.nama_wisata || '';
-			} else if (type === 'Gelar') {
-				nama = currentItem.nama_gelar || '';
 			} else if (type === 'Penghargaan') {
 				nama = currentItem.nama_penghargaan;
-			} else if (open && !editMode) {
-				if (type === 'Gelar') {
-					fetchPenghargaanLevels();
-				}
-				// Reset form for new item
-				nama = '';
 			}
+		} else if (open && !editMode) {
+			if (type === 'Gelar') {
+				fetchPenghargaanLevels();
+			}
+			// Reset form for new item
+			nama = '';
 		}
 	});
 

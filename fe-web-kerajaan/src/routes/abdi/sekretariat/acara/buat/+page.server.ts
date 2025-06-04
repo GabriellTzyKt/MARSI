@@ -162,7 +162,7 @@ export const actions: Actions = {
             formsend.append("id_pemohon", data.get("id_pemohon") as string)
             formsend.append("penanggung_jawab", data.get("penanggungjawab_id") as string)
             formsend.append("id_lpj", data.get("id_lpj") as string||"1")
-            formsend.append("lokasi_acara", data.get("id_lokasi") as string || data.get("lokasi_acara") as string)
+            formsend.append("lokasi_acara", (data.get("id_lokasi") as string )|| data.get("lokasi_acara") as string)
             formsend.append("nama_acara", data.get("namaacara") as string)
             formsend.append("deskripsi_acara", data.get("deskripsi_acara") as string)
             formsend.append("tujuan_acara", data.get("tujuan_acara") as string)

@@ -273,6 +273,14 @@
 			return 'Tambah Acara Komunitas';
 		} else if (page.route.id === '/abdi/sekretariat/acara/laporan/[id]') {
 			return 'Laporan Acara Sekretariat';
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/buat') {
+			return 'Buat Organisasi';
+		} else if (page.route.id === '/abdi/sekretariat/anggota/daftaranggota/ubah/[id]') {
+			return 'Ubah Abdi';
+		} else if (page.route.id === '/abdi/sekretariat/situs/edit/[id]') {
+			return 'Ubah Situs';
+		} else if (page.route.id === '/abdi/sekretariat/situs/detail/[id]') {
+			return 'Detail Situs';
 		} else if (
 			page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/acara/ubah/[idacara]'
 		) {

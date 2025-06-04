@@ -194,6 +194,13 @@
 		}
 	}
 
+	onMount(() => {
+		if (data?.situs?.latitude !== 0 && data?.longitude !== 0) {
+			lat = data?.situs?.latitude;
+			long = data?.situs?.longitude;
+		}
+		console.log('Latitude:', lat, 'Longitude:', long);
+	});
 	function selectLocation(name: string) {
 		alamat = name;
 		results.set([]);

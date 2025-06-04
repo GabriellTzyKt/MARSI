@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ }) => {
         // console.log("situs : ", situsList);
 
         const filteredList = situsList.filter((doc: any) => {
-            return doc.deleted_at == '0001-01-01T00:00:00Z' && doc.deleted_at !== null;
+            return doc.deleted_at == '0001-01-01T00:00:00Z' ||doc.deleted_at !== null;
         });
 
         // Fetch profile images for each situs

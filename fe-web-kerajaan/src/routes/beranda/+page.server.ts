@@ -6,10 +6,10 @@ export const load: PageServerLoad = async () => {
     try {
         // Fetch all data in parallel for better performance
         const [situsRes, acaraRes, organisasiRes, komunitasRes] = await Promise.all([
-            fetch(`${env.URL_KERAJAAN}/situs`),
-            fetch(`${env.URL_KERAJAAN}/acara`),
-            fetch(`${env.URL_KERAJAAN}/organisasi`),
-            fetch(`${env.URL_KERAJAAN}/komunitas`)
+            fetch(`${env.URL_KERAJAAN}/situs?limit=500`),
+            fetch(`${env.URL_KERAJAAN}/acara?limit=500`),
+            fetch(`${env.URL_KERAJAAN}/organisasi?limit=500`),
+            fetch(`${env.URL_KERAJAAN}/komunitas?limit=500`)
         ]);
 
         // Check responses
@@ -40,19 +40,19 @@ export const load: PageServerLoad = async () => {
          // Filter out soft-deleted items
          const filteredSitus = situsArray.filter(item => 
             item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
-        );
+        ).slice(0,5);
         
         const filteredAcara = acaraArray.filter(item => 
             item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
-        );
+        ).slice(0,5)
         
         const filteredOrganisasi = organisasiArray.filter(item => 
             item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
-        );
+        ).slice(0,5);
         
         const filteredKomunitas = komunitasArray.filter(item => 
             item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
-        );
+        ).slice(0,5);
         console.log("Filtered data counts:", {
             situs: filteredSitus.length,
             acara: filteredAcara.length,

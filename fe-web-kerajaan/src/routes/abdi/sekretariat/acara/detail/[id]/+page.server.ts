@@ -1,4 +1,5 @@
 import { env } from "$env/dynamic/private";
+import { date } from "zod";
 import type { PageServerLoad } from "../../$types";
 
 export const load: PageServerLoad = async ({params, cookies}) => {
@@ -52,6 +53,34 @@ export const load: PageServerLoad = async ({params, cookies}) => {
                     nama_penanggungjawab : user.nama_lengkap
                 };
                 
+            function setjabatan(data) {
+                switch (data) {
+                    
+                    case "ketua":
+                        return "Ketua"
+                        
+                    case "wakilketua":
+                        return "Wakil Ketua"
+                    case "sekretariat":
+                         return "Sekretariat"
+                    case "bendahara":
+                        return "Bendahara"
+                    case "acara":
+                         return "Acara"
+                    case "komunikasi":
+                         return "Komunikasi"
+                    case "perlengkapan":
+                         return "Perlengkapan"
+                    case "pdd":
+                         return "PDD"
+                    case "keamanan":
+                         return "Keamanan"
+                    case "humas":
+                        return "Humas"
+                    default:
+                        return data
+                }
+            }
             let undanganWithUser = await Promise.all(undangan.map(async (item) => { 
                 try {
                     let resUser = await fetch(`${env.PUB_PORT}/user/${item.id_penerima}`, {
@@ -63,6 +92,7 @@ export const load: PageServerLoad = async ({params, cookies}) => {
                         let user = await resUser.json()
                         return {
                             ...item,
+                          
                             nama_penerima: user.nama_lengkap,
                             nomer_telepon: user.no_telp,
                             jenis_kelamin: user.jenis_kelamin
@@ -81,11 +111,39 @@ export const load: PageServerLoad = async ({params, cookies}) => {
                     
                 }
             }))
+            let panitWithUser = await Promise.all(panit.map(async (item) => { 
+                try {
+                    let resUser = await fetch(`${env.PUB_PORT}/user/${item.id_user}`, {
+                        headers: {
+                            "Authorization" : `Bearer ${cook?.token}`
+                        }
+                    })
+                    if(resUser.ok) {
+                        let user = await resUser.json()
+                        return {
+                            ...item,
+                              jabatan : setjabatan(item.jabatan_panitia),
+                            nama_panit: user.nama_lengkap,
+                           
+                        }
+                    }
+                    
+                    else {
+                       return {
+                            ...item,
+                            nama_panit: "No User Found",
+                            
+                        }
+                    }
+                } catch (error) {
+                    
+                }
+            }))
                 console.log(formattedData)
                 console.log(undangan)
             console.log(panit)
             
-                return { data: formattedData, undangan: undanganWithUser, panit: panit, situs: situs };
+                return { data: formattedData, undangan: undanganWithUser, panit: panitWithUser, situs: situs };
            
         }
     }

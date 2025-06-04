@@ -70,10 +70,12 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
 
 export const actions: Actions = {
-    tambahSitus: async ({request}) => {
+    tambahSitus: async ({ request, cookies }) => {
+        let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
         const data = await request.formData()
         console.log(data)
-
+        let id_admin = token
+        console.log("TOKEN", id_admin)
         // Ambil file
         const profile_picture = data.get("profile_picture");
 
@@ -143,6 +145,9 @@ export const actions: Actions = {
             id_jenis_situs: 
                 z.string({ message: "Field Wisata Harus dipilih" })
                     .nonempty("Field ini tidak boleh kosong"),
+            kepemilikan: 
+                z.string({ message: "Field kepemilikan Harus dipilih" })
+                    .nonempty("Field ini tidak boleh kosong"),
             phone:
                 z.string({ message: "Field Nomer Telepon Harus diisi" })
                     .min(10, "Nomer telpon minimal 10 digit")
@@ -201,6 +206,7 @@ export const actions: Actions = {
             longitude: longitude ? String(longitude) : "",
             jam_buka: String(data.get("jam_buka")),
             jam_tutup: String(data.get("jam_tutup")),
+            kepemilikan: String(data.get("kepemilikan")),
             wisata_id: data.get("wisata_id") ? String(data.get("wisata_id")) : "",
         }
         console.log("Extracted Form:", formData);
@@ -216,6 +222,7 @@ export const actions: Actions = {
         }
         try {
             let formDataToSend = new FormData();
+            formDataToSend.append("id_admin", token?.id_admin );
             formDataToSend.append("id_jenis_situs", data.get("jenis_situs") as string);
             formDataToSend.append("id_wisata", data.get("wisata_id") as string);
             formDataToSend.append("profile", data.get("profile_picture") as File);
@@ -223,7 +230,7 @@ export const actions: Actions = {
             formDataToSend.append("deskripsi_situs", formData.deskripsi_situs);
             formDataToSend.append("alamat", formData.alamat);
             formDataToSend.append("nama_pendiri", data.get("dibangun_oleh") as string);
-            formDataToSend.append("pemilik_situs", "Pemilik Susuhunan");
+            formDataToSend.append("pemilik_situs", data.get("kepemilikan") as string);
             formDataToSend.append("tahun_berdiri", data.get("tahun_berdiri") as string);
             formDataToSend.append("pelindung", formData.pelindung);
             formDataToSend.append("pembina", formData.pembina);
@@ -240,10 +247,11 @@ export const actions: Actions = {
                 method: "POST",
                 body: formDataToSend
             })
+            let resData = await res.json();
+            console.log(resData)
             if(!res.ok){
                 throw new Error(`HTTP Error! Status: ${res.status}`)
             }
-            console.log(res)
             return {data: "berhasil", success: true}
         } catch (error) {
             

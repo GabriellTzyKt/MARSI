@@ -99,19 +99,21 @@ export const actions: Actions = {
             // Process each entry
             for (const abdi of abdiList) {
                 const form = new FormData()
-                form.append('id_gelar', abdi.gelar_id || '2')
                 form.append('id_anggota', abdi.abdi_id)
+                form.append('id_gelar', abdi.gelar_id || '2')
                 form.append('dokumentasi', abdi.bukti_gelar)
                 form.append('pemberi_gelar', abdi.pemberi_id)
                 form.append('acara_pemberian', abdi.acara_id)
                 form.append('tanggal_penerimaan', tanggal())
-                form.append('panggilan', abdi.gelar_baru)
+                // form.append('panggilan', abdi.gelar_baru)
                 console.log('yang akan di submit : ', form)
               
                 const res = await fetch(`${env.URL_KERAJAAN}/anggota/gelar`, {
                     method: "POST",
                     body: form,
                 });
+                let msg = await res.json()
+                console.log(msg)
                 if (!res.ok) {
                     console.log(" ERROR", res)
                         return fail(400,{})

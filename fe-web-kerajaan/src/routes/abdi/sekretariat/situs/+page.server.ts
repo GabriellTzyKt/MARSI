@@ -14,7 +14,7 @@ export const load: PageServerLoad = async ({cookies}) => {
         }
         let data = await res.json();
         console.log(data)
-        let formattedData = data.filter(item => item.deleted_at === "0001-01-01T00:00:00Z")
+        let formattedData = data.filter(item => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
         let resWisata = await fetch(`${env.URL_KERAJAAN}/situs/wisata?limit=1000`);
         if (!resWisata.ok) {
             throw new Error(`HTTP Error! Status: ${resWisata.status}`);

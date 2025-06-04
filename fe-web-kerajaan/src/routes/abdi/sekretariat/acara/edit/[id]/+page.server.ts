@@ -56,7 +56,7 @@ export const load: PageServerLoad = async ({params, cookies}) => {
                     waktu_mulai_original: data.waktu_mulai,
                     waktu_selesai_original: data.waktu_selesai
         };
-        let resuser = await fetch(`${env.PUB_PORT}/users`, {
+        let resuser = await fetch(`${env.PUB_PORT}/users?limit=1000`, {
             headers: {
                 "Authorization": `Bearer ${token?.token}`
             }
@@ -82,10 +82,10 @@ export const load: PageServerLoad = async ({params, cookies}) => {
         };
 
         let [resUndangan, resPanit] = await Promise.all([
-            fetch(`${env.URL_KERAJAAN}/undangan/${params.id}`, {
+            fetch(`${env.URL_KERAJAAN}/undangan/${params.id}?limit=500`, {
                 method:"GET",
             }),
-            fetch(`${env.URL_KERAJAAN}/acara/panit/${params.id}`, {
+            fetch(`${env.URL_KERAJAAN}/acara/panitia/${params.id}?limit=500`, {
                  method:"GET",   
             })
         ]);
@@ -96,6 +96,10 @@ export const load: PageServerLoad = async ({params, cookies}) => {
         dataUndangan = dataUndangan.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at)
         console.log("DAta Undangan", dataUndangan)
         let dataPanit = await resPanit.json()
+         dataPanit = dataPanit.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at)
+
+
+        console.log("data Panit", dataPanit)
         // dataPanit = dataPanit?.filter(item => item?.deleted_at === '0001-01-01T00:00:00Z' || !item?.deleted_at)
         console.log(formattedData)
         return { data: formattedData, situs,dataUndangan,dataPanit,  user: userData };
@@ -256,7 +260,7 @@ export const actions: Actions = {
                         body: JSON.stringify(send)
                     });
                     let msg = await res.json()
-                    console.log(msg)
+                    console.log("panitia",msg)
                 })
             );
             } catch (error) {
@@ -278,13 +282,14 @@ export const actions: Actions = {
                 nama_acara: data.get("namaacara"),
                 deskripsi_acara: data.get("deskripsi_acara"),
                 tujuan_acara: data.get("tujuanacara"),
-                lokasi_acara: data.get("id_lokasi"),
+                lokasi_acara: Number(data.get("id_lokasi")),
                 alamat_acara: data.get("alamat_acara"),
-                waktu_mulai: `${data.get("tanggalmulai")} ${data.get("waktumulai")}`,
-                waktu_selesai: `${data.get("tanggalselesai")} ${data.get("waktuselesai")}`,
+                waktu_mulai: `${data.get("tanggalmulai")} ${data.get("waktumulai")}:00`,
+                waktu_selesai: `${data.get("tanggalselesai")} ${data.get("waktuselesai")}:00`,
                 penanggung_jawab: Number(data.get("penanggungjawab_id")),
                 jenis_acara: data.get("jenisacara"),
                 kapasitas_acara: Number(data.get("kapasitasacara")),
+                // foto_acara: "1",
                 status: "Diajukan",
             }
             console.log("PayLoad", payload)

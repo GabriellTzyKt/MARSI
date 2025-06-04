@@ -60,6 +60,8 @@ export let load: PageServerLoad = async ({ params, cookies }) => {
                 console.error("Error fetching profile document:", error);
             }
         }
+
+          
         if (situsData.foto_situs && situsData.foto_situs.trim() !== '') {
             try {
                 let docIds = situsData.foto_situs.split(',').map(id => id.trim());
@@ -89,7 +91,7 @@ export let load: PageServerLoad = async ({ params, cookies }) => {
                 console.error("Error processing image URLs:", error);
             }
           }
-          console.log("ini profile situs: ", situsData.profile)
+        //   console.log("ini profile situs: ", situsData.profile)
         
         situsTypes = situsTypes.filter((item: any) => item && (item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at));
         console.log("Situs TYPES", situsTypes)
@@ -100,14 +102,16 @@ export let load: PageServerLoad = async ({ params, cookies }) => {
         //     fetchUserData(situsData.juru_kunci)
           // ]);
           
-          let [resjk, respl, respb] = await Promise.all([
+          let [resjk, respl, respb, resLoc] = await Promise.all([
                 fetch(`${env.PUB_PORT}/user/${situsData.juru_kunci}`),
                 fetch(`${env.PUB_PORT}/user/${situsData.pelindung}`),
-                fetch(`${env.PUB_PORT}/user/${situsData.pembina}`),
+              fetch(`${env.PUB_PORT}/user/${situsData.pembina}`),
+                fetch(`${env.URL_KERAJAAN}/loc/${situsData.id_lokasi}`),
           ])
           let jk = await resjk.json()
           let pl = await respl.json()
           let pb = await respb.json()
+          let loc = await resLoc.json()
         let resWisata = await fetch(`${env.URL_KERAJAAN}/situs/wisata?limit=500`);
         if (!resWisata.ok) {
             throw new Error(`HTTP Error! Status: ${resWisata.status}`);
@@ -122,7 +126,7 @@ export let load: PageServerLoad = async ({ params, cookies }) => {
             situsData.wisata = wisataData.nama_wisata || 'Tidak Tersedia';
             situsData.id_wisata = wisataData.id_wisata || 'Tidak Tersedia';
           }
-          console.log("Wisata Data:",   wisataData);
+        //   console.log("Wisata Data:",   wisataData);
         return {
             situs: {
                 ...situsData,
@@ -131,7 +135,9 @@ export let load: PageServerLoad = async ({ params, cookies }) => {
                 profileImage,
                 pelindung_nama: pl.nama_lengkap||"-",
                 pembina_nama: pb.nama_lengkap||"-",
-                juru_kunci_nama: jk.nama_lengkap||"-",
+                juru_kunci_nama: jk.nama_lengkap || "-",
+                latitude: parseFloat(loc.latitude),
+                longitude: parseFloat(loc.longitude),
                 // pembina,
                 // pelindung,
                 // juruKunci
@@ -173,7 +179,8 @@ async function fetchUserData(userId: number | string) {
     }
 }
 export let actions: Actions = {
-    editSitus: async ({request}) => {
+    editSitus: async ({ request, cookies }) => {
+        let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
         let data = await request.formData()
         console.log(data)
         let profile_picture:any = data.get("profile_picture") as File;
@@ -338,11 +345,12 @@ export let actions: Actions = {
         try {
            
             let sendData = {
+                id_admin: Number(token.id_admin),
                  id_situs: parseInt(String(data.get("id_situs"))),
                  id_wisata:parseInt( String(data.get("id_wisata"))),    
                  profile: profile !== "" ? String(profile): data.get("profile"),
                  id_jenis_situs: parseInt(String(data.get("jenis_situs"))),
-                foto_situs: '',
+                foto_situs: profile !== "" ? String(profile): data.get("profile"),
                 nama_situs: String(data.get("nama_situs")),
                 deskripsi_situs: String(data.get("deskripsi_situs")),
                 alamat: String(data.get("alamat")),
@@ -360,7 +368,7 @@ export let actions: Actions = {
                 email: String(data.get("email")),
     // jumlah_anggota: parseInt(String(data.get("jumlah_anggota"))),
             }
-            console.log(sendData)
+            console.log("SendData",sendData)
             const response = await fetch(`${env.URL_KERAJAAN}/situs`, {
                 method: "PUT",
                 headers: {

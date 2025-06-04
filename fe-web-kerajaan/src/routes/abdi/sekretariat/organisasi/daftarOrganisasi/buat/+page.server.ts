@@ -44,7 +44,8 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
     }
 };
 export const actions: Actions = {
-    tambahOrganisasi: async ({request}) => {
+    tambahOrganisasi: async ({ request, cookies }) => {
+        let token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
          const data = await request.formData()
                console.log(data)
               const ver = z.object({
@@ -139,6 +140,7 @@ export const actions: Actions = {
                try {
                    const formDataToSend = new FormData();
                 //    formDataToSend.append("id_pemohon", data.get("id_pemohon") as string);
+                   formDataToSend.append("id_admin", token.id_admin);
                    formDataToSend.append("penanggung_jawab", formData.penanggungjawab_id);
                    formDataToSend.append("nama_organisasi", formData.nama_organisasi);
                    formDataToSend.append("deskripsi", formData.deskripsi_organisasi);

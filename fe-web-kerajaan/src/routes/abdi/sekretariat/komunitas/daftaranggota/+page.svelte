@@ -162,7 +162,6 @@
 				bind:value={selectedKomunitas}
 				class="rounded-md border px-3 py-2 focus:outline-none"
 			>
-				<option value="">Semua Komunitas</option>
 				{#each dataListKomunitas as komunitas}
 					<option value={komunitas.id_komunitas}>{komunitas.nama_komunitas}</option>
 				{/each}
@@ -238,7 +237,7 @@
 				<SimpleLoader></SimpleLoader>
 			</div>
 		{/if}
-		<Pagination bind:currPage bind:entries totalItems={filterD(dataAnggota || []).length}
+		<Pagination bind:currPage bind:entries totalItems={filterD(komunitasMembers || []).length}
 		></Pagination>
 	</div>
 </div>

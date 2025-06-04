@@ -516,7 +516,7 @@
 </div>
 
 {#if open}
-	<SuccessModal text="Situs Berhasil Diubah"></SuccessModal>
+	<SuccessModal text="Komunitas Berhasil Diubah"></SuccessModal>
 {/if}
 
 <style>

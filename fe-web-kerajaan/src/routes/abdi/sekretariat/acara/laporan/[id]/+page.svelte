@@ -8,13 +8,16 @@
 	let { data } = $props();
 	let total = $state(8);
 	let error = $state();
-	let uploadedFiles: (File | null)[] = $state([]);
-	let uploadedFileUrls: string[] = $state([]);
-	let uploadedFileIds: (number | null)[] = $state([]);
+	let uploadedFilesAcara: (File | null)[] = $state([]);
+	let uploadedFileUrlsAcara: string[] = $state([]);
+	let uploadedFileIdsAcara: (number | null)[] = $state([]);
+	let uploadedFilesDokumentasi: (File | null)[] = $state([]);
+	let uploadedFileUrlsDokumentasi: string[] = $state([]);
+	let uploadedFileIdsDokumentasi: (number | null)[] = $state([]);
 	let fileinput = $state<File[]>([]);
 	let loading = $state(false);
 	let success = $state(false);
-	function handleFileChange(event: Event) {
+	function handleFileChangeAcara(event: Event) {
 		const target = event.target as HTMLInputElement;
 		console.log('File input changed:', target.files);
 
@@ -23,32 +26,66 @@
 			console.log('New files selected:', newFiles);
 
 			// Add new files to the list
-			uploadedFiles = [...uploadedFiles, ...newFiles];
+			uploadedFilesAcara = [...uploadedFilesAcara, ...newFiles];
 
 			// Add URLs for preview
 			const newUrls = newFiles.map((file) => URL.createObjectURL(file));
-			uploadedFileUrls = [...uploadedFileUrls, ...newUrls];
+			uploadedFileUrlsAcara = [...uploadedFileUrlsAcara, ...newUrls];
 
 			// Add null IDs for new files
-			uploadedFileIds = [...uploadedFileIds, ...Array(newFiles.length).fill(null)];
+			uploadedFileIdsAcara = [...uploadedFileIdsAcara, ...Array(newFiles.length).fill(null)];
 
-			console.log('Updated file list:', uploadedFiles);
-			console.log('Updated file id', uploadedFileIds);
+			console.log('Updated file list:', uploadedFilesAcara);
+			console.log('Updated file id', uploadedFileIdsAcara);
 
 			// Reset file input to allow selecting the same file again
 			target.value = '';
 		}
 	}
-	function removeImage(index: number) {
-		// Simpan ID gambar yang dihapus untuk dikirim ke server
-		const deletedId = uploadedFileIds[index];
+	let fileNamelpj = $state('');
 
-		// Hapus dari array
-		uploadedFiles = uploadedFiles.filter((_, i) => i !== index);
-		uploadedFileUrls = uploadedFileUrls.filter((_, i) => i !== index);
-		uploadedFileIds = uploadedFileIds.filter((_, i) => i !== index);
+	function handleFileChangeDokumentasi(event: Event) {
+		const target = event.target as HTMLInputElement;
+		if (target.files && target.files.length > 0) {
+			const newFiles = Array.from(target.files);
+			uploadedFilesDokumentasi = [...uploadedFilesDokumentasi, ...newFiles];
+			const newUrls = newFiles.map((file) => URL.createObjectURL(file));
+			uploadedFileUrlsDokumentasi = [...uploadedFileUrlsDokumentasi, ...newUrls];
+			uploadedFileIdsDokumentasi = [
+				...uploadedFileIdsDokumentasi,
+				...Array(newFiles.length).fill(null)
+			];
+			target.value = '';
+		}
 	}
 
+	function removeImageDokumentasi(index: number) {
+		uploadedFilesDokumentasi = uploadedFilesDokumentasi.filter((_, i) => i !== index);
+		uploadedFileUrlsDokumentasi = uploadedFileUrlsDokumentasi.filter((_, i) => i !== index);
+		uploadedFileIdsDokumentasi = uploadedFileIdsDokumentasi.filter((_, i) => i !== index);
+	}
+	function removeImageAcara(index: number) {
+		// Simpan ID gambar yang dihapus untuk dikirim ke server
+		const deletedId = uploadedFileIdsAcara[index];
+
+		// Hapus dari array
+		uploadedFilesAcara = uploadedFilesAcara.filter((_, i) => i !== index);
+		uploadedFileUrlsAcara = uploadedFileUrlsAcara.filter((_, i) => i !== index);
+		uploadedFileIdsAcara = uploadedFileIdsAcara.filter((_, i) => i !== index);
+	}
+	function formatError(parsed) {
+		if (!Array.isArray(parsed)) return parsed;
+
+		const fieldMap = parsed[1] || {};
+		const messages = {};
+		for (const [field, idx] of Object.entries(fieldMap)) {
+			const arrIdx = parsed.findIndex((v) => Array.isArray(v) && v[0] === idx);
+			if (arrIdx !== -1 && typeof parsed[arrIdx + 1] === 'string') {
+				messages[field] = [parsed[arrIdx + 1]];
+			}
+		}
+		return messages;
+	}
 	// Function to get file type from URL or File object
 	function getFileType(file: File | null, url: string): string {
 		if (file) {
@@ -102,7 +139,7 @@
 				return '📁';
 		}
 	}
-	function getFileNameFromUrl(url: string): string {
+	function getFileNameFromUrlAcara(url: string): string {
 		const parts = url.split('/');
 		return parts[parts.length - 1].split('?')[0];
 	}
@@ -115,27 +152,49 @@
 			const formData = new FormData(form);
 
 			// Hapus input file kosong yang mungkin ada
-			formData.delete('uploadfile');
+			formData.delete('uploadfileAcara');
+			formData.delete('uploadfileDokumentasi');
 
 			// Clear any existing existingFileId entries to avoid duplicates
-			formData.delete('existingFileId');
+			formData.delete('existingFileIdAcara');
+			formData.delete('existingFileIdDokumentasi');
 
 			// Add each docId as an existingFileId
-			uploadedFileIds.forEach((docId, index) => {
+			uploadedFileIdsAcara.forEach((docId, index) => {
 				if (docId) {
 					console.log(`Adding existingFileId ${index}:`, docId);
-					formData.append('existingFileId', docId.toString());
+					formData.append('existingFileIdAcara', docId.toString());
+				}
+			});
+			uploadedFileIdsDokumentasi.forEach((docId, index) => {
+				if (docId) {
+					console.log(`Adding existingFileId ${index}:`, docId);
+					formData.append('existingFileIdDokumentasi', docId.toString());
 				}
 			});
 
 			// Add new files
-			const newFiles = uploadedFiles.filter((file, index) => file && !uploadedFileIds[index]);
-			console.log(`Adding ${newFiles.length} new files to form`);
+			const newFilesAcara = uploadedFilesAcara.filter(
+				(file, index) => file && !uploadedFileIdsAcara[index]
+			);
+			console.log(`Adding ${newFilesAcara.length} new files to form`);
 
-			newFiles.forEach((file, index) => {
+			newFilesAcara.forEach((file, index) => {
 				if (file) {
 					console.log(`Adding new file: ${file.name} (${file.size} bytes)`);
-					formData.append('uploadfile', file);
+					formData.append('uploadfileAcara', file);
+				}
+			});
+			// Add new files
+			const newFilesDokumentasi = uploadedFilesDokumentasi.filter(
+				(file, index) => file && !uploadedFileIdsDokumentasi[index]
+			);
+			console.log(`Adding ${newFilesDokumentasi.length} new files to form`);
+
+			newFilesDokumentasi.forEach((file, index) => {
+				if (file) {
+					console.log(`Adding new file: ${file.name} (${file.size} bytes)`);
+					formData.append('uploadfileDokumentasi', file);
 				}
 			});
 
@@ -156,7 +215,7 @@
 			});
 
 			const result = await response.json();
-			console.log('Server response:', result);
+			console.log('Server response:', { result });
 
 			if (response.ok) {
 				loading = false;
@@ -164,22 +223,24 @@
 				if (result.type === 'success') {
 					setTimeout(() => {
 						success = false;
-						goto('/abdi/sekretariat/acara');
+						// goto('/abdi/sekretariat/acara');
 					}, 3000);
 				} else {
-					error = result.errors;
-					loading = false;
+					let parsed = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
+					error = formatError(parsed);
+					console.log('Type Error', error);
 				}
 			} else {
-				error = result.errors;
-				loading = false;
 			}
+
+			console.log('Error submitting form:', error);
 		} catch (err) {
 			console.error('Error submitting form:', err);
 			loading = false;
 			error = { general: ['An unexpected error occurred'] };
 		}
 	}
+	$inspect(error);
 	// Function to convert URL to File object
 	async function urlToFile(url: string, filename: string): Promise<File | null> {
 		try {
@@ -200,19 +261,21 @@
 		}
 	}
 	let datagambar = data.files;
+	let datadokumentasi = data.dokumentasi;
 	let dataambil = data.dataAset;
+	let imagePreviewlpj: string | null = $state(null);
 	onMount(async () => {
 		console.log('onMount: Starting to process datagambar:', datagambar);
 
 		if (datagambar && datagambar.length > 0) {
 			// Initialize arrays with the correct IDs
-			uploadedFileUrls = datagambar.map((file: any) => file.url);
+			uploadedFileUrlsAcara = datagambar.map((file: any) => file.url);
 
 			// Use the docId from each file as the existingFileId
-			uploadedFileIds = datagambar.map((file: any) => file.docId || null);
+			uploadedFileIdsAcara = datagambar.map((file: any) => file.docId || null);
 
-			console.log('onMount: Initial uploadedFileUrls:', uploadedFileUrls);
-			console.log('onMount: Initial uploadedFileIds:', uploadedFileIds);
+			console.log('onMount: Initial uploadedFileUrlsAcara:', uploadedFileUrlsAcara);
+			console.log('onMount: Initial uploadedFileIdsAcara:', uploadedFileIdsAcara);
 
 			// Convert URLs to File objects
 			const filePromises = datagambar.map(async (file: any, index: any) => {
@@ -221,361 +284,518 @@
 			});
 
 			// Wait for all conversions to complete
-			uploadedFiles = await Promise.all(filePromises);
-			console.log('onMount: Converted existing files to File objects:', uploadedFiles);
+			uploadedFilesAcara = await Promise.all(filePromises);
+			console.log('onMount: Converted existing files to File objects:', uploadedFilesAcara);
 		} else {
 			console.log('onMount: No datagambar found or empty array');
 		}
+		if (datadokumentasi && datadokumentasi.length > 0) {
+			// Initialize arrays with the correct IDs
+			uploadedFileUrlsDokumentasi = datadokumentasi.map((file: any) => file.url);
+
+			// Use the docId from each file as the existingFileId
+			uploadedFileIdsDokumentasi = datadokumentasi.map((file: any) => file.docId || null);
+
+			console.log('onMount: Initial uploadedFileUrlsDokumentasi:', uploadedFileUrlsDokumentasi);
+			console.log('onMount: Initial uploadedFileIdsDokumentasi:', uploadedFileIdsDokumentasi);
+
+			// Convert URLs to File objects
+			const filePromises = datadokumentasi.map(async (file: any, index: any) => {
+				const filename = file.name || `file-${index}.${file.url.split('.').pop()}`;
+				return await urlToFile(file.url, filename);
+			});
+
+			// Wait for all conversions to complete
+			uploadedFilesAcara = await Promise.all(filePromises);
+			console.log('onMount: Converted existing files to File objects:', uploadedFilesAcara);
+		} else {
+			console.log('onMount: No datadokumentasi found or empty array');
+		}
 	});
+	function handleFileChangelpj(event: Event) {
+		const target = event.target as HTMLInputElement;
+		const file = target.files?.[0];
+
+		if (file) {
+			fileNamelpj = file.name;
+
+			if (file.type.startsWith('image/')) {
+				imagePreviewlpj = URL.createObjectURL(file);
+			} else {
+				imagePreviewlpj = null;
+			}
+		}
+	}
+	let rabList = $state([{ keterangan: '', jumlah: '' }]);
+
+	function tambahRAB() {
+		rabList = [...rabList, { keterangan: '', jumlah: '' }];
+	}
+
+	function hapusRAB(index: number) {
+		rabList = rabList.filter((_, i) => i !== index);
+	}
 </script>
 
 {#if navigating.to}
 	<Loader text="Navigating..."></Loader>
 {/if}
+
 <div class="min-h-full w-full">
-	<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-		<div class="flex w-full justify-between">
-			<p class="mt-2">Informasi Acara</p>
-		</div>
+	<form
+		action="?/updateLaporan"
+		method="POST"
+		enctype="multipart/form-data"
+		onsubmit={handleSubmit}
+	>
+		<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+			<div class="flex w-full justify-between">
+				<p class="mt-2">Informasi Acara</p>
+			</div>
 
-		<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-2">
-			<div class="col-span-1">
-				<div class="mt-2 w-full">
-					<p>Nama Acara:</p>
-					<input
-						type="text"
-						value={data?.data?.nama_acara || '-'}
-						placeholder="Masukkan Nama"
-						class="w-full rounded-lg border px-2 py-1"
-						disabled
-					/>
+			<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-2">
+				<div class="col-span-1">
+					<div class="mt-2 w-full">
+						<p>Nama Acara:</p>
+						<input
+							type="text"
+							name="nama_acara"
+							value={data?.data?.nama_acara || '-'}
+							placeholder="Masukkan Nama"
+							class="w-full rounded-lg border px-2 py-1"
+							readonly
+						/>
+					</div>
+					<div class="mt-2 w-full">
+						<p>Penanggung Jawab:</p>
+						<input
+							type="text"
+							value={data?.data?.nama_penanggungjawab}
+							placeholder="Masukkan Nama"
+							class="w-full rounded-lg border px-2 py-1"
+							readonly
+						/>
+						<input
+							type="text"
+							hidden
+							name="penanggungjawab_id"
+							value={data?.data.id_penanggung_jawab}
+							id=""
+						/>
+					</div>
+					<div class="mt-2 w-full">
+						<p>Lokasi Acara:</p>
+						<input
+							type="text"
+							value={data?.data?.alamat_acara}
+							placeholder="Masukkan Nama"
+							class="w-full rounded-lg border px-2 py-1"
+							readonly
+						/>
+						<input type="text" hidden name="lokasi_acara" value={data?.data.id_lokasi} id="" />
+					</div>
+					<div class="mt-2 w-full">
+						<p>Tujuan Acara:</p>
+						<input
+							type="text"
+							value={data?.data?.tujuan_acara}
+							placeholder="Masukkan Nama"
+							name="tujuan_acara"
+							readonly
+							class="w-full rounded-lg border px-2 py-1"
+						/>
+					</div>
+					<div class="mt-2 w-full">
+						<p>Deskripsi Acara:</p>
+						<textarea
+							placeholder="Masukkan Deskripsi Acara"
+							readonly
+							name="deskripsi_acara"
+							value={data?.data?.deskripsi_acara}
+							class="h-32 w-full resize-none rounded-md border px-3 py-3 text-lg"
+						></textarea>
+					</div>
 				</div>
-				<div class="mt-2 w-full">
-					<p>Penanggung Jawab:</p>
-					<input
-						type="text"
-						value={data?.data?.nama_penanggungjawab}
-						placeholder="Masukkan Nama"
-						class="w-full rounded-lg border px-2 py-1"
-						disabled
-					/>
-				</div>
-				<div class="mt-2 w-full">
-					<p>Lokasi Acara:</p>
-					<input
-						type="text"
-						value={data?.data?.alamat_acara}
-						placeholder="Masukkan Nama"
-						class="w-full rounded-lg border px-2 py-1"
-						disabled
-					/>
-				</div>
-				<div class="mt-2 w-full">
-					<p>Tujuan Acara:</p>
-					<input
-						type="text"
-						value={data?.data?.tujuan_acara}
-						placeholder="Masukkan Nama"
-						disabled
-						class="w-full rounded-lg border px-2 py-1"
-					/>
-				</div>
-				<div class="mt-2 w-full">
-					<p>Deskripsi Acara:</p>
-					<textarea
-						placeholder="Masukkan Deskripsi Acara"
-						disabled
-						value={data?.data?.deskripsi_acara}
-						class="h-32 w-full resize-none rounded-md border px-3 py-3 text-lg"
-					></textarea>
+				<input type="text" hidden name="status" value={data?.data.status_pengajuan} id="" />
+				<div class="col-span-1">
+					<div class="flexcoba flex gap-2">
+						<div class="mt-2 w-full">
+							<p>Jenis Acara:</p>
+							<input
+								type="text"
+								placeholder="Masukkan Nama"
+								value={data?.data?.jenis_acara}
+								name="jenis_acara"
+								class="w-full rounded-lg border px-2 py-1"
+								readonly
+							/>
+						</div>
+						<div class="mt-2 w-full">
+							<p>Kapasitas Acara:</p>
+							<input
+								type="text"
+								placeholder="Masukkan Nama"
+								name="kapasitas_acara"
+								value={data?.data?.kapasitas_acara}
+								class="w-full rounded-lg border px-2 py-1"
+								readonly
+							/>
+						</div>
+					</div>
+
+					<div class="mt-2 w-full">
+						<p>Lokasi Acara:</p>
+						<input
+							type="text"
+							value={data?.data?.alamat_acara}
+							name="alamat_acara"
+							placeholder="Masukkan Nama"
+							class="w-full rounded-lg border px-2 py-1"
+							readonly
+						/>
+					</div>
+
+					<div class="flexcoba flex gap-2">
+						<div class="mt-2 w-full">
+							<p>Tanggal Mulai:</p>
+							<input
+								type="text"
+								value={data?.data?.tanggal_mulai}
+								name="tanggal_mulai"
+								placeholder="Masukkan Nama"
+								class="w-full rounded-lg border px-2 py-1"
+								readonly
+							/>
+						</div>
+						<div class="mt-2 w-full">
+							<p>Tanggal Selesai:</p>
+							<input
+								type="text"
+								value={data?.data?.tanggal_selesai}
+								name="tanggal_selesai"
+								placeholder="Masukkan Nama"
+								class="w-full rounded-lg border px-2 py-1"
+								readonly
+							/>
+						</div>
+					</div>
+
+					<div class="flexcoba flex gap-2">
+						<div class="mt-2 w-full">
+							<p>Jam Mulai:</p>
+							<input
+								type="text"
+								value={data?.data?.waktu_mulai}
+								name="jam_mulai"
+								placeholder="Masukkan Nama"
+								class="w-full rounded-lg border px-2 py-1"
+								readonly
+							/>
+						</div>
+						<div class="mt-2 w-full">
+							<p>Jam Selesai:</p>
+							<input
+								type="text"
+								value={data?.data?.waktu_selesai}
+								placeholder="Masukkan Nama"
+								name="jam_selesai"
+								class="w-full rounded-lg border px-2 py-1"
+								readonly
+							/>
+						</div>
+					</div>
 				</div>
 			</div>
 
-			<div class="col-span-1">
-				<div class="flexcoba flex gap-2">
-					<div class="mt-2 w-full">
-						<p>Jenis Acara:</p>
-						<input
-							type="text"
-							placeholder="Masukkan Nama"
-							value={data?.data?.jenis_acara}
-							class="w-full rounded-lg border px-2 py-1"
-							disabled
-						/>
+			<div class="mt-5 h-1 w-full bg-slate-300"></div>
+
+			<!-- bawah -->
+
+			<p class="mb-5 mt-5 text-start text-xl font-bold text-blue-600">Daftar Undangan</p>
+			<div class="mt-10 grid grid-cols-9 gap-2">
+				{#each data?.undangan as undangan, i}
+					<div class="col-span-1 w-full">{i + 1}</div>
+					<div class="col-span-2 w-full rounded-lg border px-2 py-1">
+						<p class="w-full py-2 text-center">{undangan?.jenis_kelamin || 'No Data'}</p>
 					</div>
-					<div class="mt-2 w-full">
-						<p>Kapasitas Acara:</p>
-						<input
-							type="text"
-							placeholder="Masukkan Nama"
-							value={data?.data?.kapasitas_acara}
-							class="w-full rounded-lg border px-2 py-1"
-							disabled
-						/>
+					<div class="col-span-3 w-full rounded-lg border px-2 py-1">
+						<p class="w-full py-2 text-center">{undangan?.nama_penerima}</p>
 					</div>
+					<div class="col-span-3 w-full rounded-lg border px-2 py-1">
+						<p class="w-full py-2 text-center">{undangan?.nomer_telepon || 'No Phone'}</p>
+					</div>
+				{/each}
+				{#if data?.undangan?.length === 0}
+					<div class="col-span-full items-center justify-center py-2">
+						<p>No Panitia Yet</p>
+					</div>
+				{/if}
+			</div>
+
+			<div class="mt-5 h-1 w-full bg-slate-300"></div>
+
+			<!-- bawah -->
+
+			<p class="mb-5 mt-5 text-start text-xl font-bold text-blue-600">Panitia Acara</p>
+			<div class="grid grid-cols-8 gap-2">
+				{#each data?.panit as panit, i}
+					<div class="col-span-1 w-full">{i + 1}</div>
+					<div class="col-span-4 w-full rounded-lg border px-2 py-1">{panit.nama_panit}</div>
+					<div class="col-span-3 w-full rounded-lg border px-2 py-1">{panit.jabatan}</div>
+				{/each}
+			</div>
+
+			<div class="mt-5 h-1 w-full bg-slate-300"></div>
+
+			<div class="flex flex-col">
+				<div>
+					<p class="mt-5 text-start text-2xl font-bold text-blue-700">Laporan Acara</p>
 				</div>
 
-				<div class="mt-2 w-full">
-					<p>Lokasi Acara:</p>
-					<input
-						type="text"
-						value={data?.data?.alamat_acara}
-						placeholder="Masukkan Nama"
-						class="w-full rounded-lg border px-2 py-1"
-						disabled
-					/>
-				</div>
+				<div class="grid grid-cols-1 gap-2 lg:grid-cols-3">
+					<div class="col-span-1 mt-5 h-full w-full rounded-lg border-2 border-gray-500">
+						<p class="ml-5 mt-5 text-xl font-bold text-blue-700">Peserta</p>
+						<p class="ml-5 mt-5">Jumlah Orang Hadir</p>
+						<input
+							type="number"
+							placeholder="Masukkan Jumlah"
+							name="jumlah_peserta"
+							required
+							readonly={data?.data?.lpj ? true : false}
+							class="ml-3 w-[90%] rounded-lg border-2 border-gray-400 px-2 py-2"
+						/>
+						{#if error?.jumlah_peserta}
+							<p class="ml-3 text-xs text-red-500">{error.jumlah_peserta[0]}</p>
+						{/if}
+						<p class="ml-5 mt-5">Perkiraan Jumlah Orang Hadir</p>
+						<input
+							type="number"
+							placeholder="Masukkan Jumlah"
+							name="perkiraan_jumlah_peserta"
+							required
+							readonly={data?.data?.lpj ? true : false}
+							class="ml-3 w-[90%] rounded-lg border-2 border-gray-400 px-2 py-2"
+						/>
+						{#if error?.perkiraan_jumlah_peserta}
+							<p class="ml-3 text-xs text-red-500">{error.perkiraan_jumlah_peserta[0]}</p>
+						{/if}
+						<p class="ml-5 mt-5">Bukti Foto</p>
+						<div class="relative ml-3 w-[90%]">
+							<!-- <input
+							type="text"
+							readonly
+							name="bukti_bintang_jasa"
+							placeholder="Bukti Gelar"
+							class="w-full rounded-lg py-2 pe-2 ps-2 focus:outline-none"
+							bind:value={fileName}
+						/> -->
+							<input
+								type="text"
+								placeholder="Unggah Bukti Foto"
+								name=""
+								bind:value={fileNamelpj}
+								class="w-full rounded-lg border-2 border-gray-400 px-2 py-2"
+							/>
+							<label for="bukti_pelaksanaan" class="absolute cursor-pointer">
+								<span class="pajamas--media absolute right-2 mt-2.5 opacity-55"> </span>
 
-				<div class="flexcoba flex gap-2">
-					<div class="mt-2 w-full">
-						<p>Tanggal Mulai:</p>
-						<input
-							type="text"
-							value={data?.data?.tanggal_mulai}
-							placeholder="Masukkan Nama"
-							class="w-full rounded-lg border px-2 py-1"
-							disabled
-						/>
+								<input
+									type="file"
+									name="bukti_pelaksanaan"
+									id="bukti_pelaksanaan"
+									accept="image/*"
+									class="hidden"
+									onchange={handleFileChangelpj}
+								/>
+							</label>
+							<!-- <span class="pajamas--media absolute right-2 mt-2.5 opacity-55"> </span> -->
+						</div>
+						{#if imagePreviewlpj}
+							<div class="mt-2 flex w-full justify-center">
+								<img
+									src={imagePreviewlpj}
+									alt="preview"
+									class="h-auto w-[200px] rounded object-fill text-center"
+								/>
+							</div>
+						{/if}
 					</div>
-					<div class="mt-2 w-full">
-						<p>Tanggal Selesai:</p>
-						<input
-							type="text"
-							value={data?.data?.tanggal_selesai}
-							placeholder="Masukkan Nama"
-							class="w-full rounded-lg border px-2 py-1"
-							disabled
-						/>
-					</div>
-				</div>
 
-				<div class="flexcoba flex gap-2">
-					<div class="mt-2 w-full">
-						<p>Jam Mulai:</p>
-						<input
-							type="text"
-							value={data?.data?.waktu_mulai}
-							placeholder="Masukkan Nama"
-							class="w-full rounded-lg border px-2 py-1"
-							disabled
-						/>
-					</div>
-					<div class="mt-2 w-full">
-						<p>Jam Selesai:</p>
-						<input
-							type="text"
-							value={data?.data?.waktu_selesai}
-							placeholder="Masukkan Nama"
-							class="w-full rounded-lg border px-2 py-1"
-							disabled
-						/>
+					<!-- 2 -->
+					<div
+						class="col-span-1 mt-5 h-full w-full rounded-lg border-2 border-gray-500 lg:col-span-2"
+					>
+						<div class="flex items-center justify-between">
+							<p class="ml-5 text-xl font-bold text-blue-700">RAB</p>
+							<button
+								class="px-15 mb-6 ml-7 mr-10 mt-5 rounded-lg border bg-blue-500 py-2 text-white lg:ml-0"
+								onclick={tambahRAB}
+								type="button"
+							>
+								Tambah
+							</button>
+						</div>
+						<div class="h-13 mx-auto w-[95%] rounded-lg border-2 border-gray-400">
+							<p class="px-3 py-2 text-xl">
+								Total Biaya : <span class="text-green-600"
+									>{rabList
+										.reduce((sum, rab) => sum + (parseInt(rab.jumlah) || 0), 0)
+										.toLocaleString()}</span
+								>
+							</p>
+						</div>
+						<!-- Looping RAB -->
+						<div class="mx-auto mt-4 h-fit w-[95%] rounded-lg border-2 border-gray-400 py-3">
+							{#each rabList as rab, i (i)}
+								<div
+									class="mx-auto mt-4 grid h-fit w-[95%] grid-cols-3 gap-2 rounded-lg border-2 border-gray-400 px-3 py-2"
+								>
+									<input
+										class="col-span-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
+										type="text"
+										placeholder="Keterangan"
+										required
+										bind:value={rabList[i].keterangan}
+										name={`rab_keterangan_${i}`}
+									/>
+									{#if error?.['rab'] && error.rab[i]?.keterangan}
+										<p class="text-xs text-red-500">{error.rab[i].keterangan}</p>
+									{/if}
+									<input
+										class="col-span-1 mb-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
+										type="number"
+										placeholder="Jumlah Uang"
+										required
+										bind:value={rabList[i].jumlah}
+										name={`rab_jumlah_${i}`}
+									/>
+									{#if error?.['rab'] && error.rab[i]?.jumlah}
+										<p class="text-xs text-red-500">{error.rab[i].jumlah}</p>
+									{/if}
+									<!-- Tombol hapus baris -->
+									{#if rabList.length > 1}
+										<button
+											type="button"
+											class="ml-2 rounded bg-red-400 px-2 py-1 text-white"
+											onclick={() => hapusRAB(i)}
+										>
+											Hapus
+										</button>
+									{/if}
+								</div>
+							{/each}
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 
-		<div class="mt-5 h-1 w-full bg-slate-300"></div>
+			<div class="mt-12 h-1 w-full bg-slate-500"></div>
 
-		<!-- bawah -->
-
-		<p class="mb-5 mt-5 text-start text-xl font-bold text-blue-600">Daftar Undangan</p>
-		<div class="mt-10 grid grid-cols-9 gap-2">
-			{#each data?.undangan as undangan, i}
-				<div class="col-span-1 w-full">{i + 1}</div>
-				<div class="col-span-2 w-full rounded-lg border px-2 py-1">
-					<p class="w-full py-2 text-center">{undangan?.jenis_kelamin || 'No Data'}</p>
-				</div>
-				<div class="col-span-3 w-full rounded-lg border px-2 py-1">
-					<p class="w-full py-2 text-center">{undangan?.nama_penerima}</p>
-				</div>
-				<div class="col-span-3 w-full rounded-lg border px-2 py-1">
-					<p class="w-full py-2 text-center">{undangan?.nomer_telepon || 'No Phone'}</p>
-				</div>
-			{/each}
-			{#if data?.undangan?.length === 0}
-				<div class="col-span-full items-center justify-center py-2">
-					<p>No Panitia Yet</p>
-				</div>
-			{/if}
-		</div>
-
-		<div class="mt-5 h-1 w-full bg-slate-300"></div>
-
-		<!-- bawah -->
-
-		<p class="mb-5 mt-5 text-start text-xl font-bold text-blue-600">Panitia Acara</p>
-		<div class="grid grid-cols-8 gap-2">
-			{#each Array(total) as _, i}
-				<div class="col-span-1 w-full">{i + 1}</div>
-				<div class="col-span-4 w-full rounded-lg border px-2 py-1">Nama Lengkap</div>
-				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Jabatan</div>
-			{/each}
-		</div>
-
-		<div class="mt-5 h-1 w-full bg-slate-300"></div>
-
-		<div class="flex flex-col">
-			<div>
-				<p class="mt-5 text-start text-2xl font-bold text-blue-700">Laporan Acara</p>
-			</div>
-			<div class="grid grid-cols-1 gap-2 lg:grid-cols-3">
-				<div class="col-span-1 mt-5 h-full w-full rounded-lg border-2 border-gray-500">
-					<p class="ml-5 mt-5 text-xl font-bold text-blue-700">Peserta</p>
-					<p class="ml-5 mt-5">Jumlah Orang Hadir</p>
-					<input
-						type="text"
-						placeholder="Masukkan Jumlah"
-						class="ml-3 w-[90%] rounded-lg border-2 border-gray-400 px-2 py-2"
-					/>
-					<p class="ml-5 mt-5">Perkiraan Jumlah Orang Hadir</p>
-					<input
-						type="text"
-						placeholder="Masukkan Jumlah"
-						class="ml-3 w-[90%] rounded-lg border-2 border-gray-400 px-2 py-2"
-					/>
-					<p class="ml-5 mt-5">Bukti Foto</p>
-					<div class="relative ml-3 w-[90%]">
-						<input
-							type="text"
-							placeholder="Unggah Bukti Foto"
-							class="w-full rounded-lg border-2 border-gray-400 px-2 py-2"
-						/>
-						<span class="pajamas--media absolute right-2 mt-2.5 opacity-55"> </span>
-					</div>
-				</div>
-
-				<!-- 2 -->
-				<div
-					class="col-span-1 mt-5 h-full w-full rounded-lg border-2 border-gray-500 lg:col-span-2"
+			<div class="mt-5 flex w-full justify-between">
+				<p class="mt-2 font-bold text-blue-600">Bukti Dokumentasi Acara</p>
+				<label
+					class="hover:bg-badran-btn-hover bg-badran-bt cursor-pointer rounded-lg p-2 text-white"
 				>
-					<div class="flex items-center justify-between">
-						<p class="ml-5 text-xl font-bold text-blue-700">RAB</p>
-						<button
-							class="px-15 mb-6 ml-7 mr-10 mt-5 rounded-lg border bg-blue-500 py-2 text-white lg:ml-0"
+					Tambah Gambar
+					<input
+						type="file"
+						class="hidden"
+						accept=".jpg,.jpeg,.png"
+						multiple
+						onchange={handleFileChangeDokumentasi}
+						name="dokumentasi"
+					/>
+				</label>
+			</div>
+
+			<div class="mx-auto mt-5 flex gap-4 overflow-x-auto">
+				{#each uploadedFileUrlsDokumentasi as fileUrl, index}
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<div class="relative flex-shrink-0">
+						<img
+							src={fileUrl}
+							alt={uploadedFilesDokumentasi[index]?.name || `Dokumentasi ${index + 1}`}
+							class="h-[200px] w-full rounded-lg border object-cover"
+						/>
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<span
+							class="absolute bottom-0.5 right-3 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
+							onclick={() => removeImageDokumentasi(index)}
 						>
-							Tambah
-						</button>
+							<i
+								class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"
+							></i>
+						</span>
 					</div>
-					<div class="h-13 mx-auto w-[95%] rounded-lg border-2 border-gray-400">
-						<p class="px-3 py-2 text-xl">
-							Total Biaya : <span class="text-green-600">1.000.000</span>
-						</p>
+					{#if uploadedFileIdsDokumentasi[index]}
+						<input
+							type="hidden"
+							name="existingDokumentasiId"
+							value={uploadedFileIdsDokumentasi[index]}
+						/>
+					{/if}
+				{/each}
+			</div>
+
+			<div class="mt-12 h-1 w-full bg-slate-500"></div>
+
+			<div class="mt-5 flex justify-between">
+				<p class="mt-2 font-bold text-blue-600">Illustrasi Acara</p>
+				<!-- <button class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white">
+					Tambah Gambar
+				</button> -->
+				<label
+					class="hover:bg-badran-btn-hover bg-badran-bt cursor-pointer rounded-lg p-2 text-white"
+				>
+					Tambah Gambar
+					<input
+						type="file"
+						class="hidden"
+						hidden
+						accept=".jpg,.jpeg,.png"
+						multiple
+						onchange={handleFileChangeAcara}
+						name="dokumentasiAcara"
+					/>
+				</label>
+			</div>
+
+			<div class="mx-auto mt-5 flex gap-4 overflow-x-auto">
+				{#each uploadedFileUrlsAcara as fileUrl, index}
+					<div class="relative flex-shrink-0">
+						<img
+							src={fileUrl}
+							alt={uploadedFilesAcara[index]?.name || getFileNameFromUrlAcara(fileUrl)}
+							class="h-[200px] w-full rounded-lg border object-cover"
+						/>
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<span
+							class="absolute bottom-0.5 right-3 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
+							onclick={() => removeImageAcara(index)}
+						>
+							<i
+								class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"
+							></i>
+						</span>
 					</div>
-					<!-- Component Kotak Bawah -->
-					<div class="mx-auto mt-4 h-fit w-[95%] rounded-lg border-2 border-gray-400 py-3">
-						<div
-							class="mx-auto mt-4 grid h-fit w-[95%] grid-cols-3 gap-2 rounded-lg border-2 border-gray-400 px-3 py-2"
-						>
-							<input
-								class="col-span-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
-								type="text"
-								placeholder="Keterangan"
-							/>
-							<input
-								class="col-span-1 mb-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
-								type="text"
-								placeholder="Jumlah Uang"
-							/>
-						</div>
-						<div
-							class="mx-auto mt-4 grid h-fit w-[95%] grid-cols-3 gap-2 rounded-lg border-2 border-gray-400 px-3 py-2"
-						>
-							<input
-								class="col-span-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
-								type="text"
-								placeholder="Keterangan"
-							/>
-							<input
-								class="col-span-1 mb-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
-								type="text"
-								placeholder="Jumlah Uang"
-							/>
-						</div>
-						<div
-							class="mx-auto mt-4 grid h-fit w-[95%] grid-cols-3 gap-2 rounded-lg border-2 border-gray-400 px-3 py-2"
-						>
-							<input
-								class="col-span-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
-								type="text"
-								placeholder="Keterangan"
-							/>
-							<input
-								class="col-span-1 mb-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
-								type="text"
-								placeholder="Jumlah Uang"
-							/>
-						</div>
-						<div
-							class="mx-auto mt-4 grid h-fit w-[95%] grid-cols-3 gap-2 rounded-lg border-2 border-gray-400 px-3 py-2"
-						>
-							<input
-								class="col-span-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
-								type="text"
-								placeholder="Keterangan"
-							/>
-							<input
-								class="col-span-1 mb-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
-								type="text"
-								placeholder="Jumlah Uang"
-							/>
-						</div>
-					</div>
-				</div>
+					<!-- Hidden input to store file ID if exists -->
+					{#if uploadedFileIdsAcara[index]}
+						<input type="hidden" name="existingFileId" value={uploadedFileIdsAcara[index]} />
+					{/if}
+				{/each}
+			</div>
+			{#if data?.data?.rab.length > 0}
+				<input type="text" name="rab" value="ada" id="" />
+			{/if}
+
+			<div class="mt-3 flex w-full justify-end">
+				<button class="mt-8 w-fit rounded-lg bg-green-500 px-8 py-2 text-white">
+					Simpan Laporan
+				</button>
 			</div>
 		</div>
-
-		<div class="mt-12 h-1 w-full bg-slate-500"></div>
-
-		<div class="mt-5 flex w-full justify-between">
-			<p class="mt-2 w-full font-bold text-blue-600">Bukti Dokumentasi Acara</p>
-			<button class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white">
-				Tambah Gambar
-			</button>
-		</div>
-
-		<div class="mx-auto mt-5 flex gap-4 overflow-x-auto">
-			{#each Array(4) as _, index}
-				<div class="relative flex-shrink-0">
-					<img src={gambartemp} class="rounded-lg" alt="Gambar {index}" />
-					<span
-						class="absolute bottom-0.5 right-3 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
-					>
-						<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"
-						></i>
-					</span>
-				</div>
-			{/each}
-		</div>
-
-		<div class="mt-12 h-1 w-full bg-slate-500"></div>
-
-		<div class="mt-5 flex w-full justify-between">
-			<p class="mt-2 w-full font-bold text-blue-600">Illustrasi Acara</p>
-			<button class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white">
-				Tambah Gambar
-			</button>
-		</div>
-
-		<div class="mx-auto mt-5 flex gap-4 overflow-x-auto">
-			{#each Array(4) as _, index}
-				<div class="relative flex-shrink-0">
-					<img src={gambartemp} class="rounded-lg" alt="Gambar {index}" />
-					<span
-						class="absolute bottom-0.5 right-3 flex h-7 w-7 items-center justify-center rounded-full bg-red-400 p-2"
-					>
-						<i class="gg--trash absolute bottom-0.5 right-0.5 z-10 items-center text-2xl text-white"
-						></i>
-					</span>
-				</div>
-			{/each}
-		</div>
-
-		<div class="mt-3 flex w-full justify-end">
-			<button class="mt-8 w-fit rounded-lg bg-green-500 px-8 py-2 text-white">
-				Simpan Laporan
-			</button>
-		</div>
-	</div>
+	</form>
 </div>
 
 <style>

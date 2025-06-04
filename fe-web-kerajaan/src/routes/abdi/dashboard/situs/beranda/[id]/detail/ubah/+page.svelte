@@ -28,14 +28,14 @@
 
 	let { form, data } = $props();
 	let dataambil = data.situs;
-	console.log("Data : ", data)
+	console.log('Data : ', data);
 	let jenisSitusList = data.jenisSitusList || [];
 	let usersList = data.usersList || [];
 	let wisataList = data.wisataList || [];
 	console.log('User list : ', usersList);
-	console.log("Data ambil : ", dataambil)
+	console.log('Data ambil : ', dataambil);
 	console.log('form data', form?.formData);
-	console.log("wisata : ", data.wisataList)
+	console.log('wisata : ', data.wisataList);
 
 	if (form?.formData) {
 		namasitus = form.formData.namasitus;
@@ -158,7 +158,7 @@
 			loading = true;
 			return async ({ result }) => {
 				loading = false;
-				console.log("Form submission result:", result);
+				console.log('Form submission result:', result);
 				if (result.type === 'success') {
 					open = true;
 					clearTimeout(timer);
@@ -168,7 +168,7 @@
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
-					console.error("Form submission errors:", error);
+					console.error('Form submission errors:', error);
 				}
 			};
 		}}
@@ -200,18 +200,10 @@
 						onchange={previewImage}
 					/>
 
-					<input 
-						type="hidden" 
-						name="existing_foto_profile" 
-						bind:value={dataambil.profile} 
-					/>
+					<input type="hidden" name="existing_foto_profile" bind:value={dataambil.profile} />
 
 					<!-- Add a hidden input to store the existing photo ID -->
-					<input 
-						type="hidden" 
-						name="existing_foto_situs" 
-						bind:value={dataambil.foto_situs} 
-					/>
+					<input type="hidden" name="existing_foto_situs" bind:value={dataambil.foto_situs} />
 				</div>
 				<div>
 					<p>Nama Situs:</p>
@@ -407,9 +399,7 @@
 						>
 							<option value="" disabled selected={!dataambil.jenissitus}>Pilih Jenis Situs</option>
 							{#each jenisSitusList as jenis}
-								<option
-									value={jenis.id_jenis_situs}
-								>
+								<option value={jenis.id_jenis_situs}>
 									{jenis.jenis_situs || jenis.nama_jenis || 'Unnamed'}
 								</option>
 							{/each}
@@ -432,9 +422,7 @@
 						>
 							<option value="" disabled selected={!dataambil.pembina}>Pilih Pembina</option>
 							{#each usersList as user}
-								<option
-									value={user.nama_lengkap}
-								>
+								<option value={user.nama_lengkap}>
 									{user.nama_lengkap || 'Unnamed'}
 								</option>
 							{/each}
@@ -454,9 +442,7 @@
 						>
 							<option value="" disabled selected={!dataambil.pelindung}>Pilih Pelindung</option>
 							{#each usersList as user}
-								<option
-									value={user.nama_lengkap}
-								>
+								<option value={user.nama_lengkap}>
 									{user.nama_lengkap || 'Unnamed'}
 								</option>
 							{/each}
@@ -512,9 +498,7 @@
 						>
 							<option value="" disabled>Pilih Pembina</option>
 							{#each wisataList as user}
-								<option
-									value={user.id_wisata}
-								>
+								<option value={user.id_wisata}>
 									{user.nama_wisata || 'Unnamed'}
 								</option>
 							{/each}

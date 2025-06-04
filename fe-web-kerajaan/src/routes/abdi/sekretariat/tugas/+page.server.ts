@@ -30,7 +30,7 @@ export const load = async ({ cookies }) => {
         fetch(`${env.PUB_PORT}/users?limit=${limitUser}`, {
           headers: { "Authorization": `Bearer ${cookie.token}` }
         }),
-        fetch(`${env.URL_KERAJAAN}/acara`)
+        fetch(`${env.URL_KERAJAAN}/acara?limit=1000`)
       ]);
   
       if (tugasRes.ok && situsRes.ok && userRes.ok && acaraRes.ok) {
@@ -41,7 +41,12 @@ export const load = async ({ cookies }) => {
           userRes.json(),
           acaraRes.json()
         ]);
-  
+        situsData = situsData.filter((doc: any) => {
+                        return doc.deleted_at === '0001-01-01T00:00:00Z' || !doc.deleted_at
+                    })
+         acaraDataRaw = acaraDataRaw.filter((doc: any) => {
+                        return doc.deleted_at === '0001-01-01T00:00:00Z' || !doc.deleted_at
+                    })        
         // Filter user yang aktif
         let userData = userDataRaw
           .filter((u: any) => u.deleted_at === '0001-01-01T00:00:00Z' || !u.deleted_at)

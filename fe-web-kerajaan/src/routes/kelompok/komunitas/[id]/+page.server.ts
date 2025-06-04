@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         let profileUrl = null;
         if (komunitas.profile) {
             try {
-                const profileRes = await fetch(`${env.URL_KERAJAAN}/doc/${komunitas.profile}`);
+                const profileRes = await fetch(`${env.URL_KERAJAAN}/doc/${komunitas.profile.split(',')[0].trim()}`);
                 if (profileRes.ok) {
                     const profileData = await profileRes.json();
                     if (profileData.file_dokumentasi) {

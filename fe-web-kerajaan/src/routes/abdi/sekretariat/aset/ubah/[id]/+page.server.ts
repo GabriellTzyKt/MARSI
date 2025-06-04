@@ -220,7 +220,7 @@ export const actions: Actions = {
              
               
         // const id_jenis_aset = jenisList.find(item => item.nama_jenis === jenis_aset)
-        let gambarf;
+        // let gambarf;
        
               
             // Combine existing and new file IDs

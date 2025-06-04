@@ -469,6 +469,23 @@
 						{/each}
 					{/if}
 				</div>
+				<div>
+					<p class="mt-5">Kepemilikan:</p>
+					<div class="relative">
+						<input
+							type="text"
+							placeholder="Kepemilikan"
+							name="kepemilikan"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 pr-10"
+						/>
+						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+					</div>
+					{#if errors}
+						{#each errors.kepemilikan as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
+				</div>
 
 				<div>
 					<p class="mt-5">Deskripsi Situs:</p>
@@ -765,7 +782,7 @@
 				<div class="relative col-span-full w-full">
 					<p>Dibangun Oleh:</p>
 					<input
-						type="number"
+						type="text"
 						placeholder="nama pembangun"
 						name="dibangun_oleh"
 						required

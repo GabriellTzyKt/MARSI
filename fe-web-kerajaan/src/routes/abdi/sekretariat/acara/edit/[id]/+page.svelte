@@ -67,6 +67,7 @@
 		);
 	}
 	let dataUndangan = $state();
+	let dataPanit = $state();
 	function filterUser(searchTerm: string) {
 		return users.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
 	}
@@ -113,7 +114,7 @@
 		invitationIds = [...invitationIds, newId];
 		console.log('invitations id: ', invitationIds);
 	}
-
+	let valSelected = '';
 	function hapus(index: number) {
 		console.log('Sebelum hapus:', invitations);
 		console.log('Menghapus indeks:', index);
@@ -134,6 +135,16 @@
 					nama: user ? user.name : '',
 					notelepon: user ? user.no_telp : '',
 					id_penerima: und.id_penerima
+				};
+			});
+		}
+		if (data?.dataPanit && data.dataPanit.length > 0) {
+			dataPanit = data.dataPanit.map((und) => {
+				const user = data.user.find((u) => u.id == und.id_user);
+				return {
+					id: und.id_panitia,
+					nama: user ? user.name : '',
+					jabatan: und.jabatan_panitia
 				};
 			});
 		}
@@ -208,27 +219,86 @@
 	async function deleteUndangan(undangan: any) {
 		console.log('delete Undangan', undangan);
 		deleteModal = true;
-		// try {
-		// 	loading = true;
-		// 	let res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/undangan/${undangan.id}`, {
-		// 		method: 'DELETE'
-		// 	});
-		// 	let msg = await res.json();
-		// 	if (!res.ok) {
-		// 		console.error(msg.message);
-		// 	}
+		try {
+			loading = true;
+			let res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/undangan/${undangan.id}`, {
+				method: 'DELETE'
+			});
+			let msg = await res.json();
+			if (!res.ok) {
+				console.error(msg.message);
+			}
 
-		// 	console.log(msg);
-		// 	success = true;
-		// } catch (error) {
-		// } finally {
-		// 	loading = false;
-		// 	await invalidateAll().then(() => {
-		// 		setTimeout(() => {
-		// 			success = false;
-		// 		}, 1000);
-		// 	});
-		// }
+			console.log(msg);
+			success = true;
+		} catch (error) {
+		} finally {
+			loading = false;
+			await invalidateAll().then(() => {
+				setTimeout(() => {
+					success = false;
+				}, 1000);
+			});
+		}
+	}
+	async function deletePanit(panit) {
+		console.log('deleting panit : ', panit);
+		try {
+			loading = true;
+			let res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/acara/panitia/${panit.id}`, {
+				method: 'DELETE'
+			});
+			let msg = await res.json();
+			if (!res.ok) {
+				console.error(msg.message);
+			}
+
+			console.log(msg);
+			success = true;
+		} catch (error) {
+		} finally {
+			loading = false;
+			await invalidateAll().then(() => {
+				setTimeout(() => {
+					success = false;
+				}, 1000);
+			});
+		}
+	}
+
+	// Edit jabatan panitia (langsung dari select)
+	async function editPanit(panit) {
+		// console.log('Editing panit : ', panit);
+		let panitNow = panit;
+		console.log('Editing panit : ', panitNow);
+		try {
+			loading = true;
+			let payload = {
+				id_panitia: Number(panitNow.id),
+				jabatan_panitia: panitNow.jabatan
+			};
+			console.log(payload);
+			let res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/acara/panitia`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(payload)
+			});
+			let msg = await res.json();
+			if (!res.ok) {
+				console.error(msg.message);
+			}
+		} catch (error) {
+		} finally {
+			loading = false;
+			success = true;
+			await invalidateAll().then(() => {
+				setTimeout(() => {
+					success = false;
+				}, 1000);
+			});
+		}
 	}
 </script>
 
@@ -607,7 +677,73 @@
 				<p class="text-center">No Panitia Yet</p>
 			</div>
 		{/if}
+		<p class="mt-2 text-center text-lg font-[600]">Daftar Panitia</p>
+		<div class="mt-4 grid grid-cols-6 items-center gap-2">
+			{#each dataPanit as panit, i}
+				<div class="col-span-1">{i + 1}</div>
 
+				<div class="col-span-1 w-full rounded-lg border px-2 py-1">
+					<p class="w-full text-center">{panit.nama || 'No Data'}</p>
+				</div>
+				<div class="col-span-3 w-full rounded-lg border px-2 py-1">
+					<select
+						bind:value={dataPanit[i].jabatan}
+						name="jabatan_baru"
+						onchange={(e) => (dataPanit[i].jabatan = e.target.value)}
+						class="mt-1 w-full"
+					>
+						<option value="" disabled selected>Silahkan Pilih!</option>
+						<option value="ketua">Ketua</option>
+						<option value="wakilketua">Wakil Ketua</option>
+						<option value="sekretariat">Sekretariat</option>
+						<option value="bendahara">Bendahara</option>
+						<option value="acara">Acara</option>
+						<option value="komunikasi">Komunikasi</option>
+						<option value="perlengkapan">Perlengkapan</option>
+						<option value="pdd">PDD</option>
+						<option value="keamanan">Keamanan</option>
+						<option value="humas">Humas</option>
+					</select>
+				</div>
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<div class="col-span-1 flex gap-2">
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<span
+						class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-red-400 p-2"
+						onclick={() => {
+							deletePanit(panit);
+						}}
+					>
+						<i class="gg--trash z-10 items-center text-2xl"></i>
+					</span>
+					<span
+						class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-yellow-400 p-2"
+						onclick={() => {
+							editPanit(panit);
+						}}
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="white"
+							class="size-6"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+							/>
+						</svg>
+					</span>
+				</div>
+			{/each}
+		</div>
+		{#if dataPanit?.length === 0 || !dataPanit}
+			<p class="text-center">No Panitia Data</p>
+		{/if}
 		<div class="mt-5 h-1 w-full bg-slate-300"></div>
 		<div class="mt-8 flex w-full">
 			<p class="my-auto ml-10 w-full font-bold">Undangan</p>

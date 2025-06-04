@@ -28,7 +28,7 @@ export const load = async ({ params }) => {
         // Process image URLs if profile is available (instead of foto_situs)
         let imageUrls = [];
         let fileDetails = [];
-
+        
         if (situsData.profile && situsData.profile.trim() !== '') {
             try {
                 const docIds = situsData.profile.split(',').map((id: any) => id.trim());
