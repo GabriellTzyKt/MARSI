@@ -13,7 +13,7 @@
 		activeTab = tab;
 	}
 
-	let filteredData = $derived(events.filter((event) => event.status == activeTab));
+	let filteredData = $derived(events?.filter((event) => event?.status == activeTab));
 
 	$inspect(activeTab);
 </script>

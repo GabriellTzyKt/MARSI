@@ -5,9 +5,10 @@ import type { PageServerLoad } from "./$types";
 export const load: PageServerLoad = async () => {
     try {
         // Fetch all data in parallel for better performance
-        const [situsRes, acaraRes, organisasiRes, komunitasRes,berandaRes] = await Promise.all([
+        const [situsRes,  acaraDisetujuiRes, acaraBerlangsungRes, organisasiRes, komunitasRes,berandaRes] = await Promise.all([
             fetch(`${env.URL_KERAJAAN}/situs?limit=500`),
-            fetch(`${env.URL_KERAJAAN}/acara?limit=500`),
+            fetch(`${env.URL_KERAJAAN}/acara/status?status=Disetujui`),
+            fetch(`${env.URL_KERAJAAN}/acara/status?status=Berlangsung`),
             fetch(`${env.URL_KERAJAAN}/organisasi?limit=500`),
             fetch(`${env.URL_KERAJAAN}/komunitas?limit=500`),
             fetch(`${env.URL_KERAJAAN}/beranda`),
@@ -15,27 +16,62 @@ export const load: PageServerLoad = async () => {
 
         // Check responses
         if (!situsRes.ok) throw new Error(`Situs API error: ${situsRes.status}`);
-        if (!acaraRes.ok) throw new Error(`Acara API error: ${acaraRes.status}`);
+        if (!acaraDisetujuiRes.ok) throw new Error(`Acara Disetujui API error: ${acaraDisetujuiRes.status}`);
+        if (!acaraBerlangsungRes.ok) throw new Error(`Acara Berlangsung API error: ${acaraBerlangsungRes.status}`);
         if (!organisasiRes.ok) throw new Error(`Organisasi API error: ${organisasiRes.status}`);
         if (!komunitasRes.ok) throw new Error(`Komunitas API error: ${komunitasRes.status}`);
         if (!berandaRes.ok) throw new Error(`Komunitas API error: ${komunitasRes.status}`);
 
         // Parse JSON responses one by one to identify the issue
         const situsData = await situsRes.json();
-        const acaraData = await acaraRes.json();
+        const acaraDisetujuiData = await acaraDisetujuiRes.json();
+        const acaraBerlangsungData = await acaraBerlangsungRes.json();
         const organisasiData = await organisasiRes.json();
         const komunitasData = await komunitasRes.json();
+        const berandaData = await berandaRes.json();
+
+        // Gabungkan acara Disetujui dan Berlangsung, lalu filter duplikat berdasarkan id_acara
+        const acaraGabungan = [
+            ...acaraDisetujuiData,
+            ...acaraBerlangsungData
+        ].filter((item, index, self) =>
+            index === self.findIndex((t) => t.id_acara === item.id_acara)
+        );
+
+        let beranda = await Promise.all(
+            berandaData.map(async (item: any) => {
+                let dokumentasi_url = "";
+                if (item.dokumentasi && typeof item.dokumentasi === "string" && item.dokumentasi.trim() !== "") {
+                    try {
+                        const pict = await fetch(`${env.URL_KERAJAAN}/doc/${item.dokumentasi}`);
+                        if (pict.ok) {
+                            const filePathData = await pict.json();
+                            const filePath = filePathData.file_dokumentasi || filePathData;
+                            if (typeof filePath === "string") {
+                                dokumentasi_url = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`;
+                            }
+                        }
+                    } catch (err) {
+                        console.error("Error fetching dokumentasi for beranda:", err);
+                    }
+                }
+                return {
+                    ...item,
+                    dokumentasi_url
+                };
+            })
+        );
 
         console.log("Raw data types:", {
             situs: typeof situsData, isArray: Array.isArray(situsData),
-            acara: typeof acaraData, isArray1: Array.isArray(acaraData),
+            
             organisasi: typeof organisasiData, isArray2: Array.isArray(organisasiData),
             komunitas: typeof komunitasData, isArray3: Array.isArray(komunitasData)
         });
 
         // Ensure all data are arrays
         const situsArray = Array.isArray(situsData) ? situsData : [situsData];
-        const acaraArray = Array.isArray(acaraData) ? acaraData : [acaraData];
+        
         const organisasiArray = Array.isArray(organisasiData) ? organisasiData : [organisasiData];
         const komunitasArray = Array.isArray(komunitasData) ? komunitasData : [komunitasData];
 
@@ -44,9 +80,11 @@ export const load: PageServerLoad = async () => {
             item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
         ).slice(0,5);
         
-        const filteredAcara = acaraArray.filter(item => 
+        // Lanjutkan proses seperti sebelumnya, ganti acaraArray jadi acaraGabungan
+        const acaraArray = Array.isArray(acaraGabungan) ? acaraGabungan : [acaraGabungan];
+        const filteredAcara = acaraArray.filter(item =>
             item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
-        ).slice(0,5)
+        ).slice(0, 5);
         
         const filteredOrganisasi = organisasiArray.filter(item => 
             item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
@@ -235,15 +273,13 @@ export const load: PageServerLoad = async () => {
         }));
 
         console.log("Processed data counts:", {
-            situs: processedSitus,
-            acara: processedAcara,
-            organisasi: processedOrganisasi,
-            komunitas: processedKomunitas
+            beranda
         });
 
         // Return all processed data
         return {
             situs: processedSitus,
+            beranda,
             acara: processedAcara,
             organisasi: processedOrganisasi,
             komunitas: processedKomunitas

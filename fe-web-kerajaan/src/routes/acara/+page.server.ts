@@ -11,12 +11,13 @@ export const load: PageServerLoad = async () => {
         }
         const data = await res.json();
         
+        const filteredData = data.filter((event) =>
+            (event.deleted_at === '0001-01-01T00:00:00Z' || !event.deleted_at|| !event.deleted_at == null) &&
+            (event.status === "Disetujui" || event.status === "Berlangsung")
+        );
 
-        const formattedData = data.filter((event) => {
-                // Keep only items where deleted_at is the default value (not deleted)
-                return event.deleted_at === '0001-01-01T00:00:00Z' || !event.deleted_at;
-        })
-        const final = await Promise.all(formattedData.map(async (item) => {
+       
+        const final = await Promise.all(filteredData.map(async (item) => {
             const formattedItem = {
                 ...item,
                 tanggal_mulai: formatDate(item.waktu_mulai),
