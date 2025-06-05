@@ -60,6 +60,11 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 
         const gelarKerajaan = await gelarResponse.json();
 
+        const filteredGelarKerajaan = gelarKerajaan.filter(
+            (item: any) => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
+        );
+
+
         const historyResponse = await fetch(`${env.BASE_URL}/history-raja?limit=200`, {
             method: "GET",
             headers: {
@@ -295,7 +300,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
             detil_kerajaan: kerajaanWithMedia,
             jenisKerajaan: filteredJenisKerajaan,
             historyRaja: historyRajaWithImages,
-            gelar: gelarKerajaan,
+            gelar: filteredGelarKerajaan,
             eraList,
             rumpunList
 

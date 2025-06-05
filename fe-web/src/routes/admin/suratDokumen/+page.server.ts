@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ fetch, cookies }) => {
 
     try {
         // ngambil data arsip
-        const arsipRequest = await fetch(env.PUB_PORT + "/arsip?limit=1000", {
+        const arsipRequest = await fetch(env.PUB_PORT + "/arsip?limit=2000", {
             method: "GET",
             headers: {
                 "Accept": "application/json"
@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({ fetch, cookies }) => {
 
         // Filter out deleted items
         const filteredArsipData = arsipData.filter((doc: any) => {
-            return doc.deleted_at === '0001-01-01T00:00:00Z' && doc.deleted_at !== null;
+            return doc.deleted_at === '0001-01-01T00:00:00Z';
         });
 
         const enrichedArsipData = filteredArsipData.map((doc: any) => {
@@ -49,7 +49,7 @@ export const load: PageServerLoad = async ({ fetch, cookies }) => {
             );
             return {
                 id_arsip: doc.id_arsip,
-                sub_kategori_nama_arsip: subKategoriDoc.nama_arsip
+                sub_kategori_nama_arsip: subKategoriDoc?.nama_arsip || ""
             };
         });
 
@@ -277,7 +277,7 @@ export const load: PageServerLoad = async ({ fetch, cookies }) => {
                             const match = enrichedArsipData.find(
                                 (enriched: any) => Number(enriched.id_arsip) === Number(doc.id_arsip)
                             );
-                            return match ? match.sub_kategori_nama_arsip : null;
+                            return match ? match.sub_kategori_nama_arsip : "";
                         })(),
                         nama_kerajaan: (() => {
                             const arsipKerajaan = arsipKerajaanData.find(

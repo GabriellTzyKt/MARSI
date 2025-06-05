@@ -2,6 +2,20 @@ import { fail, type Actions } from "@sveltejs/kit";
 import { env } from "$env/dynamic/private";
 import { z } from "zod";
 import { data_flipcard } from "$lib/dummy";
+import type { PageServerLoad } from "../$types";
+import { redirect } from "@sveltejs/kit";
+
+export const load: PageServerLoad = async ({ cookies }) => {
+    const userSession = cookies.get("userSession");
+    if (!userSession) {
+        throw redirect(302, '/login2');
+    }
+    const session = JSON.parse(userSession);
+    if (!session.adminData || session.adminData.jenis_admin !== 'admin kerajaan') {
+        throw redirect(302, '/admin/beranda');
+    }
+}
+
 
 export const actions: Actions = {
     tambahAplikasi: async ({ request }) => {

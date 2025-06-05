@@ -236,6 +236,7 @@
 		action="?/delete"
 		method="POST"
 		use:enhance={() => {
+			loading = true;
 			if (!data || !data.id_admin) {
 				console.error('Missing admin ID, cannot delete');
 				return;
@@ -244,6 +245,7 @@
 			console.log('Deleting admin ID:', data.id_admin);
 
 			return async ({ result }) => {
+				loading = true;
 				console.log(result);
 				if (result.type === 'success') {
 					value = false;

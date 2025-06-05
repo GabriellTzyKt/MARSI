@@ -387,7 +387,7 @@
 						name="subkategori"
 						class="h-[40px] w-full rounded-lg border-2 border-gray-400 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 					>
-						<option value="" disabled>None</option>
+						<option value="">None</option>
 						{#each data.arsipData as item}
 							<option value={item.id_arsip}>{item.nama_arsip}</option>
 						{/each}

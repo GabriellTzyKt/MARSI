@@ -859,7 +859,7 @@
 							<div class="mr-6 flex items-center">
 								<input
 									id="penanggalan-jawa"
-									type="checkbox"
+									type="radio"
 									value="jawa"
 									bind:group={fiturPenanggalan2}
 									name="fitur-penanggalan2"
@@ -872,7 +872,7 @@
 							<div class="flex items-center">
 								<input
 									id="penanggalan-bali"
-									type="checkbox"
+									type="radio"
 									value="bali"
 									bind:group={fiturPenanggalan2}
 									name="fitur-penanggalan2"
@@ -888,7 +888,7 @@
 							<div class="mr-6 flex items-center">
 								<input
 									id="penanggalan-hindu"
-									type="checkbox"
+									type="radio"
 									value="hindu"
 									bind:group={fiturPenanggalan2}
 									name="fitur-penanggalan2"
@@ -901,7 +901,7 @@
 							<div class="flex items-center">
 								<input
 									id="penanggalan-hijriah"
-									type="checkbox"
+									type="radio"
 									value="hijriah"
 									bind:group={fiturPenanggalan2}
 									name="fitur-penanggalan2"

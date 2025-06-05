@@ -62,8 +62,8 @@ export const load: PageServerLoad = async ({ fetch, cookies }) => {
                     id_kerajaan: id_kerajaan,
                     asal_kerajaan: kerajaanMap.get(id_kerajaan) || `Kerajaan ${id_kerajaan}`,
                     link_website: websiteFeatures.find((website: any) => website.id_kerajaan === id_kerajaan)?.url_website || "...",
-                    tanggal_buat: website.tanggal_request || "01-01-2023",
-                    tanggal_selesai: website.tanggal_selesai || "31-12-2023",
+                    tanggal_buat: website.created_at || "01-01-2023",
+                    tanggal_selesai: website.updated_at || "31-12-2023",
                     status: website.status_permintaan || "Diajukan",
                     websiteFeatures: website,
                     mobileFeatures: null

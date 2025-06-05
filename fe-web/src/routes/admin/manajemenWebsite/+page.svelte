@@ -312,20 +312,6 @@
 						readonly
 					/>
 				</div>
-
-				{#if selectedItem?.mobileFeatures !== null}
-					<div class="mb-4">
-						<p>Aplikasi Kerajaan</p>
-						<input
-							type="text"
-							class="mt-2 w-full rounded-lg border border-gray-400 py-2 pe-2 ps-2 focus:border-gray-400 focus:outline-none focus:ring-0"
-							name=""
-							placeholder="kerajaantest.apk"
-							id=""
-							readonly
-						/>
-					</div>
-				{/if}
 			</div>
 		</div>
 	</div>

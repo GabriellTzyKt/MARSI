@@ -18,14 +18,16 @@
 	let deleteD = $state(false);
 	let success = $state(false);
 
-	let { data } : any = $props();
-	let dataArsip : any = data.dataArsip;
-	console.log("Data : ", data)
+	let { data }: any = $props();
+	let dataArsip: any = data.dataArsip;
+	console.log('Data : ', data);
 	console.log('data arsip : ', dataArsip);
-	console.log("data kerajaan : ", data.kerajaan)
+	console.log('data kerajaan : ', data.kerajaan);
 
 	function filterData(data: any[]) {
-		return data.filter((item) => item?.nama_arsip?.toLowerCase().includes(keyword.toLowerCase()));
+		return Array.isArray(data)
+			? data.filter((item) => item?.nama_arsip?.toLowerCase().includes(keyword.toLowerCase()))
+			: [];
 	}
 
 	function pagination(data: any[]) {
@@ -37,7 +39,7 @@
 
 	// Memastikan datanya dalam bentuk array
 	let arsipArray = $state(Array.isArray(data.dataArsip) ? data.dataArsip : []);
-	let resData : any = $derived(pagination(data.dataArsip));
+	let resData: any = $derived(pagination(data.dataArsip));
 	let total_pages = $derived(Math.ceil(filterData(data.dataArsip).length / entries));
 
 	$effect(() => {
@@ -157,64 +159,62 @@
 		{/snippet}
 
 		{#snippet custom({ header, data })}
-		<div class="max-w-[200px] gap-2 flex flex-row overflow-x-auto">
-		{#if header === 'Dokumentasi'}
-		{#if data.files && Array.isArray(data.files) && data.files.length > 0}
-		{#each data.files as file}
-		<div class="flex w-50 h-auto">
-
-			{#if file && typeof file === 'object' && file.url}
-			{#if file.url.toLowerCase().endsWith('.mp3') || file.url
-										.toLowerCase()
-										.endsWith('.wav')}
-									<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
-										<img
-										src={logolagu}
-										alt={file.name || 'Audio File'}
-										class="h-10 w-10  rounded object-fill "
-										/>
-									</a>
+			<div class="flex max-w-[200px] flex-row gap-2 overflow-x-auto">
+				{#if header === 'Dokumentasi'}
+					{#if data.files && Array.isArray(data.files) && data.files.length > 0}
+						{#each data.files as file}
+							<div class="w-50 flex h-auto">
+								{#if file && typeof file === 'object' && file.url}
+									{#if file.url.toLowerCase().endsWith('.mp3') || file.url
+											.toLowerCase()
+											.endsWith('.wav')}
+										<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
+											<img
+												src={logolagu}
+												alt={file.name || 'Audio File'}
+												class="h-10 w-10 rounded object-fill"
+											/>
+										</a>
 									{:else if file.url.toLowerCase().endsWith('.mp4') || file.url
-										.toLowerCase()
-										.endsWith('.webm')}
-									<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
-										<img
-										src={logovidio}
-										alt={file.name || 'Video File'}
-										class="h-10 w-10 rounded  object-fill "
-										/>
-									</a>
+											.toLowerCase()
+											.endsWith('.webm')}
+										<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
+											<img
+												src={logovidio}
+												alt={file.name || 'Video File'}
+												class="h-10 w-10 rounded object-fill"
+											/>
+										</a>
 									{:else}
 										<a href={file.url} target="_blank" class="text-blue-500 hover:underline">
 											<img
-											src={file.url}
-											alt={file.name || 'Document'}
-											class="h-10 w-10 rounded object-fill  "
+												src={file.url}
+												alt={file.name || 'Document'}
+												class="h-10 w-10 rounded object-fill"
 											/>
 										</a>
-										{/if}
-										{/if}
-									</div>
-										{/each}
-										
-										{:else}
-										<span>No files</span>
-										{/if}
-										{/if}
-									</div>
-									{/snippet}
-								</Table>
-								
-								<div class="mt-4 flex flex-col lg:flex-row lg:justify-between">
-									<div>
-										<p>
-											Showing {(currPage - 1) * entries + 1}
-											to {Math.min(currPage * entries, filterData(data.dataArsip).length)}
-											of {filterData(data.dataArsip).length}
-										</p>
-									</div>
-									<div class="flex flex-row gap-3">
-										<button
+									{/if}
+								{/if}
+							</div>
+						{/each}
+					{:else}
+						<span>No files</span>
+					{/if}
+				{/if}
+			</div>
+		{/snippet}
+	</Table>
+
+	<div class="mt-4 flex flex-col lg:flex-row lg:justify-between">
+		<div>
+			<p>
+				Showing {(currPage - 1) * entries + 1}
+				to {Math.min(currPage * entries, filterData(data.dataArsip).length)}
+				of {filterData(data.dataArsip).length}
+			</p>
+		</div>
+		<div class="flex flex-row gap-3">
+			<button
 				class="rounded-lg bg-white px-3 py-2 hover:bg-[#F9D48B]"
 				disabled={currPage === 1}
 				onclick={() => {
