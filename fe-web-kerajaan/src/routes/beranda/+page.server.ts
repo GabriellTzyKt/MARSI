@@ -99,6 +99,7 @@ export const load: PageServerLoad = async () => {
             organisasi: filteredOrganisasi.length,
             komunitas: filteredKomunitas.length
         });
+        console.log("Filtered Acara", filteredAcara)
         // Process situs data with photos
         const processedSitus = await Promise.all(filteredSitus.map(async (item) => {
             const processedItem = { ...item, imageUrls: [] };
@@ -138,7 +139,7 @@ export const load: PageServerLoad = async () => {
             
             return processedItem;
         }));
-
+        console.log("")
         // Process acara data with photos
         const processedAcara = await Promise.all(filteredAcara.map(async (item) => {
             const processedItem = {

@@ -27,8 +27,8 @@
 				? data.organisasi.map((org) => ({
 						id: org.id_organisasi,
 						header: org.nama_organisasi || 'Organisasi',
-						isi: org.deskripsi || 'Tidak ada deskripsi',
-						situs: org.profileUrl || situs1,
+						isi: org.deskripsi_organisasi || 'Tidak ada deskripsi',
+						situs: org.profileUrls[0] || situs1,
 						status: 'organisasi'
 					}))
 				: [];
@@ -37,8 +37,8 @@
 				? data.komunitas.map((kom) => ({
 						id: kom.id_komunitas,
 						header: kom.nama_komunitas || 'Komunitas',
-						isi: kom.deskripsi || 'Tidak ada deskripsi',
-						situs: kom.profileUrl || situs1,
+						isi: kom.deskripsi_komunitas || 'Tidak ada deskripsi',
+						situs: kom.profileUrls[0] || situs1,
 						status: 'komunitas'
 					}))
 				: [];

@@ -111,9 +111,11 @@ export const load: PageServerLoad = async ({params, cookies}) => {
 };
 
 export const actions: Actions = {
-    editAcara: async ({ request, cookies }) => {
+    editAcara: async ({ request, cookies, params }) => {
         const data = await request.formData();
         let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
+        let res = await fetch(`${env.URL_KERAJAAN}/acara/detail/${params.id}`);
+        let msd = await res.json()
 
         const ids = data.getAll("id").map(String); // undangan
         const ids2 = data.getAll("id2").map(String); //panit
@@ -290,7 +292,7 @@ export const actions: Actions = {
                 jenis_acara: data.get("jenisacara"),
                 kapasitas_acara: Number(data.get("kapasitasacara")),
                 // foto_acara: "1",
-                status: "Diajukan",
+                status: msd.status === "Diajukan"? "Diajukan" : msd.status,
             }
             console.log("PayLoad", payload)
             let res = await fetch(`${env.URL_KERAJAAN}/acara`, {

@@ -21,20 +21,14 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
            
             try {
                     if (item.penanggung_jawab) {
-                        let userResponse = await fetch(`${env.PUB_PORT}/user/${item.penanggung_jawab}`,{
-                            headers: {
-                                "Authorization": `Bearer ${token?.token}`
-                            }
+                        let userResponse = await fetch(`${env.URL_KERAJAAN}/anggota/${item.penanggung_jawab}`,{
+                         
                         });
-                        let pembinaRes = await fetch(`${env.PUB_PORT}/user/${item.pembina}`, {
-                            headers: {
-                                "Authorization": `Bearer ${token?.token}`
-                            }
+                        let pembinaRes = await fetch(`${env.URL_KERAJAAN}/anggota/${item.pembina}`, {
+                           
                         });
-                        let pelindungres = await fetch(`${env.PUB_PORT}/user/${item.pelindung}`, {
-                            headers: {
-                                "Authorization": `Bearer ${token?.token}`
-                            }
+                        let pelindungres = await fetch(`${env.URL_KERAJAAN}/anggota/${item.pelindung}`, {
+                            
                         });
                         if (userResponse.ok) {
                             let userData = await userResponse.json();

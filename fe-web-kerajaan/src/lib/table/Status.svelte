@@ -3,16 +3,16 @@
 </script>
 
 <div
-	class="mx-1 flex rounded-full px-2 py-1 text-center"
+	class="mx-1 flex justify-center rounded-full px-2 py-1"
 	class:bg-berlangsung={status === 'Berlangsung' || status === 'Ditugaskan'}
 	class:bg-disetujui={status === 'Disetujui' || status === 'Selesai'}
 	class:bg-ditolak={status === 'Ditolak'}
-	class:bg-diajukan={status === 'Diajukan'}
 	class:bg-pending={status === 'Pending'}
+	class:bg-diajukan={status === 'Diajukan'}
 	class:bg-tugas-berlangsung={status === 'Ditugaskan'}
 	class:bg-tugas-selesai={status === 'Selesai'}
 >
-	<p class="text-xs">{status}</p>
+	<p class="text-center text-xs font-[700]">{status}</p>
 </div>
 
 <style>
