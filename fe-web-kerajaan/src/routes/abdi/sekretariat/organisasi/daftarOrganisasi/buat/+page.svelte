@@ -7,6 +7,7 @@
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
 	import { onMount } from 'svelte';
+	import { env } from '$env/dynamic/public';
 	let { data } = $props();
 
 	let open = $state(false);
@@ -56,6 +57,27 @@
 	let selectedImage = $state(null);
 	let imagePreview = $state(gambardefault);
 	let namaimage = $state('');
+	let errorPembina = $state();
+	let nama_organisasi = $state('');
+	// async function submitPembina() {
+	// 	if (nama_organisasi == '' || selectedPb == null) {
+	// 		errorPembina = 'Isi Nama Organisasidan pilih dari dropdown pembina';
+	// 	} else {
+	// 		try {
+	// 			loading = true;
+	// 			let resPembina = await fetch(
+	// 				`${env.PUBLIC_URL_KERAJAAN}/permohonan`,
+	// 				{
+	// 					method: 'POST',
+	// 					headers: {
+	// 						'Content-Type': 'application/json'
+	// 					},
+	// 					body: JSON.stringify({})
+	// 				}
+	// 			);
+	// 		} catch (error) {}
+	// 	}
+	// }
 
 	// Fungsi untuk menangani upload gambar
 	function handleImageUpload(event: any) {
@@ -135,6 +157,7 @@
 					<div class="relative">
 						<input
 							type="text"
+							bind:value={nama_organisasi}
 							name="nama_organisasi"
 							placeholder="Masukkan Nama Organisasi"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 pr-10"
@@ -310,7 +333,11 @@
 							{/each}
 						{/if}
 					</div>
-					<button class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white">
+					<button
+						type="button"
+						class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white"
+						onclick={() => submitPembina()}
+					>
 						Permohonan
 					</button>
 				</div>

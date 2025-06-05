@@ -315,16 +315,6 @@
 </script>
 
 <div class="container mx-auto p-4">
-	<div class="mb-6 flex items-center justify-between">
-		<h1 class="text-2xl font-bold">Master Data</h1>
-		<div class="flex items-center gap-2">
-			<span>Sri Apriliani</span>
-			<div class="flex h-8 w-8 items-center justify-center rounded-full bg-orange-500 text-white">
-				<span>SA</span>
-			</div>
-		</div>
-	</div>
-
 	<div class="mb-6 flex flex-wrap gap-2">
 		{#each button as btn}
 			<button

@@ -21,11 +21,11 @@ export const load = async ({ cookies }) => {
       let [tugasRes, situsRes, userRes, acaraRes] = await Promise.all([
         fetch(`${env.URL_KERAJAAN}/tugas?limit=${limitTugas}`, {
           method: 'GET',
-          headers: { Accept: 'application/json' }
+        
         }),
         fetch(`${env.URL_KERAJAAN}/situs?limit=${limitSitus}`, {
-          method: 'GET',
-          headers: { Accept: 'application/json' }
+          method: 'GET'
+          
         }),
         fetch(`${env.PUB_PORT}/users?limit=${limitUser}`, {
           headers: { "Authorization": `Bearer ${cookie.token}` }
@@ -42,7 +42,7 @@ export const load = async ({ cookies }) => {
           acaraRes.json()
         ]);
         situsData = situsData.filter((doc: any) => {
-                        return doc.deleted_at === '0001-01-01T00:00:00Z' || !doc.deleted_at
+                        return doc.deleted_at === '0001-01-01T00:00:00Z' || doc.deleted_at == null
                     })
          acaraDataRaw = acaraDataRaw.filter((doc: any) => {
                         return doc.deleted_at === '0001-01-01T00:00:00Z' || !doc.deleted_at
@@ -98,7 +98,7 @@ export const actions: Actions = {
         const data = await request.formData()
         let today = new Date().toISOString().split("T")[0]
         const formDate = String(data.get("tanggal_penugasan"))
-        // console.log(data)
+        console.log(data)
         console.log(today)
         const ver = z.object({
             pemberi_tugas:
@@ -172,7 +172,7 @@ export const actions: Actions = {
                 // lokasi
                 // id_acara ?
             };
-            // console.log("data yang mau di submit: ", tugasData);
+            console.log("data yang mau di submit: ", tugasData);
             const send = await fetch(`${env.BASE_URL_8008}/tugas`, {
                 method: "POST",
                 headers: {

@@ -265,17 +265,139 @@ export const load: PageServerLoad = async ({params, cookies}) => {
 export const actions: Actions = {
     updateLaporan: async ({ request, params }) => {
         let data = await request.formData();
-        console.log(data)
+        // console.log(data)
+        let existingLPJ: any;
+        const newFilesDokumentasi = data.getAll('uploadfileDokumentasi').filter(file => file instanceof File && file.size > 0) as File[];
+        const existingFileIdsDokumentasi = data.getAll('existingFileIdDokumentasai').map(id => id?.toString()).filter(id => id && id !== 'null' && id !== 'undefined');
+        let id_lpj: any
+        
+        let lpjRes = await fetch(`${env.URL_KERAJAAN}/lpj/${params.id}`, {
+            method: "GET",
+        });
+        let lpjData = await lpjRes.json();
+        console.log(lpjData)
+        if (!lpjRes) {
+            console.error(`Failed to fetch lpj/${params.id}: ${lpjRes.status}`);
+            // return fail(404, { error: "Lpj tidak ditemukan" });
+        }
 
-        let id_lpj:any
+        id_lpj = lpjData.id_lpj_acara
+        if (!id_lpj) {
+            
 
-        let lpj = new FormData()
-        lpj.append("jumlah_peserta", (data.get("jumlah_peserta") as string))
-        lpj.append("perkiraan_jumlah_peserta", (data.get("perkiraan_jumlah_peserta") as string))
-        lpj.append("bukti_pelaksanaan", (data.get("bukti_pelaksanaan") as File))
-        lpj.append("id_acara", (params.id as string))
+            let lpj = new FormData()
+            lpj.append("jumlah_peserta", (data.get("jumlah_peserta") as string))
+            lpj.append("perkiraan_jumlah_peserta", (data.get("perkiraan_jumlah_peserta") as string))
+            for( const doc of newFilesDokumentasi){
+                console.log("adding", doc)
+                lpj.append("bukti_pelaksanaan", (doc as File))
+            }
+            lpj.append("id_acara", (params.id as string))
+    
+            console.log("Lpj yang akan di Submit : ", lpj)
+            let lpjRes = await fetch(`${env.URL_KERAJAAN}/lpj`, {
+                method: "POST",
+                
+                body: lpj
+            })
+            let lpjData = await lpjRes.json()
+            console.log(lpjData)
+            if (!lpjRes) {
+                console.error(`Failed to fetch lpj/${params.id}: ${lpjRes.status}`);
+                // return fail(404, { error: "Lpj tidak ditemukan" });
+            }
+            id_lpj = lpjData.id_lpj_acara
+        }
+        existingLPJ = lpjData
 
-        console.log("Lpj yang akan di Submit : ", lpj)
+        console.log("id", id_lpj)
+        let newDocLPJ:any = []
+
+
+
+
+        // if (newFilesDokumentasi.length > 0) {
+        //     try {
+        //         // Upload each file individually to ensure all are processed
+        //         for (const file of newFilesDokumentasi) {
+        //             console.log(`Processing file: ${file.name} (${file.size} bytes)`);
+                    
+        //             const singleFileFormData = new FormData();
+        //             singleFileFormData.append('nama_acara', existingLPJ.nama_acara   as string);
+        //             singleFileFormData.append('foto_acara', file);
+                    
+        //             console.log(`Uploading file: ${file.name}`);
+        //             const uploadResponse = await fetch(`${env.URL_KERAJAAN}/file/foto_acara`, {
+        //                 method: 'POST',
+        //                 body: singleFileFormData
+        //             });
+                    
+        //             if (!uploadResponse.ok) {
+        //                 console.error(`Upload failed for ${file.name}:`, uploadResponse.status);
+        //                 const responseText = await uploadResponse.text();
+        //                 console.error('Upload response body:', responseText);
+        //                 continue; // Skip this file but continue with others
+        //             }
+                    
+        //             const uploadResult = await uploadResponse.json();
+        //             console.log(`Upload result for ${file.name}:`, uploadResult);
+                    
+        //             // Extract ID from response
+        //             let fileId = null;
+                    
+        //             if (uploadResult.id_path) {
+        //                 if (typeof uploadResult.id_path === 'string') {
+        //                     fileId = uploadResult.id_path;
+        //                 } else if (uploadResult.id_path.data) {
+        //                     fileId = uploadResult.id_path.data;
+        //                 }
+        //             } else if (uploadResult.id_dokumentasi) {
+        //                 if (typeof uploadResult.id_dokumentasi === 'string') {
+        //                     fileId = uploadResult.id_dokumentasi;
+        //                 } else if (Array.isArray(uploadResult.id_dokumentasi)) {
+        //                     fileId = uploadResult.id_dokumentasi[0]; // Take first if array
+        //                 }
+        //             } else if (Array.isArray(uploadResult) && uploadResult.length > 0) {
+        //                 fileId = uploadResult[0];
+        //             } else if (uploadResult.data) {
+        //                 if (typeof uploadResult.data === 'string') {
+        //                     fileId = uploadResult.data;
+        //                 } else if (Array.isArray(uploadResult.data) && uploadResult.data.length > 0) {
+        //                     fileId = uploadResult.data[0];
+        //                 }
+        //             }
+                    
+        //             if (fileId) {
+        //                 console.log(`File ${file.name} uploaded with ID: ${fileId}`);
+        //                 newDocLPJ.push(fileId);
+        //             } else {
+        //                 console.warn(`Could not extract ID for file ${file.name}:`, uploadResult);
+        //             }
+        //         }
+                
+        //         console.log('All new files uploaded with IDs:', newDocLPJ);
+        //     } catch (uploadError) {
+        //         console.error('Error in file upload process:', uploadError);
+        //         return fail(500, {
+        //             errors: `Error uploading files: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`,
+        //             success: false
+        //         });
+        //     }
+        // }
+
+        // // Combine existing and new file IDs
+        // let allFileIdsDocument = [...existingFileIdsDokumentasi];
+            
+        // // Add new file IDs if any
+        // if (newDocLPJ.length > 0) {
+        //     allFileIdsDocument = [...allFileIdsDocument, ...newDocLPJ];
+        // }
+        
+        // // If no files provided at all, use existing dokumentasi from document
+        // let finalDokumentasiAcara = allFileIdsDocument.length > 0 
+        //     ? allFileIdsDocument.join(',') 
+        //     : (existingLPJ.bukti_pelaksanaan || '');
+            
 
         let rabList: { id_lpj_acara: number;  keterangan: string; jumlah: number }[] = [];
         const rabKeteranganKeys = Array.from(data.keys()).filter((key) =>
@@ -284,16 +406,7 @@ export const actions: Actions = {
        
 
         try {
-            // let lpjRes = await fetch(`${env.URL_KERAJAAN}/lpj/${params.id}`, {
-            //     method: "GET",
-            // });
-            // let lpjData = await lpjRes.json();
-            // console.log(lpjData)
-            // if (!lpjRes) {
-            //     console.error(`Failed to fetch lpj/${params.id}: ${lpjRes.status}`);
-            //     return fail(404, { error: "Lpj tidak ditemukan" });
-            // }
-            // id_lpj = lpjData.id_lpj_acara
+            
 
             for (const ketKey of rabKeteranganKeys) {
                  const index = ketKey.split("_").pop();                       
@@ -305,8 +418,15 @@ export const actions: Actions = {
                  }            
             }   
             
-            console.log("RAB List:", rabList); 
-            
+            // console.log("RAB List:", rabList); 
+            // let fetchRAB = await fetch(`${env.URL_KERAJAAN}/lpj/rab/${id_lpj}`, {
+            //     method: "GET"
+            // })
+            // if (!fetchRAB.ok) {
+
+            //     console.error(`Failed to fetch lpj/rab/${id_lpj}: ${fetchRAB.status}`);
+
+            // }
             // let rabRes = await fetch(`${env.URL_KERAJAAN}/lpj/rab`, {
             //     method: "POST",
             //     body: JSON.stringify(rabList)
@@ -321,80 +441,83 @@ export const actions: Actions = {
             // }
             const existingFileIdsAcara = data.getAll('existingFileIdAcara').map(id => id?.toString()).filter(id => id && id !== 'null' && id !== 'undefined');
             const newFilesAcara = data.getAll('uploadfileAcara').filter(file => file instanceof File && file.size > 0) as File[];
+            // const newFilesDokumentasi = data.getAll('uploadfileDokumentasi').filter(file => file instanceof File && file.size > 0) as File[];
             console.log("New files from form:", newFilesAcara.map(f => f.name));
             let newFileIds: string[] = [];
+            const existingDocResponse = await fetch(`${env.URL_KERAJAAN}/acara/${params.id}`);
+            const existingDoc = existingDocResponse.ok ? await existingDocResponse.json() : { foto_acara: '' };
             // let fotoAcara = data.getAll("uploadfileAcara") as File[]
             console.log("File acara", newFilesAcara)
-            // if (newFilesAcara.length > 0) {
-            //     try {
-            //         // Upload each file individually to ensure all are processed
-            //         for (const file of newFilesAcara) {
-            //             console.log(`Processing file: ${file.name} (${file.size} bytes)`);
+            console.log("File doc", newFilesDokumentasi)
+            if (newFilesAcara.length > 0) {
+                try {
+                    // Upload each file individually to ensure all are processed
+                    for (const file of newFilesAcara) {
+                        console.log(`Processing file: ${file.name} (${file.size} bytes)`);
                         
-            //             const singleFileFormData = new FormData();
-            //             singleFileFormData.append('nama_acara', data.get("nama_aset") as string);
-            //             singleFileFormData.append('foto_acara', file);
+                        const singleFileFormData = new FormData();
+                        singleFileFormData.append('nama_acara', existingDoc.nama_acara   as string);
+                        singleFileFormData.append('foto_acara', file);
                         
-            //             console.log(`Uploading file: ${file.name}`);
-            //             const uploadResponse = await fetch(`${env.URL_KERAJAAN}/file/foto_acara`, {
-            //                 method: 'POST',
-            //                 body: singleFileFormData
-            //             });
+                        console.log(`Uploading file: ${file.name}`);
+                        const uploadResponse = await fetch(`${env.URL_KERAJAAN}/file/foto_acara`, {
+                            method: 'POST',
+                            body: singleFileFormData
+                        });
                         
-            //             if (!uploadResponse.ok) {
-            //                 console.error(`Upload failed for ${file.name}:`, uploadResponse.status);
-            //                 const responseText = await uploadResponse.text();
-            //                 console.error('Upload response body:', responseText);
-            //                 continue; // Skip this file but continue with others
-            //             }
+                        if (!uploadResponse.ok) {
+                            console.error(`Upload failed for ${file.name}:`, uploadResponse.status);
+                            const responseText = await uploadResponse.text();
+                            console.error('Upload response body:', responseText);
+                            continue; // Skip this file but continue with others
+                        }
                         
-            //             const uploadResult = await uploadResponse.json();
-            //             console.log(`Upload result for ${file.name}:`, uploadResult);
+                        const uploadResult = await uploadResponse.json();
+                        console.log(`Upload result for ${file.name}:`, uploadResult);
                         
-            //             // Extract ID from response
-            //             let fileId = null;
+                        // Extract ID from response
+                        let fileId = null;
                         
-            //             if (uploadResult.id_path) {
-            //                 if (typeof uploadResult.id_path === 'string') {
-            //                     fileId = uploadResult.id_path;
-            //                 } else if (uploadResult.id_path.data) {
-            //                     fileId = uploadResult.id_path.data;
-            //                 }
-            //             } else if (uploadResult.id_dokumentasi) {
-            //                 if (typeof uploadResult.id_dokumentasi === 'string') {
-            //                     fileId = uploadResult.id_dokumentasi;
-            //                 } else if (Array.isArray(uploadResult.id_dokumentasi)) {
-            //                     fileId = uploadResult.id_dokumentasi[0]; // Take first if array
-            //                 }
-            //             } else if (Array.isArray(uploadResult) && uploadResult.length > 0) {
-            //                 fileId = uploadResult[0];
-            //             } else if (uploadResult.data) {
-            //                 if (typeof uploadResult.data === 'string') {
-            //                     fileId = uploadResult.data;
-            //                 } else if (Array.isArray(uploadResult.data) && uploadResult.data.length > 0) {
-            //                     fileId = uploadResult.data[0];
-            //                 }
-            //             }
+                        if (uploadResult.id_path) {
+                            if (typeof uploadResult.id_path === 'string') {
+                                fileId = uploadResult.id_path;
+                            } else if (uploadResult.id_path.data) {
+                                fileId = uploadResult.id_path.data;
+                            }
+                        } else if (uploadResult.id_dokumentasi) {
+                            if (typeof uploadResult.id_dokumentasi === 'string') {
+                                fileId = uploadResult.id_dokumentasi;
+                            } else if (Array.isArray(uploadResult.id_dokumentasi)) {
+                                fileId = uploadResult.id_dokumentasi[0]; // Take first if array
+                            }
+                        } else if (Array.isArray(uploadResult) && uploadResult.length > 0) {
+                            fileId = uploadResult[0];
+                        } else if (uploadResult.data) {
+                            if (typeof uploadResult.data === 'string') {
+                                fileId = uploadResult.data;
+                            } else if (Array.isArray(uploadResult.data) && uploadResult.data.length > 0) {
+                                fileId = uploadResult.data[0];
+                            }
+                        }
                         
-            //             if (fileId) {
-            //                 console.log(`File ${file.name} uploaded with ID: ${fileId}`);
-            //                 newFileIds.push(fileId);
-            //             } else {
-            //                 console.warn(`Could not extract ID for file ${file.name}:`, uploadResult);
-            //             }
-            //         }
+                        if (fileId) {
+                            console.log(`File ${file.name} uploaded with ID: ${fileId}`);
+                            newFileIds.push(fileId);
+                        } else {
+                            console.warn(`Could not extract ID for file ${file.name}:`, uploadResult);
+                        }
+                    }
                     
-            //         console.log('All new files uploaded with IDs:', newFileIds);
-            //     } catch (uploadError) {
-            //         console.error('Error in file upload process:', uploadError);
-            //         return fail(500, {
-            //             errors: `Error uploading files: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`,
-            //             success: false
-            //         });
-            //     }
-            // }
-               const existingDocResponse = await fetch(`${env.URL_KERAJAAN}/acara/${params.id}`);
-            const existingDoc = existingDocResponse.ok ? await existingDocResponse.json() : { foto_acara: '' };
+                    console.log('All new files uploaded with IDs:', newFileIds);
+                } catch (uploadError) {
+                    console.error('Error in file upload process:', uploadError);
+                    return fail(500, {
+                        errors: `Error uploading files: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`,
+                        success: false
+                    });
+                }
+            }
+               
              
               
         // const id_jenis_aset = jenisList.find(item => item.nama_jenis === jenis_aset)
@@ -431,6 +554,18 @@ export const actions: Actions = {
                
                 status: data.get("status"),               
             };
+            let res = await fetch(`${env.URL_KERAJAAN}/acara`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            let msg = await res.json()
+            console.log(msg)
+            if (!res.ok) {
+                console.error(msg.message)
+            }
             console.log("Final Isian",payload)
             return { success: true };
 

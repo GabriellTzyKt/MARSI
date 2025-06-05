@@ -1,11 +1,15 @@
 <script lang="ts">
+	import { goto, invalidateAll } from '$app/navigation';
 	import { navigating, page } from '$app/state';
 	import { env } from '$env/dynamic/public';
 	import Loader from '$lib/loader/Loader.svelte';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	let { data } = $props();
 	let total = $state(8);
 	console.log(data);
 	let loading = $state(false);
+	let success = $state(false);
+
 	async function persetujuan(yes: boolean) {
 		try {
 			loading = true;
@@ -14,28 +18,37 @@
 				nama_acara: data.data.nama_acara,
 				deskripsi_acara: data.data.deskripsi_acara,
 				tujuan_acara: data.data.tujuan_acara,
-				lokasi_acara: data.data.id_lokasi,
+				lokasi_acara: Number(data.data.id_lokasi),
 				alamat_acara: data.data.alamat_acara,
-				waktu_mulai: `${data.data.tanggal_mulai} ${data.data.waktu_mulai}`,
-				waktu_selesai: `${data.data.tanggal_selesai} ${data.data.waktu_selesai}`,
+				waktu_mulai: `${data.data.tanggal_mulai} ${data.data.waktu_mulai}:00`,
+				waktu_selesai: `${data.data.tanggal_selesai} ${data.data.waktu_selesai}:00`,
 				penanggung_jawab: Number(data.data.id_penanggung_jawab),
 				jenis_acara: data.data.jenis_acara,
 				kapasitas_acara: Number(data.data.kapasitas_acara),
+				foto_acara: data.data.foto_acara,
 				status: yes ? 'Disetujui' : 'Ditolak'
 			};
 			console.log('Payload', payload);
-			// let res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/acara`, {
-			// 	method: 'PUT',
-			// 	headers: {
-			// 		'Content-Type': 'application/json'
-			// 	},
-			// 	body: JSON.stringify(payload)
-			// });
-			// let msg = await res.json();
-			// console.log(msg);
+			let res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/acara`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(payload)
+			});
+			let msg = await res.json();
+			console.log(msg);
 		} catch (error) {
 		} finally {
 			loading = false;
+			success = true;
+
+			await invalidateAll().then(() => {
+				setTimeout(() => {
+					success = false;
+					goto('/abdi/sekretariat/acara');
+				});
+			});
 		}
 	}
 </script>
@@ -247,6 +260,9 @@
 </div>
 {#if loading}
 	<Loader></Loader>
+{/if}
+{#if success}
+	<SuccessModal text="Berhasil!"></SuccessModal>
 {/if}
 
 <style>

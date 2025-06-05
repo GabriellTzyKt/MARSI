@@ -5,6 +5,7 @@
 	import Loader from '$lib/loader/Loader.svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	let { data } = $props();
 	let total = $state(8);
 	let error = $state();
@@ -605,15 +606,15 @@
 									id="bukti_pelaksanaan"
 									accept="image/*"
 									class="hidden"
-									onchange={handleFileChangelpj}
+									onchange={handleFileChangeDokumentasi}
 								/>
 							</label>
 							<!-- <span class="pajamas--media absolute right-2 mt-2.5 opacity-55"> </span> -->
 						</div>
-						{#if imagePreviewlpj}
+						{#if uploadedFileUrlsDokumentasi.length !== 0}
 							<div class="mt-2 flex w-full justify-center">
 								<img
-									src={imagePreviewlpj}
+									src={uploadedFileUrlsDokumentasi[0]}
 									alt="preview"
 									class="h-auto w-[200px] rounded object-fill text-center"
 								/>
@@ -797,6 +798,12 @@
 		</div>
 	</form>
 </div>
+{#if loading}
+	<Loader></Loader>
+{/if}
+{#if success}
+	<SuccessModal text="Sukses!"></SuccessModal>
+{/if}
 
 <style>
 	.pajamas--media {

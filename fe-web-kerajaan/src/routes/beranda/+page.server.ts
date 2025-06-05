@@ -5,11 +5,12 @@ import type { PageServerLoad } from "./$types";
 export const load: PageServerLoad = async () => {
     try {
         // Fetch all data in parallel for better performance
-        const [situsRes, acaraRes, organisasiRes, komunitasRes] = await Promise.all([
+        const [situsRes, acaraRes, organisasiRes, komunitasRes,berandaRes] = await Promise.all([
             fetch(`${env.URL_KERAJAAN}/situs?limit=500`),
             fetch(`${env.URL_KERAJAAN}/acara?limit=500`),
             fetch(`${env.URL_KERAJAAN}/organisasi?limit=500`),
-            fetch(`${env.URL_KERAJAAN}/komunitas?limit=500`)
+            fetch(`${env.URL_KERAJAAN}/komunitas?limit=500`),
+            fetch(`${env.URL_KERAJAAN}/beranda`),
         ]);
 
         // Check responses
@@ -17,6 +18,7 @@ export const load: PageServerLoad = async () => {
         if (!acaraRes.ok) throw new Error(`Acara API error: ${acaraRes.status}`);
         if (!organisasiRes.ok) throw new Error(`Organisasi API error: ${organisasiRes.status}`);
         if (!komunitasRes.ok) throw new Error(`Komunitas API error: ${komunitasRes.status}`);
+        if (!berandaRes.ok) throw new Error(`Komunitas API error: ${komunitasRes.status}`);
 
         // Parse JSON responses one by one to identify the issue
         const situsData = await situsRes.json();

@@ -6,10 +6,56 @@
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import Loader from '$lib/loader/Loader.svelte';
 	import { navigating } from '$app/state';
+	let { data } = $props();
 	let error = $state();
 	let timer: number;
+	let dataHeader = $state(data?.beranda[0] || {});
+	let dataCard1 = $state(data?.beranda[1] || {});
+	let dataCard2 = $state(data?.beranda[2] || {});
+	let dataCard3 = $state(data?.beranda[3] || {});
 	let open = $state(false);
 	let loading = $state(false);
+	// Untuk setiap gambar section
+	let selectedImageHeader = $state<File | null>(null);
+	let imagePreviewHeader = $state<string | undefined>(g1);
+
+	let selectedImageCard1 = $state<File | null>(null);
+	let imagePreviewCard1 = $state<string | undefined>(g1);
+
+	let selectedImageCard2 = $state<File | null>(null);
+	let imagePreviewCard2 = $state<string | undefined>(g1);
+
+	let selectedImageCard3 = $state<File | null>(null);
+	let imagePreviewCard3 = $state<string | undefined>(g1);
+
+	function handleImageUploadHeader(event: any) {
+		const file = event.target.files[0];
+		if (file) {
+			selectedImageHeader = file;
+			imagePreviewHeader = URL.createObjectURL(file);
+		}
+	}
+	function handleImageUploadCard1(event: any) {
+		const file = event.target.files[0];
+		if (file) {
+			selectedImageCard1 = file;
+			imagePreviewCard1 = URL.createObjectURL(file);
+		}
+	}
+	function handleImageUploadCard2(event: any) {
+		const file = event.target.files[0];
+		if (file) {
+			selectedImageCard2 = file;
+			imagePreviewCard2 = URL.createObjectURL(file);
+		}
+	}
+	function handleImageUploadCard3(event: any) {
+		const file = event.target.files[0];
+		if (file) {
+			selectedImageCard3 = file;
+			imagePreviewCard3 = URL.createObjectURL(file);
+		}
+	}
 </script>
 
 {#if navigating.to}
@@ -41,6 +87,7 @@
 	<form
 		action="?/tambahLanding"
 		method="post"
+		enctype="multipart/form-data"
 		use:enhance={() => {
 			loading = true;
 			return async ({ result }) => {
@@ -65,7 +112,12 @@
 					<p>Judul Halaman</p>
 				</div>
 				<div class="mt-1">
-					<Input type="text" name="judul_halaman" value="Maha Mentri Keraton Surabaya"></Input>
+					<input
+						type="text"
+						name="judul_header"
+						class="w-full rounded-lg border border-gray-500 bg-white py-2 ps-2 text-gray-500 focus:outline-none"
+						value={dataHeader.judul_section}
+					/>
 					{#if error?.judul_halaman}
 						{#each error.judul_halaman as e}
 							<p class="text-left text-red-500">{e}</p>
@@ -81,7 +133,8 @@
 				</div>
 				<div class="mt-1">
 					<textarea
-						name="deskripsi_halaman"
+						name="deskripsi_header"
+						value={dataHeader.isi_section}
 						class="min-h-[200px] w-full rounded-lg border border-gray-500 bg-white focus:outline-none"
 						placeholder="Deskripsi singkat"
 						rows="5"
@@ -100,22 +153,32 @@
 					<p>Gambar Background</p>
 				</div>
 
-				<img src={g1} alt="" class=" min-h-[200px] w-full" />
+				<img src={imagePreviewHeader} alt="" class=" min-h-[200px] w-full" />
 				<div class="bg-badran-yellow right-26 absolute top-14 rounded-lg p-1 xl:right-10 xl:top-10">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="1.5"
-						stroke="white"
-						class="size-6 xl:size-4"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+					<label for="header">
+						<input
+							type="file"
+							id="header"
+							name="header"
+							accept="image/*"
+							onchange={handleImageUploadHeader}
+							class="hidden"
 						/>
-					</svg>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="white"
+							class="size-6 xl:size-4"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+							/>
+						</svg>
+					</label>
 				</div>
 				<div class="bg-badran-bdr absolute right-10 top-14 rounded-lg p-1 xl:right-2 xl:top-10">
 					<svg
@@ -150,6 +213,7 @@
 				<div class="mt-1">
 					<textarea
 						name="deskripsi_1"
+						value={dataCard1.isi_section}
 						class="min-h-[200px] w-full rounded-lg border border-gray-500 bg-white focus:outline-none"
 						placeholder="Deskripsi singkat"
 						rows="5"
@@ -164,22 +228,32 @@
 			</div>
 			<!-- isi halaman 1 -->
 			<div class="relative flex flex-col justify-end">
-				<img src={g1} alt="" class="mb-1 min-h-[200px] w-full" />
+				<img src={imagePreviewCard1} alt="" class="mb-1 min-h-[200px] w-full" />
 				<div class="bg-badran-yellow right-26 xl:top-18 absolute top-14 rounded-lg p-1 xl:right-10">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="1.5"
-						stroke="white"
-						class="size-6 xl:size-4"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+					<label for="card1">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="white"
+							class="size-6 xl:size-4"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+							/>
+						</svg>
+						<input
+							type="file"
+							id="card1"
+							name="card1"
+							accept="image/*"
+							onchange={handleImageUploadCard1}
+							class="hidden"
 						/>
-					</svg>
+					</label>
 				</div>
 				<div class="bg-badran-bdr xl:top-18 absolute right-10 top-14 rounded-lg p-1 xl:right-2">
 					<svg
@@ -208,6 +282,7 @@
 				<div class="mt-1">
 					<textarea
 						name="deskripsi_2"
+						value={dataCard2.isi_section}
 						class="min-h-[200px] w-full rounded-lg border border-gray-500 bg-white focus:outline-none"
 						placeholder="Deskripsi singkat"
 						rows="5"
@@ -222,22 +297,32 @@
 			</div>
 			<!-- isi halaman 2 -->
 			<div class="relative flex flex-col justify-end">
-				<img src={g1} alt="" class="mb-1 min-h-[200px] w-full" />
+				<img src={imagePreviewCard2} alt="" class="mb-1 min-h-[200px] w-full" />
 				<div class="bg-badran-yellow right-26 xl:top-18 absolute top-14 rounded-lg p-1 xl:right-10">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="1.5"
-						stroke="white"
-						class="size-6 xl:size-4"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+					<label for="card2">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="white"
+							class="size-6 xl:size-4"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+							/>
+						</svg>
+						<input
+							type="file"
+							id="card2"
+							name="card2"
+							accept="image/*"
+							onchange={handleImageUploadCard2}
+							class="hidden"
 						/>
-					</svg>
+					</label>
 				</div>
 				<div class="bg-badran-bdr xl:top-18 absolute right-10 top-14 rounded-lg p-1 xl:right-2">
 					<svg
@@ -266,6 +351,7 @@
 				<div class="mt-1">
 					<textarea
 						name="deskripsi_3"
+						value={dataCard3.isi_section}
 						class="min-h-[200px] w-full rounded-lg border border-gray-500 bg-white focus:outline-none"
 						placeholder="Deskripsi singkat"
 						rows="5"
@@ -280,22 +366,32 @@
 			</div>
 			<!-- isi halaman 3-->
 			<div class="relative flex flex-col justify-end">
-				<img src={g1} alt="" class="mb-1 min-h-[200px] w-full" />
+				<img src={imagePreviewCard3} alt="" class="mb-1 min-h-[200px] w-full" />
 				<div class="bg-badran-yellow right-26 xl:top-18 absolute top-14 rounded-lg p-1 xl:right-10">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="1.5"
-						stroke="white"
-						class="size-6 xl:size-4"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+					<label for="card3">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="white"
+							class="size-6 xl:size-4"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+							/>
+						</svg>
+						<input
+							type="file"
+							id="card3"
+							name="card3"
+							accept="image/*"
+							onchange={handleImageUploadCard3}
+							class="hidden"
 						/>
-					</svg>
+					</label>
 				</div>
 				<div class="bg-badran-bdr xl:top-18 absolute right-10 top-14 rounded-lg p-1 xl:right-2">
 					<svg
