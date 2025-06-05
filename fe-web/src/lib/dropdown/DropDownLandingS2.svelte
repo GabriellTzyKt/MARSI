@@ -14,7 +14,9 @@
 		name_gambar
 	} = $props();
 
-	let filePreviews: { name: string; url: string; isNew: boolean; id?: string|number }[] = $state([]);
+	let filePreviews: { name: string; url: string; isNew: boolean; id?: string | number }[] = $state(
+		[]
+	);
 	let initialized = false;
 
 	$effect(() => {
@@ -29,10 +31,32 @@
 
 	let fileInput: HTMLInputElement;
 
+	const MAX_FILES = 4;
+
 	function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement;
+		const inputName = input.name; // ambil name_gambar
+		let maxFiles = 1;
+
+		// Sesuaikan batas maksimal berdasarkan nama input
+		if (inputName === 'gambar_section2') {
+			maxFiles = 4;
+		}
+
 		if (input.files) {
 			const newFiles = Array.from(input.files);
+
+			const totalFiles = filePreviews.length + newFiles.length;
+
+			if (totalFiles > maxFiles) {
+				const availableSlots = maxFiles - filePreviews.length;
+				if (availableSlots <= 0) {
+					alert(`Maksimum ${maxFiles} gambar.`);
+					return;
+				}
+				newFiles.splice(availableSlots);
+			}
+
 			files = [...files, ...newFiles];
 			filePreviews = [
 				...filePreviews,
@@ -146,7 +170,7 @@
 								name={name_gambar}
 								class="absolute inset-0 cursor-pointer opacity-0"
 								onchange={handleFileChange}
-								multiple
+								multiple={name_gambar == 'gambar_section2'}
 								bind:this={fileInput}
 							/>
 							<svg
