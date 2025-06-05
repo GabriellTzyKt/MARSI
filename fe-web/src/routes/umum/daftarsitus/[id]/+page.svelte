@@ -15,7 +15,8 @@
 	let gambar3 = situs.gambar3;
 	let gambar4 = situs.gambar4;
 	let nomorcagarbudaya = situs.nomor_cagarbudaya;
-	let kepemilikan = situs.kepemilikan;
+	let namawisata = situs.nama_wisata;
+	let kepemilikan = situs.kepemilikan || "Kasunanan";
 	let pendiri = situs.nama_pendiri;
 	let tahun_berdiri = situs.tahun_berdiri;
 	let jenis_situs = situs.jenis_situs;
@@ -136,7 +137,7 @@
 						>
 							<span class="mdi--run"></span>
 						</div>
-						<p class="ml-2 items-center text-start">Aktivitas : {kepemilikan}</p>
+						<p class="ml-2 items-center text-start">Aktivitas : {namawisata}</p>
 					</div>
 
 					<div class="mt-5 flex items-center">
@@ -148,14 +149,14 @@
 						<p class="ml-2 items-center text-start">Lokasi : {lokasi}</p>
 					</div>
 
-					<div class="mt-5 flex items-center">
+					<!-- <div class="mt-5 flex items-center">
 						<div
 							class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border bg-yellow-600"
 						>
 							<img src={bangunan} alt="" />
 						</div>
 						<p class="ml-2 items-center text-start">Nomor Cagar Budaya : {nomorcagarbudaya}</p>
-					</div>
+					</div> -->
 
 					<p class="mb-5 mt-3 text-start text-sm">{isi}</p>
 				</div>

@@ -306,6 +306,7 @@
 			<select
 				id="sortSelect"
 				bind:value={selectKategori}
+				disabled
 				class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 			>
 				<option value="">None</option>
@@ -320,6 +321,7 @@
 			<select
 				id="sortSelect"
 				bind:value={selectKepemilikan}
+				disabled
 				class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 			>
 				<option value="">None</option>

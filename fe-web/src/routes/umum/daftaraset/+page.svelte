@@ -156,21 +156,6 @@
 
 	<div class="ml-11 flex flex-col gap-y-2 lg:flex-row lg:justify-between lg:gap-y-0">
 		<div class="relative flex items-center gap-x-2">
-			<p>Sort By :</p>
-			<select
-				id="sortSelect"
-				class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-				onchange={handleSortChange}
-			>
-				<option value=" " selected>None</option>
-				<option value="lokasi">Lokasi</option>
-				<option value="tahun-asc">Tahun ( Ascending )</option>
-				<option value="tahun-desc">Tahun ( Descending )</option>
-				<!-- <option value="era">Era</option>
-				<option value="popularity">Popularity</option> -->
-			</select>
-		</div>
-		<div class="relative flex items-center gap-x-2">
 			<p>Show :</p>
 			<select
 				bind:value
@@ -188,6 +173,7 @@
 			<p>Kategori :</p>
 			<select
 				id="sortSelect"
+				disabled
 				bind:value={selectKategori}
 				class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 			>
@@ -198,10 +184,11 @@
 		</div>
 		<!--  -->
 		<!-- Belom Nyoba Di Filter, masih nunggu datanya apa aja biar pasti -->
-		<div class="relative flex items-center gap-x-2">
+		<div class="relative flex items-center gap-x-2 mx-12">
 			<p>Kepemilikan :</p>
 			<select
 				id="sortSelect"
+				disabled
 				bind:value={selectKepemilikan}
 				class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 			>
@@ -211,32 +198,6 @@
 			</select>
 		</div>
 		<!--  -->
-		<div class="relative mr-11 flex items-center gap-x-2">
-			<p>Daerah :</p>
-			{#if (selectedDaerah === ' ' && userLocation === ' ') || (selectedDaerah !== ' ' && userLocation === ' ') || selectedDaerah === ' '}
-				<select
-					bind:value={selectedDaerah}
-					class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-				>
-					<option value="">None</option>
-					<option value="surakarta">Surakarta</option>
-					<option value="yogyakarta">Yogyakarta</option>
-					<option value="Surabaya">Surabaya</option>
-				</select>
-			{:else if userLocation !== ' '}
-				<select
-					bind:value={userLocation}
-					onchange={handleSortChange}
-					disabled
-					class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-				>
-					<option value="">None</option>
-					<option value="surakarta">Surakarta</option>
-					<option value="yogyakarta">Yogyakarta</option>
-					<option value="Surabaya">Surabaya</option>
-				</select>
-			{/if}
-		</div>
 	</div>
 
 	<div class="relative mb-20 ml-10 mr-10 mt-10 grid grid-cols-1 gap-x-4 gap-y-10 md:grid-cols-2">

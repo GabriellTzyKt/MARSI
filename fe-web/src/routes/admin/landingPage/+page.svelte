@@ -11,12 +11,38 @@
 	console.log("Data : ", data)
 
 	const section1 = data.sections.find((s : any) => s.id_section === 1) ?? {};
-	console.log("section 1 : ", section1)
 	const section2 = data.sections.find((s : any) => s.id_section === 2) ?? {};
+	const section3 = data.sections.find((s : any) => s.id_section === 3) ?? {};
+	const section4 = data.sections.find((s : any) => s.id_section === 4) ?? {};
+	const section5 = data.sections.find((s : any) => s.id_section === 5) ?? {};
+	const section6 = data.sections.find((s : any) => s.id_section === 6) ?? {};
+
     const existingPreviewsS2_2 = section2.dokumentasi_files?.map((f : any) => ({
         id: f.id,
         url: f.url
     })) ?? [];
+	const existingPreviewsS3_3 = section3.dokumentasi_files?.map((f : any) => ({
+        id: f.id,
+        url: f.url
+    })) ?? [];
+
+	const existingPreviewsS4_4 = section4.dokumentasi_files?.map((f : any) => ({
+        id: f.id,
+        url: f.url
+    })) ?? [];
+
+	const existingPreviewsS5_5 = section5.dokumentasi_files?.map((f : any) => ({
+        id: f.id,
+        url: f.url
+    })) ?? [];
+
+	const existingPreviewsS6_6 = section6.dokumentasi_files?.map((f : any) => ({
+        id: f.id,
+        url: f.url
+    })) ?? [];
+
+
+	console.log("Existig id section 2 : ", existingPreviewsS2_2)
 
 	let loading = $state(false);
 	let errors = $state();
@@ -84,6 +110,7 @@
 				<DropDownLandingS2
 					name_header="judulpage_section2"
 					name_deskripsi="isipage_section2"
+					name_hidden="id_exist_section2"
 					judulSection="Section 2 - Tentang Kami"
 					name_gambar="gambar_section2"
 					bind:files={filesS2_2}
@@ -96,9 +123,11 @@
 					name_header="judulpage_section3"
 					name_deskripsi="isipage_section3"
 					judulSection="Section 3 - Kerajaan"
-					    name_gambar="gambar_section3"
-
+					name_gambar="gambar_section3"
+					name_hidden="id_exist_section3"
 					bind:files={filesS2_3}
+					dataambil = {section3}
+					existingPreviews = {existingPreviewsS3_3}
 				></DropDownLandingS2>
 			</div>
 			<div class="my-2">
@@ -106,8 +135,11 @@
 					name_header="judulpage_section4"
 					name_deskripsi="isipage_section4"
 					judulSection="Section 4 - Situs"
-					    name_gambar="gambar_section4"
+					name_gambar="gambar_section4"
+					name_hidden="id_exist_section4"
 					bind:files={filesS2_4}
+					dataambil = {section4}
+					existingPreviews = {existingPreviewsS4_4}
 				></DropDownLandingS2>
 			</div>
 			<div class="my-2">
@@ -115,8 +147,11 @@
 					name_header="judulpage_section5"
 					name_deskripsi="isipage_section5"
 					judulSection="Section 5 - Aset Kebudayaan"
-					    name_gambar="gambar_section5"
+					name_gambar="gambar_section5"
+					name_hidden="id_exist_section5"
 					bind:files={filesS2_5}
+					dataambil = {section5}
+					existingPreviews = {existingPreviewsS5_5}
 				></DropDownLandingS2>
 			</div>
 			<div class="my-2">
@@ -124,8 +159,11 @@
 					name_header="judulpage_section6"
 					name_deskripsi="isipage_section6"
 					judulSection="Section 6 - Sorotan Acara"
-					    name_gambar="gambar_section6"
+					name_hidden="id_exist_section6"
+					name_gambar="gambar_section6"
 					bind:files={filesS2_6}
+					dataambil = {section6}
+					existingPreviews = {existingPreviewsS6_6}
 				></DropDownLandingS2>
 			</div>
 		</div>

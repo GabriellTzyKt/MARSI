@@ -47,6 +47,8 @@
 		</div>
 	</div>
 
+	<input type="hidden" name="judulpage_section1" value={dataambil.judul_section}>
+
 	{#if value}
 		<div
 			class=" grid grid-cols-6 rounded-b-xl border-x border-b border-gray-500 bg-white pb-6"

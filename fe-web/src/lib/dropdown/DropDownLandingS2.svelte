@@ -7,20 +7,23 @@
 		files = $bindable([]),
 		existingPreviews = [],
 		judulSection,
+		name_hidden,
 		name_header,
 		dataambil,
 		name_deskripsi,
 		name_gambar
 	} = $props();
 
-	let filePreviews: { name: string; url: string }[] = $state([]);
+	let filePreviews: { name: string; url: string; isNew: boolean; id?: string|number }[] = $state([]);
 	let initialized = false;
 
 	$effect(() => {
 		if (!initialized && existingPreviews && existingPreviews.length > 0) {
 			filePreviews = [...existingPreviews];
 			initialized = true;
+			let allIds = existingPreviews.map((item) => item.id);
 			console.log('File preview : ', filePreviews);
+			console.log('Existing ID : ', allIds);
 		}
 	});
 
@@ -29,17 +32,31 @@
 	function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement;
 		if (input.files) {
-			files = Array.from(input.files);
-			filePreviews = files.map((file) => ({
-				name: file.name,
-				url: URL.createObjectURL(file)
-			}));
+			const newFiles = Array.from(input.files);
+			files = [...files, ...newFiles];
+			filePreviews = [
+				...filePreviews,
+				...newFiles.map((file) => ({
+					name: file.name,
+					url: URL.createObjectURL(file),
+					isNew: true
+				}))
+			];
 		}
 	}
 
 	function rmfile(index: number) {
-		files = files.filter((_, i) => i !== index);
+		const removed = filePreviews[index];
 		filePreviews = filePreviews.filter((_, i) => i !== index);
+
+		if (removed.id) {
+			// Hapus dari existingPreviews juga jika ada id (gambar lama)
+			existingPreviews = existingPreviews.filter((item) => item.id !== removed.id);
+		}
+		if (removed.isNew) {
+			// Hapus dari files jika file baru
+			files = files.filter((_, i) => i !== index - existingPreviews.length);
+		}
 	}
 
 	let value = $state(false);
@@ -47,7 +64,7 @@
 		value = !value;
 		if (value) {
 			console.log('File preview saat buka:', filePreviews);
-			console.log('data : ', dataambil)
+			console.log('data : ', dataambil);
 		}
 	}
 </script>
@@ -78,6 +95,10 @@
 		</div>
 	</div>
 
+	<input type="hidden" name={name_header} value={dataambil.judul_section} />
+	<input type="hidden" name={name_deskripsi} value={dataambil.isi_section} />
+	<input hidden name={name_hidden} value={existingPreviews.map((item) => item.id).join(',')} />
+
 	{#if value}
 		<div
 			class="flex flex-col rounded-b-xl border-x border-b border-gray-500 bg-white p-4 pb-6"
@@ -107,6 +128,7 @@
 					></textarea>
 				</div>
 			</div>
+			<input hidden name={name_hidden} value={existingPreviews.map((item) => item.id).join(',')} />
 			<div class="my-4 flex w-full flex-col items-center justify-center">
 				<div class="flex w-full">
 					<p class="text-left text-xl">Gambar Section</p>

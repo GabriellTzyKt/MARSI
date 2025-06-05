@@ -18,6 +18,8 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
         const situs = situsData.find((item: any) => 
             Number(item.id_situs) === id || Number(item.id) === id
         );
+
+        
         
         if (!situs) {
             throw new Error(`Data tidak ditemukan untuk ID: ${id}`);
@@ -55,6 +57,25 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
                 }
             } catch (error) {
                 console.error(`Error fetching jenis situs list:`, error);
+            }
+        }
+
+        if (situs.id_wisata) {
+            try {
+                const wisataRes = await fetch(`${env.BASE_URL_8008}/situs/wisata?limit=200`);
+                if (wisataRes.ok) {
+                    const wisataList = await wisataRes.json();
+                    const matchingWisata = wisataList.find((item: any) =>
+                        item.id_wisata === situs.id_wisata || item.id === situs.id_wisata
+                    );
+
+                    if (matchingWisata) {
+                        processedSitus.nama_wisata = matchingWisata.nama_wisata || matchingWisata.nama || '';
+                        console.log(`Found nama_wisata: ${processedSitus.nama_wisata}`);
+                    }
+                }
+            } catch (error) {
+                console.error(`Error fetching wisata list:`, error);
             }
         }
         

@@ -29,7 +29,45 @@
 
 	let { data } = $props();
 	console.log('data dari belakang', data.dataKerajaan);
+	console.log('data : ', data);
 	let resultBaru: any = $state([]);
+
+	let section1 = null;
+	if (data && data.dataBeranda && Array.isArray(data.dataBeranda)) {
+		section1 = data.dataBeranda.find((item: any) => item.id_section === 1);
+	}
+
+	let section2 = null;
+	if (data && data.dataBeranda && Array.isArray(data.dataBeranda)) {
+		section2 = data.dataBeranda.find((item: any) => item.id_section === 2);
+	}
+
+	let section3 = null;
+	if (data && data.dataBeranda && Array.isArray(data.dataBeranda)) {
+		section3 = data.dataBeranda.find((item: any) => item.id_section === 3);
+	}
+
+	let section4 = null;
+	if (data && data.dataBeranda && Array.isArray(data.dataBeranda)) {
+		section4 = data.dataBeranda.find((item: any) => item.id_section === 4);
+	}
+
+	let section5 = null;
+	if (data && data.dataBeranda && Array.isArray(data.dataBeranda)) {
+		section5 = data.dataBeranda.find((item: any) => item.id_section === 5);
+	}
+
+	let section6 = null;
+	if (data && data.dataBeranda && Array.isArray(data.dataBeranda)) {
+		section6 = data.dataBeranda.find((item: any) => item.id_section === 6);
+	}
+
+	console.log('section 1 : ', section1);
+	console.log('section 2 : ', section2);
+	console.log('section 3 : ', section3);
+	console.log('section 4 : ', section4);
+	console.log('section 5 : ', section5);
+	console.log('section 6 : ', section6);
 
 	let isMarker = $state(false);
 
@@ -63,7 +101,12 @@
 	const initialView: LatLngExpression = [-2.5489, 118.0149]; // Pusat Indonesia (biar tampilan awal pas)
 
 	// Lokasi marker di beberapa wilayah Indonesia
-	const markerLocations: Array<{ latLng: LatLngExpression; text: string; location: string; id: number }> = [];
+	const markerLocations: Array<{
+		latLng: LatLngExpression;
+		text: string;
+		location: string;
+		id: number;
+	}> = [];
 
 	if (data && data.dataKerajaan && Array.isArray(data.dataKerajaan)) {
 		data.dataKerajaan.forEach((kerajaan: any) => {
@@ -72,32 +115,10 @@
 					latLng: [parseFloat(kerajaan.latitude), parseFloat(kerajaan.longitude)],
 					text: kerajaan.nama_kerajaan || 'Kerajaan',
 					location: kerajaan.place_name || 'Indonesia',
-					id : kerajaan.id_kerajaan || 0
+					id: kerajaan.id_kerajaan || 0
 				});
 			}
 		});
-	}
-
-	// Tambahkan marker random jika markerLocations kosong
-	if (markerLocations.length === 0) {
-		// Batas koordinat Indonesia (kurang lebih)
-		const minLat = -11.0; // Selatan
-		const maxLat = 6.0; // Utara
-		const minLng = 95.0; // Barat
-		const maxLng = 141.0; // Timur
-
-		// Tambahkan 5 marker random di wilayah Indonesia
-		for (let i = 0; i < 10; i++) {
-			const randomLat = minLat + Math.random() * (maxLat - minLat);
-			const randomLng = minLng + Math.random() * (maxLng - minLng);
-
-			markerLocations.push({
-				latLng: [randomLat, randomLng],
-				text: 'Kesultanan Ngayogyakarta Hadiningrat',
-				location: 'Indonesia',
-				id: 0
-			});
-		}
 	}
 </script>
 
@@ -111,7 +132,7 @@
 <section class="relative overflow-x-hidden">
 	<div class=" min-w-screen bg-umum flex min-h-screen flex-col items-center justify-center">
 		<div class="text-center">
-			<p class="mt-20 text-5xl font-[600]">MAJELIS AGUNG RAJA SULTAN INDONESIA</p>
+			<p class="mt-20 text-5xl font-[600]">{section1?.judul_section}</p>
 		</div>
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div class="z-0 h-screen w-[80%] py-6" onmouseenter={showMarkers} onmouseleave={hideMarkers}>
@@ -214,23 +235,20 @@
 >
 	<div class=" grid grid-cols-1 items-center justify-center md:grid-cols-2">
 		<div class="mb-10 ml-10 mt-10 grid grid-cols-3 grid-rows-[auto_auto_1fr] gap-1">
-			<img src={gambar1} alt="dor" class="col-span-1 row-span-2 h-full object-cover" />
-			<img src={gambar2} class="col-span-2 row-span-1 h-[205px] object-cover" alt="dor" />
-			<img src={gambar3} class="col-span-2 row-span-1 h-[172px] object-cover" alt="dor" />
+			<img src={section2.dokumentasi_files[0].url} alt="dor" class="col-span-1 row-span-2 h-full object-cover" />
+			<img src={section2.dokumentasi_files[1].url} class="col-span-2 row-span-1 h-[205px] object-cover" alt="dor" />
+			<img src={section2.dokumentasi_files[2].url} class="col-span-2 row-span-1 h-[172px] object-cover" alt="dor" />
 			<img
-				src={gambar4}
-				class="col-span-3 h-auto max-h-60 w-[100%] object-cover lg:w-[93%]"
+				src={section2.dokumentasi_files[3].url}
+				class="col-span-3 h-auto max-h-60 w-[50%] object-cover lg:w-[75%]"
 				alt="dordordor"
 			/>
 		</div>
 
 		<div class="ms-30 mb-10 max-w-full break-words p-4 text-center lg:mb-0 lg:mr-10 lg:text-left">
-			<p class="mb-4 text-4xl font-[500]">Tentang Kami</p>
+			<p class="mb-4 text-4xl font-[500]">{section2.judul_section}</p>
 			<p>
-				Majelis Agung Raja Sultan Indonesia (MARSI) adalah sebuah organisasi yang menghimpun
-				raja-raja dan sultan-sultan dari berbagai keraton dan kerajaan di Indonesia. Organisasi ini
-				bertujuan untuk menjaga dan melestarikan nilai-nilai budaya, tradisi, dan adat istiadat yang
-				berasal dari keraton-keraton Nusantara.
+				{section2.isi_section}
 			</p>
 		</div>
 	</div>
@@ -254,16 +272,12 @@
 	<div class="bg-umum relative pb-10">
 		<div class="grid grid-cols-1 items-center justify-center md:grid-cols-2">
 			<div class="m-4 text-center">
-				<img src={candi} alt="" />
+				<img src={section3.dokumentasi_files[0].url} alt="" />
 			</div>
 			<div class="me-30 max-w-full break-words p-4 text-center md:me-60 lg:text-left">
-				<p class="mb-4 text-4xl font-[500]">Kerajaan di Indonesia</p>
+				<p class="mb-4 text-4xl font-[500]">{section3.judul_section}</p>
 				<p>
-					Kerajaan-kerajaan yang berdiri di Indonesia berjumlah ratusan. Majelis Agung Raja Sultan
-					Indonesia (MARSI) sendiri merupakan sebuah organisasi yang beranggotakan para Raja beserta
-					dengan Kerajaannya. Anggota MARSI tersebar dari sabang hingga merauke. Melalui laman ini,
-					anda dapat memperkaya pengetahuan anda mengenai ratusan kerajaan yang berdiri di
-					Indonesia.
+					{section3.isi_section}
 				</p>
 				<div class="flex w-full justify-center lg:justify-start">
 					<a
@@ -331,13 +345,9 @@
 	<section class="relative bg-white pb-10 pt-10">
 		<div class="grid grid-cols-1 items-center justify-center md:grid-cols-2">
 			<div class=" max-w-full break-words p-4 text-center lg:text-right">
-				<p class="mb-4 text-4xl font-[500]">Situs Bersejarah Kerajaan</p>
+				<p class="mb-4 text-4xl font-[500]">{section4.judul_section}</p>
 				<p class=" min-w-screen lg:ml-auto lg:w-[80%]">
-					Dari banyaknya kerajaan yang berdiri dan tersebar di seluruh penjuru nusantara, semua
-					pasti memiliki situs bersejarahnya masing-masing. Mulai dari bangunan, situs khusus,
-					ataupun yang hanya dalam bentuk struktur. Di laman ini, anda dapat mengakses secara
-					lengkap mengenai informasi seputar situs-situs bersejarah dari ratusan kerajaan yang
-					tentunya sangat menarik untuk anda lihat!
+					{section4.isi_section}
 				</p>
 				<div class="flex w-full justify-center lg:justify-end">
 					<a
@@ -358,7 +368,7 @@
 				</div>
 			</div>
 			<div class="m-4 text-center">
-				<img src={candi2} alt="" />
+				<img src={section4.dokumentasi_files[0].url} alt="" />
 			</div>
 		</div>
 	</section>
@@ -382,17 +392,14 @@
 
 	<div class="bg-umum relative mt-10 grid grid-cols-1 items-center justify-center md:grid-cols-2">
 		<div class="m-4">
-			<img src={gbr} class="mt-20" alt="" />
+			<img src={section5.dokumentasi_files[0].url} class="mt-20" alt="" />
 		</div>
 		<div
 			class="mr-4 ms-4 flex max-w-full flex-col break-words p-4 text-center md:mr-20 md:ms-40 lg:text-right"
 		>
-			<p class="mb-4 text-4xl font-[500]">Aset Bersejarah Kerajaan</p>
+			<p class="mb-4 text-4xl font-[500]">{section5.judul_section}</p>
 			<p>
-				Kerajaan yang telah berdiri sejak lama tentu memiliki aset yang senantiasa dijaga. Ada aset
-				yang berupa benda (contohnya keris), lalu juga ada aset yang berupa takbenda (contohnya
-				tarian). Tentu aset-aset tersebut memiliki nilai sejarah yang sangat tinggi dan pastinya
-				akan sangat menarik untuk anda lihat dan pelajari melalui laman berikut!
+				{section5.isi_section}
 			</p>
 
 			<!-- Tombol Animasi 1 -->
@@ -425,11 +432,10 @@
 				<div class="item-center max-w-full break-words p-4 text-center lg:text-right">
 					<p class="mb-5 mt-5">SOROTAN ACARA</p>
 					<p class="mb-5 text-4xl font-[500] lg:ms-40">
-						Pengukuhan Majelis Agung Raja Sultan Indonesia
+						{section6.judul_section}
 					</p>
 					<p class="mb-2 w-[100%] items-center lg:ml-auto lg:w-[70%]">
-						Kementrian Dalam Negeri (Kemendagri) mengukuhkan Majelis Agung Raja Sultan (MARS)
-						Indonesia di Kantor Kemendagri, Medan Merdeka Utara, Jakarta Pusat, Kamis (24/8/2017).
+						{section6.isi_section}
 					</p>
 					<div class="flex w-full justify-center lg:justify-end">
 						<a href="/" class="my-2 flex items-center gap-2 rounded-full px-5 py-3">
@@ -439,7 +445,7 @@
 					</div>
 				</div>
 				<div class="m-4 flex items-center justify-center lg:-mx-20 lg:mr-20">
-					<img src={gambar2} alt="" class="h-[300px] w-[450px]" />
+					<img src={section6.dokumentasi_files[0].url} alt="" class="h-[300px] w-[450px]" />
 				</div>
 			</div>
 		</section>

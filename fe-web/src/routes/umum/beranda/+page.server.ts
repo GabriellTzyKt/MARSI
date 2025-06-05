@@ -31,7 +31,6 @@ export const load: PageServerLoad = async () => {
 
             const filteredData = data.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z");
 
-
             // Format dates and extract place names
             const kerajaanFormatted = await Promise.all(filteredData.map(async (item: any) => {
                 const formatDate = (iso: string) => {
@@ -92,8 +91,51 @@ export const load: PageServerLoad = async () => {
                 };
             }));
 
+            let berandaData: any[] = [];
+            try {
+                const berandaRes = await fetch(`${env.PUB_PORT}/beranda`, {
+                    method: "GET",
+                    headers: { "Accept": "application/json" }
+                });
+                if (berandaRes.ok) {
+                    const berandaRaw = await berandaRes.json();
+                    // Proses dokumentasi untuk setiap item di /beranda
+                    berandaData = await Promise.all(berandaRaw.map(async (item: any) => {
+                        let dokumentasi_files: { id: number, url: string }[] = [];
+                        if (item.dokumentasi) {
+                            const ids = String(item.dokumentasi).split(',').map(id => id.trim()).filter(Boolean);
+                            for (const idStr of ids) {
+                                const id = Number(idStr);
+                                if (!isNaN(id)) {
+                                    try {
+                                        const docRes = await fetch(`${env.PUB_PORT}/doc/${id}`);
+                                        if (docRes.ok) {
+                                            const docData = await docRes.json();
+                                            if (docData.file_dokumentasi) {
+                                                dokumentasi_files.push({
+                                                    id,
+                                                    url: `${env.PUB_PORT}/file?file_path=${docData.file_dokumentasi}`
+                                                });
+                                            }
+                                        }
+                                    } catch (err) {
+                                        console.error(`Gagal fetch doc ${id}:`, err);
+                                    }
+                                }
+                            }
+                        }
+                        return { ...item, dokumentasi_files };
+                    }));
+                }
+            } catch (err) {
+                console.error("Gagal fetch /beranda:", err);
+            }
+
             console.log("ini dari beranda 1: ", kerajaanFormatted);
-            return { dataKerajaan: kerajaanFormatted };
+            return {
+                dataKerajaan: kerajaanFormatted,
+                dataBeranda: berandaData
+            };
         }
         else return { dataKerajaan: "Failed" };
     }

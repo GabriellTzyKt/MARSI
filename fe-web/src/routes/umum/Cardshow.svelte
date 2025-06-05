@@ -18,20 +18,24 @@
 	});
 
 	let { judul, lokasi, gambar, id, tahun = null } = $props();
-	console.log("Gamar : ", gambar)
+	if (lokasi == '' || !lokasi) {
+		lokasi = 'Kasunanan';
+	}
+	console.log('Gamar : ', gambar);
+	if (typeof gambar === 'string') {
+		gambar = [gambar];
+	} else if (Array.isArray(gambar)) {
+		gambar;
+	}
 </script>
 
 <div class="grid grid-cols-1 gap-6">
 	<div class="w-xl flex h-full min-h-[350px] flex-col justify-between rounded shadow-lg">
-		{#if gambar[0]}
-			<img
-				class="h-64 w-full object-cover text-center"
-				src={gambar || gambar[0]}
-				alt="Sunset in the mountains"
-			/>
+		{#if gambar && gambar.length > 0}
+			<img class="h-64 w-full object-cover text-center" src={gambar[0]} alt="No Images" />
 		{:else}
 			<div class="h-64 w-full object-cover text-center">
-				<p class="text-gray-600">No Images</p>
+				<img class="h-64 w-full object-cover text-center" src={gambar} alt="No Images" />
 			</div>
 		{/if}
 		<div class="mx-6 flex flex-grow flex-col py-4">
@@ -39,7 +43,7 @@
 				class="mb-2 overflow-hidden text-ellipsis whitespace-nowrap text-xl font-bold"
 				title={judul}
 			>
-				{judul} ({tahun})
+				{judul}
 			</div>
 			<div class="flex flex-grow flex-col lg:flex-row lg:justify-between">
 				<div class="flex items-center">

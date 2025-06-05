@@ -14,7 +14,7 @@
 	let aset = anggota.kategori_aset;
 	let vidio = anggota.videoUrls;
 	let isi = anggota.isi;
-	let kepemilikan = anggota.kepemilikan;
+	let kepemilikan = anggota.kepemilikan || "Kasunanan";
 	let gambar1 = anggota.gambar1;
 	let gambar2 = anggota.gambar2;
 	let gambar3 = anggota.gambar3;
