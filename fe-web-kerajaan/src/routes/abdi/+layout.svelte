@@ -285,8 +285,11 @@
 			page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/acara/ubah/[idacara]'
 		) {
 			return 'Edit Acara Organisasi';
+		} else if (page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/acara/edit/[idacara]') {
+			return 'Ubah Acara Komunitas';
 		}
 	});
+
 
 	function handleLogout() {
 		goto('/login');

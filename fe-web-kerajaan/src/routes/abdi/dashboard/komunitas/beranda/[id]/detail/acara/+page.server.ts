@@ -11,7 +11,6 @@ export const load: PageServerLoad = async ({fetch, params, depends}) => {
     try {
         // Get the current komunitas ID from params
         const currentKomId = params.id;
-        console.log("Current komunitas ID:", currentKomId);
         
         // Fetch all data in parallel using Promise.all
         const [komunitasResponse, acaraResponse, allKomunitasResponse] = await Promise.all([
@@ -45,7 +44,6 @@ export const load: PageServerLoad = async ({fetch, params, depends}) => {
                 )
                 : [];
         }
-        console.log("user : ", userProfiles)
 
         // Process acara data - extract from nested structure and attach penanggung jawab profile
         const processedAcara = acaraNestedData.map((item: any) => {
@@ -62,7 +60,6 @@ export const load: PageServerLoad = async ({fetch, params, depends}) => {
             };
         });
         
-        console.log("[Processed : ", processedAcara)
 
         // Handle all komunitas response
         let komunitasList = [];
