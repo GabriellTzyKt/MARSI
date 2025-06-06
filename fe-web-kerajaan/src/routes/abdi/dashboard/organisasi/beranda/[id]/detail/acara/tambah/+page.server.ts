@@ -10,11 +10,7 @@ export const load: PageServerLoad = async ({ fetch, params, cookies }) => {
     console.log("Params", id)
     // Fetch users, situs, komunitas, organisasi, dan acara
     const [usersRes, situsRes, organisasiRes, acaraRes] = await Promise.all([
-        fetch(`${env.PUB_PORT}/users`, {
-            headers: {
-               "Authorization": `Bearer ${token?.token}`
-            }
-        }),
+        fetch(`${env.BASE_URL_8008}/anggota`),
         fetch(`${env.BASE_URL_8008}/situs?limit=200`),
         fetch(`${env.BASE_URL_8008}/organisasi?limit=200`),
         fetch(`${env.BASE_URL_8008}/acara/organisasi/${id}?limit=200`)

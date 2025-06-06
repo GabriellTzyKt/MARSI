@@ -22,7 +22,7 @@ export const load = async ({ params, fetch, cookies }) => {
 
     // Ambil semua data yang dibutuhkan secara paralel
     const [usersRes, situsRes, organisasiRes, acaraRes, panitiaRes, undanganRes] = await Promise.all([
-        fetch(`${env.BASE_URL}/users?limit=2000`),
+        fetch(`${env.BASE_URL_8008}/anggota?limit=2000`),
         fetch(`${env.BASE_URL_8008}/situs?limit=200`),
         fetch(`${env.BASE_URL_8008}/organisasi?limit=200`),
         fetch(`${env.BASE_URL_8008}/acara/organisasi/${id_situs}?limit=200`),
@@ -79,7 +79,7 @@ export const load = async ({ params, fetch, cookies }) => {
 
     // Cari acara yang id-nya sama dengan id_acaraorganisasi
     let acara = null;
-    for (const item of filteredAcaraList) {
+    for (const item of acaraList) {
         if (item.Acara.id_acara == Number(id_acaraorganisasi)) {
             acara = item;
             break;

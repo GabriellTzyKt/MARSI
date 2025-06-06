@@ -192,7 +192,6 @@ export const actions: Actions = {
             const formData = new FormData();
             formData.append("id_pemohon", token.id_admin);
             formData.append("penanggung_jawab", form.penanggungjawab);
-            formData.append("id_lpj", "1");
             formData.append("lokasi_acara", form.lokasiacara);
             formData.append("nama_acara", form.namaacara);
             formData.append("deskripsi_acara", form.deskripsiacara);
@@ -202,9 +201,7 @@ export const actions: Actions = {
             formData.append("waktu_selesai", `${form.tanggalselesai} ${form.waktuselesai}:00`);
             formData.append("jenis_acara", form.inputradio);
             formData.append("kapasitas_acara", form.kapasitasacara);
-            formData.append("status", "Diajukan");
-            // formData.append("profile");
-            // formData.append("foto_acara");
+            formData.append("status", "diajukan");
            
             console.log("Payload", formData)
             //    let formsend = new FormData()
@@ -247,7 +244,6 @@ export const actions: Actions = {
 
             return {
                 success: true,
-                apiResult
             };
         
             

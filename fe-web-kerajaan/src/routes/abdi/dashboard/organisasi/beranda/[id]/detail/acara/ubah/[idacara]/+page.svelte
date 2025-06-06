@@ -339,7 +339,7 @@
 		<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 			<div class="col-span-2">
 				<div class="mt-2 w-full">
-					<p>Nama Acara:</p>
+					<p>Nama Acara: <span class="text-red-500">*</span></p>
 					<input
 						type="text"
 						name="namaacara"
@@ -373,7 +373,7 @@
 					/>
 				</div> -->
 				<div class="relative mt-3 w-full">
-					<p>Lokasi Acara:</p>
+					<p>Lokasi Acara: <span class="text-red-500">*</span></p>
 					<input
 						type="text"
 						autocomplete="off"
@@ -413,7 +413,7 @@
 					{/each}
 				{/if}
 				<div class="mt-3 w-full">
-					<p>Alamat Acara:</p>
+					<p>Alamat Acara: <span class="text-red-500">*</span></p>
 					<input
 						type="text"
 						name="alamat_acara"
@@ -438,7 +438,7 @@
 					/>
 				</div> -->
 				<div class="mt-2 w-full">
-					<p>Deskripsi Acara:</p>
+					<p>Deskripsi Acara: <span class="text-red-500">*</span></p>
 					<textarea
 						placeholder="Masukkan Deskripsi Acara"
 						name="deskripsi_acara"

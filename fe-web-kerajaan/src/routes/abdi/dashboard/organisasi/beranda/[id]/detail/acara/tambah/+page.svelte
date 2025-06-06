@@ -325,7 +325,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 			<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 				<div class="col-span-2">
 					<div class="mt-2 w-full">
-						<p>Nama Acara:</p>
+						<p>Nama Acara: <span class="text-red-500">*</span> </p>
 						{#if activeTab === 'completed'}
 							<select
 								name="namaacara"
@@ -357,7 +357,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 					<input type="hidden" name="nama_acara" value={nama_acara} />
 
 					<div class="col-span-2 mt-2 w-full">
-						<p class="mt-2">Penanggung Jawab:</p>
+						<p class="mt-2">Penanggung Jawab: <span class="text-red-500">*</span> </p>
 						<select
 							name="penanggungjawab"
 							bind:value={penanggungjawab}
@@ -376,7 +376,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 					</div>
 
 					<div class="col-span-2 mt-2 w-full">
-						<p class="mt-2">Penyelenggara Acara:</p>
+						<p class="mt-2">Penyelenggara Acara: <span class="text-red-500">*</span> </p>
 						<select
 							name="penyelenggaraacara"
 							bind:value={penyelenggaraacara}
@@ -397,7 +397,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 					</div>
 
 					<div class="mt-2 w-full">
-						<p>Lokasi Acara:</p>
+						<p>Lokasi Acara: <span class="text-red-500">*</span> </p>
 						<select
 							name="lokasiacara"
 							bind:value={lokasiacara}
@@ -417,7 +417,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 					</div>
 
 					<div class="mt-2 w-full">
-						<p>Tujuan Acara:</p>
+						<p>Tujuan Acara: </p>
 						<input
 							type="text"
 							name="tujuanacara"
@@ -436,7 +436,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 				<div class="col-span-2">
 					<div class="flexcoba mt-2 flex w-full">
 						<div class="flex-1">
-							<p>Kapasitas Acara:</p>
+							<p>Kapasitas Acara: <span class="text-red-500">*</span> </p>
 							<input
 								type="text"
 								bind:value={kapasitasacara}
@@ -452,7 +452,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 						</div>
 						<div class="ml-10 flex">
 							<div class="mr-10 w-full items-center text-center">
-								<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara</p>
+								<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara <span class="text-red-500">*</span></p>
 								<div class="mt-2 flex items-center justify-center self-center">
 									<div class="mx-2 flex items-center justify-center">
 										<input
@@ -492,7 +492,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 
 					<div class="flexcoba mt-2 flex w-full">
 						<div class="lg:flex-1">
-							<p>Tanggal Mulai:</p>
+							<p>Tanggal Mulai: <span class="text-red-500">*</span></p>
 							<input
 								type="date"
 								name="tanggalmulai"
@@ -508,7 +508,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 						</div>
 						<div class="flex-1 lg:ml-10">
 							<div class="w-full">
-								<p>Tanggal Selesai:</p>
+								<p>Tanggal Selesai: <span class="text-red-500">*</span></p>
 								<input
 									type="date"
 									name="tanggalselesai"
@@ -526,7 +526,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 					</div>
 					<div class="flexcoba mt-2 flex w-full">
 						<div class="lg:flex-1">
-							<p>Waktu Mulai:</p>
+							<p>Waktu Mulai: <span class="text-red-500">*</span></p>
 							<input
 								type="time"
 								name="waktumulai"
@@ -541,7 +541,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 						</div>
 						<div class="flex-1 lg:ml-10">
 							<div class="w-full">
-								<p>Waktu Selesai:</p>
+								<p>Waktu Selesai: <span class="text-red-500">*</span></p>
 								<input
 									type="time"
 									name="waktuselesai"
@@ -557,7 +557,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 						</div>
 					</div>
 					<div class="w-full" style="position:relative">
-						<p>Alamat acara:</p>
+						<p>Alamat acara: <span class="text-red-500">*</span></p>
 						{#if activeTab === 'completed'}
 							<input
 								type="text"
@@ -591,7 +591,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 						{/if}
 					</div>
 					<div class="w-full">
-						<p>Deskripsi Acara:</p>
+						<p>Deskripsi Acara: <span class="text-red-500">*</span></p>
 						<textarea
 							name="deskripsiacara"
 							bind:value={deskripsiacara}
@@ -605,168 +605,6 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 						{/if}
 					</div>
 				</div>
-			</div>
-
-			<div class="mt-5 h-1 w-full bg-slate-300"></div>
-			<div class="mt-8 flex w-full">
-				<p class="my-auto ml-10 w-full text-center font-bold">Undangan</p>
-				<button
-					class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white"
-					onclick={() => {
-						console.log('hi');
-						tambah();
-					}}
-					type="button"
-				>
-					Tambah Undangan
-				</button>
-			</div>
-
-			<div class="mt-10 grid grid-cols-8 gap-2">
-				{#each invitations as invitation, i (invitation.id)}
-					<div class="col-span-1">{i + 1}</div>
-					<input type="hidden" name="id" value={invitation.id} />
-					<div class="col-span-1 w-full rounded-lg border px-2 py-1">
-						<select
-							bind:value={panggilan[invitation.id]}
-							name={`panggilan_${invitation.id}`}
-							id={`panggilan_${invitation.id}`}
-							class="mt-1 w-full"
-						>
-							<option value="laki-laki">Laki-laki</option>
-							<option value="perempuan">Perempuan</option>
-						</select>
-					</div>
-
-					<div class="col-span-3 w-full rounded-lg border px-2 py-1">
-						<!-- Nama jadi dropdown -->
-						<select
-							bind:value={namabawah[invitation.id]}
-							name={`namabawah_${invitation.id}`}
-							id={`namabawah_${invitation.id}`}
-							class="w-full focus:outline-none"
-							onchange={() => handleNamaChange(invitation.id)}
-						>
-							<option value="" disabled selected>Pilih Nama</option>
-							{#each data.users as user}
-								<option value={user.id_user}>{user.nama_lengkap}</option>
-							{/each}
-						</select>
-						{#if error}
-							{console.log(error)}
-							{#if error.namabawah && !namabawah[invitation.id]}
-								<p class="text-left text-red-500">{error.namabawah[0]}</p>
-							{:else}
-								{console.log('No error for namabawah with id', invitation.id)}
-							{/if}
-						{/if}
-					</div>
-
-					<div class="col-span-2 w-full rounded-lg border px-2 py-1">
-						<input
-							type="text"
-							bind:value={notelpbawah[invitation.id]}
-							name={`notelpbawah_${invitation.id}`}
-							id={`notelpbawah_${invitation.id}`}
-							placeholder="081638149124"
-							class="w-full focus:outline-none"
-							pattern="\d+"
-							title="Hanya angka yang diizinkan"
-							minlength="10"
-						/>
-						{#if error.notelpbawah && !notelpbawah[invitation.id]}
-							<p class="text-left text-red-500">{error.notelpbawah[0]}</p>
-						{/if}
-					</div>
-					<!-- svelte-ignore a11y_no_static_element_interactions -->
-					<div class="col-span-1">
-						<!-- svelte-ignore a11y_click_events_have_key_events -->
-						<span
-							class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-red-400 p-2"
-							onclick={() => hapus(i)}
-						>
-							<i class="gg--trash z-10 items-center text-2xl"></i>
-						</span>
-					</div>
-				{/each}
-			</div>
-
-			<div class="mt-5 h-1 w-full bg-slate-300"></div>
-			<div class="mt-8 flex w-full">
-				<p class="my-auto ml-10 w-full text-start font-bold">Panitia Acara</p>
-				<button
-					class="w-60 justify-end text-nowrap rounded-lg bg-blue-400 px-2 py-2 text-white"
-					onclick={() => {
-						console.log('hi2');
-						tambah2();
-					}}
-					type="button"
-				>
-					Tambah Undangan
-				</button>
-			</div>
-
-			<div class="mt-10 grid grid-cols-10 gap-2">
-				{#each invitations2 as invitation, i (invitation.id)}
-					<div class="col-span-1">{i + 1}</div>
-					<input type="hidden" name="id2" value={invitation.id} />
-
-					<div class="col-span-4 w-full rounded-lg border px-2 py-1">
-						<select
-							bind:value={namalengkapbawah[invitation.id]}
-							name={`namalengkapbawah_${invitation.id}`}
-							id={`namalengkapbawah_${invitation.id}`}
-							class="w-full focus:outline-none"
-						>
-							<option value="" disabled selected>Pilih Nama</option>
-							{#each data.users as user}
-								<option value={user.id_user}>{user.nama_lengkap}</option>
-							{/each}
-						</select>
-						{#if error}
-							{console.log(error)}
-							{#if error.namalengkapbawah && !namalengkapbawah[invitation.id]}
-								<p class="text-left text-red-500">{error.namalengkapbawah[0]}</p>
-							{:else}
-								{console.log('No error for namabawah with id', invitation.id)}
-							{/if}
-						{/if}
-					</div>
-
-					<div class="col-span-4 w-full rounded-lg border px-2 py-1">
-						<select
-							bind:value={namajabatan[invitation.id]}
-							name={`namajabatan_${invitation.id}`}
-							id={`namajabatan_${invitation.id}`}
-							class="mt-1 w-full"
-						>
-							<option value="" disabled selected>Silahkan Pilih!</option>
-							<option value="ketua" disabled={isKetuaDipilih(invitation.id)}>Ketua</option>
-							<option value="wakilketua">Wakil Ketua</option>
-							<option value="sekretariat">Sekretariat</option>
-							<option value="bendahara">Bendahara</option>
-							<option value="acara">Acara</option>
-							<option value="komunikasi">Komunikasi</option>
-							<option value="perlengkapan">Perlengkapan</option>
-							<option value="pdd">PDD</option>
-							<option value="keamanan">Keamanan</option>
-							<option value="humas">Humas</option>
-						</select>
-						{#if error.namajabatan && !namajabatan[invitation.id]}
-							<p class="text-left text-red-500">{error.namajabatan[0]}</p>
-						{/if}
-					</div>
-					<!-- svelte-ignore a11y_no_static_element_interactions -->
-					<div class="col-span-1">
-						<!-- svelte-ignore a11y_click_events_have_key_events -->
-						<span
-							class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-red-400 p-2"
-							onclick={() => hapus2(i)}
-						>
-							<i class="gg--trash z-10 items-center text-2xl"></i>
-						</span>
-					</div>
-				{/each}
 			</div>
 
 			<div class="mt-8 flex w-full justify-center lg:justify-end">
