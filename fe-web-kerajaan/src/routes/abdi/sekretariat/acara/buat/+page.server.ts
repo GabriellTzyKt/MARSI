@@ -6,7 +6,7 @@ import { env } from "$env/dynamic/private";
 export const load: PageServerLoad = async ({ cookies }) => {
     try {
         let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
-        let res = await fetch(`${env.URL_KERAJAAN}/situs`);
+        let res = await fetch(`${env.URL_KERAJAAN}/situs?limit=1000`);
         let resUser = await fetch(`${env.PUB_PORT}/users`,{
             headers: {
                 "Authorization": `Bearer ${token?.token}`
@@ -34,6 +34,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
         
         if (res.ok) {
             let data = await res.json();
+            data = data.filter((item)=> item.deleted_at === "0001-01-01T00:00:00Z" || !item.deleted_at || item.deleted_at == null);
             console.log("Data: ", data);
             
             return { data, user: userData, id_pemohon: token?.user_data.id_user };
