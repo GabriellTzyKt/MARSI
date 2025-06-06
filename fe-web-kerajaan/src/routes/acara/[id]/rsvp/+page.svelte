@@ -183,7 +183,7 @@
 				<input type="hidden" name="tamu_count" value={number} />
 
 				<div class="mt-4 flex flex-col">
-					<p>Pilih Nama</p>
+					<p>Pilih Nama <span class="text-red-500">*</span></p>
 					<select
 						class="rounded-lg border-2 px-2 py-2"
 						placeholder="Pilih nama"

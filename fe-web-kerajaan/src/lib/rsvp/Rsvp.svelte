@@ -22,7 +22,9 @@
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 		<!-- Nama Lengkap Dropdown -->
 		<div class="flex flex-col">
-			<label for={`tamu_nama_${index}`} class="mb-1">Nama Lengkap</label>
+			<label for={`tamu_nama_${index}`} class="mb-1"
+				>Nama Lengkap <span class="text-red-500">*</span></label
+			>
 			<!-- <input 
                 list={`datalist_nama_${index}`}
                 id={`tamu_nama_${index}`}
@@ -45,7 +47,9 @@
 
 		<!-- Jenis Kelamin -->
 		<div class="flex flex-col">
-			<label for={`tamu_jeniskelamin_${index}`} class="mb-1">Jenis Kelamin</label>
+			<label for={`tamu_jeniskelamin_${index}`} class="mb-1"
+				>Jenis Kelamin <span class="text-red-500">*</span></label
+			>
 			<select
 				id={`tamu_jeniskelamin_${index}`}
 				name={`tamu_jeniskelamin_${index}`}
@@ -64,7 +68,9 @@
 
 	<!-- Telepon -->
 	<div class="mt-4 flex flex-col">
-		<label for={`tamu_telepon_${index}`} class="mb-1">Nomor Telepon</label>
+		<label for={`tamu_telepon_${index}`} class="mb-1"
+			>Nomor Telepon <span class="text-red-500">*</span></label
+		>
 		<input
 			type="phone"
 			id={`tamu_telepon_${index}`}

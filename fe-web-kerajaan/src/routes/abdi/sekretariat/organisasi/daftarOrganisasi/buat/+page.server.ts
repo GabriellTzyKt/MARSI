@@ -153,7 +153,7 @@ export const actions: Actions = {
                    formDataToSend.append("pelindung", formData.pelindung_id);
                    formDataToSend.append("pembina", formData.pembina_id);
                    formDataToSend.append("tanggal_berdiri", formData.tanggal_berdiri);
-                   formDataToSend.append("foto_organisasi", data.get("profile_image") as File);
+                  
                    formDataToSend.append("profile", data.get("profile_image") as File);
                    // formDataToSend.append("lokasi", '2');
                    // formDataToSend.append("tempat_operasional", formData.tempat_operasional);

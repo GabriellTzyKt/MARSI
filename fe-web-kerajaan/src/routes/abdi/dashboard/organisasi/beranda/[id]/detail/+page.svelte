@@ -9,7 +9,7 @@
 
 	let { data } = $props();
 	let dataambil = $state(data.organisasi);
-	let datafotoprofile = $state(data?.profileUrl);
+	let datafotoprofile = $state(data?.profileUrl.url);
 	let datasemuafoto = $state(data.fotoOrganisasiDetails?.map((detail: any) => detail.url));
 	let dataanggota = $state(data.dataanggota.length);
 	let uploadedFiles: (File | null)[] = $state([]);
