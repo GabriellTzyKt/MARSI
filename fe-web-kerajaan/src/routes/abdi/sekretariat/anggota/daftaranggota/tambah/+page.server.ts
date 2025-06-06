@@ -98,19 +98,19 @@ export const actions: Actions = {
             jabatan:
                 z.string({ message: "Field Jabatan harus diisi" })
             .nonempty("Field Jabatan Tidak Boleh Kosong!"),
-            nama_ayah:
-                z.string({ message: "Field Nama Ayah harus diisi" })
-            .nonempty("Field Nama Ayah Tidak Boleh Kosong!"),
+            // nama_ayah:
+            //     z.string({ message: "Field Nama Ayah harus diisi" })
+            // .nonempty("Field Nama Ayah Tidak Boleh Kosong!"),
            
-            nama_ibu:
-                z.string({ message: "Field Nama Ibu harus diisi" })
-            .nonempty("Field Nama Ibu Tidak Boleh Kosong!"),
+            // nama_ibu:
+            //     z.string({ message: "Field Nama Ibu harus diisi" })
+            // .nonempty("Field Nama Ibu Tidak Boleh Kosong!"),
             email:
                 z.string({ message: "Field Email harus diisi" })
             .email("Email Tidak Valid").nullable(),
-            wongso:
-                z.string({ message: "Field Wongso harus diisi" })
-            .nonempty("Field Wongso Tidak Boleh Kosong!"),
+            // wongso:
+            //     z.string({ message: "Field Wongso harus diisi" })
+            // .nonempty("Field Wongso Tidak Boleh Kosong!"),
             pekerjaan:
                 z.string({ message: "Field Pekerjaan harus diisi" })
                 .optional(),
@@ -129,10 +129,10 @@ export const actions: Actions = {
             password: String(data.get("password")||""),
             jenis_kelamin: String(data.get("jenis_kelamin")||""),
             hobi: String(data.get("hobi")||""),    
-            nama_ayah: String(data.get("nama_ayah")||""),
-            nama_ibu: String(data.get("nama_ibu")||""),
+            // nama_ayah: String(data.get("nama_ayah")||""),
+            // nama_ibu: String(data.get("nama_ibu")||""),
             email: String(data.get("email")||""),
-            wongso: String(data.get("wongso")||""),
+            // wongso: String(data.get("wongso")||""),
             pekerjaan: String(data.get("pekerjaan")||""),
             agama: String(data.get("agama")||""),
             jabatan: String(data.get("jabatan")||"")
@@ -149,8 +149,8 @@ export const actions: Actions = {
                 alamat: form.alamat,
                 tempat_lahir: form.tempat_lahir,
                 tanggal_lahir: form.tanggal_lahir,
-                nama_ayah: form.nama_ayah,
-                nama_ibu: form.nama_ibu,
+                nama_ayah: data.get("nama_ayah")||"",
+                nama_ibu: data.get("nama_ibu")||"",
                 username: form.username,
                 password: form.password,                
                 jenis_kelamin: form.jenis_kelamin,
@@ -159,7 +159,7 @@ export const actions: Actions = {
                 pekerjaan: form.pekerjaan,
                 agama: form.agama,
                 hobi: form.hobi,
-                keturunan: form.wongso,
+                keturunan: data.get("wongso")||"",
                 jabatan: form.jabatan,
                 id_gelar: 1,
                 

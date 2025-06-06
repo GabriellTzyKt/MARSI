@@ -137,13 +137,14 @@
 				</div>
 			</div>
 		</div>
+		<span class="flex justify-center text-red-500">*</span>
 		<input type="text" name="profile" value={data?.data?.profile} hidden />
 		<input type="text" name="id_organisasi" value={data?.data.id_organisasi} hidden />
 		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<!-- 1 -->
 			<div>
 				<div>
-					<p>Nama Organisasi</p>
+					<p>Nama Organisasi<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -162,7 +163,7 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Alamat</p>
+					<p class="mt-5">Alamat<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -181,7 +182,7 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Email</p>
+					<p class="mt-5">Email<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -200,7 +201,7 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Deskripsi Organisasi</p>
+					<p class="mt-5">Deskripsi Organisasi<span class="text-red-500">*</span></p>
 					<div class="relative w-full">
 						<textarea
 							placeholder="Masukkan Deskripsi Organisasi"
@@ -223,7 +224,7 @@
 			<!-- 2 -->
 			<div>
 				<div>
-					<p>Penanggung Jawab</p>
+					<p>Penanggung Jawab<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -271,7 +272,7 @@
 
 				<div class="mt-5 flex items-center gap-3">
 					<div class="w-full">
-						<p>Pembina</p>
+						<p>Pembina<span class="text-red-500">*</span></p>
 						<div class="relative">
 							<input
 								type="text"
@@ -316,14 +317,11 @@
 							{/each}
 						{/if}
 					</div>
-					<button class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white">
-						Permohonan
-					</button>
 				</div>
 
 				<div class="mt-5 flex items-center gap-3">
 					<div class="w-full">
-						<p>Pelindung</p>
+						<p>Pelindung<span class="text-red-500">*</span></p>
 						<div class="relative">
 							<input
 								type="text"
@@ -362,9 +360,6 @@
 							</div>
 						{/if}
 					</div>
-					<button class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white">
-						Permohonan
-					</button>
 				</div>
 				{#if errors}
 					{#each errors.pelindung as e}
@@ -372,7 +367,7 @@
 					{/each}
 				{/if}
 				<div class="mt-2">
-					<p>Tanggal Berdiri</p>
+					<p>Tanggal Berdiri<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="date"
@@ -390,7 +385,7 @@
 				</div>
 				<div class="mt-5 flex gap-12">
 					<div class="w-full lg:w-[50%]">
-						<p>No telepon :</p>
+						<p>No telepon<span class="text-red-500">*</span></p>
 						<input
 							type="text"
 							name="phone"

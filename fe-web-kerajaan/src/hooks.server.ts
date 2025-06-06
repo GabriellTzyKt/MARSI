@@ -18,7 +18,22 @@ export const handle = async ({ event, resolve}) => {
             }
         }
         if (event.url.pathname.startsWith("/abdi/sekretariat")) {
-            if (!auth?.id_admin || auth.jenis_admin === 0 || auth.status_admin_aktif === 0) {
+            if (!auth?.id_admin || auth.jenis_admin === 0 || auth.status_admin_aktif === 0 || auth.jenis_admin !=="Super Admin") {
+                throw redirect(302, '/beranda');
+            }
+        }
+        if (event.url.pathname.startsWith("/abdi/dashboard/komunitas")) {
+            if (!auth?.id_admin || auth.jenis_admin === 0 || auth.status_admin_aktif === 0 || auth.jeni_admin !== "Admin Komunitas") {
+                throw redirect(302, '/beranda');
+            }
+        }
+        if (event.url.pathname.startsWith("/abdi/dashboard/organisasi")) {
+            if (!auth?.id_admin || auth.jenis_admin === 0 || auth.status_admin_aktif === 0 || auth.jeni_admin !== "Admin Organisasi") {
+                throw redirect(302, '/beranda');
+            }
+        }
+        if (event.url.pathname.startsWith("/abdi/dashboard/situs")) {
+            if (!auth?.id_admin || auth.jenis_admin === 0 || auth.status_admin_aktif === 0 || auth.jenis_admin !== "Admin Situs") {
                 throw redirect(302, '/beranda');
             }
         }

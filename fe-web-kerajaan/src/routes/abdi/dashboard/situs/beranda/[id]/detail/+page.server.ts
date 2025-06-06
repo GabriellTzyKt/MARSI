@@ -287,7 +287,7 @@ export const actions: Actions = {
         let finalDokumentasi = allFileIds.length > 0  
             ? allFileIds.join(',') 
             : (existingDoc.foto_situs || '');
-        // console.log('Final dokumentasi value:', finalDokumentasi);
+        console.log('Final dokumentasi value:', finalDokumentasi);
         
         
         
@@ -316,7 +316,7 @@ export const actions: Actions = {
             no_telp: existingDoc.no_telp,                            
             email: existingDoc.email,                            
         };       
-        console.log(payload)       
+        console.log("Payload",payload)       
         try {
             const res = await fetch(`${env.URL_KERAJAAN}/situs`, {
                 headers: {

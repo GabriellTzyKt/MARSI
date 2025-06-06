@@ -225,7 +225,6 @@
 				if (result.type === 'success') {
 					setTimeout(() => {
 						success = false;
-						// goto('/abdi/sekretariat/acara');
 					}, 3000);
 				} else {
 					let parsed = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
@@ -589,9 +588,6 @@
 					<div class="col-span-4 w-full rounded-lg border px-2 py-1">{panit.nama_panit}</div>
 					<div class="col-span-3 w-full rounded-lg border px-2 py-1">{panit.jabatan}</div>
 				{/each}
-				{#if data?.panit?.length == 0}
-					<p>No Panitia</p>
-				{/if}
 			</div>
 
 			<div class="mt-5 h-1 w-full bg-slate-300"></div>
@@ -604,7 +600,7 @@
 				<div class="grid grid-cols-1 gap-2 lg:grid-cols-3">
 					<div class="col-span-1 mt-5 h-full w-full rounded-lg border-2 border-gray-500">
 						<p class="ml-5 mt-5 text-xl font-bold text-blue-700">Peserta</p>
-						<p class="ml-5 mt-5">Jumlah Orang Hadir <span class="text-red-500">*</span></p>
+						<p class="ml-5 mt-5">Jumlah Orang Hadir</p>
 						<input
 							type="number"
 							placeholder="Masukkan Jumlah"
@@ -616,9 +612,7 @@
 						{#if error?.jumlah_peserta}
 							<p class="ml-3 text-xs text-red-500">{error.jumlah_peserta[0]}</p>
 						{/if}
-						<p class="ml-5 mt-5">
-							Perkiraan Jumlah Orang Hadir <span class="text-red-500">*</span>
-						</p>
+						<p class="ml-5 mt-5">Perkiraan Jumlah Orang Hadir</p>
 						<input
 							type="number"
 							placeholder="Masukkan Jumlah"

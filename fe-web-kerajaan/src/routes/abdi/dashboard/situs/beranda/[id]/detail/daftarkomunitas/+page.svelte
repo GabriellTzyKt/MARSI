@@ -10,6 +10,7 @@
 	let keyword = $state('');
 	let entries = $state(10);
 	let currPage = $state(1);
+	let id_situs = data?.id;
 	function filterD(data: any[]) {
 		return data.filter(
 			(item) =>
@@ -135,7 +136,7 @@
 								label: 'Detail',
 								action: () =>
 									goto(
-										`/abdi/situs/beranda/${data?.id_situs}/detail/daftarkomunitas/${data.id_anggota}`
+										`/abdi/dashboard/situs/beranda/${id_situs}/detail/daftarkomunitas/${data.id_komunitas}`
 									)
 							},
 							{

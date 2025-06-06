@@ -18,13 +18,14 @@
 	console.log('data Situs: ', data);
 	console.log('data Acara: ', dataAcara);
 	console.log('USer Daat', userData);
+	console.log('Edit dara', dataEdit);
 	let open = $state(false);
 	let findNamaSitus = data.filter((item: any) => item?.id_situs == Number(dataEdit?.lokasi_tugas));
 	console.log('Fiound,', findNamaSitus);
 	let namaSitus = $state<any>(findNamaSitus?.length > 0 ? findNamaSitus[0]?.nama_situs : '');
 	console.log(namaSitus);
 	let timer: number;
-	let jenisTugas = $state('');
+	let jenisTugas = $state(dataEdit?.lokasi_tugas ? 'pribadi' : 'acara');
 	let showDropdown = $state(false);
 	let today = $state(String(new Date().toISOString().split('T')[0]));
 	function setTimer() {
@@ -41,7 +42,9 @@
 		}
 	}
 
-	let selectedKeterkaitan = $state<any>(null);
+	let selectedKeterkaitan = $state<any>(
+		dataEdit.lokasi_tugas ? data.find((item) => item.id_situs == dataEdit.lokasi_tugas) : null
+	);
 	// console.log('selectedKeterkaitan', selectedKeterkaitan);
 	let selectedUserKeyword = $state(dataEdit ? dataEdit.pemberi_tugas : '');
 	let selecteduser: any = $state(
@@ -138,7 +141,7 @@
 		</div>
 		<div class="relative flex w-full flex-col">
 			<div>
-				<p class="text-sm">Pemberi Tugas</p>
+				<p class="text-sm">Pemberi Tugas<span class="text-red-500">*</span></p>
 			</div>
 			<!-- Pemberi Tugas -->
 			<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
@@ -206,9 +209,12 @@
 				{/each}
 			{/if}
 		</div>
+		{#if dataEdit}
+			<input type="text" hidden name="status_tugas" value={dataEdit.status_tugas} />
+		{/if}
 		<div class="mt-2 flex w-full flex-col">
 			<div>
-				<p class="text-sm">Nama Tugas</p>
+				<p class="text-sm">Nama Tugas<span class="text-red-500">*</span></p>
 			</div>
 			<!-- nama Tugas -->
 			<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
@@ -248,7 +254,7 @@
 		</div>
 		<div class="mt-2 flex w-full flex-col">
 			<div>
-				<p class="text-sm">Tanggal Penugasan</p>
+				<p class="text-sm">Tanggal Penugasan<span class="text-red-500">*</span></p>
 			</div>
 			<!-- Anggota yang ditugaskan -->
 			<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
@@ -271,7 +277,7 @@
 		</div>
 		<div class="relative mt-2 flex w-full flex-col">
 			<div>
-				<p class="text-sm">Anggota yang Ditugaskan</p>
+				<p class="text-sm">Anggota yang Ditugaskan<span class="text-red-500">*</span></p>
 			</div>
 			<!-- nama Tugas -->
 			<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
@@ -345,7 +351,7 @@
 		</div>
 
 		<div class="flex-col">
-			<label for="tugas">Jenis Tugas</label>
+			<label for="tugas">Jenis Tugas<span class="text-red-500">*</span></label>
 
 			<select
 				name="jenis_tugas"
@@ -367,7 +373,7 @@
 		{#if jenisTugas === 'pribadi'}
 			<div class="mt-2 flex w-full flex-col">
 				<div>
-					<p class="text-sm">Nama Situs :</p>
+					<p class="text-sm">Nama Situs<span class="text-red-500">*</span></p>
 				</div>
 				<!-- nama Tugas -->
 				<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
@@ -431,7 +437,7 @@
 
 			<div class="mt-2 flex w-full flex-col">
 				<div>
-					<p class="text-sm">Deskripsi Tugas</p>
+					<p class="text-sm">Deskripsi Tugas<span class="text-red-500">*</span></p>
 				</div>
 				<!-- nama Tugas -->
 				<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
@@ -457,7 +463,7 @@
 		{#if jenisTugas === 'acara'}
 			<div class="relative mt-2 flex w-full flex-col">
 				<div>
-					<p class="text-sm">Nama Acara :</p>
+					<p class="text-sm">Nama Acara<span class="text-red-500">*</span></p>
 				</div>
 				<!-- nama Tugas -->
 				<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
@@ -525,7 +531,7 @@
 
 			<div class="mt-2 flex w-full flex-col">
 				<div>
-					<p class="text-sm">Deskripsi Tugas</p>
+					<p class="text-sm">Deskripsi Tugas<span class="text-red-500">*</span></p>
 				</div>
 				<!-- nama Tugas -->
 				<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">

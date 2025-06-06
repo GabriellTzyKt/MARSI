@@ -167,6 +167,20 @@
 						text={`Apakah yakin ingin mengarsipkan ${data.nama_anggota}?`}
 						items={[
 							{
+								label: 'Detail',
+								action: () =>
+									goto(
+										`/abdi/dashboard/situs/beranda/${idAktif}/detail/daftaracara/detail/${data.id_acara}`
+									)
+							},
+							{
+								label: 'Laporan',
+								action: () =>
+									goto(
+										`/abdi/dashboard/situs/beranda/${idAktif}/detail/daftaracara/laporan/${data.id_acara}`
+									)
+							},
+							{
 								label: 'Edit',
 								action: () =>
 									goto(

@@ -5,10 +5,11 @@ import type { PageServerLoad } from "../$types";
 
 export const load: PageServerLoad = async ({ params }) => {
   
-
+    let id = params.id
     // Fetch data for the specific community
-    let res = await fetch(`${env.URL_KERAJAAN}/komunitas`);
+    let res = await fetch(`${env.URL_KERAJAAN}/komunitas?limit=1000`);
     let komunitas = await res.json();
+    console.log(id)
     console.log("Komunitas data:", komunitas);
     if (!res.ok) {
         console.error("Failed to fetch komunitas data");
@@ -21,7 +22,8 @@ export const load: PageServerLoad = async ({ params }) => {
     });
     return {
         komunitas: komunitasFiltered,
-        id_situs: params.id
+        id_situs: params.id,
+        id
     };
 };
 

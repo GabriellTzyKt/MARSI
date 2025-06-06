@@ -124,7 +124,7 @@
 			</button>
 		</div>
 
-		<p class="ml-5 mt-5">Nama Anggota</p>
+		<p class="ml-5 mt-5">Nama Anggota<span class="text-red-500">*</span></p>
 		<div class="relative ml-5 w-[90%]">
 			<input
 				type="text"
@@ -168,7 +168,7 @@
 			{/each}
 		{/if}
 
-		<p class="ml-5 mt-5">Deskripsi Tugas</p>
+		<p class="ml-5 mt-5">Deskripsi Tugas<span class="text-red-500">*</span></p>
 		<div class="relative ml-5 w-[90%]">
 			<textarea
 				placeholder="Deskripsi Tugas"
@@ -183,7 +183,7 @@
 			{/each}
 		{/if}
 
-		<p class="ml-5 mt-5">Pilih Jabatan</p>
+		<p class="ml-5 mt-5">Pilih Jabatan<span class="text-red-500">*</span></p>
 		<div class="relative ml-5 w-[90%]">
 			<select
 				id="jabatan"

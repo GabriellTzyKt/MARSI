@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
@@ -8,11 +8,15 @@
 	import { fade } from 'svelte/transition';
 	import { number } from 'zod';
 	import { writable } from 'svelte/store';
+	import { formatDate, formatTime } from '$lib';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import { env } from '$env/dynamic/public';
+	let { form, data } = $props();
 
-	let input_radio = $state('');
+	let input_radio = $state(data?.acara?.jenis_acara || '');
 	let namaacara = $state('');
 	let lokasiacara: any = $state('');
-	let tujuanacara = $state('');
+	let tujuanacara = $state<Number>(data?.acara.tujuan_acara || '');
 	let deskripsiacara = $state('');
 	let kapasitasacara = $state('');
 	let penanggungjawab: any = $state('');
@@ -24,6 +28,8 @@
 	let waktuselesai = $state('');
 	let buttonselect = $state('baru');
 	let error: any = $state('');
+	let lokasi = $state(Number(data.acara.id_lokasi));
+	console.log('id lokasi', lokasi);
 
 	let panggilan: any = $state([]);
 	let namabawah: any = $state([]);
@@ -31,54 +37,80 @@
 	let namajabatan = $state([]);
 	let notelpbawah: any = $state([]);
 
-	let { form, data } = $props();
 	let dataacara = data.acara;
 	console.log('Data : ', data);
-	console.log("Data acara : ", dataacara)
+	console.log('Data acara : ', dataacara);
 	console.log('form data', form);
 
 	let selectedAcara = null;
 
+	// $effect(() => {
+	// 	if (activeTab === 'completed' && namaacara) {
+	// 		selectedAcara = data.acara.find((a: any) => a.nama_acara === namaacara) ?? null;
+	// 		lokasiacara = Number(selectedAcara.id_lokasi);
+	// 		penanggungjawab = Number(selectedAcara.id_penanggung_jawab);
+	// 		alamatacara = selectedAcara.alamat_acara;
+	// 		kapasitasacara = selectedAcara.kapasitas_acara;
+	// 		deskripsiacara = selectedAcara.deskripsi_acara;
+	// 		tujuanacara = selectedAcara.tujuan_acara;
+	// 		input_radio = selectedAcara.jenis_acara;
+	// 		console.log('Selected : ', selectedAcara);
+	// 	} else {
+	// 		selectedAcara = null;
+	// 		namaacara = '';
+	// 		lokasiacara = '';
+	// 		penanggungjawab = '';
+	// 		alamatacara = '';
+	// 		kapasitasacara = '';
+	// 		deskripsiacara = '';
+	// 		tujuanacara = '';
+	// 		input_radio = '';
+	// 	}
+	// });
+
+	// if (form?.formData) {
+	// 	buttonselect = form.formData.buttonselect;
+	// 	input_radio = form.formData.inputradio;
+	// 	namaacara = form.formData.namaacara;
+	// 	lokasiacara = form.formData.lokasiacara;
+	// 	tujuanacara = form.formData.tujuanacara;
+	// 	kapasitasacara = form.formData.kapasitascara;
+	// 	deskripsiacara = form.formData.deskripsiacara;
+	// 	penanggungjawab = form.formData.penanggungjawab;
+	// 	tanggalmulai = form.formData.tanggalmulai;
+	// 	tanggalselesai = form.formData.tanggalselesai;
+	// 	waktumulai = form.formData.waktumulai;
+	// 	waktuselesai = form.formData.waktuselesai;
+	// }
+	let dataUndangan = $state();
+	let dataPanit = $state();
+	let activeTab = $state('completed');
+
 	$effect(() => {
-		if (activeTab === 'completed' && namaacara) {
-			selectedAcara = data.acara.find((a: any) => a.nama_acara === namaacara) ?? null;
-			lokasiacara = Number(selectedAcara.id_lokasi);
-			penanggungjawab = Number(selectedAcara.id_penanggung_jawab);
-			alamatacara = selectedAcara.alamat_acara;
-			kapasitasacara = selectedAcara.kapasitas_acara;
-			deskripsiacara = selectedAcara.deskripsi_acara;
-			tujuanacara = selectedAcara.tujuan_acara;
-			input_radio = selectedAcara.jenis_acara;
-			console.log('Selected : ', selectedAcara);
-		} else {
-			selectedAcara = null;
-			namaacara = '';
-			lokasiacara = '';
-			penanggungjawab = '';
-			alamatacara = '';
-			kapasitasacara = '';
-			deskripsiacara = '';
-			tujuanacara = '';
-			input_radio = '';
+		if (data?.dataUndangan && data.dataUndangan.length > 0) {
+			dataUndangan = data.dataUndangan.map((und) => {
+				const user = data.users.find((u) => u.id_user == und.id_penerima);
+				return {
+					id: und.id_undangan,
+					jenis_kelamin: user.jenis_kelamin || '', // jika ada field panggilan di dataUndangan
+					nama: user ? user.nama_lengkap : '',
+					notelepon: user ? user.no_telp : '',
+					id_penerima: und.id_penerima
+				};
+			});
+		}
+		if (data?.dataPanit && data.dataPanit.length > 0) {
+			dataPanit = data.dataPanit.map((und) => {
+				const user = data.users.find((u) => u.id_user == und.id_user);
+				return {
+					id: und.id_panitia,
+					nama: user ? user.nama_lengkap : '',
+					jabatan: und.jabatan_panitia
+				};
+			});
 		}
 	});
 
-	if (form?.formData) {
-		buttonselect = form.formData.buttonselect;
-		input_radio = form.formData.inputradio;
-		namaacara = form.formData.namaacara;
-		lokasiacara = form.formData.lokasiacara;
-		tujuanacara = form.formData.tujuanacara;
-		kapasitasacara = form.formData.kapasitascara;
-		deskripsiacara = form.formData.deskripsiacara;
-		penanggungjawab = form.formData.penanggungjawab;
-		tanggalmulai = form.formData.tanggalmulai;
-		tanggalselesai = form.formData.tanggalselesai;
-		waktumulai = form.formData.waktumulai;
-		waktuselesai = form.formData.waktuselesai;
-	}
-
-	let activeTab = $state('completed');
 	let open = $state(false);
 	let timer: number;
 
@@ -89,7 +121,7 @@
 
 	let invitations2: { id: number; namalengkap: string; namajabatan: string }[] = $state([]);
 	let invitationIds2: number[] = $state([]); // Array that stores only the invitation ids
-
+	let selectedLokasi = data?.acara.id_lokasi;
 	function tambah() {
 		// id nya dipakei date.now itu supaya pasti beda
 		const newId = Date.now();
@@ -203,6 +235,91 @@
 	function isKetuaDipilih(currentId: number) {
 		return invitations2.some((inv) => inv.id !== currentId && namajabatan[inv.id] === 'ketua');
 	}
+	let deleteModal = $state(false);
+	async function deleteUndangan(undangan: any) {
+		console.log('delete Undangan', undangan);
+		deleteModal = true;
+		try {
+			loading = true;
+			let res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/undangan/${undangan.id}`, {
+				method: 'DELETE'
+			});
+			let msg = await res.json();
+			if (!res.ok) {
+				console.error(msg.message);
+			}
+
+			console.log(msg);
+			success = true;
+		} catch (error) {
+		} finally {
+			loading = false;
+			await invalidateAll().then(() => {
+				setTimeout(() => {
+					success = false;
+				}, 1000);
+			});
+		}
+	}
+	async function deletePanit(panit) {
+		console.log('deleting panit : ', panit);
+		try {
+			loading = true;
+			let res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/acara/panitia/${panit.id}`, {
+				method: 'DELETE'
+			});
+			let msg = await res.json();
+			if (!res.ok) {
+				console.error(msg.message);
+			}
+
+			console.log(msg);
+			success = true;
+		} catch (error) {
+		} finally {
+			loading = false;
+			await invalidateAll().then(() => {
+				setTimeout(() => {
+					success = false;
+				}, 1000);
+			});
+		}
+	}
+
+	// Edit jabatan panitia (langsung dari select)
+	async function editPanit(panit) {
+		// console.log('Editing panit : ', panit);
+		let panitNow = panit;
+		console.log('Editing panit : ', panitNow);
+		try {
+			loading = true;
+			let payload = {
+				id_panitia: Number(panitNow.id),
+				jabatan_panitia: panitNow.jabatan
+			};
+			console.log(payload);
+			let res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/acara/panitia`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(payload)
+			});
+			let msg = await res.json();
+			if (!res.ok) {
+				console.error(msg.message);
+			}
+		} catch (error) {
+		} finally {
+			loading = false;
+			success = true;
+			await invalidateAll().then(() => {
+				setTimeout(() => {
+					success = false;
+				}, 1000);
+			});
+		}
+	}
 </script>
 
 {#if navigating.to}
@@ -226,6 +343,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
+						goto(`/abdi/dashboard/situs/beranda`);
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
@@ -241,17 +359,13 @@
 			<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 				<div class="col-span-2">
 					<div class="mt-2 w-full">
-						<p>Nama Acara:</p>
-						<select
+						<p>Nama Acara<span class="text-red-500">*</span></p>
+						<input
 							name="namaacara"
 							value={dataacara.nama_acara}
 							class="w-full rounded-lg border px-2 py-1"
-						>
-							<option value="" disabled selected>Pilih Acara Lama</option>
-							{#each data.acaraList as acara}
-								<option value={acara.nama_acara}>{acara.nama_acara}</option>
-							{/each}
-						</select>
+						/>
+
 						{#if error}
 							{#each error.namaacara as a}
 								<p class="text-left text-red-500">{a}</p>
@@ -260,7 +374,7 @@
 					</div>
 
 					<div class="col-span-2 mt-2 w-full">
-						<p class="mt-2">Penanggung Jawab:</p>
+						<p class="mt-2">Penanggung Jawab<span class="text-red-500">*</span></p>
 						<select
 							name="penanggungjawab"
 							bind:value={dataacara.id_penanggung_jawab}
@@ -278,44 +392,10 @@
 						{/if}
 					</div>
 
-					<div class="col-span-2 mt-2 w-full">
-						<p class="mt-2">Penyelenggara Acara:</p>
-						<select
-							name="penyelenggaraacara"
-							bind:value={penyelenggaraacara}
-							class="w-full rounded-lg border px-2 py-1"
-						>
-							<option value="" disabled selected>Pilih Penyelenggara</option>
-							<optgroup label="Komunitas">
-								{#each data.komunitas as komunitas}
-									<option value={`komunitas-${komunitas.id_komunitas}`}
-										>{komunitas.nama_komunitas}</option
-									>
-								{/each}
-							</optgroup>
-							<optgroup label="Organisasi">
-								{#each data.organisasi as organisasi}
-									<option value={`organisasi-${organisasi.id_organisasi}`}
-										>{organisasi.nama_organisasi}</option
-									>
-								{/each}
-							</optgroup>
-						</select>
-						{#if error}
-							{#each error.penyelenggaraacara as a}
-								<p class="text-left text-red-500">{a}</p>
-							{/each}
-						{/if}
-					</div>
-
 					<div class="mt-2 w-full">
-						<p>Lokasi Acara:</p>
-						<select
-							name="lokasiacara"
-							bind:value={dataacara.id_lokasi}
-							class="w-full rounded-lg border px-2 py-1"
-						>
-							<option value="" disabled selected>Pilih Lokasi Acara</option>
+						<p>Lokasi Acara<span class="text-red-500">*</span></p>
+						<select name="lokasiacara" value={lokasi} class="w-full rounded-lg border px-2 py-1">
+							<option value={data?.acara.id_lokasi} disabled>{data?.acara.nama_situs}</option>
 							{#each data.situs as s}
 								<option value={s.id_situs}>{s.nama_situs}</option>
 							{/each}
@@ -329,11 +409,11 @@
 					</div>
 
 					<div class="mt-2 w-full">
-						<p>Tujuan Acara:</p>
+						<p>Tujuan Acara<span class="text-red-500">*</span></p>
 						<input
 							type="text"
 							name="tujuanacara"
-							bind:value={tujuanacara}
+							value={data?.acara?.tujuan_acara || '-'}
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
 						/>
@@ -348,10 +428,10 @@
 				<div class="col-span-2">
 					<div class="flexcoba mt-2 flex w-full">
 						<div class="flex-1">
-							<p>Kapasitas Acara:</p>
+							<p>Kapasitas Acara<span class="text-red-500">*</span></p>
 							<input
 								type="text"
-								bind:value={kapasitasacara}
+								value={data?.acara?.kapasitas_acara || '0'}
 								name="kapasitasacara"
 								placeholder="Masukkan Nama"
 								class="w-full rounded-lg border px-2 py-1"
@@ -364,7 +444,9 @@
 						</div>
 						<div class="ml-10 flex">
 							<div class="mr-10 w-full items-center text-center">
-								<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara</p>
+								<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">
+									Jenis Acara<span class="text-red-500">*</span>
+								</p>
 								<div class="mt-2 flex items-center justify-center self-center">
 									<div class="mx-2 flex items-center justify-center">
 										<input
@@ -404,12 +486,12 @@
 
 					<div class="flexcoba mt-2 flex w-full">
 						<div class="lg:flex-1">
-							<p>Tanggal Mulai:</p>
+							<p>Tanggal Mulai<span class="text-red-500">*</span></p>
 							<input
 								type="date"
 								name="tanggalmulai"
 								placeholder="Masukkan Nama"
-								bind:value={tanggalmulai}
+								value={formatDate(data?.acara.waktu_mulai)}
 								class="w-full rounded-lg border px-2 py-1"
 							/>
 							{#if error}
@@ -420,12 +502,12 @@
 						</div>
 						<div class="flex-1 lg:ml-10">
 							<div class="w-full">
-								<p>Tanggal Selesai:</p>
+								<p>Tanggal Selesai<span class="text-red-500">*</span></p>
 								<input
 									type="date"
 									name="tanggalselesai"
 									placeholder="Masukkan Nama"
-									bind:value={tanggalselesai}
+									value={formatDate(data?.acara.waktu_selesai)}
 									class="w-full rounded-lg border px-2 py-1"
 								/>
 								{#if error}
@@ -438,11 +520,11 @@
 					</div>
 					<div class="flexcoba mt-2 flex w-full">
 						<div class="lg:flex-1">
-							<p>Waktu Mulai:</p>
+							<p>Waktu Mulai<span class="text-red-500">*</span></p>
 							<input
 								type="time"
 								name="waktumulai"
-								bind:value={waktumulai}
+								value={formatTime(data?.acara?.waktu_mulai)}
 								class="w-full rounded-lg border px-2 py-1"
 							/>
 							{#if error}
@@ -453,11 +535,11 @@
 						</div>
 						<div class="flex-1 lg:ml-10">
 							<div class="w-full">
-								<p>Waktu Selesai:</p>
+								<p>Waktu Selesai<span class="text-red-500">*</span></p>
 								<input
 									type="time"
 									name="waktuselesai"
-									bind:value={waktuselesai}
+									value={formatTime(data?.acara?.waktu_selesai)}
 									class="w-full rounded-lg border px-2 py-1"
 								/>
 								{#if error}
@@ -469,13 +551,13 @@
 						</div>
 					</div>
 					<div class="w-full" style="position:relative">
-						<p>Alamat acara:</p>
+						<p>Alamat acara<span class="text-red-500">*</span></p>
 
 						<input
 							class="input-field w-full rounded-lg border p-2 pr-8"
 							type="text"
 							name="alamatacara"
-							bind:value={alamatacara}
+							value={data?.acara?.alamat_acara}
 							onkeydown={handleLokasiKeyDown}
 							placeholder="Cari alamat..."
 							autocomplete="off"
@@ -494,10 +576,10 @@
 						{/if}
 					</div>
 					<div class="w-full">
-						<p>Deskripsi Acara:</p>
+						<p>Deskripsi Acara<span class="text-red-500">*</span></p>
 						<textarea
 							name="deskripsiacara"
-							bind:value={deskripsiacara}
+							value={data?.acara?.deskripsi_acara}
 							placeholder="Masukkan Deskripsi Acara"
 							class="h-12 w-full resize-none rounded-md border px-3 py-3 text-lg"
 						></textarea>
@@ -509,7 +591,111 @@
 					</div>
 				</div>
 			</div>
+			<div class="mt-4 flex justify-center">
+				<p class="text-lg font-[600]">Daftar Anggota yang Diundang</p>
+			</div>
+			{#if data.dataUndangan.length > 0}
+				<div class="mt-4 grid grid-cols-8 items-center gap-2">
+					<!-- Undangan dari backend -->
+					{#each dataUndangan as undangan, i}
+						<div class="col-span-1">{i + 1}</div>
 
+						<div class="col-span-1 w-full rounded-lg border px-2 py-1">
+							<p class="w-full text-center">{undangan.jenis_kelamin || 'No Data'}</p>
+						</div>
+						<div class="col-span-3 w-full rounded-lg border px-2 py-1">
+							<p class="w-full text-center">{undangan.nama}</p>
+						</div>
+						<div class="col-span-2 w-full rounded-lg border px-2 py-1">
+							<p class="w-full text-center">{undangan.notelepon || 'No Phone'}</p>
+						</div>
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<div class="col-span-1">
+							<!-- svelte-ignore a11y_click_events_have_key_events -->
+							<span
+								class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-red-400 p-2"
+								onclick={() => {
+									deleteUndangan(undangan);
+								}}
+							>
+								<i class="gg--trash z-10 items-center text-2xl"></i>
+							</span>
+						</div>
+					{/each}
+				</div>
+			{:else}
+				<div>
+					<p class="text-center">No Undangan Yet</p>
+				</div>
+			{/if}
+			<p class="mt-2 text-center text-lg font-[600]">Daftar Panitia</p>
+			<div class="mt-4 grid grid-cols-6 items-center gap-2">
+				{#each dataPanit as panit, i}
+					<div class="col-span-1">{i + 1}</div>
+
+					<div class="col-span-1 w-full rounded-lg border px-2 py-1">
+						<p class="w-full text-center">{panit.nama || 'No Data'}</p>
+					</div>
+					<div class="col-span-3 w-full rounded-lg border px-2 py-1">
+						<select
+							bind:value={dataPanit[i].jabatan}
+							name="jabatan_baru"
+							onchange={(e) => (dataPanit[i].jabatan = e.target.value)}
+							class="mt-1 w-full"
+						>
+							<option value="" disabled selected>Silahkan Pilih!</option>
+							<option value="ketua">Ketua</option>
+							<option value="wakilketua">Wakil Ketua</option>
+							<option value="sekretariat">Sekretariat</option>
+							<option value="bendahara">Bendahara</option>
+							<option value="acara">Acara</option>
+							<option value="komunikasi">Komunikasi</option>
+							<option value="perlengkapan">Perlengkapan</option>
+							<option value="pdd">PDD</option>
+							<option value="keamanan">Keamanan</option>
+							<option value="humas">Humas</option>
+						</select>
+					</div>
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<div class="col-span-1 flex gap-2">
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<span
+							class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-red-400 p-2"
+							onclick={() => {
+								deletePanit(panit);
+							}}
+						>
+							<i class="gg--trash z-10 items-center text-2xl"></i>
+						</span>
+						<span
+							class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-yellow-400 p-2"
+							onclick={() => {
+								editPanit(panit);
+							}}
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="white"
+								class="size-6"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+								/>
+							</svg>
+						</span>
+					</div>
+				{/each}
+			</div>
+			{#if dataPanit?.length === 0 || !dataPanit}
+				<p class="text-center">No Panitia Data</p>
+			{/if}
 			<div class="mt-5 h-1 w-full bg-slate-300"></div>
 			<div class="mt-8 flex w-full">
 				<p class="my-auto ml-10 w-full text-center font-bold">Undangan</p>
@@ -674,7 +860,7 @@
 
 			<div class="mt-8 flex w-full justify-center lg:justify-end">
 				<button class="w-50 text-nowrap rounded-lg bg-green-400 px-2 py-2 text-white" type="submit">
-					Buat acara
+					Update Acara
 				</button>
 			</div>
 		</div>
@@ -683,13 +869,11 @@
 
 {#if open}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
-		<SucessModal
-			{open}
-			text="Tamu Berhasil Di Undang!"
-			to="/abdi/dashboard/situs/beranda"
-			on:close={toggle}
-		></SucessModal>
+		<SuccessModal text="Berhasil"></SuccessModal>
 	</div>
+{/if}
+{#if success}
+	<SuccessModal text="Berhasil!"></SuccessModal>
 {/if}
 
 <style>

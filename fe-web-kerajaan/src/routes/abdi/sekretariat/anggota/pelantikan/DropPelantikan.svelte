@@ -154,6 +154,7 @@
 		>
 			<!-- nama abdi/ id abdi -->
 			<div class="relative col-span-1 flex w-full flex-col lg:col-span-1">
+				<span class="text-red-500">*</span>
 				<div class="flex w-full justify-between rounded-md border border-gray-600 bg-white">
 					<input
 						type="text"
@@ -187,6 +188,7 @@
 						</svg>
 					</div>
 				</div>
+
 				<input
 					type="text"
 					hidden
@@ -219,6 +221,7 @@
 
 			<!-- nama Acara -->
 			<div class="relative col-span-1 flex w-full flex-col lg:col-span-1">
+				<span class="text-red-500">*</span>
 				<div class=" flex w-full justify-between rounded-md border border-gray-600 bg-white">
 					<input
 						type="text"
@@ -283,6 +286,7 @@
 			</div>
 			<!-- Dilantik Siapa -->
 			<div class="relative col-span-1 flex w-full flex-col lg:col-span-1">
+				<span class="text-red-500">*</span>
 				<div class="flex w-full justify-between rounded-md border border-gray-600 bg-white">
 					<input
 						type="text"
@@ -348,6 +352,7 @@
 
 			<!-- bukti pelantikan -->
 			<div class="col-span-1 flex w-full flex-col lg:col-span-1">
+				<span class="text-red-500">*</span>
 				<div class="flex w-full justify-between rounded-md border border-gray-600 bg-white">
 					<input
 						type="text"
@@ -406,7 +411,9 @@
 		</div>
 		<div class="me-3 ms-3 mt-3 grid grid-cols-9 gap-4">
 			<!-- nama bintang jasa-->
+
 			<div class="col-span-1 flex w-full flex-col lg:col-span-3">
+				<span class="text-gray-200">()</span>
 				<div class="flex w-full justify-between rounded-md border border-gray-600 bg-white">
 					<input
 						type="text"
@@ -424,6 +431,7 @@
 			</div>
 			<!-- keterangan gelar-->
 			<div class="col-span-1 flex w-full flex-col lg:col-span-3">
+				<span class="text-red-500">*</span>
 				<div class="flex w-full justify-between rounded-md border border-gray-600 bg-white">
 					<input
 						type="text"
@@ -439,6 +447,7 @@
 			</div>
 			<!-- Gelar -->
 			<div class="relative col-span-1 flex w-full flex-col lg:col-span-3">
+				<span class="text-red-500">*</span>
 				<div class="flex w-full justify-between rounded-md border border-gray-600 bg-white">
 					<input
 						type="text"

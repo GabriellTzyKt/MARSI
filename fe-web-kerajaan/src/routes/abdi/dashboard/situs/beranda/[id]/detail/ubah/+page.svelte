@@ -9,6 +9,7 @@
 	import { fade } from 'svelte/transition';
 	import { writable } from 'svelte/store';
 
+	let { form, data } = $props();
 	let namasitus = $state('');
 	let email = $state('');
 	let notelepon = $state('');
@@ -17,16 +18,15 @@
 	let dibangunoleh = $state('');
 	let tanggalberdiri = $state('');
 	let alamat = $state('');
-	let jurukunci = $state('');
+	let jurukunci: Number = $state<Number>(parseInt(data?.situs.jurukunci) || 0);
 	let jenissitus = $state('');
-	let pembina = $state('');
-	let pelindung = $state('');
+	let pembina: Number = $state<Number>(parseInt(data?.situs.pembina) || 0);
+	let pelindung: Number = $state<Number>(parseInt(data?.situs.pelindung) || 0);
 	let jambuka = $state('');
 	let jamtutup = $state('');
 	let wisata = $state('');
 	let showEditIcon = $state(true);
 
-	let { form, data } = $props();
 	let dataambil = data.situs;
 	console.log('Data : ', data);
 	let jenisSitusList = data.jenisSitusList || [];
@@ -181,7 +181,7 @@
 					<label for="upload-photo" class="relative ml-5 mr-5 cursor-pointer hover:opacity-25">
 						<img
 							id="preview-image"
-							src={dataambil.imageUrls}
+							src={dataambil.imageUrls[0]}
 							class="h-20 w-20 rounded-full object-cover"
 							alt="Profile"
 						/>
@@ -206,7 +206,7 @@
 					<input type="hidden" name="existing_foto_situs" bind:value={dataambil.foto_situs} />
 				</div>
 				<div>
-					<p>Nama Situs:</p>
+					<p>Nama Situs<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -225,7 +225,7 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Email:</p>
+					<p class="mt-5">Email<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -245,7 +245,7 @@
 
 				<div class="flexcoba mt-5 flex gap-6">
 					<div class="w-full">
-						<p>No telepon :</p>
+						<p>No telepon<span class="text-red-500">*</span></p>
 						<input
 							type="text"
 							name="notelepon"
@@ -277,7 +277,7 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Deskripsi Situs:</p>
+					<p class="mt-5">Deskripsi Situs<span class="text-red-500">*</span></p>
 					<div class="relative w-full">
 						<textarea
 							placeholder="Masukkan nama"
@@ -301,7 +301,7 @@
 			<div>
 				<div class="flexcoba mt-5 flex gap-6">
 					<div class="w-full">
-						<p>Dibangun Oleh :</p>
+						<p>Dibangun Oleh<span class="text-red-500">*</span></p>
 						<input
 							type="text"
 							name="dibangunoleh"
@@ -333,7 +333,7 @@
 				</div>
 
 				<div class="mt-5">
-					<p>Alamat:</p>
+					<p>Alamat<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							class="input-field mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
@@ -372,15 +372,14 @@
 
 				<div class="flexcoba mt-5 flex gap-6">
 					<div class="w-full">
-						<p>Juru Kunci :</p>
+						<p>Juru Kunci<span class="text-red-500">*</span></p>
 						<select
 							name="jurukunci"
-							bind:value={dataambil.jurukunci}
+							bind:value={jurukunci}
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 						>
-							<option value="" disabled selected={!dataambil.jurukunci}>Pilih Juru Kunci</option>
 							{#each usersList as user}
-								<option value={user.nama_lengkap}>
+								<option value={user.id}>
 									{user.nama_lengkap || 'Unnamed'}
 								</option>
 							{/each}
@@ -392,12 +391,11 @@
 						{/if}
 					</div>
 					<div class="w-full">
-						<p>Jenis Situs :</p>
+						<p>Jenis Situs<span class="text-red-500">*</span></p>
 						<select
 							name="jenissitus"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 						>
-							<option value="" disabled selected={!dataambil.jenissitus}>Pilih Jenis Situs</option>
 							{#each jenisSitusList as jenis}
 								<option value={jenis.id_jenis_situs}>
 									{jenis.jenis_situs || jenis.nama_jenis || 'Unnamed'}
@@ -414,15 +412,14 @@
 
 				<div class="flexcoba mt-5 flex gap-6">
 					<div class="w-full">
-						<p>Pembina :</p>
+						<p>Pembina<span class="text-red-500">*</span></p>
 						<select
 							name="pembina"
-							bind:value={dataambil.pembina}
+							bind:value={pembina}
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 						>
-							<option value="" disabled selected={!dataambil.pembina}>Pilih Pembina</option>
 							{#each usersList as user}
-								<option value={user.nama_lengkap}>
+								<option value={user.id}>
 									{user.nama_lengkap || 'Unnamed'}
 								</option>
 							{/each}
@@ -434,15 +431,14 @@
 						{/if}
 					</div>
 					<div class="w-full">
-						<p>Pelindung :</p>
+						<p>Pelindung<span class="text-red-500">*</span></p>
 						<select
 							name="pelindung"
-							bind:value={dataambil.pelindung}
+							bind:value={pelindung}
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 						>
-							<option value="" disabled selected={!dataambil.pelindung}>Pilih Pelindung</option>
 							{#each usersList as user}
-								<option value={user.nama_lengkap}>
+								<option value={user.id}>
 									{user.nama_lengkap || 'Unnamed'}
 								</option>
 							{/each}
@@ -457,7 +453,7 @@
 
 				<div class="flexcoba mt-5 flex gap-6">
 					<div class="w-full">
-						<p>Jam Buka :</p>
+						<p>Jam Buka<span class="text-red-500">*</span></p>
 						<input
 							type="time"
 							bind:value={dataambil.jambuka}
@@ -472,7 +468,7 @@
 						{/if}
 					</div>
 					<div class="w-full">
-						<p>Jam Tutup :</p>
+						<p>Jam Tutup<span class="text-red-500">*</span></p>
 						<input
 							type="time"
 							bind:value={dataambil.jamtutup}
@@ -489,7 +485,7 @@
 				</div>
 
 				<div class="mt-3">
-					<p>Wisata:</p>
+					<p>Wisata<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<select
 							name="wisata"

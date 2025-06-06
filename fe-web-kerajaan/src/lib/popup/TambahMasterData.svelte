@@ -192,7 +192,9 @@
 				{/if}
 
 				<div class="mb-4">
-					<label for="nama" class="mb-2 block font-medium">Nama {type}</label>
+					<label for="nama" class="mb-2 block font-medium"
+						>Nama {type}<span class="text-red-500">*</span></label
+					>
 					<input
 						type="text"
 						id="nama"
@@ -203,7 +205,9 @@
 					/>
 				</div>
 				{#if type === 'Gelar'}
-					<label for="singkatan" class="mb-2 block font-medium">Singkatan {type}</label>
+					<label for="singkatan" class="mb-2 block font-medium"
+						>Singkatan {type}<span class="text-red-500">*</span></label
+					>
 					<input
 						type="text"
 						id="singkatan"
@@ -212,7 +216,9 @@
 						class="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-[#FFA600] focus:outline-none"
 						required
 					/>
-					<label for="level" class="mb-2 block font-medium">Level</label>
+					<label for="level" class="mb-2 block font-medium"
+						>Level<span class="text-red-500">*</span></label
+					>
 					<select
 						id="level"
 						name="level"

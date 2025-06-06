@@ -181,7 +181,7 @@
 			<!-- Nama Aset -->
 			<div class="flex w-full flex-col gap-1">
 				<div>
-					<p>Nama Aset</p>
+					<p>Nama Aset<span class="text-red-500">*</span></p>
 				</div>
 				<div class="flex">
 					<input
@@ -201,7 +201,7 @@
 			<!-- Jenis Aset -->
 			<div class="relative flex w-full flex-col gap-1">
 				<div>
-					<p>Jenis Aset</p>
+					<p>Jenis Aset<span class="text-red-500">*</span></p>
 				</div>
 				<div class="flex justify-between rounded-xl border bg-white px-2 py-2 shadow-sm">
 					<input

@@ -280,6 +280,7 @@
 				</label>
 			</div>
 		</div>
+		<span class="flex justify-center text-red-500">*</span>
 		{#if errors?.profile_picture}
 			{#each errors.profile_picture as e}
 				<p class="text-left text-red-500">- {e}</p>
@@ -290,7 +291,7 @@
 			<!-- 1 -->
 			<div>
 				<div>
-					<p>Nama Situs:</p>
+					<p>Nama Situs<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -308,7 +309,7 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Alamat:</p>
+					<p class="mt-5">Alamat<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -419,7 +420,7 @@
 						</div>
 						<div class="p-3">
 							<p class="text-sm text-gray-700">
-								<span class="font-medium">Koordinat:</span>
+								<span class="font-medium">Koordinat<span class="text-red-500">*</span></span>
 								{lat}, {long}
 							</p>
 							<div
@@ -453,7 +454,7 @@
 				{/if}
 
 				<div>
-					<p class="mt-5">Email:</p>
+					<p class="mt-5">Email<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -470,7 +471,7 @@
 					{/if}
 				</div>
 				<div>
-					<p class="mt-5">Kepemilikan:</p>
+					<p class="mt-5">Kepemilikan<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -488,7 +489,7 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Deskripsi Situs:</p>
+					<p class="mt-5">Deskripsi Situs<span class="text-red-500">*</span></p>
 					<div class="relative w-full">
 						<textarea
 							placeholder="Masukkan Deskripsi Situs"
@@ -510,7 +511,7 @@
 			<!-- 2 -->
 			<div>
 				<div>
-					<p>Juru Kunci:</p>
+					<p>Juru Kunci<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -559,7 +560,7 @@
 
 				<div class="mt-5 flex items-center gap-3">
 					<div class="w-full">
-						<p>Pembina:</p>
+						<p>Pembina<span class="text-red-500">*</span></p>
 						<div class="relative">
 							<input
 								type="text"
@@ -602,22 +603,11 @@
 							{/each}
 						{/if}
 					</div>
-					<button
-						type="button"
-						class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white"
-						onclick={() => {
-							// Reset pembina selection
-							selectedPembina = null;
-							pembinaSearchTerm = '';
-						}}
-					>
-						Permohonan
-					</button>
 				</div>
 
 				<div class="mt-5 flex items-center gap-3">
 					<div class="w-full">
-						<p>Pelindung:</p>
+						<p>Pelindung<span class="text-red-500">*</span></p>
 						<div class="relative">
 							<input
 								type="text"
@@ -660,17 +650,6 @@
 							{/each}
 						{/if}
 					</div>
-					<button
-						type="button"
-						class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white"
-						onclick={() => {
-							// Reset pelindung selection
-							selectedPelindung = null;
-							pelindungSearchTerm = '';
-						}}
-					>
-						Permohonan
-					</button>
 				</div>
 				{#if errors}
 					{#each errors.pelindung as e}
@@ -679,7 +658,7 @@
 				{/if}
 				<div class="mt-5 grid w-full grid-cols-1 flex-col gap-4 lg:grid-cols-2">
 					<div class="relative col-span-full w-full">
-						<p>Jenis Situs:</p>
+						<p>Jenis Situs<span class="text-red-500">*</span></p>
 						<input
 							type="text"
 							placeholder="Masukkan Jenis Situs"
@@ -727,7 +706,7 @@
 				</div>
 				<div class="mt-5 grid w-full grid-cols-1 flex-col gap-4 lg:grid-cols-2">
 					<div class="relative col-span-full w-full">
-						<p>Wisata:</p>
+						<p>Wisata<span class="text-red-500">*</span></p>
 						<input
 							type="text"
 							placeholder="Masukkan Wisata"
@@ -770,7 +749,7 @@
 					</div>
 				</div>
 				<div class="relative col-span-full w-full">
-					<p>Tahun Berdiri:</p>
+					<p>Tahun Berdiri<span class="text-red-500">*</span></p>
 					<input
 						type="number"
 						placeholder="1990"
@@ -780,7 +759,7 @@
 					/>
 				</div>
 				<div class="relative col-span-full w-full">
-					<p>Dibangun Oleh:</p>
+					<p>Dibangun Oleh<span class="text-red-500">*</span></p>
 					<input
 						type="text"
 						placeholder="nama pembangun"
@@ -791,7 +770,7 @@
 				</div>
 				<div class="mt-5 grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
 					<div class="w-full">
-						<p>Jam Buka:</p>
+						<p>Jam Buka<span class="text-red-500">*</span></p>
 						<input
 							type="time"
 							name="jam_buka"
@@ -805,7 +784,7 @@
 						{/if}
 					</div>
 					<div class="w-full">
-						<p>Jam Tutup:</p>
+						<p>Jam Tutup<span class="text-red-500">*</span></p>
 						<input
 							type="time"
 							name="jam_tutup"
@@ -821,7 +800,7 @@
 				</div>
 				<div class="mt-5 flex gap-12">
 					<div class="w-full lg:w-[50%]">
-						<p>No telepon :</p>
+						<p>No telepon<span class="text-red-500">*</span></p>
 						<input
 							type="text"
 							name="phone"

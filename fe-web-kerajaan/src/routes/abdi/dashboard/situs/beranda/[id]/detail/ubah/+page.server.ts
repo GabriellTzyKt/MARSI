@@ -138,7 +138,7 @@ export const load = async ({ params }) => {
             imageUrls,
             fileDetails
         };
-
+        console.log("situs final", formattedData)
         return {
             situs: formattedData,
             jenisSitusList,
@@ -152,11 +152,17 @@ export const load = async ({ params }) => {
 };
 
 export const actions: Actions = {
-    edit: async ({ request, params }) => {
+    edit: async ({ request, params, cookies }) => {
+        let token = cookies.get('userSession') ? JSON.parse(cookies.get('userSession') as string) : '';
         const data: any = await request.formData();
         const id = params.id;
         console.log("data : ", data);
+        try {
+            let resSitus = await fetch(`${env.URL_KERAJAAN}/situs/${id}`, { method: 'GET' });
 
+        } catch (error) {
+            
+        }
         let form = {
             namasitus: data.get("namasitus") ?? "",
             notelepon: data.get("notelepon") ?? "",
@@ -242,6 +248,7 @@ export const actions: Actions = {
 
             // Prepare data for API
             const situsData = {
+                id_admin: Number(token.id_admin),
                 id_situs: Number(id),
                 id_wisata: Number(form.wisata),
                 id_jenis_situs: Number(form.jenissitus),
@@ -250,11 +257,11 @@ export const actions: Actions = {
                 nama_situs: form.namasitus,
                 deskripsi_situs: form.deskripsi,
                 alamat: form.alamat,
-                longitude: parseFloat(form.longitude),
-                latitude: parseFloat(form.latitude),
+                longitude: parseFloat(form.longitude)||1.01,
+                latitude: parseFloat(form.latitude)||1.01,
                 nama_pendiri: form.dibangunoleh,
                 pemilik_situs: form.kepemilikan,
-                tahun_berdiri: new Date(form.tanggalberdiri).getFullYear(),
+                tahun_berdiri: Number(form.tanggalberdiri),
                 pelindung: form.pelindung,
                 pembina: form.pembina,
                 juru_kunci: form.jurukunci,

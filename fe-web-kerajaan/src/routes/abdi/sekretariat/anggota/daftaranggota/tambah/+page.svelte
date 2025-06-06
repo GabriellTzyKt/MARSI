@@ -89,7 +89,7 @@
 			<!-- 1 -->
 			<div>
 				<div>
-					<p>Nama Lengkap / Asma Timur*:</p>
+					<p>Nama Lengkap / Asma Timur <span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -110,7 +110,7 @@
 
 				<div class="mt-5 flex gap-12">
 					<div class="w-full">
-						<p>Tempat Lahir :</p>
+						<p>Tempat Lahir <span class="text-red-500">*</span></p>
 						<input
 							type="text"
 							name="tempat_lahir"
@@ -126,7 +126,7 @@
 						</div>
 					</div>
 					<div class="w-full">
-						<p>Tanggal Lahir :</p>
+						<p>Tanggal Lahir <span class="text-red-500">*</span></p>
 						<input
 							type="date"
 							name="tanggal_lahir"
@@ -145,7 +145,7 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Alamat:</p>
+					<p class="mt-5">Alamat<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -164,7 +164,7 @@
 					</div>
 				</div>
 				<div>
-					<p class="mt-5">Username:</p>
+					<p class="mt-5">Username<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -183,7 +183,7 @@
 					</div>
 				</div>
 				<div>
-					<p class="mt-5">Password:</p>
+					<p class="mt-5">Password<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							{type}
@@ -253,7 +253,7 @@
 
 				<div class="mt-5 flex gap-12">
 					<div class="w-full">
-						<p>No telepon :</p>
+						<p>No telepon <span class="text-red-500">*</span></p>
 						<input
 							type="phone"
 							name="no_telp"
@@ -269,7 +269,7 @@
 						</div>
 					</div>
 					<div class="w-full">
-						<p>Jenis Kelamin :</p>
+						<p>Jenis Kelamin <span class="text-red-500">*</span></p>
 						<select
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 							name="jenis_kelamin"
@@ -289,7 +289,7 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Hobi (Opsional):</p>
+					<p class="mt-5">Hobi</p>
 					<div class="relative">
 						<input
 							type="text"
@@ -484,7 +484,7 @@
 				</div>
 
 				<div class="mt-5">
-					<p>Email:</p>
+					<p>Email<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="email"
@@ -505,7 +505,7 @@
 
 				<div class="flex gap-2">
 					<div class="mt-5 w-[50%]">
-						<p>Wongso:</p>
+						<p>Wongso</p>
 						<div class="relative">
 							<input
 								type="text"
@@ -525,7 +525,7 @@
 					</div>
 
 					<div class="mt-5 w-[50%]">
-						<p>Pekerjaan(Opsional):</p>
+						<p>Pekerjaan</p>
 						<div class="relative">
 							<input
 								type="text"
@@ -545,7 +545,7 @@
 					</div>
 				</div>
 				<div class="mt-5">
-					<p>Jabatan:</p>
+					<p>Jabatan<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<select
 							name="jabatan"
@@ -577,7 +577,7 @@
 					</div>
 				</div>
 				<div class="mt-5">
-					<p>Agama(Opsional):</p>
+					<p>Agama</p>
 					<div class="relative w-full lg:w-[50%]">
 						<select
 							placeholder="Masukkan Agama"

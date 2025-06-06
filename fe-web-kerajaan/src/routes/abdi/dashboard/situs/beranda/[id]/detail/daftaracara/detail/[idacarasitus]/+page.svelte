@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { navigating } from '$app/state';
+	import { formatDate } from '$lib';
 	import Loader from '$lib/loader/Loader.svelte';
-
+	let { data } = $props();
+	console.log('data', data);
+	let acara = $state(data?.data);
 	let total = $state(8);
 </script>
 
@@ -12,7 +15,8 @@
 	<div class="block min-h-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
 		<div class="flex w-full justify-between">
 			<p class="mt-2">Informasi Acara</p>
-			<a href="/abdi/dashboard/situs/detail/daftaracara/edit"
+			<a
+				href={`/abdi/dashboard/situs/beranda/${data?.id_situs}/detail/daftaracara/edit/${data?.id_acara}`}
 				><button class="w-40 rounded-lg border-2 bg-yellow-500 px-2 py-2">Ubah</button></a
 			>
 		</div>
@@ -23,6 +27,8 @@
 					<p>Nama Acara:</p>
 					<input
 						type="text"
+						readonly
+						value={acara.nama_acara}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
@@ -30,23 +36,20 @@
 				<div class="mt-2 w-full">
 					<p>Penanggung Jawab:</p>
 					<input
+						readonly
+						value={acara.nama_penanggungjawab}
 						type="text"
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
 				</div>
-				<div class="mt-2 w-full">
-					<p>Penyelenggara Acara:</p>
-					<input
-						type="text"
-						placeholder="Masukkan Nama"
-						class="w-full rounded-lg border px-2 py-1"
-					/>
-				</div>
+
 				<div class="mt-2 w-full">
 					<p>Tujuan Acara:</p>
 					<input
 						type="text"
+						readonly
+						value={acara.tujuan_acara}
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
@@ -54,6 +57,8 @@
 				<div class="mt-2 w-full">
 					<p>Deskripsi Acara:</p>
 					<textarea
+						readonly
+						value={acara.deskripsi_acara}
 						placeholder="Masukkan Deskripsi Acara"
 						class="h-32 w-full resize-none rounded-md border px-3 py-3 text-lg"
 					></textarea>
@@ -65,6 +70,8 @@
 					<div class="mt-2 w-full">
 						<p>Jenis Acara:</p>
 						<input
+							readonly
+							value={acara.jenis_acara}
 							type="text"
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
@@ -73,6 +80,8 @@
 					<div class="mt-2 w-full">
 						<p>Kapasitas Acara:</p>
 						<input
+							readonly
+							value={acara.kapasitas_acara}
 							type="text"
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
@@ -83,6 +92,8 @@
 				<div class="mt-2 w-full">
 					<p>Lokasi Acara:</p>
 					<input
+						readonly
+						value={acara.alamat_acara}
 						type="text"
 						placeholder="Masukkan Nama"
 						class="w-full rounded-lg border px-2 py-1"
@@ -93,7 +104,9 @@
 					<div class="mt-2 w-full">
 						<p>Tanggal Mulai:</p>
 						<input
-							type="text"
+							type="date"
+							readonly
+							value={formatDate(acara.tanggal_mulai)}
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
 						/>
@@ -101,7 +114,9 @@
 					<div class="mt-2 w-full">
 						<p>Tanggal Selesai:</p>
 						<input
-							type="text"
+							type="date"
+							readonly
+							value={formatDate(acara.tanggal_selesai)}
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
 						/>
@@ -113,6 +128,8 @@
 						<p>Jam Mulai:</p>
 						<input
 							type="text"
+							readonly
+							value={acara.waktu_mulai}
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
 						/>
@@ -121,59 +138,11 @@
 						<p>Jam Selesai:</p>
 						<input
 							type="text"
+							readonly
+							value={acara.waktu_selesai}
 							placeholder="Masukkan Nama"
 							class="w-full rounded-lg border px-2 py-1"
 						/>
-					</div>
-				</div>
-
-				<div class="mt-12 flex gap-2 px-4">
-					<div class="mt-2 flex w-full">
-						<button
-							class="flex w-full items-center justify-center rounded-lg border bg-green-600 px-2 py-2 text-white"
-						>
-							<span class="mr-2 flex items-center justify-center">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									x="0px"
-									y="0px"
-									width="28"
-									height="28"
-									viewBox="0,0,256,256"
-								>
-									<g
-										fill="#ffffff"
-										fill-rule="nonzero"
-										stroke="none"
-										stroke-width="1"
-										stroke-linecap="butt"
-										stroke-linejoin="miter"
-										stroke-miterlimit="10"
-										stroke-dasharray=""
-										stroke-dashoffset="0"
-										font-family="none"
-										font-weight="none"
-										font-size="none"
-										text-anchor="none"
-										style="mix-blend-mode: normal"
-										><g transform="scale(5.12,5.12)"
-											><path
-												d="M25,2c-12.683,0 -23,10.317 -23,23c0,12.683 10.317,23 23,23c12.683,0 23,-10.317 23,-23c0,-4.56 -1.33972,-8.81067 -3.63672,-12.38867l-1.36914,1.61719c1.895,3.154 3.00586,6.83148 3.00586,10.77148c0,11.579 -9.421,21 -21,21c-11.579,0 -21,-9.421 -21,-21c0,-11.579 9.421,-21 21,-21c5.443,0 10.39391,2.09977 14.12891,5.50977l1.30859,-1.54492c-4.085,-3.705 -9.5025,-5.96484 -15.4375,-5.96484zM43.23633,7.75391l-19.32227,22.80078l-8.13281,-7.58594l-1.36328,1.46289l9.66602,9.01563l20.67969,-24.40039z"
-											></path></g
-										></g
-									>
-								</svg>
-							</span>
-							Terima
-						</button>
-					</div>
-					<div class="mt-2 flex w-full">
-						<button
-							class="flex w-full items-center justify-center rounded-lg border bg-red-600 px-2 py-2 text-white"
-						>
-							<span class="material-symbols--cancel mr-2 flex items-center justify-center"></span>
-							Tolak
-						</button>
 					</div>
 				</div>
 			</div>
@@ -185,17 +154,23 @@
 
 		<p class="mb-5 mt-5 text-start text-xl font-bold text-blue-600">Daftar Undangan</p>
 		<div class="mt-10 grid grid-cols-9 gap-2">
-			{#each Array(total) as _, i}
+			{#each data?.undangan as undangan, i}
 				<div class="col-span-1 w-full">{i + 1}</div>
 				<div class="col-span-2 w-full rounded-lg border px-2 py-1">
-					<select name="panggilan" id="panggilan" class="w-full">
-						<option value="volvo">Tn</option>
-						<option value="saab">Ny</option>
-					</select>
+					<p class="w-full py-2 text-center">{undangan.jenis_kelamin || 'No Data'}</p>
 				</div>
-				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
-				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
+				<div class="col-span-3 w-full rounded-lg border px-2 py-1">
+					<p class="w-full py-2 text-center">{undangan.nama_penerima}</p>
+				</div>
+				<div class="col-span-3 w-full rounded-lg border px-2 py-1">
+					<p class="w-full py-2 text-center">{undangan.nomer_telepon || 'No Phone'}</p>
+				</div>
 			{/each}
+			{#if data?.undangan.length === 0}
+				<div class="col-span-full items-center justify-center py-2">
+					<p>No Panitia Yet</p>
+				</div>
+			{/if}
 		</div>
 
 		<div class="mt-5 h-1 w-full bg-slate-300"></div>
@@ -203,11 +178,11 @@
 		<!-- bawah -->
 
 		<p class="mb-5 mt-5 text-start text-xl font-bold text-blue-600">Panitia Acara</p>
-		<div class="mt-10 grid grid-cols-9 gap-2">
-			{#each Array(total) as _, i}
+		<div class="grid grid-cols-8 gap-2">
+			{#each data?.panit as panit, i}
 				<div class="col-span-1 w-full">{i + 1}</div>
-				<div class="col-span-5 w-full rounded-lg border px-2 py-1">Tn</div>
-				<div class="col-span-3 w-full rounded-lg border px-2 py-1">Tn</div>
+				<div class="col-span-4 w-full rounded-lg border px-2 py-1">{panit.nama_panit}</div>
+				<div class="col-span-3 w-full rounded-lg border px-2 py-1">{panit.jabatan}</div>
 			{/each}
 		</div>
 	</div>

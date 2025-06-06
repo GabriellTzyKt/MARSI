@@ -35,7 +35,7 @@
 	console.log('Data : ', data);
 	console.log('form data', form);
 
-	let selectedAcara : any = $state(null);
+	let selectedAcara: any = $state(null);
 
 	$effect(() => {
 		if (activeTab === 'completed' && namaacara) {
@@ -300,7 +300,7 @@
 			<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 				<div class="col-span-2">
 					<div class="mt-2 w-full">
-						<p>Nama Acara:</p>
+						<p>Nama Acara<span class="text-red-500">*</span></p>
 						{#if activeTab === 'completed'}
 							<select
 								name="namaacara"
@@ -329,7 +329,7 @@
 					</div>
 
 					<div class="col-span-2 mt-2 w-full">
-						<p class="mt-2">Penanggung Jawab:</p>
+						<p class="mt-2">Penanggung Jawab<span class="text-red-500">*</span></p>
 						<select
 							name="penanggungjawab"
 							bind:value={penanggungjawab}
@@ -347,38 +347,8 @@
 						{/if}
 					</div>
 
-					<div class="col-span-2 mt-2 w-full">
-						<p class="mt-2">Penyelenggara Acara:</p>
-						<select
-							name="penyelenggaraacara"
-							bind:value={penyelenggaraacara}
-							class="w-full rounded-lg border px-2 py-1"
-						>
-							<option value="" disabled selected>Pilih Penyelenggara</option>
-							<optgroup label="Komunitas">
-								{#each data.komunitas as komunitas}
-									<option value={`komunitas-${komunitas.id_komunitas}`}
-										>{komunitas.nama_komunitas}</option
-									>
-								{/each}
-							</optgroup>
-							<optgroup label="Organisasi">
-								{#each data.organisasi as organisasi}
-									<option value={`organisasi-${organisasi.id_organisasi}`}
-										>{organisasi.nama_organisasi}</option
-									>
-								{/each}
-							</optgroup>
-						</select>
-						{#if error}
-							{#each error.penyelenggaraacara as a}
-								<p class="text-left text-red-500">{a}</p>
-							{/each}
-						{/if}
-					</div>
-
 					<div class="mt-2 w-full">
-						<p>Lokasi Acara:</p>
+						<p>Lokasi Acara<span class="text-red-500">*</span></p>
 						<select
 							name="lokasiacara"
 							bind:value={lokasiacara}
@@ -398,7 +368,7 @@
 					</div>
 
 					<div class="mt-2 w-full">
-						<p>Tujuan Acara:</p>
+						<p>Tujuan Acara<span class="text-red-500">*</span></p>
 						<input
 							type="text"
 							name="tujuanacara"
@@ -417,7 +387,7 @@
 				<div class="col-span-2">
 					<div class="flexcoba mt-2 flex w-full">
 						<div class="flex-1">
-							<p>Kapasitas Acara:</p>
+							<p>Kapasitas Acara<span class="text-red-500">*</span></p>
 							<input
 								type="text"
 								bind:value={kapasitasacara}
@@ -433,7 +403,9 @@
 						</div>
 						<div class="ml-10 flex">
 							<div class="mr-10 w-full items-center text-center">
-								<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara</p>
+								<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">
+									Jenis Acara<span class="text-red-500">*</span>
+								</p>
 								<div class="mt-2 flex items-center justify-center self-center">
 									<div class="mx-2 flex items-center justify-center">
 										<input
@@ -473,7 +445,7 @@
 
 					<div class="flexcoba mt-2 flex w-full">
 						<div class="lg:flex-1">
-							<p>Tanggal Mulai:</p>
+							<p>Tanggal Mulai<span class="text-red-500">*</span></p>
 							<input
 								type="date"
 								name="tanggalmulai"
@@ -489,7 +461,7 @@
 						</div>
 						<div class="flex-1 lg:ml-10">
 							<div class="w-full">
-								<p>Tanggal Selesai:</p>
+								<p>Tanggal Selesai<span class="text-red-500">*</span></p>
 								<input
 									type="date"
 									name="tanggalselesai"
@@ -507,7 +479,7 @@
 					</div>
 					<div class="flexcoba mt-2 flex w-full">
 						<div class="lg:flex-1">
-							<p>Waktu Mulai:</p>
+							<p>Waktu Mulai<span class="text-red-500">*</span></p>
 							<input
 								type="time"
 								name="waktumulai"
@@ -522,7 +494,7 @@
 						</div>
 						<div class="flex-1 lg:ml-10">
 							<div class="w-full">
-								<p>Waktu Selesai:</p>
+								<p>Waktu Selesai<span class="text-red-500">*</span></p>
 								<input
 									type="time"
 									name="waktuselesai"
@@ -538,7 +510,7 @@
 						</div>
 					</div>
 					<div class="w-full" style="position:relative">
-						<p>Alamat acara:</p>
+						<p>Alamat acara<span class="text-red-500">*</span></p>
 						{#if activeTab === 'completed'}
 							<input
 								type="text"
@@ -572,7 +544,7 @@
 						{/if}
 					</div>
 					<div class="w-full">
-						<p>Deskripsi Acara:</p>
+						<p>Deskripsi Acara<span class="text-red-500">*</span></p>
 						<textarea
 							name="deskripsiacara"
 							bind:value={deskripsiacara}
@@ -760,7 +732,7 @@
 </div>
 
 {#if open}
-{console.log("Oiiii anjeeee")}
+	{console.log('Oiiii anjeeee')}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
 		<SucessModal
 			{open}

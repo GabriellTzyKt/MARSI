@@ -1,11 +1,13 @@
 import { env } from "$env/dynamic/private";
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "../$types";
+import { parseAst } from "vite";
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, cookies }) => {
+    let token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
      try {
-            const id = params.id;
-    
+            const id = params.idkom;
+            console.log(params.idkom    )
             // Fetch komunitas data
             const komunitasResponse = await fetch(`${env.URL_KERAJAAN}/komunitas/${id}`);
             if (!komunitasResponse.ok) {
@@ -14,19 +16,19 @@ export const load: PageServerLoad = async ({ params }) => {
             let komunitasData = await komunitasResponse.json();
          console.log("Komunitas data:", komunitasData);
           let [pelindungRes, pembinaRes, penanggungJawabRes] = await Promise.all([
-              fetch(`${env.URL_KERAJAAN}/user/${komunitasData.pelindung}`, {
+              fetch(`${env.PUB_PORT}/user/${komunitasData.pelindung}`, {
                 headers: {
-                  Authorization: `Bearer ${env.API_TOKEN}`
+                  Authorization: `Bearer ${token.token}`
                 }
             }),
-            fetch(`${env.URL_KERAJAAN}/user/${komunitasData.pembina}`, {
+            fetch(`${env.PUB_PORT}/user/${komunitasData.pembina}`, {
               headers: {
-                Authorization: `Bearer ${env.API_TOKEN}`
+                Authorization: `Bearer ${token.token}`
               }
             }),
-            fetch(`${env.URL_KERAJAAN}/user/${komunitasData.penanggung_jawab}`, {
+            fetch(`${env.PUB_PORT}/user/${komunitasData.penanggung_jawab}`, {
               headers: {
-                Authorization: `Bearer ${env.API_TOKEN}`
+                Authorization: `Bearer ${token.token}`
               }
             })
           ]);

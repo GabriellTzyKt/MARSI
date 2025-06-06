@@ -33,7 +33,7 @@ export const load: PageServerLoad = async ({ fetch, params,cookies }) => {
 
     const situsData = await situsRes.json();
     const filteredSitus = Array.isArray(situsData)
-        ? situsData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
+        ? situsData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at==null)
         : situsData;
 
     const komunitasData = await komunitasRes.json();
@@ -103,7 +103,7 @@ export const actions: Actions = {
             tujuanacara: z.string().trim().min(1, "Tujuan harus diisi!"),
             deskripsiacara: z.string().trim().min(1, "Deskripsi harus terisi!"),
             penanggungjawab: z.string().trim().min(1, "Isi penanggungjawab!"),
-            penyelenggaraacara: z.string().trim().min(1, "Isi penyelenggara!"),
+           
             kapasitasacara: z.string()
                 .trim()
                 .min(1, "Kapasitas harus terisi!")
@@ -136,7 +136,7 @@ export const actions: Actions = {
             tujuanacara: data.get("tujuanacara") ?? "",
             deskripsiacara: data.get("deskripsiacara") ?? "",
             penanggungjawab: data.get("penanggungjawab") ?? "",
-            penyelenggaraacara: data.get("penyelenggaraacara") ?? "",
+            
             kapasitasacara: data.get("kapasitasacara") ?? "",
             tanggalmulai: data.get("tanggalmulai") ?? "",
             tanggalselesai: data.get("tanggalselesai") ?? "",
