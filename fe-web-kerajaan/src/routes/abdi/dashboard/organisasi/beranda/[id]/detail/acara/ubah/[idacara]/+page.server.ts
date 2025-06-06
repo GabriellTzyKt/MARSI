@@ -56,6 +56,9 @@ export const load = async ({ params, fetch, cookies }) => {
         ? panitia.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
         : panitia;
 
+    const isKetuaExist = filteredPanitia.some((item: any) => item.jabatan_panitia === "ketua");
+
+
     const undangan = await undanganRes.json();
     const filteredUndangan = Array.isArray(undangan)
         ? undangan.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
@@ -94,7 +97,8 @@ export const load = async ({ params, fetch, cookies }) => {
         dataUndangan: filteredUndangan,
         dataPanit: filteredPanitia,
         id_situs,
-        id_acaraorganisasi
+        id_acaraorganisasi,
+        isKetuaExist
     };
 };
 

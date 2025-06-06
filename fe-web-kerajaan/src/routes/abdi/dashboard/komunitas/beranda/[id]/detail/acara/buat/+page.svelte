@@ -34,7 +34,7 @@
 	let notelpbawah: any = $state([]);
 
 	let { form, data } = $props();
-	console.log('Data : ', data);
+	console.log('Data 12 : ', data);
 	console.log('form data', form);
 
 	let nama_acara = $state("")

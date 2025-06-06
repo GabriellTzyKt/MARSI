@@ -2,30 +2,61 @@
 	import { goto } from '$app/navigation';
 	import { navigating, page } from '$app/state';
 	import DropDown from '$lib/dropdown/DropDown.svelte';
+	import { dummyAcara, dummyAnggota } from '$lib/dummy';
 	import Loader from '$lib/loader/Loader.svelte';
 	import Pagination from '$lib/table/Pagination.svelte';
 	import Search from '$lib/table/Search.svelte';
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
 	import { invalidateAll } from '$app/navigation';
+	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
+	import { enhance } from '$app/forms';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 
 	let { data } = $props();
+	let dataambil = data.acaraList;
+	let dataacara = dataambil.map((item: any) => ({
+		...item.Acara,
+		id_organisasi: item.id_organisasi,
+		organisasi_nama: item.organisasi_nama,
+		nama_penanggung_jawab: item.nama_penanggung_jawab
+	}));
+	console.log('DATA AMBIL : ', dataacara);
+	let id_org = data.id_org;
+	console.log('id org : ', id_org);
 
-	// Get the current komunitas ID from the URL
-	let idKomunitas = $state('');
-	$effect(() => {
-		idKomunitas = page.params.id;
-		console.log('ID Komunitas:', idKomunitas);
-	});
-
-	// Use the acaraList directly from the server
-	let dataacara = data.allAcara;
-	console.log('Acara data:', dataacara);
+	// // Check if allEvents exists and process it
+	// if (data.allEvents && Array.isArray(data.allEvents)) {
+	// 	dataacara = data.allEvents.map((item: any) => {
+	// 		// If data has a nested Acara structure
+	// 		if (item.Acara) {
+	// 			return {
+	// 				...item.Acara,
+	// 				organisasi_id: item.id_organisasi,
+	// 				organisasi_nama: item.nama_organisasi || 'Unknown Organization'
+	// 			};
+	// 		}
+	// 		// If data is already in the expected format
+	// 		return item;
+	// 	});
+	// }
 
 	let keyword = $state('');
 	let entries = $state(10);
 	let currPage = $state(1);
 
+	let errors: any = $state('');
+	let success = $state(false);
+	let loading = $state(false);
+
+	let deleteid = $state();
+	let deleteModal = $state(false);
+	function handleDelete(id: any) {
+		console.log('Delete', id);
+		deleteid = id;
+		deleteModal = true;
+	}
 	function pagination(data: any[]) {
 		if (!data || !Array.isArray(data)) return [];
 		let start = (currPage - 1) * entries;
@@ -65,27 +96,33 @@
 {#if navigating.to}
 	<Loader text="Navigating..."></Loader>
 {/if}
+{#if loading}
+	<Loader></Loader>
+{/if}
 <div class="flex w-full flex-col">
-	<div class="flex flex-col xl:flex-row xl:justify-between">
+	<div class=" flex flex-col xl:flex-row xl:justify-between">
 		<button
 			class="bg-badran-bt cursor-pointer rounded-lg px-3 py-2 text-white"
-			onclick={() => goto(`/abdi/dashboard/komunitas/beranda/${idKomunitas}/detail/acara/buat`)}
-			>+Tambah Data</button
+			onclick={() =>
+				goto(
+					`/abdi/dashboard/organisasi/beranda/${dataambil[0].id_organisasi}/detail/acara/tambah`
+				)}>+Tambah Data</button
 		>
 		<div
 			class="mt-4 flex flex-col items-center justify-center gap-2 md:flex-row xl:mt-0 xl:justify-start"
 		>
 			<!-- select -->
 			<select
-				name="Komunitas"
+				name="Organisasi"
 				id=""
-				value="Komunitas"
-				placeholder="cari komunitas"
+				value="Organisasi"
+				placeholder="cari organisasi"
 				class="rounded-md border px-3 py-2 focus:outline-none"
 			>
-				<option value="komunitas">Komunitas</option>
-				<option value="Organisasi">Organisasi</option>
+				<option value="organisasi">Organisasi</option>
+				<option value="Komunitas">Komunitas</option>
 				<option value="Abdi">Abdi</option>
+				<option value="organisasi">Organisasi</option>
 			</select>
 			<!-- cari -->
 			<div class="flex items-center rounded-lg border px-2">
@@ -93,7 +130,7 @@
 					type="text"
 					bind:value={keyword}
 					placeholder="Cari.."
-					class="w-full bg-transparent px-2 py-2 focus:outline-none"
+					class=" w-full bg-transparent px-2 py-2 focus:outline-none"
 				/>
 
 				<!-- svelte-ignore a11y_consider_explicit_label -->
@@ -135,7 +172,7 @@
 				['nama_acara', 'Nama Acara'],
 				['waktu_mulai', 'Tanggal'],
 				['alamat_acara', 'Lokasi'],
-				['penanggung_jawab_profile', 'Penanggung Jawab'],
+				['nama_penanggung_jawab', 'Penanggung Jawab'],
 				['jenis_acara', 'Jenis Acara'],
 				['kapasitas_acara', 'Kapasitas'],
 				['children', 'Status'],
@@ -144,31 +181,39 @@
 			table_data={resdata}
 		>
 			{#snippet children({ header, data, index })}
-			{console.log(data)}
 				{#if header === 'Aksi'}
-					<DropDown
-						text={`Apakah yakin ingin mengarsipkan ${data.nama_acara || 'acara ini'}?`}
-						successText={`Berhasil mengarsipkan ${data.nama_acara || 'acara ini'}!`}
-						link={`/abdi/dashboard/komunitas/beranda/${idKomunitas}/detail/acara`}
+					<DropDownNew
+						text={`Apakah yakin ingin mengarsipkan ${data.nama_anggota}?`}
 						items={[
-							[
-								'Detail',
-								`/abdi/dashboard/komunitas/beranda/${idKomunitas}/detail/acara/detail/${data.id_acara}`
-							],
-							[
-								'Ubah',
-								`/abdi/dashboard/komunitas/beranda/${idKomunitas}/detail/acara/edit/${data.id_acara}`
-							],
-							[
-								'Laporan',
-								`/abdi/dashboard/komunitas/beranda/${idKomunitas}/detail/acara/laporan/${data.id_acara}`
-							],
-							['children', 'Arsip', '']
+							{
+								label: 'Detail',
+								action: () =>
+									goto(
+										`/abdi/dashboard/komunitas/beranda/${id_org}/detail/acara/detail/${data.id_acara}`
+									)
+							},
+							{
+								label: 'Ubah',
+								action: () =>
+									goto(
+										`/abdi/dashboard/komunitas/beranda/${id_org}/detail/acara/edit/${data.id_acara}`
+									)
+							},
+							{
+								label: 'Laporan',
+								action: () =>
+									goto(
+										`/abdi/dashboard/komunitas/beranda/${id_org}/detail/acara/laporan/${data.id_organisasi}`
+									)
+							},
+							{
+								label: 'Hapus',
+								action: () => handleDelete(data.id_acara)
+							}
 						]}
 						id={`id-${index}`}
-						{data}
-						onSuccess={refreshData}
-					></DropDown>
+						data={resdata}
+					></DropDownNew>
 				{:else if header === 'Status'}
 					<Status status={data.status || 'unknown'}></Status>
 				{/if}
@@ -182,3 +227,49 @@
 		</div>
 	</div>
 </div>
+{#if deleteModal}
+	<!-- Overlay -->
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+		<!-- Modal box -->
+		<div class="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg">
+			<h2 class="mb-4 text-lg font-bold">Konfirmasi Hapus</h2>
+			<p class="mb-4">Apakah kamu yakin ingin menghapus acara ini?</p>
+
+			<form
+				action="?/hapusAcara"
+				method="post"
+				use:enhance={() => {
+					loading = true;
+					return async ({ result }) => {
+						loading = false;
+						if (result.type === 'success') {
+							success = true;
+							invalidateAll();
+							setTimeout(() => {
+								success = false;
+								deleteModal = false;
+								goto(`/abdi/dashboard/komunitas/beranda/${id_org}/detail/acara`);
+							}, 3000);
+						}
+						if (result.type === 'failure') {
+							errors = result.data?.errors;
+						}
+					};
+				}}
+			>
+				<input type="hidden" name="id_acara" value={deleteid} />
+
+				<DeleteModal
+					bind:value={deleteModal}
+					text="apa yakin ingin menghapus acara ini?"
+					successText="berhasil dihapus"
+					choose="delete"
+				></DeleteModal>
+			</form>
+		</div>
+	</div>
+{/if}
+
+{#if success}
+	<SuccessModal text="Berhasil!"></SuccessModal>
+{/if}

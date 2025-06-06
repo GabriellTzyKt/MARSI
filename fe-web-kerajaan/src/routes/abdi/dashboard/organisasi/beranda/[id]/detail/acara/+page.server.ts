@@ -38,6 +38,12 @@ export const load: PageServerLoad = async ({ fetch, params, depends }) => {
         const acaraData = await acaraResponse.json();
         console.log(`Events for organization ${currentOrgId}:`, acaraData);
 
+        const filteredAcara = Array.isArray(acaraData)
+            ? acaraData.filter((item: any) =>
+                item.Acara.deleted_at === "0001-01-01T00:00:00Z" || item.Acara.deleted_at == null
+            )
+            : [];
+
         const usersResponse = await fetch(`${env.BASE_URL}/users?limit=2000`, {
             cache: 'no-store'
         });
@@ -50,7 +56,7 @@ export const load: PageServerLoad = async ({ fetch, params, depends }) => {
 
 
         // Add organization info to each acara without processing photos
-        const processedAcara = acaraData.map((acara: any) => {
+        const processedAcara = filteredAcara.map((acara: any) => {
             // Cari user dengan id sama
             const user = users.find((u: any) => u.id_user == acara.Acara.id_penanggung_jawab);
             return {
@@ -60,6 +66,8 @@ export const load: PageServerLoad = async ({ fetch, params, depends }) => {
                 nama_penanggung_jawab: user ? user.nama_lengkap : 'Tidak diketahui'
             };
         });
+
+        console.log("Processed acara : ", processedAcara)
 
         // Fetch all organizations for reference (if needed)
         const allOrganisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi`, {
@@ -80,5 +88,52 @@ export const load: PageServerLoad = async ({ fetch, params, depends }) => {
     } catch (err) {
         console.error("Error in load function:", err);
         throw err;
+    }
+};
+
+export let actions: Actions = {
+    hapusAcara: async ({ request }) => {
+        let data = await request.formData()
+        console.log(data)
+        let id = data.get("id_acara")
+        //   console.log("Deleting acara with ID:", id);
+        try {
+            let res = await fetch(`${env.URL_KERAJAAN}/acara/detail/${id}`, {
+                method: "GET"
+            })
+            if (!res.ok) {
+                console.error(`Failed to find event: ${res.status}`);
+                return fail(404, { error: "Acara tidak ditemukan" });
+            }
+
+            let eventData = await res.json()
+            console.log(eventData)
+
+            let delres = await fetch(`${env.URL_KERAJAAN}/acara/${id}`, {
+                method: "DELETE",
+
+                // body: JSON.stringify(formattedEvents)
+            })
+            if (!delres.ok) {
+                let errorData = await delres.json().catch(() => ({}));
+                console.error("Delete failed:", delres.status, errorData);
+                return fail(delres.status, {
+                    error: errorData.message || `Gagal menghapus acara (${delres.status})`
+                });
+            }
+            let successData = await delres.json().catch(() => ({ message: "Success" }));
+            console.log("Delete successful:", successData);
+
+
+            // Return success with the updated data
+            return {
+                success: true,
+                message: "Acara berhasil dihapus"
+            };
+        }
+        catch (error) {
+
+        }
+        console.log(id)
     }
 };

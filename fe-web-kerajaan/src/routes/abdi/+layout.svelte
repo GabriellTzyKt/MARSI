@@ -287,7 +287,12 @@
 			return 'Edit Acara Organisasi';
 		} else if (page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/acara/edit/[idacara]') {
 			return 'Ubah Acara Komunitas';
+		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/acara/detail/[idacara]') {
+			return 'Detail Acara Organisasi';
+		} else if (page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/acara/detail/[idacara]') {
+			return 'Detail Acara Komunitas';
 		}
+
 	});
 
 

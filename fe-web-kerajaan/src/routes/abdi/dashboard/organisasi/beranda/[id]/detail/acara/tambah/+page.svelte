@@ -37,6 +37,10 @@
 	console.log('Data : ', data);
 	console.log('form data', form);
 
+let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
+		console.log("acara list : ", acaraList)
+
+
 	let nama_acara = $state("")
 
 	let selectedAcara: any = null;
@@ -56,6 +60,10 @@
 			nama_acara = found.Acara.nama_acara;
 			tujuanacara = found.Acara.tujuan_acara;
 			input_radio = found.Acara.jenis_acara.toLowerCase() === 'tertutup' ? 'private' : 'public';
+			waktumulai = found.Acara.waktu_mulai.split("T")[1].split(":")[0] + ":" + found.Acara.waktu_mulai.split("T")[1].split(":")[1]
+			waktuselesai = found.Acara.waktu_selesai.split("T")[1].split(":")[0] + ":" + found.Acara.waktu_selesai.split("T")[1].split(":")[1]
+			tanggalmulai = found.Acara.waktu_mulai.split("T")[0].split(":")[0]
+			tanggalselesai = found.Acara.waktu_selesai.split("T")[0].split(":")[0]
 			console.log("SELECTED : ", selectedAcara)
 		} else {
 			selectedAcara = null;
@@ -326,8 +334,8 @@
 								class="w-full rounded-lg border px-2 py-1"
 							>
 								<option value="" disabled selected>Pilih Acara Lama</option>
-								{#each data.acara as acara}
-									<option value={acara.Acara.id_acara}>{acara.Acara.nama_acara}</option>
+								{#each acaraList as acara}
+									<option value={acara.Acara?.id_acara}>{acara.Acara?.nama_acara}</option>
 								{/each}
 							</select>
 						{:else}
