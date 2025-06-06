@@ -326,7 +326,7 @@
 
 					setTimeout(() => {
 						success = false;
-						goto(`/abdi/dashboard/komunitas/beranda/${data.id_situs}/detail/acara`);
+						goto(`/abdi/dashboard/organisasi/beranda/${data.id_situs}/detail/acara`);
 					}, 3000);
 				}
 				if (result.type === 'failure') {
@@ -880,7 +880,7 @@
 						class="mt-1 w-full"
 					>
 						<option value="" disabled selected>Silahkan Pilih!</option>
-						<option value="ketua" disabled={isKetuaDipilih(invitation.id)}>Ketua</option>
+						<option value="ketua" disabled={data.isKetuaExist}>Ketua</option>
 						<option value="wakilketua">Wakil Ketua</option>
 						<option value="sekretariat">Sekretariat</option>
 						<option value="bendahara">Bendahara</option>

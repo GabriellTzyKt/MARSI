@@ -10,6 +10,9 @@
 	import Table from '$lib/table/Table.svelte';
 	import { invalidateAll } from '$app/navigation';
 	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
+	import { enhance } from '$app/forms';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 
 	let { data } = $props();
 	let dataambil = data.acaraList;
@@ -19,8 +22,9 @@
 		organisasi_nama: item.organisasi_nama,
 		nama_penanggung_jawab: item.nama_penanggung_jawab
 	}));
-	console.log('DATA AMBIL : ', dataacara);
+	console.log('DATA AMBIL : ', data);
 	let id_org = data.id_org;
+	console.log('id org : ', id_org);
 
 	// // Check if allEvents exists and process it
 	// if (data.allEvents && Array.isArray(data.allEvents)) {
@@ -41,6 +45,10 @@
 	let keyword = $state('');
 	let entries = $state(10);
 	let currPage = $state(1);
+
+	let errors: any = $state('');
+	let success = $state(false);
+	let loading = $state(false);
 
 	let deleteid = $state();
 	let deleteModal = $state(false);
@@ -87,6 +95,9 @@
 
 {#if navigating.to}
 	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader></Loader>
 {/if}
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
@@ -177,7 +188,9 @@
 							{
 								label: 'Detail',
 								action: () =>
-									goto(`/abdi/dashboard/organisasi/beranda/${id_org}/detail/acara/detail`)
+									goto(
+										`/abdi/dashboard/organisasi/beranda/${id_org}/detail/acara/detail/${data.id_acara}`
+									)
 							},
 							{
 								label: 'Ubah',
@@ -195,7 +208,7 @@
 							},
 							{
 								label: 'Hapus',
-								action: () => handleDelete(data.id_user)
+								action: () => handleDelete(data.id_acara)
 							}
 						]}
 						id={`id-${index}`}
@@ -215,5 +228,48 @@
 	</div>
 </div>
 {#if deleteModal}
-	<form action="?/hapusAcara"></form>
+	<!-- Overlay -->
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+		<!-- Modal box -->
+		<div class="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg">
+			<h2 class="mb-4 text-lg font-bold">Konfirmasi Hapus</h2>
+			<p class="mb-4">Apakah kamu yakin ingin menghapus acara ini?</p>
+
+			<form
+				action="?/hapusAcara"
+				method="post"
+				use:enhance={() => {
+					loading = true;
+					return async ({ result }) => {
+						loading = false;
+						if (result.type === 'success') {
+							success = true;
+							invalidateAll();
+							setTimeout(() => {
+								success = false;
+								deleteModal = false;
+								goto(`/abdi/dashboard/organisasi/beranda/${id_org}/detail/acara`);
+							}, 3000);
+						}
+						if (result.type === 'failure') {
+							errors = result.data?.errors;
+						}
+					};
+				}}
+			>
+				<input type="hidden" name="id_acara" value={deleteid} />
+
+				<DeleteModal
+					bind:value={deleteModal}
+					text="apa yakin ingin menghapus acara ini?"
+					successText="berhasil dihapus"
+					choose="delete"
+				></DeleteModal>
+			</form>
+		</div>
+	</div>
+{/if}
+
+{#if success}
+	<SuccessModal text="Berhasil!"></SuccessModal>
 {/if}

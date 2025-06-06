@@ -42,23 +42,14 @@ export const load: PageServerLoad = async ({ fetch, params, cookies }) => {
 
     const acaraData = await acaraRes.json();
     const filteredAcara = Array.isArray(acaraData)
-        ? acaraData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
+        ? acaraData.filter((item: any) => item.Acara.deleted_at === "0001-01-01T00:00:00Z" || item.Acara.deleted_at === null)
         : acaraData;
-
-
-    const processedAcara = filteredAcara.map((acara: any) => {
-        return {
-            ...filteredAcara,
-            organisasi_id: id,
-            nama_acara: acara.Acara.nama_acara
-        };
-    });
 
     return {
         users : filteredUsers,
         situs : filteredSitus,
         organisasi : filteredOrganisasi,
-        acara: processedAcara
+        acara: filteredAcara
     };
 };
 
