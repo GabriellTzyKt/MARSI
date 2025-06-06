@@ -348,7 +348,7 @@
 					</div>
 
 					<div class="mt-2 w-full">
-						<p>Lokasi Acara<span class="text-red-500">*</span></p>
+						<p>Lokasi Acara:</p>
 						<select
 							name="lokasiacara"
 							bind:value={lokasiacara}
@@ -368,7 +368,7 @@
 					</div>
 
 					<div class="mt-2 w-full">
-						<p>Tujuan Acara<span class="text-red-500">*</span></p>
+						<p>Tujuan Acara:</p>
 						<input
 							type="text"
 							name="tujuanacara"
@@ -560,7 +560,7 @@
 				</div>
 			</div>
 
-			<div class="mt-5 h-1 w-full bg-slate-300"></div>
+			<!-- <div class="mt-5 h-1 w-full bg-slate-300"></div>
 			<div class="mt-8 flex w-full">
 				<p class="my-auto ml-10 w-full text-center font-bold">Undangan</p>
 				<button
@@ -592,8 +592,8 @@
 					</div>
 
 					<div class="col-span-3 w-full rounded-lg border px-2 py-1">
-						<!-- Nama jadi dropdown -->
-						<select
+						 Nama jadi dropdown -->
+			<!-- <select
 							bind:value={namabawah[invitation.id]}
 							name={`namabawah_${invitation.id}`}
 							id={`namabawah_${invitation.id}`}
@@ -631,20 +631,20 @@
 							<p class="text-left text-red-500">{error.notelpbawah[0]}</p>
 						{/if}
 					</div>
-					<!-- svelte-ignore a11y_no_static_element_interactions -->
-					<div class="col-span-1">
-						<!-- svelte-ignore a11y_click_events_have_key_events -->
-						<span
+					 svelte-ignore a11y_no_static_element_interactions -->
+			<!-- <div class="col-span-1"> -->
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- <span
 							class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-red-400 p-2"
 							onclick={() => hapus(i)}
 						>
 							<i class="gg--trash z-10 items-center text-2xl"></i>
 						</span>
-					</div>
-				{/each}
-			</div>
+					</div> -->
+			<!-- {/each}  -->
+			<!-- </div> -->
 
-			<div class="mt-5 h-1 w-full bg-slate-300"></div>
+			<!-- <div class="mt-5 h-1 w-full bg-slate-300"></div>
 			<div class="mt-8 flex w-full">
 				<p class="my-auto ml-10 w-full text-start font-bold">Panitia Acara</p>
 				<button
@@ -708,11 +708,11 @@
 						{#if error.namajabatan && !namajabatan[invitation.id]}
 							<p class="text-left text-red-500">{error.namajabatan[0]}</p>
 						{/if}
-					</div>
-					<!-- svelte-ignore a11y_no_static_element_interactions -->
-					<div class="col-span-1">
-						<!-- svelte-ignore a11y_click_events_have_key_events -->
-						<span
+					</div> -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<!-- <div class="col-span-1"> -->
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- <span
 							class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-red-400 p-2"
 							onclick={() => hapus2(i)}
 						>
@@ -720,7 +720,7 @@
 						</span>
 					</div>
 				{/each}
-			</div>
+			</div> -->
 
 			<div class="mt-8 flex w-full justify-center lg:justify-end">
 				<button class="w-50 text-nowrap rounded-lg bg-green-400 px-2 py-2 text-white" type="submit">
