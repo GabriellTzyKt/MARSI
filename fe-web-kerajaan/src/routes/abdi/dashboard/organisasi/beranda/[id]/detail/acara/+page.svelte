@@ -203,7 +203,7 @@
 								label: 'Laporan',
 								action: () =>
 									goto(
-										`/abdi/dashboard/organisasi/beranda/${id_org}/detail/acara/laporan/${data.id_organisasi}`
+										`/abdi/dashboard/organisasi/beranda/${id_org}/detail/acara/laporan/${data.id_acara}`
 									)
 							},
 							{

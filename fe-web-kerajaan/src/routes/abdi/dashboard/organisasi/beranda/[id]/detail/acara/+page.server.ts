@@ -81,7 +81,7 @@ export const load: PageServerLoad = async ({ fetch, params, depends }) => {
 
         return {
             organisasi: currentOrganisasi,
-            acaraList: processedAcara,
+            acaraList: acaraData,
             organisasiList: organisasiList,
             id_org: params.id
         };
