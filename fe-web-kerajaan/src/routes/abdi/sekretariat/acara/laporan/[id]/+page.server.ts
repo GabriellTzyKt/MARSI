@@ -227,33 +227,91 @@ export const load: PageServerLoad = async ({params, cookies}) => {
                
             } 
              let lpjData = await resLpj.json();
+             
+            let rab = await fetch(`${env.URL_KERAJAAN}/lpj/rab/${lpjData.id_lpj_acara}`, {
+                method:"GET"
+            });
+            let rabData = await rab.json();
+            rabData = rabData?.filter((item)=> item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at)||[]
             formattedData.lpj = lpjData.message === "Lpj Acara not found" ? '' : lpjData;
+            const dokumentasiValueDoc = lpjData.bukti_pelaksanaan?.toString() || '';
+            const docIdsDoc = dokumentasiValueDoc.includes(',') 
+            ? dokumentasiValueDoc.split(',').map((id : any) => id.trim()).filter(Boolean)
+            : [dokumentasiValueDoc];
+
+        console.log(`Document has ${docIds.length} dokumentasi IDs:`, docIds);
+          let fileDetailsDoc : any = [];
+             // Process each document ID separately
+        for (const docId of docIdsDoc) {
+            if (!docId) continue;
             
-            let lpjGambar :any
-            if (lpjData.bukti_pelaksanaan) {
-                
-                const filePathsRequest = await fetch(`${env.URL_KERAJAAN}/doc/${lpjData.bukti_pelaksanaan}`, {
+            console.log(`Fetching doc/${docId}`);
+            const filePathsRequest = await fetch(`${env.URL_KERAJAAN}/doc/${docId}`, {
                 method: "GET",
                 headers: {
                     "Accept": "application/json"
                 }
-                });
-                 const filePathsData = await filePathsRequest.json();
-                 const filePaths = Array.isArray(filePathsData.file_dokumentasi) 
+            });
+            
+            if (!filePathsRequest.ok) {
+                console.error(`Failed to fetch doc/${docId}: ${filePathsRequest.status}`);
+                continue;
+            }
+            
+            const filePathsData = await filePathsRequest.json();
+            console.log(`File paths data for doc ${docId}:`, filePathsData);
+            
+            // Extract file paths
+            const filePaths = Array.isArray(filePathsData.file_dokumentasi) 
                 ? filePathsData.file_dokumentasi 
                 : [filePathsData.file_dokumentasi];
-                lpjGambar = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePaths[0])}`;
-            }
-                
-                let resRAB = await fetch(`${env.URL_KERAJAAN}/lpj/rab/${formattedData.lpj.id_lpj_acara}`);
-                if (!resRAB.ok) {
-                    console.error(`Failed to fetch lpj/rab/${formattedData.lpj.id_lpj_acara}: ${resRAB.status}`);
-                }
-                let rabData = await resRAB.json();
-                formattedData.rab = rabData || '';
             
-            console.log("Formatted Data",formattedData)
-                return { data: formattedData,lpjGambar, undangan: undanganWithUser, panit: panitWithUser, situs: situs, files: fileDetails};
+            // Process each file path
+            const docFileDetails = await Promise.all(filePaths.map(async (path : any) => {
+                if (!path) return null;
+                
+                const actualPath = path;
+                console.log(`Processing file path from doc ${docId}:`, actualPath);
+                
+                try {
+                    const fileDataRequest = await fetch(`${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(actualPath)}`, {
+                        method: "GET"
+                    });
+                    
+                    if (!fileDataRequest.ok) {
+                        console.error(`Failed to fetch file data for path ${actualPath}:`, fileDataRequest.status);
+                        return {
+                            path: actualPath,
+                            url: null,
+                            error: `Failed to load file: ${fileDataRequest.status}`,
+                            docId: docId
+                        };
+                    }
+                    
+                    return {
+                        path: actualPath,
+                        url: `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(actualPath)}`,
+                        type: fileDataRequest.headers.get("content-type") || "unknown",
+                        name: actualPath.split('/').pop(),
+                        size: fileDataRequest.headers.get("content-length") || "unknown",
+                        docId: docId
+                    };
+                } catch (error) {
+                    console.error(`Error processing file path ${actualPath}:`, error);
+                    return {
+                        path: actualPath,
+                        url: null,
+                        error: error instanceof Error ? error.message : "Unknown error",
+                        docId: docId
+                    };
+                }
+            }));
+            
+            // Add files from this document to the main list
+            fileDetailsDoc = [...fileDetailsDoc, ...docFileDetails.filter(file => file !== null)];
+            }
+
+                return { data: formattedData,rabData, fileDetailsDoc, undangan: undanganWithUser, panit: panitWithUser, situs: situs, files: fileDetails};
            
         }
 
@@ -268,7 +326,8 @@ export const actions: Actions = {
         // console.log(data)
         let existingLPJ: any;
         const newFilesDokumentasi = data.getAll('uploadfileDokumentasi').filter(file => file instanceof File && file.size > 0) as File[];
-        const existingFileIdsDokumentasi = data.getAll('existingFileIdDokumentasai').map(id => id?.toString()).filter(id => id && id !== 'null' && id !== 'undefined');
+        const existingFileIdsDokumentasi = data.getAll('existingFileIdDokumentasi').map(id => id?.toString()).filter(id => id && id !== 'null' && id !== 'undefined');
+        console.log("exisiting doc :v", existingFileIdsDokumentasi)
         let id_lpj: any
         
         let lpjRes = await fetch(`${env.URL_KERAJAAN}/lpj/${params.id}`, {
@@ -282,6 +341,7 @@ export const actions: Actions = {
         }
 
         id_lpj = lpjData.id_lpj_acara
+         existingLPJ = lpjData
         if (!id_lpj) {
             
 
@@ -302,104 +362,128 @@ export const actions: Actions = {
             })
             let lpjData = await lpjRes.json()
             console.log(lpjData)
+
             if (!lpjRes) {
                 console.error(`Failed to fetch lpj/${params.id}: ${lpjRes.status}`);
                 // return fail(404, { error: "Lpj tidak ditemukan" });
             }
-            id_lpj = lpjData.id_lpj_acara
+            let lpjjres = await fetch(`${env.URL_KERAJAAN}/lpj/${params.id}`, {
+                method: "GET",
+            });
+            let lpjj = await lpjjres.json();
+            id_lpj = lpjj.id_lpj_acara
+            existingLPJ = lpjj
         }
-        existingLPJ = lpjData
+       
 
         console.log("id", id_lpj)
+        console.log("dataLPJ", existingLPJ)
         let newDocLPJ:any = []
 
 
 
 
-        // if (newFilesDokumentasi.length > 0) {
-        //     try {
-        //         // Upload each file individually to ensure all are processed
-        //         for (const file of newFilesDokumentasi) {
-        //             console.log(`Processing file: ${file.name} (${file.size} bytes)`);
+        if (newFilesDokumentasi.length > 0) {
+            try {
+                // Upload each file individually to ensure all are processed
+                for (const file of newFilesDokumentasi) {
+                    console.log(`Processing file: ${file.name} (${file.size} bytes)`);
                     
-        //             const singleFileFormData = new FormData();
-        //             singleFileFormData.append('nama_acara', existingLPJ.nama_acara   as string);
-        //             singleFileFormData.append('foto_acara', file);
+                    const singleFileFormData = new FormData();
+                    singleFileFormData.append('nama_acara', (data.get("nama_acara"))  as string);
+                    singleFileFormData.append('bukti_pelaksanaan', file);
                     
-        //             console.log(`Uploading file: ${file.name}`);
-        //             const uploadResponse = await fetch(`${env.URL_KERAJAAN}/file/foto_acara`, {
-        //                 method: 'POST',
-        //                 body: singleFileFormData
-        //             });
+                    console.log(`Uploading file: ${file.name}`);
+                    const uploadResponse = await fetch(`${env.URL_KERAJAAN}/file/lpj_acara`, {
+                        method: 'POST',
+                        body: singleFileFormData
+                    });
                     
-        //             if (!uploadResponse.ok) {
-        //                 console.error(`Upload failed for ${file.name}:`, uploadResponse.status);
-        //                 const responseText = await uploadResponse.text();
-        //                 console.error('Upload response body:', responseText);
-        //                 continue; // Skip this file but continue with others
-        //             }
+                    if (!uploadResponse.ok) {
+                        console.error(`Upload failed for ${file.name}:`, uploadResponse.status);
+                        const responseText = await uploadResponse.text();
+                        console.error('Upload response body:', responseText);
+                        continue; // Skip this file but continue with others
+                    }
                     
-        //             const uploadResult = await uploadResponse.json();
-        //             console.log(`Upload result for ${file.name}:`, uploadResult);
+                    const uploadResult = await uploadResponse.json();
+                    console.log(`Upload result for ${file.name}:`, uploadResult);
                     
-        //             // Extract ID from response
-        //             let fileId = null;
+                    // Extract ID from response
+                    let fileId = null;
                     
-        //             if (uploadResult.id_path) {
-        //                 if (typeof uploadResult.id_path === 'string') {
-        //                     fileId = uploadResult.id_path;
-        //                 } else if (uploadResult.id_path.data) {
-        //                     fileId = uploadResult.id_path.data;
-        //                 }
-        //             } else if (uploadResult.id_dokumentasi) {
-        //                 if (typeof uploadResult.id_dokumentasi === 'string') {
-        //                     fileId = uploadResult.id_dokumentasi;
-        //                 } else if (Array.isArray(uploadResult.id_dokumentasi)) {
-        //                     fileId = uploadResult.id_dokumentasi[0]; // Take first if array
-        //                 }
-        //             } else if (Array.isArray(uploadResult) && uploadResult.length > 0) {
-        //                 fileId = uploadResult[0];
-        //             } else if (uploadResult.data) {
-        //                 if (typeof uploadResult.data === 'string') {
-        //                     fileId = uploadResult.data;
-        //                 } else if (Array.isArray(uploadResult.data) && uploadResult.data.length > 0) {
-        //                     fileId = uploadResult.data[0];
-        //                 }
-        //             }
+                    if (uploadResult.id_path) {
+                        if (typeof uploadResult.id_path === 'string') {
+                            fileId = uploadResult.id_path;
+                        } else if (uploadResult.id_path.data) {
+                            fileId = uploadResult.id_path.data;
+                        }
+                    } else if (uploadResult.id_dokumentasi) {
+                        if (typeof uploadResult.id_dokumentasi === 'string') {
+                            fileId = uploadResult.id_dokumentasi;
+                        } else if (Array.isArray(uploadResult.id_dokumentasi)) {
+                            fileId = uploadResult.id_dokumentasi[0]; // Take first if array
+                        }
+                    } else if (Array.isArray(uploadResult) && uploadResult.length > 0) {
+                        fileId = uploadResult[0];
+                    } else if (uploadResult.data) {
+                        if (typeof uploadResult.data === 'string') {
+                            fileId = uploadResult.data;
+                        } else if (Array.isArray(uploadResult.data) && uploadResult.data.length > 0) {
+                            fileId = uploadResult.data[0];
+                        }
+                    }
                     
-        //             if (fileId) {
-        //                 console.log(`File ${file.name} uploaded with ID: ${fileId}`);
-        //                 newDocLPJ.push(fileId);
-        //             } else {
-        //                 console.warn(`Could not extract ID for file ${file.name}:`, uploadResult);
-        //             }
-        //         }
+                    if (fileId) {
+                        console.log(`File ${file.name} uploaded with ID: ${fileId}`);
+                        newDocLPJ.push(fileId);
+                    } else {
+                        console.warn(`Could not extract ID for file ${file.name}:`, uploadResult);
+                    }
+                }
                 
-        //         console.log('All new files uploaded with IDs:', newDocLPJ);
-        //     } catch (uploadError) {
-        //         console.error('Error in file upload process:', uploadError);
-        //         return fail(500, {
-        //             errors: `Error uploading files: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`,
-        //             success: false
-        //         });
-        //     }
-        // }
+                console.log('All new files uploaded with IDs:', newDocLPJ);
+            } catch (uploadError) {
+                console.error('Error in file upload process:', uploadError);
+                return fail(500, {
+                    errors: `Error uploading files: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`,
+                    success: false
+                });
+            }
+        }
 
-        // // Combine existing and new file IDs
-        // let allFileIdsDocument = [...existingFileIdsDokumentasi];
+        // Combine existing and new file IDs
+        let allFileIdsDocument = [...existingFileIdsDokumentasi];
             
-        // // Add new file IDs if any
-        // if (newDocLPJ.length > 0) {
-        //     allFileIdsDocument = [...allFileIdsDocument, ...newDocLPJ];
-        // }
-        
-        // // If no files provided at all, use existing dokumentasi from document
-        // let finalDokumentasiAcara = allFileIdsDocument.length > 0 
-        //     ? allFileIdsDocument.join(',') 
-        //     : (existingLPJ.bukti_pelaksanaan || '');
+        // Add new file IDs if any
+        if (newDocLPJ.length > 0) {
+            allFileIdsDocument = [...allFileIdsDocument, ...newDocLPJ];
+        }
+        console.log("all files doc", allFileIdsDocument)
+        // If no files provided at all, use existing dokumentasi from document
+        let finalDokumentasiAcara = allFileIdsDocument.length > 0 
+            ? allFileIdsDocument.join(',') 
+            : (existingLPJ.bukti_pelaksanaan || '');
             
 
-        let rabList: { id_lpj_acara: number;  keterangan: string; jumlah: number }[] = [];
+         const payloadLPJ = {
+             id_lpj_acara: Number(existingLPJ.id_lpj_acara),
+             bukti_pelaksanaan: finalDokumentasiAcara,
+             jumlah_peserta:  Number(data.get("jumlah_peserta"))||Number(existingLPJ.jumlah_peserta),
+             perkiraan_jumlah_peserta: Number(data.get("perkiraan_jumlah_peserta"))||Number(existingLPJ.perkiraan_jumlah_peserta)
+        };
+        console.log("lpj payload", payloadLPJ   )
+        let put = await fetch(`${env.URL_KERAJAAN}/lpj  `, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payloadLPJ)
+        });
+        let lpjMesg = await put.json()
+        console.log("SubmitLPJ", lpjMesg)
+
+        let rabList: { id_lpj_acara: number;  keterangan: string; jumlah_pengeluaran: number }[] = [];
         const rabKeteranganKeys = Array.from(data.keys()).filter((key) =>
             key.startsWith("rab_keterangan_")
         );
@@ -407,18 +491,32 @@ export const actions: Actions = {
 
         try {
             
-
             for (const ketKey of rabKeteranganKeys) {
-                 const index = ketKey.split("_").pop();                       
-                 const jumlahKey = `rab_jumlah_${index}`;                    
-                 const keterangan = data.get(ketKey)?.toString() ?? "";                   
-                 const jumlah = parseInt(data.get(jumlahKey)?.toString() ?? "0")              
-                 if (keterangan || jumlah) {               
-                     rabList.push({id_lpj_acara: Number(id_lpj), keterangan, jumlah });           
-                 }            
+                const index = ketKey.split("_").pop();                       
+                const jumlahKey = `rab_jumlah_${index}`;                    
+                const keterangan = data.get(ketKey)?.toString() ?? "";                   
+                const jumlah = parseInt(data.get(jumlahKey)?.toString() ?? "0")              
+                if (keterangan || jumlah) {               
+                    rabList.push({id_lpj_acara: Number(id_lpj), keterangan, jumlah_pengeluaran:Number(jumlah) });           
+                }            
             }   
-            
-            // console.log("RAB List:", rabList); 
+
+            if(rabList.length>0){
+                
+            console.log("RAB List:", rabList); 
+            console.log()
+            if(rabList.length > 0){
+                let rabRes = await fetch(`${env.URL_KERAJAAN}/lpj/rab`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                body: JSON.stringify(rabList)
+            });
+                let ms = await rabRes.json()
+                console.log(ms)
+                }
+                }
             // let fetchRAB = await fetch(`${env.URL_KERAJAAN}/lpj/rab/${id_lpj}`, {
             //     method: "GET"
             // })
@@ -427,10 +525,14 @@ export const actions: Actions = {
             //     console.error(`Failed to fetch lpj/rab/${id_lpj}: ${fetchRAB.status}`);
 
             // }
-            // let rabRes = await fetch(`${env.URL_KERAJAAN}/lpj/rab`, {
-            //     method: "POST",
-            //     body: JSON.stringify(rabList)
-            // });
+            // let rabData = await fetchRAB.json()
+            // if (rabData?.length === 0) {
+                
+            // }
+            // else {
+                
+
+            // }
             // if (!rabRes.ok) {
             //     console.error(`Failed to submit rab: ${rabRes.status}`);
             //     return fail(406, {
@@ -444,7 +546,7 @@ export const actions: Actions = {
             // const newFilesDokumentasi = data.getAll('uploadfileDokumentasi').filter(file => file instanceof File && file.size > 0) as File[];
             console.log("New files from form:", newFilesAcara.map(f => f.name));
             let newFileIds: string[] = [];
-            const existingDocResponse = await fetch(`${env.URL_KERAJAAN}/acara/${params.id}`);
+            const existingDocResponse = await fetch(`${env.URL_KERAJAAN}/acara/detail/${params.id}`);
             const existingDoc = existingDocResponse.ok ? await existingDocResponse.json() : { foto_acara: '' };
             // let fotoAcara = data.getAll("uploadfileAcara") as File[]
             console.log("File acara", newFilesAcara)
@@ -550,9 +652,10 @@ export const actions: Actions = {
                 penanggung_jawab: Number(data.get("penanggungjawab_id")),
                 jenis_acara: data.get("jenis_acara"),
                 kapasitas_acara: Number(data.get("kapasitas_acara")),
-                foto_acara: finalDokumentasiAcara,        
+                foto_acara: finalDokumentasiAcara, 
+                
                
-                status: data.get("status"),               
+                status: existingDoc.status,               
             };
             let res = await fetch(`${env.URL_KERAJAAN}/acara`, {
                 method: 'PUT',

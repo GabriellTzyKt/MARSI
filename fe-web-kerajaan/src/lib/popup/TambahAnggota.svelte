@@ -82,23 +82,23 @@
 		}, 200);
 	}
 
-	// Validate before form submission
-	$effect(() => {
-		validateSelection();
+	// // Validate before form submission
+	// // $effect(() => {
+	// // 	validateSelection();
 
-		if (!isValidSelection) {
-			// Prevent form submission if selection is invalid
+	// // 	if (!isValidSelection) {
+	// // 		// Prevent form submission if selection is invalid
 
-			// Add custom error
-			if (!errors) errors = {};
-			if (!errors.namaanggota) errors.namaanggota = [];
-			errors.namaanggota = ['Pilih nama anggota dari daftar yang tersedia'];
-		} else {
-			// Remove custom error if selection is valid
+	// // 		// Add custom error
+	// // 		if (!errors) errors = {};
+	// // 		if (!errors.namaanggota) errors.namaanggota = [];
+	// // 		errors.namaanggota = ['Pilih nama anggota dari daftar yang tersedia'];
+	// // 	} else {
+	// // 		// Remove custom error if selection is valid
 
-			errors = null;
-		}
-	});
+	// // 		errors = null;
+	// // 	}
+	// });
 </script>
 
 <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/30">

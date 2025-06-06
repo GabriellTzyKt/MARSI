@@ -19,20 +19,14 @@ export const load: PageServerLoad = async ({params, cookies}) => {
         
         let finalData = await Promise.all(dataArray.map(async (item: any) => {
             try {
-                let resPj = await fetch(`${env.PUB_PORT}/user/${item.penanggung_jawab}`, {
-                    headers: {
-                        "Authorization": `Bearer ${token?.token}`
-                    }
+                let resPj = await fetch(`${env.URL_KERAJAAN}/anggota/${item.penanggung_jawab}`, {
+                    
                });
-                let resPl = await fetch(`${env.PUB_PORT}/user/${item.pelindung}`, {
-                    headers: {
-                        "Authorization": `Bearer ${token?.token}`
-                    }
+                let resPl = await fetch(`${env.URL_KERAJAAN}/anggota/${item.pelindung}`, {
+                    
                });
-                let resPb = await fetch(`${env.PUB_PORT}/user/${item.pembina}`, {
-                    headers: {
-                        "Authorization": `Bearer ${token?.token}`
-                    }
+                let resPb = await fetch(`${env.URL_KERAJAAN}/anggota/${item.pembina}`, {
+                    
                });
                 if (resPj.ok && resPl.ok && resPb.ok) {
                     let pjData = await resPj.json();
@@ -94,8 +88,9 @@ export const load: PageServerLoad = async ({params, cookies}) => {
         });
         
         let allUsers = [];
-       
-       
+    let anggotares = await fetch(`${env.URL_KERAJAAN}/anggota?limit=1000`)
+        let anggotaData = await anggotares.json()
+        anggotaData = anggotaData.filter((user)=> user.deleted_at === '0001-01-01T00:00:00Z' || !user.deleted_at)
 
         if (usersResponse.ok) {
             const userData = await usersResponse.json();
@@ -108,7 +103,7 @@ export const load: PageServerLoad = async ({params, cookies}) => {
             }));
         }
         
-        return { data: finalData[0], allUsers };
+        return { data: finalData[0], allUsers, allAnggota: anggotaData };
     } catch (error) {
         console.error("Error in load function:", error);
         return { data: [], allUsers: [] };

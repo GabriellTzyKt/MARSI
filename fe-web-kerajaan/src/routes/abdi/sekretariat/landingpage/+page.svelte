@@ -17,16 +17,16 @@
 	let loading = $state(false);
 	// Untuk setiap gambar section
 	let selectedImageHeader = $state<File | null>(null);
-	let imagePreviewHeader = $state<string | undefined>(g1);
+	let imagePreviewHeader = $state<string | undefined>(dataHeader.dokumentasi_url || g1);
 
 	let selectedImageCard1 = $state<File | null>(null);
-	let imagePreviewCard1 = $state<string | undefined>(g1);
+	let imagePreviewCard1 = $state<string | undefined>(dataCard1.dokumentasi_url || g1);
 
 	let selectedImageCard2 = $state<File | null>(null);
-	let imagePreviewCard2 = $state<string | undefined>(g1);
+	let imagePreviewCard2 = $state<string | undefined>(dataCard2.dokumentasi_url || g1);
 
 	let selectedImageCard3 = $state<File | null>(null);
-	let imagePreviewCard3 = $state<string | undefined>(g1);
+	let imagePreviewCard3 = $state<string | undefined>(dataCard3.dokumentasi_url || g1);
 
 	function handleImageUploadHeader(event: any) {
 		const file = event.target.files[0];
@@ -153,7 +153,7 @@
 					<p>Gambar Background</p>
 				</div>
 
-				<img src={imagePreviewHeader} alt="" class=" min-h-[200px] w-full" />
+				<img src={imagePreviewHeader} alt="" class="min-h-[200px] w-full rounded-lg" />
 				<div class="bg-badran-yellow right-26 absolute top-14 rounded-lg p-1 xl:right-10 xl:top-10">
 					<label for="header">
 						<input
@@ -228,7 +228,7 @@
 			</div>
 			<!-- isi halaman 1 -->
 			<div class="relative flex flex-col justify-end">
-				<img src={imagePreviewCard1} alt="" class="mb-1 min-h-[200px] w-full" />
+				<img src={imagePreviewCard1} alt="" class="mb-1 min-h-[200px] w-full rounded-lg" />
 				<div class="bg-badran-yellow right-26 xl:top-18 absolute top-14 rounded-lg p-1 xl:right-10">
 					<label for="card1">
 						<svg
@@ -297,7 +297,7 @@
 			</div>
 			<!-- isi halaman 2 -->
 			<div class="relative flex flex-col justify-end">
-				<img src={imagePreviewCard2} alt="" class="mb-1 min-h-[200px] w-full" />
+				<img src={imagePreviewCard2} alt="" class="mb-1 min-h-[200px] w-full rounded-lg" />
 				<div class="bg-badran-yellow right-26 xl:top-18 absolute top-14 rounded-lg p-1 xl:right-10">
 					<label for="card2">
 						<svg
@@ -366,7 +366,7 @@
 			</div>
 			<!-- isi halaman 3-->
 			<div class="relative flex flex-col justify-end">
-				<img src={imagePreviewCard3} alt="" class="mb-1 min-h-[200px] w-full" />
+				<img src={imagePreviewCard3} alt="" class="mb-1 min-h-[200px] w-full rounded-lg" />
 				<div class="bg-badran-yellow right-26 xl:top-18 absolute top-14 rounded-lg p-1 xl:right-10">
 					<label for="card3">
 						<svg

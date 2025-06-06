@@ -16,6 +16,7 @@
 	import Loader from '$lib/loader/Loader.svelte';
 	let { data } = $props();
 	console.log(data);
+	let beranda = $state(data.beranda);
 	let situs = $state(data.situs);
 	let acara = $state(data.acara);
 	let organisasi = $state(data.organisasi);
@@ -29,21 +30,26 @@
 <!-- 1  -->
 <section class="h-fit w-full">
 	<div class="relative">
-		<img src={gambarAtas} alt="" class="min-h-screen w-full object-cover" />
+		<img src={beranda[0].dokumentasi_url} alt="" class="min-h-screen w-full object-cover" />
 		<div class="absolute top-[35%] flex h-full w-full flex-col text-center lg:top-[25%]">
-			<p class="items-center text-white sm:text-2xl md:text-8xl">Maha Menteri</p>
 			<div>
-				<p class="mt-4 items-center text-2xl text-white lg:text-8xl">Keraton Surakarta</p>
+				<p class="mt-4 items-center text-2xl text-white lg:text-8xl">{beranda[0].judul_section}</p>
 				<p class="mt-4 items-center text-2xl text-white">
-					Deskripsi singkat mengenai Maha Menteri Keraton Surakarta
+					{beranda[0].isi_section}
 				</p>
-				<p class="mt-12 text-2xl text-white">Acara Mendatang</p>
+				<!-- <p class="mt-12 text-2xl text-white">Acara Mendatang</p> -->
 				<div class="mt-4 flex justify-center gap-1 lg:gap-4">
-					<span class="gg--arrow-left-o self-center"></span>
-					<img src={gambar2} class="h-20 w-auto rounded-lg object-cover lg:h-40" alt="" />
-					<img src={gambar3} class="h-20 w-auto rounded-lg object-cover lg:h-40" alt="" />
-					<img src={gambar4} class="h-20 w-auto rounded-lg object-cover lg:h-40" alt="" />
-					<span class="gg--arrow-right-o self-center"></span>
+					<!-- <span class="gg--arrow-left-o self-center"></span> -->
+					{#each acara.slice(0, 3) as a, i}
+						<a href={`/acara/${a.id_acara}`}>
+							<img
+								src={a.imageUrls[0] || (i === 0 ? gambarAbout1 : i === 1 ? gambar2 : gambar3)}
+								class="h-20 w-auto rounded-lg border border-white object-cover lg:h-40"
+								alt=""
+							/>
+						</a>
+					{/each}
+					<!-- <span class="gg--arrow-right-o self-center"></span> -->
 				</div>
 			</div>
 		</div>
@@ -57,35 +63,22 @@
 		<div class="mx-auto grid grid-cols-1 gap-2 p-5 lg:grid-cols-3">
 			<!-- Grid item 1 -->
 			<CardAbout
-				gambarAbout={gambarAbout1}
-				isiAbout="Keraton Surakarta Hadiningrat adalah istana resmi Kesultanan Surakarta, yang didirikan
-                oleh Paku Buwono II pada tahun 1745. Terletak di kota Surakarta, Jawa Tengah, keraton ini merupakan
-                salah satu pusat kebudayaan Jawa dan simbol dari keberlanjutan tradisi kerajaan di Indonesia. Selain 
-                sebagai kediaman resmi raja-raja Surakarta, keraton juga berfungsi sebagai pusat spiritual, sosial, 
-                dan budaya, serta menyimpan berbagai artefak bersejarah yang berkaitan dengan sejarah kerajaan dan tradisi Jawa."
+				gambarAbout={beranda[1].dokumentasi_url || gambarAbout1}
+				isiAbout={beranda[1].isi_section}
 				warna="blue"
 			></CardAbout>
 
 			<!-- Grid item 2 -->
 			<CardAbout
-				gambarAbout={gambarAbout2}
-				isiAbout="Keraton Surakarta Hadiningrat adalah istana resmi Kesultanan Surakarta, yang didirikan
-						oleh Paku Buwono II pada tahun 1745. Terletak di kota Surakarta, Jawa Tengah, keraton
-						ini merupakan salah satu pusat kebudayaan Jawa dan simbol dari keberlanjutan tradisi
-						kerajaan di Indonesia. Selain sebagai kediaman resmi raja-raja Surakarta, keraton juga
-						berfungsi sebagai pusat spiritual, sosial, dan budaya, serta menyimpan berbagai artefak
-						bersejarah yang berkaitan dengan sejarah kerajaan dan tradisi Jawa."
+				gambarAbout={beranda[2].dokumentasi_url || gambarAbout2}
+				isiAbout={beranda[2].isi_section}
 				warna="red"
 			></CardAbout>
 
 			<!-- Grid item 3 -->
 			<CardAbout
-				gambarAbout={gambarAbout3}
-				isiAbout="Keraton Surakarta memiliki jumlah abdi yang sangat banyak, mencakup berbagai peran dan
-						tingkatan dalam struktur keraton. Beberapa di antaranya bahkan berasal dari mancanegara,
-						yang menunjukkan daya tarik dan nilai historis tradisi keraton. Keberadaan abdi dari
-						luar negeri ini mencerminkan komitmen internasional dalam melestarikan dan mempelajari
-						warisan budaya yang kaya dan beragam di Surakarta."
+				gambarAbout={beranda[3].dokumentasi_url || gambarAbout3}
+				isiAbout={beranda[3].isi_section}
 				warna="yellow"
 			></CardAbout>
 		</div>

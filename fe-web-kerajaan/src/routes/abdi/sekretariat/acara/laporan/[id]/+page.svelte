@@ -3,9 +3,10 @@
 	import gambardefault from '$lib/asset/kerajaan/default.jpg';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import { env } from '$env/dynamic/public';
 	let { data } = $props();
 	let total = $state(8);
 	let error = $state();
@@ -22,7 +23,7 @@
 		const target = event.target as HTMLInputElement;
 		console.log('File input changed:', target.files);
 
-		if (target.files && target.files.length > 0) {
+		if (target.files && target.files?.length > 0) {
 			const newFiles = Array.from(target.files);
 			console.log('New files selected:', newFiles);
 
@@ -262,13 +263,13 @@
 		}
 	}
 	let datagambar = data.files;
-	let datadokumentasi = data.dokumentasi;
+	let datadokumentasi = data?.fileDetailsDoc;
 	let dataambil = data.dataAset;
 	let imagePreviewlpj: string | null = $state(null);
 	onMount(async () => {
 		console.log('onMount: Starting to process datagambar:', datagambar);
 
-		if (datagambar && datagambar.length > 0) {
+		if (datagambar && datagambar?.length > 0) {
 			// Initialize arrays with the correct IDs
 			uploadedFileUrlsAcara = datagambar.map((file: any) => file.url);
 
@@ -290,7 +291,7 @@
 		} else {
 			console.log('onMount: No datagambar found or empty array');
 		}
-		if (datadokumentasi && datadokumentasi.length > 0) {
+		if (datadokumentasi && datadokumentasi?.length > 0) {
 			// Initialize arrays with the correct IDs
 			uploadedFileUrlsDokumentasi = datadokumentasi.map((file: any) => file.url);
 
@@ -307,8 +308,8 @@
 			});
 
 			// Wait for all conversions to complete
-			uploadedFilesAcara = await Promise.all(filePromises);
-			console.log('onMount: Converted existing files to File objects:', uploadedFilesAcara);
+			uploadedFilesDokumentasi = await Promise.all(filePromises);
+			console.log('onMount: Converted existing files to File objects:', uploadedFilesDokumentasi);
 		} else {
 			console.log('onMount: No datadokumentasi found or empty array');
 		}
@@ -335,6 +336,50 @@
 
 	function hapusRAB(index: number) {
 		rabList = rabList.filter((_, i) => i !== index);
+	}
+	let rab = $state(data?.rabData);
+	async function hapusRABAPI(rab: any) {
+		console.log('Rab ini dihapus', rab);
+	}
+	async function simpanEditRABAPI(i) {
+		const edited = rab[i]; // Sudah berisi value terbaru dari input!
+		console.log('Yang diedit ', edited);
+		try {
+			loading = true;
+			const res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/lpj/rab`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					id_rab: Number(edited.id_rab),
+					keterangan: edited.keterangan,
+					jumlah_pengeluaran: Number(edited.jumlah_pengeluaran)
+				})
+			});
+			let msg = await res.json();
+			if (res.ok) {
+				// rab[i] = {
+				// 	...rab[i],
+				// 	keterangan: edited.keterangan,
+				// 	jumlah_pengeluaran: Number(edited.jumlah_pengeluaran)
+				// };
+				// rab = [...rab];
+				console.log('Rab berhasil diubah', msg);
+				success = true;
+				// Optionally: tampilkan notifikasi sukses
+			}
+			await invalidateAll().then(() => {
+				loading = false;
+				setTimeout(() => {
+					success = false;
+				}, 1000);
+			});
+		} catch (error) {}
+	}
+	function getFileNameFromUrl(url: string): string {
+		if (!url) return '';
+		const parts = url.split('/');
+		const lastPart = parts[parts.length - 1];
+		return lastPart.split('?')[0]; // hapus query string jika ada
 	}
 </script>
 
@@ -562,7 +607,7 @@
 							placeholder="Masukkan Jumlah"
 							name="jumlah_peserta"
 							required
-							readonly={data?.data?.lpj ? true : false}
+							value={data?.data?.lpj.jumlah_peserta || ''}
 							class="ml-3 w-[90%] rounded-lg border-2 border-gray-400 px-2 py-2"
 						/>
 						{#if error?.jumlah_peserta}
@@ -574,7 +619,7 @@
 							placeholder="Masukkan Jumlah"
 							name="perkiraan_jumlah_peserta"
 							required
-							readonly={data?.data?.lpj ? true : false}
+							value={data?.data?.lpj.perkiraan_jumlah_peserta || ''}
 							class="ml-3 w-[90%] rounded-lg border-2 border-gray-400 px-2 py-2"
 						/>
 						{#if error?.perkiraan_jumlah_peserta}
@@ -594,7 +639,12 @@
 								type="text"
 								placeholder="Unggah Bukti Foto"
 								name=""
-								bind:value={fileNamelpj}
+								readonly
+								value={uploadedFilesDokumentasi.length > 0
+									? uploadedFilesDokumentasi[0]?.name
+									: uploadedFileUrlsDokumentasi.length > 0
+										? getFileNameFromUrl(uploadedFileUrlsDokumentasi[0])
+										: ''}
 								class="w-full rounded-lg border-2 border-gray-400 px-2 py-2"
 							/>
 							<label for="bukti_pelaksanaan" class="absolute cursor-pointer">
@@ -611,7 +661,7 @@
 							</label>
 							<!-- <span class="pajamas--media absolute right-2 mt-2.5 opacity-55"> </span> -->
 						</div>
-						{#if uploadedFileUrlsDokumentasi.length !== 0}
+						{#if uploadedFileUrlsDokumentasi?.length !== 0}
 							<div class="mt-2 flex w-full justify-center">
 								<img
 									src={uploadedFileUrlsDokumentasi[0]}
@@ -639,14 +689,54 @@
 						<div class="h-13 mx-auto w-[95%] rounded-lg border-2 border-gray-400">
 							<p class="px-3 py-2 text-xl">
 								Total Biaya : <span class="text-green-600"
-									>{rabList
-										.reduce((sum, rab) => sum + (parseInt(rab.jumlah) || 0), 0)
+									>{[...(rab || []), ...(rabList || [])]
+										.reduce(
+											(sum, item) => sum + (parseInt(item.jumlah_pengeluaran || item.jumlah) || 0),
+											0
+										)
 										.toLocaleString()}</span
 								>
 							</p>
 						</div>
 						<!-- Looping RAB -->
 						<div class="mx-auto mt-4 h-fit w-[95%] rounded-lg border-2 border-gray-400 py-3">
+							{#each rab as rab, i}
+								<div
+									class="mx-auto mt-4 grid h-fit w-[95%] grid-cols-3 gap-2 rounded-lg border-2 border-gray-400 px-3 py-2"
+								>
+									<input
+										class="col-span-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
+										type="text"
+										placeholder="Keterangan"
+										bind:value={rab.keterangan}
+									/>
+
+									<input
+										class="col-span-1 mb-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
+										type="number"
+										placeholder="Jumlah Uang"
+										bind:value={rab.jumlah_pengeluaran}
+									/>
+
+									<!-- Tombol hapus baris -->
+
+									<button
+										type="button"
+										class="rounded-lg bg-red-500 text-white"
+										onclick={() => hapusRAB(rab)}
+									>
+										Hapus
+									</button>
+
+									<button
+										type="button"
+										class="rounded-lg bg-yellow-500 text-white"
+										onclick={() => simpanEditRABAPI(i)}
+									>
+										Edit
+									</button>
+								</div>
+							{/each}
 							{#each rabList as rab, i (i)}
 								<div
 									class="mx-auto mt-4 grid h-fit w-[95%] grid-cols-3 gap-2 rounded-lg border-2 border-gray-400 px-3 py-2"
@@ -655,7 +745,6 @@
 										class="col-span-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
 										type="text"
 										placeholder="Keterangan"
-										required
 										bind:value={rabList[i].keterangan}
 										name={`rab_keterangan_${i}`}
 									/>
@@ -666,7 +755,6 @@
 										class="col-span-1 mb-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
 										type="number"
 										placeholder="Jumlah Uang"
-										required
 										bind:value={rabList[i].jumlah}
 										name={`rab_jumlah_${i}`}
 									/>
@@ -674,7 +762,7 @@
 										<p class="text-xs text-red-500">{error.rab[i].jumlah}</p>
 									{/if}
 									<!-- Tombol hapus baris -->
-									{#if rabList.length > 1}
+									{#if rabList?.length > 1}
 										<button
 											type="button"
 											class="ml-2 rounded bg-red-400 px-2 py-1 text-white"
@@ -786,7 +874,7 @@
 					{/if}
 				{/each}
 			</div>
-			{#if data?.data?.rab.length > 0}
+			{#if data?.data?.rab?.length > 0}
 				<input type="text" name="rab" value="ada" id="" />
 			{/if}
 

@@ -31,26 +31,26 @@
 	let filteredPbUsers = $derived(filterUser(pbKeyword));
 
 	function filterUser(searchTerm: string) {
-		return data.allUsers.filter((item) =>
-			item.name.toLowerCase().includes(searchTerm.toLowerCase())
+		return data.allAnggota.filter((item) =>
+			item.nama_lengkap.toLowerCase().includes(searchTerm.toLowerCase())
 		);
 	}
 
 	function selectPj(user: any) {
 		selectedPj = user;
-		pjKeyword = user.name;
+		pjKeyword = user.nama_lengkap;
 		showPjDropdown = false;
 	}
 
 	function selectPl(user: any) {
 		selectedPl = user;
-		plKeyword = user.name;
+		plKeyword = user.nama_lengkap;
 		showPlDropdown = false;
 	}
 
 	function selectPb(user: any) {
 		selectedPb = user;
-		pbKeyword = user.name;
+		pbKeyword = user.nama_lengkap;
 		showPbDropdown = false;
 	}
 	// Tambahkan state untuk gambar
@@ -248,7 +248,7 @@
 							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 						/>
 					</div>
-					<input type="hidden" name="penanggungjawab_id" value={selectedPj?.id || ''} />
+					<input type="hidden" name="penanggungjawab_id" value={selectedPj?.id_anggota || ''} />
 					{#if showPjDropdown && filteredPjUsers.length > 0}
 						<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
 							<ul class="max-h-60 overflow-y-auto">
@@ -260,7 +260,7 @@
 										onclick={() => selectPj(user)}
 									>
 										<div class="flex flex-col">
-											<span class="font-medium">{user.name}</span>
+											<span class="font-medium">{user.nama_lengkap}</span>
 											<span class="text-sm text-gray-500">{user.email}</span>
 										</div>
 									</li>
@@ -301,7 +301,7 @@
 								class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 							/>
 						</div>
-						<input type="hidden" name="pembina_id" value={selectedPb?.id || ''} />
+						<input type="hidden" name="pembina_id" value={selectedPb?.id_anggota || ''} />
 						{#if showPbDropdown && filteredPbUsers.length > 0}
 							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
 								<ul class="max-h-60 overflow-y-auto">
@@ -313,7 +313,7 @@
 											onclick={() => selectPb(user)}
 										>
 											<div class="flex flex-col">
-												<span class="font-medium">{user.name}</span>
+												<span class="font-medium">{user.nama_lengkap}</span>
 												<span class="text-sm text-gray-500">{user.email}</span>
 											</div>
 										</li>
@@ -336,7 +336,6 @@
 					<button
 						type="button"
 						class="mt-8 h-fit w-fit rounded-lg border bg-blue-600 px-4 py-2.5 text-white"
-						onclick={() => submitPembina()}
 					>
 						Permohonan
 					</button>
@@ -362,7 +361,7 @@
 								class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 							/>
 						</div>
-						<input type="hidden" name="pelindung_id" value={selectedPl?.id || ''} />
+						<input type="hidden" name="pelindung_id" value={selectedPl?.id_anggota || ''} />
 						{#if showPlDropdown && filteredPlUsers.length > 0}
 							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
 								<ul class="max-h-60 overflow-y-auto">
@@ -374,7 +373,7 @@
 											onclick={() => selectPl(user)}
 										>
 											<div class="flex flex-col">
-												<span class="font-medium">{user.name}</span>
+												<span class="font-medium">{user.nama_lengkap}</span>
 												<span class="text-sm text-gray-500">{user.email}</span>
 											</div>
 										</li>

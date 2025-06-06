@@ -17,29 +17,26 @@ export const load: PageServerLoad = async () => {
         );
         let beranda = await berandaRes.json();
         beranda = await Promise.all(beranda.map(async (item: any) => {
-            let pict = await fetch(`${env.URL_KERAJAAN}/doc/${item.dokumentasi}`, {
-                method: "GET",
-            })
-            if(!pict.ok){
-                const filePathData = await pict.json();
-                console.log("File path data:", filePathData);
-                
-                const filePath = filePathData.file_dokumentasi;
-                if (filePath) {
-                    return {
-                        ...item,
-                        dokumentasi_url: `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`,
+            let dokumentasi_url = "";
+            if (item.dokumentasi && typeof item.dokumentasi === "string" && item.dokumentasi.trim() !== "") {
+                try {
+                    const pict = await fetch(`${env.URL_KERAJAAN}/doc/${item.dokumentasi}`);
+                    if (pict.ok) {
+                        const filePathData = await pict.json();
+                        const filePath = filePathData.file_dokumentasi || filePathData;
+                        if (typeof filePath === "string") {
+                            dokumentasi_url = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`;
+                        }
                     }
-                }
-                else {
-                    return {
-                        ...item,
-                        dokumentasi_url: "",
-                    }
+                } catch (err) {
+                    console.error("Error fetching dokumentasi for beranda:", err);
                 }
             }
-            return item
-        }))
+            return {
+                ...item,
+                dokumentasi_url
+            };
+        }));
         return { beranda };
     } catch (error) {
         
@@ -109,9 +106,10 @@ export const actions: Actions = {
         payload[1].isi_section = formData.deskripsi_1
         payload[2].isi_section = formData.deskripsi_2
         payload[3].isi_section = formData.deskripsi_3
-        let form = new FormData();
+        
         // Jika file diupload, lakukan upload ke API, jika tidak, ambil dokumentasi lama (misal dari DB)
         if (isFile(headerFile)) {
+            let form = new FormData();
             form.append("dokumentasi", headerFile as File);
             let upload = await fetch(`${env.URL_KERAJAAN}/file/beranda`, {
                 method: "POST",
@@ -122,10 +120,11 @@ export const actions: Actions = {
             // upload headerFile ke API, dapatkan url/filepath
             // dokumentasiHeader = hasilUploadHeader;
         } else {
-            
+            payload[0].dokumentasi = beranda[0].dokumentasi
             // dokumentasiHeader = dokumentasi lama dari DB
         }
         if (isFile(card1File)) {
+            let form = new FormData();
             console.log("card1",card1File)
             form.append("dokumentasi", data.get("card1") as File);
             let upload = await fetch(`${env.URL_KERAJAAN}/file/beranda`, {
@@ -138,8 +137,10 @@ export const actions: Actions = {
             // dokumentasiCard1 = hasilUploadCard1;
         } else {
             // dokumentasiCard1 = dokumentasi lama dari DB
+            payload[1].dokumentasi = beranda[1].dokumentasi
         }
         if (isFile(card2File)) {
+            let form = new FormData();
             console.log("card2",card2File)
             form.append("dokumentasi", card2File as File);
             let upload = await fetch(`${env.URL_KERAJAAN}/file/beranda`, {
@@ -151,10 +152,11 @@ export const actions: Actions = {
             // upload card2File ke API, dapatkan url/filepath
             // dokumentasiCard2 = hasilUploadCard2;
         } else {
-
+            payload[2].dokumentasi = beranda[2].dokumentasi
             // dokumentasiCard2 = dokumentasi lama dari DB
         }
         if (isFile(card3File)) {
+            let form = new FormData();
             console.log("card3",card3File)
             form.append("dokumentasi", card3File as File);
             let upload = await fetch(`${env.URL_KERAJAAN}/file/beranda`, {
@@ -166,6 +168,7 @@ export const actions: Actions = {
             // upload card3File ke API, dapatkan url/filepath
             // dokumentasiCard3 = hasilUploadCard3;
         } else {
+            payload[3].dokumentasi = beranda[3].dokumentasi
             // dokumentasiCard3 = dokumentasi lama dari DB
         }
 
@@ -173,8 +176,9 @@ export const actions: Actions = {
         // ...
         console.log("final Payload data", payload)
         try {
+            
             let res = await Promise.all(payload.map(async (item: any) => {
-                let beranda = await fetch(`${env.URL_KERAJAAN}/beranda/${item.id_section}`, {
+                let beranda = await fetch(`${env.URL_KERAJAAN}/beranda`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",

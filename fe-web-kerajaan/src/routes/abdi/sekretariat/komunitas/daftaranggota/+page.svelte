@@ -36,7 +36,7 @@
 	let timer;
 	let loadUser = $state(false);
 	let komunitasMembers = $state([]);
-
+	let komData;
 	// Function to fetch organization members
 	async function fetchKomunitasMember(komId) {
 		if (!komId) return;

@@ -21,37 +21,45 @@ export const load: PageServerLoad = async () => {
         const filterOrganisasi = dataOrg.filter((item: any) => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
         console.log("organisais", filterOrganisasi);
 
-        async function fetchProfileImage(item: any, idField: string) {
-            let profileUrl = null;
-            
+        async function fetchProfileImages(item: any, idField: string) {
+            let profileUrls: string[] = [];
+
             if (item.profile) {
-                try {
-                    const filePathResponse = await fetch(`${env.URL_KERAJAAN}/doc/${item.profile}`);
-                    if (filePathResponse.ok) {
-                        const filePathData = await filePathResponse.json();
-                        const filePath = filePathData.file_dokumentasi;
-                        
-                        if (filePath) {
-                            profileUrl = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`;
+                const ids = item.profile.split(',').map((id: string) => id.trim()).filter(Boolean);
+                for (const id of ids) {
+                    try {
+                        const filePathResponse = await fetch(`${env.URL_KERAJAAN}/doc/${id}`);
+                        if (filePathResponse.ok) {
+                            const filePathData = await filePathResponse.json();
+                            const filePath = filePathData.file_dokumentasi;
+                            if (filePath) {
+                                if (Array.isArray(filePath)) {
+                                    filePath.forEach((path: string) => {
+                                        if (path) profileUrls.push(`${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(path)}`);
+                                    });
+                                } else {
+                                    profileUrls.push(`${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`);
+                                }
+                            }
                         }
+                    } catch (fileError) {
+                        console.error(`Error fetching profile for item ${item[idField]}:`, fileError);
                     }
-                } catch (fileError) {
-                    console.error(`Error fetching profile for item ${item[idField]}:`, fileError);
                 }
             }
-            
+
             return {
                 ...item,
-                profileUrl
+                profileUrls // array of all profile image URLs
             };
         }
         
         // Fetch profile images for each komunitas
         const finalKomunitas = await Promise.all(filterKomunitas.map(async (item: any) => {
-            return await fetchProfileImage(item, 'id_komunitas');
+            return await fetchProfileImages(item, 'id_komunitas');
         }));
         const finalOrganisasi = await Promise.all(filterOrganisasi.map(async (item: any) => {
-            return await fetchProfileImage(item, 'id_organisasi');
+            return await fetchProfileImages(item, 'id_organisasi');
         }));
         console.log(finalKomunitas)
         return {

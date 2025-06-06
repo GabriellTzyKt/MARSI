@@ -11,6 +11,9 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
                 "Authorization": `Bearer ${token?.token}`
             }
         })
+        let resAnggota = await fetch(`${env.URL_KERAJAAN}/anggota?limit=10000`);
+        let anggotaData = await resAnggota.json()
+        anggotaData = anggotaData.filter((item)=> item.deleted_at === "0001-01-01T00:00:00Z" || !item.deleted_at);
         let resSitus = await fetch(`${env.URL_KERAJAAN}/situs`);
         if (!resSitus.ok) {
             throw new Error(`HTTP Error! Status: ${resSitus.status}`)
@@ -38,7 +41,7 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
             }
         });
        
-        return {allUsers: data, allSitus}
+        return {allUsers: data, allSitus, allAnggota: anggotaData}
     } catch (error) {
         
     }
