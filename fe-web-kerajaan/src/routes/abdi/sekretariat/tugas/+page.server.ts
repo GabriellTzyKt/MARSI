@@ -167,8 +167,10 @@ export const actions: Actions = {
                 deskripsi_tugas: formData.deskripsi_tugas,
                 lokasi_tugas: formData.jenis_tugas === "pribadi" ? data.get("id_situs") : null,
                 tanggal_mulai: formatDatetoUI(formData.tanggal_penugasan),
-                nama_situs: formData.nama_situs,
-                nama_acara: formData.nama_acara
+                nama_situs: formData.nama_situs|| null,
+                nama_acara: formData.nama_acara || null,
+                jenis_tugas: formData.jenis_tugas,
+                status_tugas: "Ditugaskan"
                 // lokasi
                 // id_acara ?
             };
@@ -271,7 +273,10 @@ export const actions: Actions = {
                 lokasi_tugas: formData.jenis_tugas === "pribadi" ? data.get("id_situs") : null,
                 jenis_tugas: formData.jenis_tugas,
                 tanggal_mulai: formatDatetoUI(formData.tanggal_penugasan),
-                status: data.get("status_tugas")
+                status: data.get("status_tugas"),
+                 nama_situs: formData.nama_situs|| null,
+                nama_acara: formData.nama_acara || null,
+                
                 // lokasi
                 // id_acara ?
             };

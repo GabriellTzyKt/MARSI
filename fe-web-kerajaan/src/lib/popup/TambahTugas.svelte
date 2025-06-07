@@ -20,7 +20,7 @@
 	console.log('USer Daat', userData);
 	console.log('Edit dara', dataEdit);
 	let open = $state(false);
-	let findNamaSitus = data.filter((item: any) => item?.id_situs == Number(dataEdit?.lokasi_tugas));
+	let findNamaSitus = data?.filter((item: any) => item?.id_situs == Number(dataEdit?.lokasi_tugas));
 	console.log('Fiound,', findNamaSitus);
 	let namaSitus = $state<any>(findNamaSitus?.length > 0 ? findNamaSitus[0]?.nama_situs : '');
 	console.log(namaSitus);
@@ -71,7 +71,9 @@
 	);
 
 	function filterAcara(acara: any) {
-		return dataAcara.filter((item: any) => item.name.toLowerCase().includes(acara.toLowerCase()));
+		return dataAcara?.filter((item: any) =>
+			item?.name?.toLowerCase()?.includes(acara?.toLowerCase())
+		);
 	}
 
 	function filterUser(user) {
@@ -79,7 +81,7 @@
 			// Check if item and item.name exist before calling toLowerCase()
 			const itemName = item?.name ?? ''; // Use empty string if name is undefined or null
 			const userFilter = user ?? ''; // Use empty string if user is undefined or null
-			return itemName.toLowerCase().includes(userFilter.toLowerCase());
+			return itemName?.toLowerCase()?.includes(userFilter?.toLowerCase());
 		});
 	}
 	function selectPemberiTugas(user: any) {
@@ -472,6 +474,7 @@
 							type="text"
 							class="my-2 w-full pe-2 ps-2 focus:outline-none"
 							placeholder="Jane Doe"
+							name="nama_acara"
 							bind:value={selectedAcara}
 							onfocus={() => (dropDownAcara = true)}
 							onblur={() => {
