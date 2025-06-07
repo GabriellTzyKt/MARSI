@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ params, fetch, cookies }) => {
         // Use Promise.all to fetch data in parallel
         const [userRes, allUsersRes] = await Promise.all([
             fetch(`${env.PUB_PORT}/user/${params.id}`),
-            fetch(`${env.URL_KERAJAAN}/anggota`, {
+            fetch(`${env.URL_KERAJAAN}/anggota?limit=1000`, {
                 headers: {
                     "Authorization": `Bearer ${session.token}`
                 }
@@ -205,12 +205,10 @@ export const actions: Actions = {
                     .max(155, "Field Asma Dalem sudah mencapai batas max (255 huruf)"),
             nama_ayah:
                 z.string({ message: "Field Nama Ayah tidak boleh kosong" })
-                    .nonempty("Tolong isi minimal 1 huruf")
-                    .max(155, "Field Nama Ayah sudah mencapai batas max (255 huruf)"),
+                    .optional(),
             nama_ibu:
                 z.string({ message: "Field Nama Ibu tidak boleh kosong" })
-                    .nonempty("Tolong isi minimal 1 huruf")
-                    .max(155, "Field Nama Ibu sudah mencapai batas max (255 huruf)")            
+                  .optional()           
         });
 
         const form = {

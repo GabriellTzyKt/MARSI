@@ -99,6 +99,8 @@
 		showBarcode = true;
 	}
 	$inspect(filterAyah);
+	let errors = $state();
+	let success = $state(false);
 </script>
 
 <Navbar></Navbar>
@@ -118,11 +120,18 @@
 			loading = false;
 			console.log(result.data.errors);
 			if (result.type === 'success') {
+				success = true;
+				setTimeout(() => {
+					success = false;
+					goto('/profile');
+				}, 300);
 			} else if (result.type === 'failure') {
+				errors = result.data.errors;
 			}
 		};
 	}}
 >
+	<input type="text" name="id_user" hidden value={data?.data?.id_user} id="" />
 	<div class=" mt-18 flex justify-center">
 		<p class=" text-2xl font-[500]">Ubah Profil</p>
 	</div>
@@ -242,8 +251,8 @@
 			</div>
 			<div class="mt-2">
 				<Input type="text" name="nama_lengkap" value={data.data.nama_lengkap || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.nama_lengkap as e}
+				{#if errors}
+					{#each errors.nama_lengkap as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -256,8 +265,8 @@
 			</div>
 			<div class="mt-2">
 				<Input type="text" name="tempat_lahir" value={data.data.nama_lengkap || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.tempat_lahir as e}
+				{#if errors}
+					{#each errors.tempat_lahir as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -276,8 +285,8 @@
 					id="tanggal_lahir"
 					value={formatDate(data.data.tanggal_lahir) || '-'}
 				/>
-				{#if form?.errors}
-					{#each form?.errors.tanggal_lahir as e}
+				{#if errors}
+					{#each errors.tanggal_lahir as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -298,8 +307,8 @@
 					<option value="Perempuan">Perempuan</option>
 					<option value="Laki_Laki">Laki - Laki</option>
 				</select>
-				{#if form?.errors}
-					{#each form?.errors.jenis_kelamin as e}
+				{#if errors}
+					{#each errors.jenis_kelamin as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -312,8 +321,8 @@
 			</div>
 			<div class="mt-2">
 				<Input type="text" name="alamat" value={data.data.alamat || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.alamat as e}
+				{#if errors}
+					{#each errors.alamat as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -326,8 +335,8 @@
 			</div>
 			<div class="mt-2">
 				<Input type="phone" name="no_telp" value={data.data.no_telp || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.no_telp as e}
+				{#if errors}
+					{#each errors.no_telp as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -341,8 +350,8 @@
 			</div>
 			<div class="mt-2">
 				<Input type="text" name="pekerjaan" value={data.data.pekerjaan || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.pekerjaan as e}
+				{#if errors}
+					{#each errors.pekerjaan as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -355,8 +364,8 @@
 			</div>
 			<div class="mt-2">
 				<Input type="text" name="wongso" value={data.data.wongso || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.wongso as e}
+				{#if errors}
+					{#each errors.wongso as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -370,8 +379,8 @@
 			</div>
 			<div class="mt-2">
 				<Input type="email" name="email" value={data.data.email || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.email as e}
+				{#if errors}
+					{#each errors.email as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -384,8 +393,8 @@
 			</div>
 			<div class="mt-2">
 				<Input type="text" name="hobi" value={data.data.hobi || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.hobi as e}
+				{#if errors}
+					{#each errors.hobi as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -398,9 +407,22 @@
 				<p class="text-xl">Agama</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="agama" value={data.data.agama || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.agama as e}
+				<select
+					name="agama"
+					class="w-full rounded-lg border border-gray-500 bg-white py-2 ps-2 text-gray-500 focus:outline-none"
+					value={data.data.agama || '-'}
+					id=""
+				>
+					<option value="Islam">Islam</option>
+					<option value="Kristen">Kristen</option>
+					<option value="Katolik">Katolik</option>
+					<option value="Buddha">Buddha</option>
+					<option value="Hindu">Hindu</option>
+					<option value="Khonghucu">Khonghucu</option>
+				</select>
+				<!-- <Input type="text" name="agama" value={data.data.agama || '-'}></Input> -->
+				{#if errors}
+					{#each errors.agama as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -415,8 +437,8 @@
 			</div>
 			<div class="mt-2">
 				<Input type="text" name="asma_dalem" value={data.data.panggilan || '-'}></Input>
-				{#if form?.errors}
-					{#each form?.errors.asma_dalem as e}
+				{#if errors}
+					{#each errors.asma_dalem as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -478,8 +500,8 @@
 						{/each}
 					</div>
 				{/if}
-				{#if form?.errors}
-					{#each form?.errors.nama_ayah as e}
+				{#if errors}
+					{#each errors.nama_ayah as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -533,7 +555,7 @@
 							<div
 								class="cursor-pointer rounded-lg p-2 hover:bg-gray-200"
 								onclick={() => {
-									ayahkeyword = data.name;
+									ibuKeyword = data.name;
 									setTimeout(() => {
 										dropDownIbu = false;
 									}, 200);
@@ -545,8 +567,8 @@
 						{/each}
 					</div>
 				{/if}
-				{#if form?.errors}
-					{#each form?.errors.nama_ibu as e}
+				{#if errors}
+					{#each errors.nama_ibu as e}
 						<p class="text-left text-red-500">- {e}</p>
 					{/each}
 				{/if}
@@ -559,6 +581,6 @@
 </form>
 
 <Footer></Footer>
-{#if open}
-	<SuccessModal text="Akun Sudah Aktif!"></SuccessModal>
+{#if success}
+	<SuccessModal text="berhasil!"></SuccessModal>
 {/if}
