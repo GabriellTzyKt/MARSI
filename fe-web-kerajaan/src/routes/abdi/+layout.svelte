@@ -31,6 +31,11 @@
 			return 'Selamat datang';
 		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda') {
 			return 'Daftar Organisasi';
+		} else if (
+			page.route.id ===
+			'/abdi/dashboard/komunitas/beranda/[id]/detail/daftaranggota/edit/[idanggota]'
+		) {
+			return 'Edit Profile Abdi Komunitas';
 		} else if (page.route.id === '/abdi/dashboard/komunitas/beranda') {
 			return 'Daftar Komunitas';
 		} else if (page.route.id === '/abdi/dashboard/situs/beranda') {
@@ -307,12 +312,15 @@
 			page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/acara/edit/[idacara]'
 		) {
 			return 'Ubah Acara Komunitas';
-		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/acara/detail/[idacara]') {
+		} else if (
+			page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/acara/detail/[idacara]'
+		) {
 			return 'Detail Acara Organisasi';
-		} else if (page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/acara/detail/[idacara]') {
+		} else if (
+			page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/acara/detail/[idacara]'
+		) {
 			return 'Detail Acara Komunitas';
 		}
-
 	});
 
 	function handleLogout() {

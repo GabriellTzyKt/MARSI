@@ -1,9 +1,15 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { navigating } from '$app/state';
+	import { formatDate } from '$lib';
+	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	let { data } = $props();
 
 	let namalengkap = $state('');
+	let user = $state(data?.user);
+	let anggota = $state(data?.selectedAnggota);
 	let tempatlahir = $state('');
 	let tanggallahir = $state('');
 	let jeniskelamin = $state('');
@@ -11,10 +17,23 @@
 	let notelepon = $state('');
 	let hobi = $state('');
 	let jabatan = $state('');
-	let radioayah = $state('');
-	let radioibu = $state('');
-	let inputayah = $state('');
-	let inputibu = $state('');
+	let radioayah = $state('tidak');
+	let radioibu = $state('tidak');
+	let ayahAbdiNama = $state('');
+	let ayahSearch = $state(user?.nama_ayah || '');
+	let showAyahDropdown = $state(false);
+	let filteredAyah = $derived(searchUser(ayahSearch));
+
+	function searchUser(keyword: string) {
+		return data?.alluserData.filter((u) =>
+			u.nama_lengkap.toLowerCase().includes(keyword.toLowerCase())
+		);
+	}
+
+	let ibuAbdiNama = $state('');
+	let ibuSearch = $state(user?.nama_ibu || '');
+	let showIbuDropdown = $state(false);
+	let filteredIbu = $derived(searchUser(ibuSearch));
 	let email = $state('');
 	let wongso = $state('');
 	let pekerjaan = $state('');
@@ -22,46 +41,33 @@
 	let deskripsitugas = $state('');
 
 	let error: any = $state('');
-
-	let { form } = $props();
-	console.log('form data', form);
-
-	if (form?.formData) {
-		namalengkap = form.formData.namalengkap;
-		tempatlahir = form.formData.tempatlahir;
-		tanggallahir = form.formData.tanggallahir;
-		notelepon = form.formData.notelepon;
-		hobi = form.formData.hobi;
-		jabatan = form.formData.jabatan;
-		radioayah = form.formData.radioayah;
-		radioibu = form.formData.radioibu;
-		inputayah = form.formData.inputayah;
-		inputibu = form.formData.inputibu;
-		email = form.formData.email;
-		wongso = form.formData.wongso;
-		pekerjaan = form.formData.pekerjaan;
-		agama = form.formData.agama;
-		deskripsitugas = form.formData.deskripsitugas;
-		jeniskelamin = form.formData.jeniskelamin;
-	}
-
+	let loading = $state(false);
+	let success = $state(false);
 	let open = $state(false);
 	let timer: number;
 </script>
 
+{#if loading}
+	<Loader></Loader>
+{/if}
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
 <div class="min-h-full w-full">
 	<form
 		method="post"
 		action="?/edit"
 		use:enhance={() => {
+			loading = true;
 			return async ({ result }) => {
 				console.log(result);
+				loading = false;
 				if (result.type === 'success') {
 					open = true;
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						goto('/abdi/dashboard/komunitas/detail/daftaranggota');
+						goto(`/abdi/dashboard/komunitas/beranda/${data?.id_komunitas}/detail/daftaranggota`);
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
@@ -69,15 +75,19 @@
 			};
 		}}
 	>
+		<input type="text" hidden name="id_user" value={anggota?.id_user} id="" />
+		<input type="text" hidden name="tanggal_bergabung" value={anggota?.tanggal_bergabung} id="" />
+		<input type="text" hidden name="id_komunitas" value={data?.id_komunitas} id="" />
+
 		<div class="mt-10 grid grid-cols-2 gap-4">
 			<!-- 1 -->
 			<div>
 				<div>
-					<p>Nama Lengkap / Asma Timur*:</p>
+					<p>Nama Lengkap / Asma Timur<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
-							bind:value={namalengkap}
+							value={user?.nama_lengkap}
 							name="namalengkap"
 							placeholder="Masukkan Nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
@@ -93,10 +103,10 @@
 
 				<div class="mt-5 flex flex-col gap-2 lg:flex-row">
 					<div class="w-full">
-						<p>Tempat Lahir :</p>
+						<p>Tempat Lahir<span class="text-red-500">*</span></p>
 						<input
 							type="text"
-							bind:value={tempatlahir}
+							value={user?.tempat_lahir}
 							name="tempatlahir"
 							placeholder="Masukkan nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
@@ -108,10 +118,10 @@
 						{/if}
 					</div>
 					<div class="w-full">
-						<p>Tanggal Lahir :</p>
+						<p>Tanggal Lahir<span class="text-red-500">*</span></p>
 						<input
 							type="date"
-							bind:value={tanggallahir}
+							value={formatDate(user?.tanggal_lahir)}
 							name="tanggallahir"
 							placeholder="Masukkan nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
@@ -126,11 +136,11 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Alamat:</p>
+					<p class="mt-5">Alamat<span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
-							bind:value={alamat}
+							value={user?.alamat}
 							name="alamat"
 							placeholder="Masukkan Nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 pr-9"
@@ -146,11 +156,11 @@
 
 				<div class="mt-5 flex flex-col gap-2 lg:flex-row">
 					<div class="w-full">
-						<p>No telepon :</p>
+						<p>No telepon<span class="text-red-500">*</span></p>
 						<input
 							type="text"
 							name="notelepon"
-							bind:value={notelepon}
+							value={user?.no_telp}
 							placeholder="Masukkan nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 						/>
@@ -161,10 +171,14 @@
 						{/if}
 					</div>
 					<div class="w-full">
-						<p>Jenis Kelamin :</p>
-						<select class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2" name="jeniskelamin" bind:value={jeniskelamin}>
-							<option value="laki-laki">Laki-laki</option>
-							<option value="perempuan">Perempuan</option>
+						<p>Jenis Kelamin<span class="text-red-500">*</span></p>
+						<select
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+							name="jeniskelamin"
+							value={user?.jenis_kelamin}
+						>
+							<option value="Laki-Laki">Laki-laki</option>
+							<option value="Perempuan">Perempuan</option>
 						</select>
 						{#if error}
 							{#each error.jeniskelamin as a}
@@ -175,12 +189,12 @@
 				</div>
 
 				<div>
-					<p class="mt-5">Hobi (Opsional):</p>
+					<p class="mt-5">Hobi</p>
 					<div class="relative">
 						<input
 							type="text"
 							name="hobi"
-							bind:value={hobi}
+							value={user?.hobi || '-'}
 							placeholder="Masukkan Nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 						/>
@@ -192,23 +206,25 @@
 						{/if}
 					</div>
 				</div>
-
 				<div class="mt-3">
-					<p>Jabatan:</p>
+					<p>Deskripsi Tugas<span class="text-red-500">*</span></p>
 					<div class="relative">
-						<input
-							type="text"
-							name="jabatan"
-							bind:value={jabatan}
-							placeholder="Masukkan Nama"
-							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-						/>
-						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
-						{#if error}
-							{#each error.jabatan as a}
-								<p class="text-left text-red-500">{a}</p>
-							{/each}
-						{/if}
+						<div class="relative w-full">
+							<textarea
+								name="deskripsitugas"
+								value={anggota?.deskripsi_tugas}
+								placeholder="Masukkan nama"
+								class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg"
+							></textarea>
+							<div class="h-full">
+								<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+							</div>
+							{#if error}
+								{#each error.deskripsitugas as a}
+									<p class="text-left text-red-500">{a}</p>
+								{/each}
+							{/if}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -254,11 +270,40 @@
 					<div class="relative">
 						<input
 							type="text"
-							name="inputayah"
-							bind:value={inputayah}
+							name="nama_ayah"
+							bind:value={ayahSearch}
+							onfocus={() => (showAyahDropdown = true)}
+							onblur={() => {
+								setTimeout(() => {
+									showAyahDropdown = false;
+								}, 200);
+							}}
 							placeholder="Masukkan Nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 						/>
+						{#if showAyahDropdown && ayahSearch && radioayah == 'ya'}
+							<ul
+								class="absolute z-10 mt-1 max-h-40 w-full overflow-auto rounded border bg-white shadow"
+							>
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								{#each filteredAyah as user}
+									<!-- svelte-ignore a11y_click_events_have_key_events -->
+									<li
+										class="cursor-pointer px-3 py-2 hover:bg-blue-100"
+										onclick={() => {
+											ayahAbdiNama = user.nama_lengkap;
+											ayahSearch = user.nama_lengkap;
+											showAyahDropdown = false;
+										}}
+									>
+										{user.nama_lengkap}
+									</li>
+								{/each}
+								{#if filteredAyah.length === 0}
+									<li class="px-3 py-2 text-gray-400">Tidak ditemukan</li>
+								{/if}
+							</ul>
+						{/if}
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 						{#if error}
 							{#each error.inputayah as a}
@@ -307,12 +352,41 @@
 					<div class="relative">
 						<input
 							type="text"
-							name="inputibu"
-							bind:value={inputibu}
+							name="nama_ibu"
+							bind:value={ibuSearch}
+							onfocus={() => (showIbuDropdown = true)}
+							onblur={() => {
+								setTimeout(() => {
+									showIbuDropdown = false;
+								}, 200);
+							}}
 							placeholder="Masukkan Nama"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 						/>
 						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+						{#if showIbuDropdown && ibuSearch && radioibu == 'ya'}
+							<ul
+								class="absolute z-10 mt-1 max-h-40 w-full overflow-auto rounded border bg-white shadow"
+							>
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								{#each filteredIbu as user}
+									<!-- svelte-ignore a11y_click_events_have_key_events -->
+									<li
+										class="cursor-pointer px-3 py-2 hover:bg-blue-100"
+										onclick={() => {
+											ibuAbdiNama = user.nama_lengkap;
+											ibuSearch = user.nama_lengkap;
+											showIbuDropdown = false;
+										}}
+									>
+										{user.nama_lengkap}
+									</li>
+								{/each}
+								{#if filteredIbu.length === 0}
+									<li class="px-3 py-2 text-gray-400">Tidak ditemukan</li>
+								{/if}
+							</ul>
+						{/if}
 						{#if error}
 							{#each error.inputibu as a}
 								<p class="text-left text-red-500">{a}</p>
@@ -322,12 +396,12 @@
 				</div>
 
 				<div class="mt-5">
-					<p>Email(Opsional):</p>
+					<p>Email</p>
 					<div class="relative">
 						<input
 							type="text"
 							placeholder="Masukkan Nama"
-							bind:value={email}
+							value={user?.email}
 							name="email"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 						/>
@@ -342,12 +416,12 @@
 
 				<div class="flex flex-col gap-2 lg:flex-row">
 					<div class="mt-5 w-full">
-						<p>Wongso:</p>
+						<p>Wongso<span class="text-red-500">*</span></p>
 						<div class="relative">
 							<input
 								name="wongso"
 								type="text"
-								bind:value={wongso}
+								value={user?.panggilan || '-'}
 								placeholder="Masukkan Nama"
 								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 							/>
@@ -359,39 +433,40 @@
 							{/if}
 						</div>
 					</div>
-
-					<div class="mt-5 w-full">
-						<p>Pekerjaan(Opsional):</p>
-						<div class="relative">
-							<input
-								type="text"
-								name="pekerjaan"
-								bind:value={pekerjaan}
-								placeholder="Masukkan Nama"
-								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-							/>
-							<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
-							{#if error}
-								{#each error.pekerjaan as a}
-									<p class="text-left text-red-500">{a}</p>
-								{/each}
-							{/if}
-						</div>
+				</div>
+				<div class="mt-5 w-full">
+					<p>Pekerjaan</p>
+					<div class="relative">
+						<input
+							type="text"
+							name="pekerjaan"
+							value={user?.pekerjaan || '-'}
+							placeholder="Masukkan Nama"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						/>
+						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+						{#if error}
+							{#each error.pekerjaan as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
 					</div>
 				</div>
-
 				<div class="flex">
-					<div class="mt-5 w-[100%] lg:w-[50%]">
-						<p>Agama(Opsional):</p>
+					<div class="mt-5 w-full">
+						<p>Agama<span class="text-red-500">*</span></p>
 						<div class="relative">
-							<select class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2" name="jeniskelamin" bind:value={agama}>
-								<option value="kristen">Kristen</option>
-								<option value="katolik">Katolik</option>
-								<option value="islam">Islam</option>
-								<option value="hindu">Hindu</option>
-								<option value="budha">Budha</option>
-								<option value="konghucu">Konghucu</option>
-								<option value=" ">---</option>
+							<select
+								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+								name="agama"
+								value={user?.agama}
+							>
+								<option value="Kristen">Kristen</option>
+								<option value="Katolik">Katolik</option>
+								<option value="Islam">Islam</option>
+								<option value="Hindu">Hindu</option>
+								<option value="Budha">Budha</option>
+								<option value="Konghucu">Konghucu</option>
 							</select>
 							{#if error}
 								{#each error.agama as a}
@@ -401,26 +476,28 @@
 						</div>
 					</div>
 				</div>
-
 				<div class="mt-3">
-					<p>Deskripsi Tugas:</p>
-					<div class="relative">
-						<div class="relative w-full">
-							<textarea
-								name="deskripsitugas"
-								bind:value={deskripsitugas}
-								placeholder="Masukkan nama"
-								class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg"
-							></textarea>
-							<div class="h-full">
-								<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
-							</div>
-							{#if error}
-								{#each error.deskripsitugas as a}
-									<p class="text-left text-red-500">{a}</p>
-								{/each}
-							{/if}
-						</div>
+					<p>Jabatan<span class="text-red-500">*</span></p>
+					<div class="relative w-full">
+						<select
+							id="jabatan"
+							name="jabatan"
+							value={anggota.jabatan_anggota}
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						>
+							<option selected disabled>Pilih Jabatan</option>
+							<option value="Ketua">Ketua</option>
+							<option value="Wakil Ketua">Wakil Ketua</option>
+							<option value="Sekretaris">Sekretaris</option>
+							<option value="Bendahara">Bendahara</option>
+							<option value="Anggota">Anggota</option>
+						</select>
+
+						{#if error}
+							{#each error.jabatan as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -436,6 +513,10 @@
 {#if open}
 	<SuccessModal text="Anggota Berhasil Diedit"></SuccessModal>
 {/if}
+
+<!-- {#if loading}
+	<Loader></Loader>
+{/if} -->
 
 <style>
 	.raphael--edit {

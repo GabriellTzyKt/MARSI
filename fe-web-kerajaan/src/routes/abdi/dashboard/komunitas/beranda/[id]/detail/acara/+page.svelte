@@ -104,9 +104,8 @@
 		<button
 			class="bg-badran-bt cursor-pointer rounded-lg px-3 py-2 text-white"
 			onclick={() =>
-				goto(
-					`/abdi/dashboard/organisasi/beranda/${dataambil[0].id_organisasi}/detail/acara/tambah`
-				)}>+Tambah Data</button
+				goto(`/abdi/dashboard/komunitas/beranda/${dataambil[0].id_komunitas}/detail/acara/buat`)}
+			>+Tambah Data</button
 		>
 		<div
 			class="mt-4 flex flex-col items-center justify-center gap-2 md:flex-row xl:mt-0 xl:justify-start"

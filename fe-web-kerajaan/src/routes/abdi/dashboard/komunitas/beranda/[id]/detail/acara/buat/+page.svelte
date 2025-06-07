@@ -10,7 +10,6 @@
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 
-	
 	let input_radio = $state('');
 	let namaacara = $state('');
 	let lokasiacara: any = $state('');
@@ -37,14 +36,14 @@
 	console.log('Data 12 : ', data);
 	console.log('form data', form);
 
-	let nama_acara = $state("")
+	let nama_acara = $state('');
 
 	let selectedAcara: any = null;
 	function handleNamaAcaraChange(event: any) {
 		const nama = event.target.value;
-		console.log("nama : ", nama)
+		console.log('nama : ', nama);
 		const found = data.acara.find((a: any) => a.Acara.id_acara == nama);
-		console.log("found : ", found)
+		console.log('found : ', found);
 		if (found) {
 			selectedAcara = found;
 			lokasiacara = Number(found.Acara.id_lokasi);
@@ -56,7 +55,7 @@
 			nama_acara = found.Acara.nama_acara;
 			tujuanacara = found.Acara.tujuan_acara;
 			input_radio = found.Acara.jenis_acara.toLowerCase() === 'tertutup' ? 'private' : 'public';
-			console.log("SELECTED : ", selectedAcara)
+			console.log('SELECTED : ', selectedAcara);
 		} else {
 			selectedAcara = null;
 			lokasiacara = '';
@@ -89,7 +88,7 @@
 	let open = $state(false);
 	let timer: number;
 
-	let idAktif = $state("")
+	let idAktif = $state('');
 
 	$effect(() => {
 		idAktif = page.params.id;
@@ -246,7 +245,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						goto(`/abdi/dashboard/komunitas/beranda/${idAktif}/detail/acara`)
+						// goto(`/abdi/dashboard/komunitas/beranda/${idAktif}/detail/acara`)
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;

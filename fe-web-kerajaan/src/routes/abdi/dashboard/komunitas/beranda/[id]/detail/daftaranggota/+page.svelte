@@ -24,6 +24,7 @@
 	let datakomunitas = data.komunitas_id;
 	let dataTugas = data.komunitasList;
 	let entries = $state(10);
+	let kom_id = data?.komunitas_id;
 	let keyword = $state('');
 	let deleteD = $state(false);
 	let success = $state(false);
@@ -250,6 +251,13 @@
 							{
 								label: 'Edit',
 								action: () => handleEdit(data)
+							},
+							{
+								label: 'Edit Profile',
+								action: () =>
+									goto(
+										`/abdi/dashboard/komunitas/beranda/${kom_id}/detail/daftaranggota/edit/${data.id_user}`
+									)
 							},
 							{
 								label: 'Hapus',
