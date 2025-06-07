@@ -339,7 +339,7 @@
 		<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 			<div class="col-span-2">
 				<div class="mt-2 w-full">
-					<p>Nama Acara:</p>
+					<p>Nama Acara:  <span class="text-red-500">*</span> </p>
 					<input
 						type="text"
 						name="namaacara"
@@ -373,7 +373,7 @@
 					/>
 				</div> -->
 				<div class="relative mt-3 w-full">
-					<p>Lokasi Acara:</p>
+					<p>Lokasi Acara:  <span class="text-red-500">*</span></p>
 					<input
 						type="text"
 						autocomplete="off"
@@ -413,7 +413,7 @@
 					{/each}
 				{/if}
 				<div class="mt-3 w-full">
-					<p>Alamat Acara:</p>
+					<p>Alamat Acara: (Silahkan pilih dari lokasi diatas)  <span class="text-red-500">*</span></p>
 					<input
 						type="text"
 						name="alamat_acara"
@@ -438,7 +438,7 @@
 					/>
 				</div> -->
 				<div class="mt-2 w-full">
-					<p>Deskripsi Acara:</p>
+					<p>Deskripsi Acara:  <span class="text-red-500">*</span></p>
 					<textarea
 						placeholder="Masukkan Deskripsi Acara"
 						name="deskripsi_acara"
@@ -457,7 +457,7 @@
 				<div class=" flex">
 					<div class="grid w-full grid-cols-1 lg:grid-cols-2">
 						<div class="flex flex-col">
-							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Kapasitas Acara</p>
+							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Kapasitas Acara  <span class="text-red-500">*</span></p>
 							<input
 								name="kapasitasacara"
 								type="text"
@@ -467,7 +467,7 @@
 							/>
 						</div>
 						<div class="mr-10 w-full items-center text-center">
-							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara</p>
+							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara  <span class="text-red-500">*</span></p>
 							<div class="mt-2 flex items-center justify-center self-center">
 								<div class="mx-2 flex items-center justify-center">
 									<input
@@ -506,7 +506,7 @@
 				</div>
 
 				<div class="mt-3 w-full">
-					<p>Penanggung Jawab:</p>
+					<p>Penanggung Jawab:  <span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -535,7 +535,7 @@
 											onclick={() => selectPenanggungjawab(user)}
 										>
 											<div class="flex flex-col">
-												<span class="font-medium">{user.name}</span>
+												<span class="font-medium">{user.nama_lengkap}</span>
 												<span class="text-sm text-gray-500">{user.email}</span>
 											</div>
 										</li>
@@ -551,7 +551,7 @@
 					{/if}
 				</div>
 				<div class="mt-3 w-full">
-					<p>Tujuan Acara:</p>
+					<p>Tujuan Acara:  <span class="text-red-500">*</span></p>
 					<input
 						type="text"
 						name="tujuanacara"
@@ -567,7 +567,7 @@
 				{/if}
 				<div class="flexcoba mt-2 flex w-full">
 					<div class="mt-2 lg:flex-1">
-						<p>Tanggal Mulai:</p>
+						<p>Tanggal Mulai:  <span class="text-red-500">*</span></p>
 						<input
 							type="date"
 							name="tanggalmulai"
@@ -583,7 +583,7 @@
 					</div>
 					<div class="flex-1 lg:ml-10">
 						<div class="mt-2 w-full">
-							<p>Tanggal Selesai:</p>
+							<p>Tanggal Selesai:  <span class="text-red-500">*</span></p>
 							<input
 								type="date"
 								name="tanggalselesai"
@@ -601,7 +601,7 @@
 				</div>
 				<div class="flexcoba mt-2 flex w-full">
 					<div class="mt-2 lg:flex-1">
-						<p>Waktu Mulai:</p>
+						<p>Waktu Mulai:  <span class="text-red-500">*</span></p>
 						<input
 							type="time"
 							name="waktumulai"
@@ -616,7 +616,7 @@
 					</div>
 					<div class="flex-1 lg:ml-10">
 						<div class="mt-2 w-full">
-							<p>Waktu Selesai:</p>
+							<p>Waktu Selesai:  <span class="text-red-500">*</span></p>
 							<input
 								type="time"
 								name="waktuselesai"

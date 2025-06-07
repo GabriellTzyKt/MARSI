@@ -6,6 +6,7 @@
 	import Loader from '$lib/loader/Loader.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	let { data } = $props();
+	console.log("Data : ", data)
 
 	let namalengkap = $state('');
 	let user = $state(data?.user);
@@ -67,7 +68,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						goto(`/abdi/dashboard/organisasi/beranda/${data?.id_organsiasi}/detail/daftaranggota`);
+						goto(`/abdi/dashboard/komunitas/beranda/${data?.id_komunitas}/detail/daftaranggota`);
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;

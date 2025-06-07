@@ -24,8 +24,8 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         let user = await userRes.json();
         let anggota = await anggotaRes.json();
         let selectedAnggota = anggota.find((item: any) => item.id_user === user.id_user);
-        console.log("User res:", user);
-        console.log("Anggota res:", anggota);
+        // console.log("User res:", user);
+        // console.log("Anggota res:", anggota);
         anggota = anggota.filter((item: any) => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
         if (!anggotaRes.ok) {
             
@@ -89,6 +89,8 @@ export const actions: Actions = {
         };
 
         const validation = ver.safeParse({ ...form });
+
+        console.log("Form : ", form)
 
         if (!validation.success) {
             console.log(validation.error.flatten().fieldErrors)

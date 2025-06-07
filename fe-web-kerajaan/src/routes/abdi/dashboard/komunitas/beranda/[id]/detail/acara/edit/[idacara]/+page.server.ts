@@ -79,7 +79,7 @@ export const load = async ({ params, fetch, cookies }) => {
 
     // Cari acara yang id-nya sama dengan id_acaraorganisasi
     let acara = null;
-    for (const item of filteredAcaraList) {
+    for (const item of acaraList) {
         if (item.Acara.id_acara == Number(id_acaraorganisasi)) {
             acara = item;
             break;
