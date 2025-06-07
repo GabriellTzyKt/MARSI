@@ -44,7 +44,7 @@ export const load: PageServerLoad = async ({ fetch, params, depends }) => {
             )
             : [];
 
-        const usersResponse = await fetch(`${env.BASE_URL}/users?limit=2000`, {
+        const usersResponse = await fetch(`${env.BASE_URL_8008}/anggota?limit=2000`, {
             cache: 'no-store'
         });
         let users = [];
@@ -52,11 +52,11 @@ export const load: PageServerLoad = async ({ fetch, params, depends }) => {
             users = await usersResponse.json();
         }
 
-        console.log("Acara data : ", acaraData)
+        console.log("user : ", users)
 
 
         // Add organization info to each acara without processing photos
-        const processedAcara = filteredAcara.map((acara: any) => {
+        const processedAcara = acaraData.map((acara: any) => {
             // Cari user dengan id sama
             const user = users.find((u: any) => u.id_user == acara.Acara.id_penanggung_jawab);
             return {

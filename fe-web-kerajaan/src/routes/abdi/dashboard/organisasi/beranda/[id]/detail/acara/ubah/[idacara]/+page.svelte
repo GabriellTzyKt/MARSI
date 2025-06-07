@@ -418,7 +418,7 @@
 						type="text"
 						name="alamat_acara"
 						bind:value={lokasi}
-						readonly={isLocationSelected}
+						readonly
 						placeholder="Masukkan Alamat"
 						class="w-full rounded-lg border px-2 py-1"
 					/>
@@ -457,7 +457,7 @@
 				<div class=" flex">
 					<div class="grid w-full grid-cols-1 lg:grid-cols-2">
 						<div class="flex flex-col">
-							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Kapasitas Acara</p>
+							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Kapasitas Acara <span class="text-red-500">*</span></p>
 							<input
 								name="kapasitasacara"
 								type="text"
@@ -467,7 +467,7 @@
 							/>
 						</div>
 						<div class="mr-10 w-full items-center text-center">
-							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara</p>
+							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara <span class="text-red-500">*</span></p>
 							<div class="mt-2 flex items-center justify-center self-center">
 								<div class="mx-2 flex items-center justify-center">
 									<input
@@ -506,7 +506,7 @@
 				</div>
 
 				<div class="mt-3 w-full">
-					<p>Penanggung Jawab:</p>
+					<p>Penanggung Jawab: <span class="text-red-500">*</span></p>
 					<div class="relative">
 						<input
 							type="text"
@@ -524,10 +524,10 @@
 						<input type="hidden" name="penanggungjawab" value={selectedPenanggungjawab?.nama_lengkap} />
 						<input type="hidden" name="penanggungjawab_id" value={selectedPenanggungjawab?.id_user} />
 
-						{#if showPenanggungjawabDropdown && filteredPenanggungJawab.length > 0}
+						{#if showPenanggungjawabDropdown && data.anggota.length > 0}
 							<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">
 								<ul class="max-h-60 overflow-y-auto">
-									{#each filteredPenanggungJawab as user}
+									{#each data.anggota as user}
 										<!-- svelte-ignore a11y_click_events_have_key_events -->
 										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 										<li
@@ -535,7 +535,7 @@
 											onclick={() => selectPenanggungjawab(user)}
 										>
 											<div class="flex flex-col">
-												<span class="font-medium">{user.name}</span>
+												<span class="font-medium">{user.nama_lengkap}</span>
 												<span class="text-sm text-gray-500">{user.email}</span>
 											</div>
 										</li>

@@ -21,13 +21,14 @@ export const load = async ({ params, fetch, cookies }) => {
     console.log("id situs : ", id_situs);
 
     // Ambil semua data yang dibutuhkan secara paralel
-    const [usersRes, situsRes, organisasiRes, acaraRes, panitiaRes, undanganRes] = await Promise.all([
-        fetch(`${env.BASE_URL_8008}/anggota?limit=2000`),
+    const [usersRes, situsRes, organisasiRes, acaraRes, panitiaRes, undanganRes, anggotaRes] = await Promise.all([
+        fetch(`${env.BASE_URL}/users?limit=2000`),
         fetch(`${env.BASE_URL_8008}/situs?limit=200`),
         fetch(`${env.BASE_URL_8008}/organisasi?limit=200`),
         fetch(`${env.BASE_URL_8008}/acara/organisasi/${id_situs}?limit=200`),
         fetch(`${env.BASE_URL_8008}/acara/panitia/${id_acaraorganisasi}`),
-        fetch(`${env.BASE_URL_8008}/undangan/${id_acaraorganisasi}`)
+        fetch(`${env.BASE_URL_8008}/undangan/${id_acaraorganisasi}`),
+        fetch(`${env.BASE_URL_8008}/anggota?limit=2000`),
     ]);
 
     if (!usersRes.ok || !situsRes.ok || !organisasiRes.ok || !acaraRes.ok) {
@@ -87,6 +88,11 @@ export const load = async ({ params, fetch, cookies }) => {
     }
     if (!acara) throw error(404, "Acara tidak ditemukan");
 
+    const anggota = await anggotaRes.json();
+    const filteredAnggota = Array.isArray(anggota)
+        ? anggota.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
+        : anggota;
+
     return {
         id_admin,
         users: filteredUsers,
@@ -98,7 +104,8 @@ export const load = async ({ params, fetch, cookies }) => {
         dataPanit: filteredPanitia,
         id_situs,
         id_acaraorganisasi,
-        isKetuaExist
+        isKetuaExist,
+        anggota : filteredAnggota
     };
 };
 
@@ -108,9 +115,9 @@ export const actions: Actions = {
         const id = params.id
         const id_acara = params.idacara
         console.log("id : ", id)
-        console.log("id a : " , id_acara)
+        console.log("id a : ", id_acara)
         const data = await request.formData();
-        let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
+        let token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : ''
 
         const ids = data.getAll("id").map(String); // undangan
         const ids2 = data.getAll("id2").map(String); //panit
@@ -118,7 +125,7 @@ export const actions: Actions = {
         console.log(data)
         console.log(ids)
         console.log(ids2)
-        let form : any = {
+        let form: any = {
             namaacara: "",
             lokasiacara: "",
             tujuanacara: "",
@@ -143,7 +150,7 @@ export const actions: Actions = {
             tujuanacara: z.string().trim().min(1, "Tujuan harus diisi!"),
             jenis_acara: z.enum(["private", "public"], {
                 errorMap: () => ({ message: "Pilih jenis acara!" }),
-                }),
+            }),
             deskripsiacara: z.string().trim().min(1, "Deskripsi harus terisi!"),
             penanggungjawab: z.string().trim().min(1, "Isi penanggungjawab!"),
             kapasitasacara: z.string()
@@ -188,7 +195,7 @@ export const actions: Actions = {
             namabawah: {},
             notelpbawah: {},
             namalengkapbawah: {},
-            namajabatan : {},
+            namajabatan: {},
         };
 
 
@@ -223,47 +230,47 @@ export const actions: Actions = {
             notelp: form.notelpbawah[id],
             panggilan: form.panggilan[id]
         }));
-          const panitiaArr = Object.keys(form.namalengkapbawah).map(id => ({
+        const panitiaArr = Object.keys(form.namalengkapbawah).map(id => ({
             nama: form.namalengkapbawah[id],
             jabatan: form.namajabatan[id]
-          }));
-        console.log("undangan arr : ", undanganArr , "panitia arr : ", panitiaArr)
+        }));
+        console.log("undangan arr : ", undanganArr, "panitia arr : ", panitiaArr)
         if (undanganArr && panitiaArr) {
             try {
-            await Promise.all(
-                undanganArr.map(async (undangan) => {
-                    let send = {
-                        id_acara: Number(id_acara),
-                        id_pengirim: Number(token?.user_data?.id_user),
-                        id_penerima: Number(undangan.nama)
-                    }
-                    console.log("sending acara", send)
-                   let res = await fetch(`${env.URL_KERAJAAN}/undangan`, {    
-                        method: "POST",            
-                        headers: { "Content-Type": "application/json" }, 
-                        body: JSON.stringify(send)
-                   });
-                    let msg = await res.json()
-                    console.log(msg)
-                })
-            );
-            await Promise.all(
-                panitiaArr.map(async (panitia) => {
-                     let send = {
-                        id_acara: Number(id_acara),
-                        id_user: Number(panitia.nama),
-                        jabatan_panitia: panitia.jabatan
-                    }
-                    console.log("sending panit", send)
-                    let res = await fetch(`${env.URL_KERAJAAN}/acara/panitia`, {    
-                        method: "POST",            
-                        headers: { "Content-Type": "application/json" }, 
-                        body: JSON.stringify(send)
-                    });
-                    let msg = await res.json()
-                    console.log("panitia",msg)
-                })
-            );
+                await Promise.all(
+                    undanganArr.map(async (undangan) => {
+                        let send = {
+                            id_acara: Number(id_acara),
+                            id_pengirim: Number(token?.user_data?.id_user),
+                            id_penerima: Number(undangan.nama)
+                        }
+                        console.log("sending acara", send)
+                        let res = await fetch(`${env.URL_KERAJAAN}/undangan`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(send)
+                        });
+                        let msg = await res.json()
+                        console.log(msg)
+                    })
+                );
+                await Promise.all(
+                    panitiaArr.map(async (panitia) => {
+                        let send = {
+                            id_acara: Number(id_acara),
+                            id_user: Number(panitia.nama),
+                            jabatan_panitia: panitia.jabatan
+                        }
+                        console.log("sending panit", send)
+                        let res = await fetch(`${env.URL_KERAJAAN}/acara/panitia`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(send)
+                        });
+                        let msg = await res.json()
+                        console.log("panitia", msg)
+                    })
+                );
             } catch (error) {
                 console.log(error)
                 return fail(406, {
@@ -272,13 +279,13 @@ export const actions: Actions = {
                     formData: form,
                     type: "add"
                 });
-            
+
             }
 
-        
+
         }
         try {
-            let payload ={
+            let payload = {
                 id_acara: Number(id_acara),
                 nama_acara: data.get("namaacara"),
                 deskripsi_acara: data.get("deskripsi_acara"),
@@ -302,20 +309,20 @@ export const actions: Actions = {
                 body: JSON.stringify(payload)
             })
             let msg = await res.json()
-            console.log("Edit acara",msg)
+            console.log("Edit acara", msg)
             if (!res.ok) {
             }
-            return {success: true}
+            return { success: true }
         } catch (error) {
-            
+
         }
-        
-        
-      
-        console.log("Undangan :", undanganArr )
-        console.log("Panit :", panitiaArr )
-        
-        
+
+
+
+        console.log("Undangan :", undanganArr)
+        console.log("Panit :", panitiaArr)
+
+
         return { errors: "Success", success: true, acara: true };
     },
 

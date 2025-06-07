@@ -10,7 +10,6 @@
 	import SucessModal from '$lib/popup/SucessModal.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 
-	
 	let input_radio = $state('');
 	let namaacara = $state('');
 	let lokasiacara: any = $state('');
@@ -37,18 +36,17 @@
 	console.log('Data : ', data);
 	console.log('form data', form);
 
-let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
-		console.log("acara list : ", acaraList)
+	let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
+	console.log('acara list : ', acaraList);
 
-
-	let nama_acara = $state("")
+	let nama_acara = $state('');
 
 	let selectedAcara: any = null;
 	function handleNamaAcaraChange(event: any) {
 		const nama = event.target.value;
-		console.log("nama : ", nama)
+		console.log('nama : ', nama);
 		const found = data.acara.find((a: any) => a.Acara.id_acara == nama);
-		console.log("found : ", found)
+		console.log('found : ', found);
 		if (found) {
 			selectedAcara = found;
 			lokasiacara = Number(found.Acara.id_lokasi);
@@ -60,11 +58,17 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 			nama_acara = found.Acara.nama_acara;
 			tujuanacara = found.Acara.tujuan_acara;
 			input_radio = found.Acara.jenis_acara.toLowerCase() === 'tertutup' ? 'private' : 'public';
-			waktumulai = found.Acara.waktu_mulai.split("T")[1].split(":")[0] + ":" + found.Acara.waktu_mulai.split("T")[1].split(":")[1]
-			waktuselesai = found.Acara.waktu_selesai.split("T")[1].split(":")[0] + ":" + found.Acara.waktu_selesai.split("T")[1].split(":")[1]
-			tanggalmulai = found.Acara.waktu_mulai.split("T")[0].split(":")[0]
-			tanggalselesai = found.Acara.waktu_selesai.split("T")[0].split(":")[0]
-			console.log("SELECTED : ", selectedAcara)
+			waktumulai =
+				found.Acara.waktu_mulai.split('T')[1].split(':')[0] +
+				':' +
+				found.Acara.waktu_mulai.split('T')[1].split(':')[1];
+			waktuselesai =
+				found.Acara.waktu_selesai.split('T')[1].split(':')[0] +
+				':' +
+				found.Acara.waktu_selesai.split('T')[1].split(':')[1];
+			tanggalmulai = found.Acara.waktu_mulai.split('T')[0].split(':')[0];
+			tanggalselesai = found.Acara.waktu_selesai.split('T')[0].split(':')[0];
+			console.log('SELECTED : ', selectedAcara);
 		} else {
 			selectedAcara = null;
 			lokasiacara = '';
@@ -97,11 +101,17 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 	let open = $state(false);
 	let timer: number;
 
-	let idAktif = $state("")
+	let idAktif = $state('');
 
 	$effect(() => {
 		idAktif = page.params.id;
 		console.log('ID : ', idAktif);
+		if (lokasiacara) {
+			const selectedSitus = data.situs.find((s: any) => s.id_situs == lokasiacara);
+			if (selectedSitus) {
+				alamatacara = selectedSitus.alamat;
+			}
+		}
 	});
 
 	let invitations: { id: number; panggilan: string; nama: string; notelepon: string }[] = $state(
@@ -254,7 +264,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						goto(`/abdi/dashboard/organisasi/beranda/${idAktif}/detail/acara`)
+						goto(`/abdi/dashboard/organisasi/beranda/${idAktif}/detail/acara`);
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
@@ -325,7 +335,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 			<div class="mt-5 grid grid-cols-1 gap-12 lg:grid-cols-4">
 				<div class="col-span-2">
 					<div class="mt-2 w-full">
-						<p>Nama Acara: <span class="text-red-500">*</span> </p>
+						<p>Nama Acara: <span class="text-red-500">*</span></p>
 						{#if activeTab === 'completed'}
 							<select
 								name="namaacara"
@@ -356,48 +366,8 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 
 					<input type="hidden" name="nama_acara" value={nama_acara} />
 
-					<div class="col-span-2 mt-2 w-full">
-						<p class="mt-2">Penanggung Jawab: <span class="text-red-500">*</span> </p>
-						<select
-							name="penanggungjawab"
-							bind:value={penanggungjawab}
-							class="w-full rounded-lg border px-2 py-1"
-						>
-							<option value="" disabled selected>Pilih Penanggung Jawab</option>
-							{#each data.users as user}
-								<option value={user.id_user}>{user.nama_lengkap}</option>
-							{/each}
-						</select>
-						{#if error}
-							{#each error.penanggungjawab as a}
-								<p class="text-left text-red-500">{a}</p>
-							{/each}
-						{/if}
-					</div>
-
-					<div class="col-span-2 mt-2 w-full">
-						<p class="mt-2">Penyelenggara Acara: <span class="text-red-500">*</span> </p>
-						<select
-							name="penyelenggaraacara"
-							bind:value={penyelenggaraacara}
-							class="w-full rounded-lg border px-2 py-1"
-						>
-							<option value="" disabled selected>Pilih Penyelenggara</option>
-							<optgroup label="Organisasi">
-								{#each data.organisasi as organisasi}
-									<option value={organisasi.id_organisasi}>{organisasi.nama_organisasi}</option>
-								{/each}
-							</optgroup>
-						</select>
-						{#if error}
-							{#each error.penyelenggaraacara as a}
-								<p class="text-left text-red-500">{a}</p>
-							{/each}
-						{/if}
-					</div>
-
 					<div class="mt-2 w-full">
-						<p>Lokasi Acara: <span class="text-red-500">*</span> </p>
+						<p>Lokasi Acara: <span class="text-red-500">*</span></p>
 						<select
 							name="lokasiacara"
 							bind:value={lokasiacara}
@@ -416,17 +386,33 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 						{/if}
 					</div>
 
-					<div class="mt-2 w-full">
-						<p>Tujuan Acara: </p>
+					<div class="w-full mt-2" style="position:relative">
+						<p>Alamat acara: (Silahkan pilih lokasi terlebih dahulu) <span class="text-red-500">*</span></p>
 						<input
 							type="text"
-							name="tujuanacara"
-							bind:value={tujuanacara}
-							placeholder="Masukkan Nama"
+							name="alamatacara"
+							bind:value={alamatacara}
+							readonly
+							placeholder="Masukkan alamat"
 							class="w-full rounded-lg border px-2 py-1"
 						/>
 						{#if error}
-							{#each error.tujuanacara as a}
+							{#each error.lokasiacara as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+
+					<div class="w-full mt-2">
+						<p>Deskripsi Acara: <span class="text-red-500">*</span></p>
+						<textarea
+							name="deskripsiacara"
+							bind:value={deskripsiacara}
+							placeholder="Masukkan Deskripsi Acara"
+							class="h-12 w-full resize-none rounded-md border px-3 py-3 text-lg"
+						></textarea>
+						{#if error}
+							{#each error.deskripsiacara as a}
 								<p class="text-left text-red-500">{a}</p>
 							{/each}
 						{/if}
@@ -436,7 +422,7 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 				<div class="col-span-2">
 					<div class="flexcoba mt-2 flex w-full">
 						<div class="flex-1">
-							<p>Kapasitas Acara: <span class="text-red-500">*</span> </p>
+							<p>Kapasitas Acara: <span class="text-red-500">*</span></p>
 							<input
 								type="text"
 								bind:value={kapasitasacara}
@@ -452,7 +438,9 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 						</div>
 						<div class="ml-10 flex">
 							<div class="mr-10 w-full items-center text-center">
-								<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara <span class="text-red-500">*</span></p>
+								<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">
+									Jenis Acara <span class="text-red-500">*</span>
+								</p>
 								<div class="mt-2 flex items-center justify-center self-center">
 									<div class="mx-2 flex items-center justify-center">
 										<input
@@ -488,6 +476,41 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 								{/if}
 							</div>
 						</div>
+					</div>
+
+					<div class="col-span-2 mt-2 w-full">
+						<p class="mt-2">Penanggung Jawab: <span class="text-red-500">*</span></p>
+						<select
+							name="penanggungjawab"
+							bind:value={penanggungjawab}
+							class="w-full rounded-lg border px-2 py-1"
+						>
+							<option value="" disabled selected>Pilih Penanggung Jawab</option>
+							{#each data.users as user}
+								<option value={user.id_user}>{user.nama_lengkap}</option>
+							{/each}
+						</select>
+						{#if error}
+							{#each error.penanggungjawab as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
+					</div>
+
+					<div class="mt-2 w-full">
+						<p>Tujuan Acara:</p>
+						<input
+							type="text"
+							name="tujuanacara"
+							bind:value={tujuanacara}
+							placeholder="Masukkan Nama"
+							class="w-full rounded-lg border px-2 py-1"
+						/>
+						{#if error}
+							{#each error.tujuanacara as a}
+								<p class="text-left text-red-500">{a}</p>
+							{/each}
+						{/if}
 					</div>
 
 					<div class="flexcoba mt-2 flex w-full">
@@ -555,54 +578,6 @@ let acaraList = Array.isArray(data?.acara) ? data.acara.flat() : [];
 								{/if}
 							</div>
 						</div>
-					</div>
-					<div class="w-full" style="position:relative">
-						<p>Alamat acara: <span class="text-red-500">*</span></p>
-						{#if activeTab === 'completed'}
-							<input
-								type="text"
-								name="alamatacara"
-								bind:value={alamatacara}
-								placeholder="Masukkan alamat"
-								class="w-full rounded-lg border px-2 py-1"
-							/>
-						{:else}
-							<input
-								class="input-field w-full rounded-lg border p-2 pr-8"
-								type="text"
-								name="alamatacara"
-								bind:value={alamatacara}
-								onkeydown={handleLokasiKeyDown}
-								placeholder="Cari alamat..."
-								autocomplete="off"
-							/>
-							{#if $showLokasiDropdown && alamatacara !== ''}
-								<ul class="dropdown">
-									{#each $lokasiDropdown as name}
-										<li onclick={() => selectLokasi(name)}>{name}</li>
-									{/each}
-								</ul>
-							{/if}
-						{/if}
-						{#if error}
-							{#each error.lokasiacara as a}
-								<p class="text-left text-red-500">{a}</p>
-							{/each}
-						{/if}
-					</div>
-					<div class="w-full">
-						<p>Deskripsi Acara: <span class="text-red-500">*</span></p>
-						<textarea
-							name="deskripsiacara"
-							bind:value={deskripsiacara}
-							placeholder="Masukkan Deskripsi Acara"
-							class="h-12 w-full resize-none rounded-md border px-3 py-3 text-lg"
-						></textarea>
-						{#if error}
-							{#each error.deskripsiacara as a}
-								<p class="text-left text-red-500">{a}</p>
-							{/each}
-						{/if}
 					</div>
 				</div>
 			</div>

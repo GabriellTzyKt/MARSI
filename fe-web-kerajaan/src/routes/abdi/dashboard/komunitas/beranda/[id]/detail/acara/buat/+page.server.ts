@@ -57,8 +57,9 @@ export const load: PageServerLoad = async ({ fetch, params, cookies }) => {
 
 
 export const actions: Actions = {
-    tambah: async ({ request }) => {
+    tambah: async ({ request, params }) => {
         const data = await request.formData();
+        let id = params.id
 
         console.log("Data : ", data)
 
@@ -99,7 +100,6 @@ export const actions: Actions = {
             tujuanacara: z.string().trim().min(1, "Tujuan harus diisi!"),
             deskripsiacara: z.string().trim().min(1, "Deskripsi harus terisi!"),
             penanggungjawab: z.string().trim().min(1, "Isi penanggungjawab!"),
-            penyelenggaraacara: z.string().trim().min(1, "Isi penyelenggara!"),
             kapasitasacara: z.string()
                 .trim()
                 .min(1, "Kapasitas harus terisi!")
@@ -132,7 +132,7 @@ export const actions: Actions = {
             tujuanacara: data.get("tujuanacara") ?? "",
             deskripsiacara: data.get("deskripsiacara") ?? "",
             penanggungjawab: data.get("penanggungjawab") ?? "",
-            penyelenggaraacara: data.get("penyelenggaraacara") ?? "",
+            penyelenggaraacara: id || 0,
             kapasitasacara: data.get("kapasitasacara") ?? "",
             tanggalmulai: data.get("tanggalmulai") ?? "",
             tanggalselesai: data.get("tanggalselesai") ?? "",
