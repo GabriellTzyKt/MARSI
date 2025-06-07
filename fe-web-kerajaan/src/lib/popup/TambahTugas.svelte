@@ -43,7 +43,7 @@
 	}
 
 	let selectedKeterkaitan = $state<any>(
-		dataEdit.lokasi_tugas ? data.find((item) => item.id_situs == dataEdit.lokasi_tugas) : null
+		dataEdit?.lokasi_tugas ? data.find((item) => item?.id_situs == dataEdit?.lokasi_tugas) : null
 	);
 	// console.log('selectedKeterkaitan', selectedKeterkaitan);
 	let selectedUserKeyword = $state(dataEdit ? dataEdit.pemberi_tugas : '');
@@ -333,8 +333,8 @@
 								onclick={() => selectAnggotaDitugaskan(user)}
 							>
 								<div class="flex flex-col">
-									<span class="font-medium">{user.name}</span>
-									<span class="text-sm text-gray-500">{user.email}</span>
+									<span class="font-medium">{user?.name}</span>
+									<span class="text-sm text-gray-500">{user?.email}</span>
 								</div>
 							</li>
 						{/each}

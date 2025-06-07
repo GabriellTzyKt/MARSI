@@ -18,9 +18,7 @@
 	let { data } = $props();
 	console.log('data : ', data);
 	let dataAmbil = $derived(data.data);
-	let situsData = $state(
-		data.situs.filter((item: any) => item.deleted_at === '0001-01-01T00:00:00Z')
-	);
+	let situsData = $state(data.situs);
 	console.log(dataAmbil);
 	let open = $state(false);
 	let success = $state(false);
@@ -295,7 +293,7 @@
 		<TambahTugas
 			bind:value={editModal}
 			text="Edit Tugas"
-			bind:data={situsData}
+			data={situsData}
 			{errors}
 			userData={data?.userData}
 			dataAcara={data?.acaraData}

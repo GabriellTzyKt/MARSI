@@ -23,8 +23,8 @@ export const load = async ({ cookies }) => {
           method: 'GET',
         
         }),
-        fetch(`${env.URL_KERAJAAN}/situs?limit=${limitSitus}`, {
-          method: 'GET'
+        fetch(`${env.URL_KERAJAAN}/situs?limit=1000`, {
+
           
         }),
         fetch(`${env.PUB_PORT}/users?limit=${limitUser}`, {

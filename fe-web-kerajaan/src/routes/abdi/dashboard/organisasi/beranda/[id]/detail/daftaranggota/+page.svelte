@@ -25,7 +25,7 @@
 	let allUser = data.userData;
 
 	let idAktif = $state(page.params.id);
-
+	let org_id = $state(data?.id_organisasi);
 	let open = $state(false);
 	let valo = $state(false);
 	let error = $state();
@@ -193,18 +193,7 @@
 			class=" flex flex-col items-center justify-center gap-x-2 gap-y-2 md:flex-row xl:mt-0 xl:justify-start"
 		>
 			<!-- select -->
-			<select
-				name="Organisasi"
-				id=""
-				value="Organisasi"
-				placeholder="cari organisasi"
-				class="rounded-md border px-3 py-2 focus:outline-none"
-			>
-				<option value="organisasi">Organisasi</option>
-				<option value="Komunitas">Komunitas</option>
-				<option value="Abdi">Abdi</option>
-				<option value="organisasi">Organisasi</option>
-			</select>
+
 			<!-- cari -->
 			<div class="flex items-center rounded-lg border px-2">
 				<input
@@ -267,6 +256,13 @@
 							{
 								label: 'Edit',
 								action: () => handleEdit(data)
+							},
+							{
+								label: 'Edit Profile',
+								action: () =>
+									goto(
+										`/abdi/dashboard/organisasi/beranda/${org_id}/detail/daftaranggota/edit/${data.id_user}`
+									)
 							},
 							{
 								label: 'Hapus',

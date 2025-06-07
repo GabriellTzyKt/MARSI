@@ -35,7 +35,11 @@
 			page.route.id ===
 			'/abdi/dashboard/komunitas/beranda/[id]/detail/daftaranggota/edit/[idanggota]'
 		) {
-			return 'Edit Profile Abdi Komunitas';
+		} else if (
+			page.route.id ===
+			'/abdi/dashboard/organisasi/beranda/[id]/detail/daftaranggota/edit/[idanggota]'
+		) {
+			return 'Edit Profile Abdi Organisasi';
 		} else if (page.route.id === '/abdi/dashboard/komunitas/beranda') {
 			return 'Daftar Komunitas';
 		} else if (page.route.id === '/abdi/dashboard/situs/beranda') {

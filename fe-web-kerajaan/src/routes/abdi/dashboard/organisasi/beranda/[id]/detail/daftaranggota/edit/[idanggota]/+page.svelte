@@ -67,7 +67,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						goto(`/abdi/dashboard/organisasi/beranda/${data?.id_organsiasi}/detail/daftaranggota`);
+						goto(`/abdi/dashboard/organisasi/beranda/${data?.id_organisasi}/detail/daftaranggota`);
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
@@ -77,7 +77,7 @@
 	>
 		<input type="text" hidden name="id_user" value={anggota?.id_user} id="" />
 		<input type="text" hidden name="tanggal_bergabung" value={anggota?.tanggal_bergabung} id="" />
-		<input type="text" hidden name="id_komunitas" value={data?.id_komunitas} id="" />
+		<input type="text" hidden name="id_organisasi" value={data?.id_organisasi} id="" />
 
 		<div class="mt-10 grid grid-cols-2 gap-4">
 			<!-- 1 -->
