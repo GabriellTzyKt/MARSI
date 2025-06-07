@@ -5,7 +5,7 @@
 </script>
 
 <div class="max-w-sm overflow-hidden rounded bg-white shadow-lg">
-	<div class="w-full justify-center">
+	<div class="h-auto w-full justify-center">
 		{#if situs == ''}
 			<div class="flex h-[150px] w-[300px] items-center justify-center">
 				<p class="text-gray-600">No Images</p>
@@ -24,7 +24,7 @@
 			<p class="multiline-ellipsis h-fulltext-sm mb-5 mt-5 text-gray-700">
 				{isi}
 			</p>
-			<div class="flex h-full w-full justify-between">
+			<div class="flex h-auto w-full justify-between">
 				{#if icon == 'tempatIstirahat'}
 					<span class="flex h-10 w-10 items-center justify-center rounded-full bg-red-400 p-2">
 						<i class="material-symbols--bed-outline-rounded text-lg text-white"></i>

@@ -18,7 +18,10 @@
 	let penanggungjawab: any = $state('');
 	let penyelenggaraacara = $state('');
 	let tanggalmulai = $state('');
-	let alamatacara = $state('');
+	let alamatacara = $derived(findLokasi(lokasiacara));
+	function findLokasi(keyword) {
+		return data?.situs.find((l: any) => l?.id_situs === Number(keyword));
+	}
 	let tanggalselesai = $state('');
 	let waktumulai = $state('');
 	let waktuselesai = $state('');
@@ -42,7 +45,7 @@
 			selectedAcara = data.acara.find((a: any) => a.nama_acara === namaacara) ?? null;
 			lokasiacara = Number(selectedAcara.id_lokasi);
 			penanggungjawab = Number(selectedAcara.id_penanggung_jawab);
-			alamatacara = selectedAcara.alamat_acara;
+			// alamatacara = selectedAcara.alamat_acara;
 			kapasitasacara = selectedAcara.kapasitas_acara;
 			deskripsiacara = selectedAcara.deskripsi_acara;
 			tujuanacara = selectedAcara.tujuan_acara;
@@ -53,7 +56,7 @@
 			namaacara = '';
 			lokasiacara = '';
 			penanggungjawab = '';
-			alamatacara = '';
+			// alamatacara = '';
 			kapasitasacara = '';
 			deskripsiacara = '';
 			tujuanacara = '';
@@ -189,7 +192,7 @@
 	}
 
 	function selectLokasi(name: string) {
-		alamatacara = name; // set alamatacara,
+		// alamatacara = name; // set alamatacara,
 		showLokasiDropdown.set(false);
 	}
 
@@ -233,8 +236,8 @@
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
-					console.log('Error for namabawah:', error.namabawah);
-					console.log('Error for notelpbawah:', error.notelpbawah);
+					// console.log('Error for namabawah:', error.namabawah);
+					// console.log('Error for notelpbawah:', error.notelpbawah);
 				}
 			};
 		}}
@@ -515,7 +518,7 @@
 							<input
 								type="text"
 								name="alamatacara"
-								bind:value={alamatacara}
+								value={alamatacara?.alamat || ''}
 								placeholder="Masukkan alamat"
 								class="w-full rounded-lg border px-2 py-1"
 							/>
@@ -524,18 +527,11 @@
 								class="input-field w-full rounded-lg border p-2 pr-8"
 								type="text"
 								name="alamatacara"
-								bind:value={alamatacara}
-								onkeydown={handleLokasiKeyDown}
-								placeholder="Cari alamat..."
+								value={alamatacara?.alamat || ''}
+								readonly
+								placeholder="alamat..."
 								autocomplete="off"
 							/>
-							{#if $showLokasiDropdown && alamatacara !== ''}
-								<ul class="dropdown">
-									{#each $lokasiDropdown as name}
-										<li onclick={() => selectLokasi(name)}>{name}</li>
-									{/each}
-								</ul>
-							{/if}
 						{/if}
 						{#if error}
 							{#each error.lokasiacara as a}

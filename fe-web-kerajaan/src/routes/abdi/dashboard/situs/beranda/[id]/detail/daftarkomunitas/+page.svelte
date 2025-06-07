@@ -51,10 +51,11 @@
 
 <div class="flex w-full flex-col">
 	<div class=" flex flex-col lg:flex-row lg:justify-between">
-		<button
+		<div></div>
+		<!-- <button
 			class="bg-badran-bt rounded-lg px-3 py-2 text-white"
 			onclick={() => goto('daftaranggota/tambah')}>+Tambah Data</button
-		>
+		> -->
 		<div
 			class="mt-4 flex flex-col items-center justify-center gap-2 lg:mt-0 lg:flex-row lg:justify-start"
 		>

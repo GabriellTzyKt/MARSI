@@ -51,16 +51,18 @@
 			<section class="h-auto w-full py-5">
 				<div class="ml-5 mr-5">
 					{#if acara.length > 0}
-						<div class="mx-auto grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+						<div class="mx-auto grid h-auto gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 							{#each acara.slice(0, displayCount) as a}
-								<Card2
-									situs={a.imageUrls[0] || ''}
-									header={a.nama_acara}
-									isi={a.deskripsi_acara || 'No Description'}
-									icon=""
-									href={`/acara/${a.id_acara}`}
-									id={a.id_acara}
-								></Card2>
+								<div class="h-auto">
+									<Card2
+										situs={a.imageUrls[0] || ''}
+										header={a.nama_acara}
+										isi={a.deskripsi_acara || 'No Description'}
+										icon=""
+										href={`/acara/${a.id_acara}`}
+										id={a.id_acara}
+									></Card2>
+								</div>
 							{/each}
 						</div>
 

@@ -43,8 +43,16 @@
 			return 'Edit Profile Abdi Organisasi';
 		} else if (page.route.id === '/abdi/dashboard/komunitas/beranda') {
 			return 'Daftar Komunitas';
+		} else if (
+			page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/acara/laporan/[idacara]'
+		) {
+			return 'Laporan Acara Komunitas';
 		} else if (page.route.id === '/abdi/dashboard/situs/beranda') {
 			return 'Daftar Situs';
+		} else if (page.route.id === '/abdi/sekretariat/situs/bukutamu/[id]') {
+			return 'Buku Tamu Situs Sekretariat';
+		} else if (page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail/daftarkomunitas') {
+			return 'Daftar Komunitas di Situs';
 		} else if (page.route.id === '/abdi/dashboard/komunitas/detail') {
 			return 'Detail Komunitas';
 		} else if (page.route.id === '/abdi/dashboard/organisasi/detail') {
@@ -325,7 +333,7 @@
 			page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/acara/detail/[idacara]'
 		) {
 			return 'Detail Acara Komunitas';
-		} 
+		}
 	});
 
 	function handleLogout() {

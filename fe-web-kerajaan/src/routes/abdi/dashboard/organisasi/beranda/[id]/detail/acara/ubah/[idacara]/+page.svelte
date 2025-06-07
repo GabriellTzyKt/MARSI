@@ -22,7 +22,8 @@
 	let isLocationSelected = $state(data?.data?.id_lokasi ? true : false);
 
 	let penanggungjawabSearchTerm = $state(
-		data?.users?.find((user) => user?.id_user == data?.data?.Acara.id_penanggung_jawab)?.nama_lengkap || ''
+		data?.users?.find((user) => user?.id_user == data?.data?.Acara.id_penanggung_jawab)
+			?.nama_lengkap || ''
 	);
 	let selectedPenanggungjawab = $state<any>(
 		data?.users?.find((nama) => nama?.id_user == data?.data.Acara.id_penanggung_jawab) || null
@@ -31,13 +32,21 @@
 
 	let namaacara = $state(data?.data.Acara.nama_acara || '-');
 	let alamatacara = $state(data?.data.Acara.alamat_acara || '');
-	let waktumulai = $state(data?.data.Acara.waktu_mulai.split("T")[1].split(":")[0] +":"+ data?.data.Acara.waktu_mulai.split("T")[1].split(":")[1]|| '');
-	let waktuselesai = $state(data?.data.Acara.waktu_selesai.split("T")[1].split(":")[0]+":"+ data?.data.Acara.waktu_selesai.split("T")[1].split(":")[1]|| '');
-	console.log("watu selesai : ", waktuselesai)
+	let waktumulai = $state(
+		data?.data.Acara.waktu_mulai.split('T')[1].split(':')[0] +
+			':' +
+			data?.data.Acara.waktu_mulai.split('T')[1].split(':')[1] || ''
+	);
+	let waktuselesai = $state(
+		data?.data.Acara.waktu_selesai.split('T')[1].split(':')[0] +
+			':' +
+			data?.data.Acara.waktu_selesai.split('T')[1].split(':')[1] || ''
+	);
+	console.log('watu selesai : ', waktuselesai);
 	let tujuanacara = $state(data?.data.Acara.tujuan_acara || '');
-	let tanggalmulai = $state(data?.data?.Acara?.waktu_mulai?.split("T")[0] || '');
-	console.log("tgl mule : ", tanggalmulai)
-	let tanggalselesai = $state(data?.data?.Acara?.waktu_selesai?.split("T")[0] || '');
+	let tanggalmulai = $state(data?.data?.Acara?.waktu_mulai?.split('T')[0] || '');
+	console.log('tgl mule : ', tanggalmulai);
+	let tanggalselesai = $state(data?.data?.Acara?.waktu_selesai?.split('T')[0] || '');
 	let penanggungjawab = $state(data?.data.Acara.nama_penanggung_jawab || '');
 	let panggilan: any = $state([]);
 	let namabawah: any = $state([]);
@@ -59,26 +68,31 @@
 
 	let errors: any = $state('');
 	let success = $state(false);
-	let lokasi_acara = $state(data?.situs.find((item : any) => item.id_situs == data.data.Acara.id_lokasi).nama_situs || '');
+	let lokasi_acara = $state(
+		data?.situs?.find((item: any) => item?.id_situs == data?.data?.Acara?.id_lokasi)?.nama_situs ||
+			''
+	);
 	let id_alamat = $state();
 	let lokasi = $state(data?.data.Acara.alamat_acara || '');
 	let users = $state(data?.user || []);
 	function filter(data: any[]) {
 		return data.filter((item) =>
-			item.nama_situs.toLowerCase().includes(lokasi_acara.toLowerCase())
+			item?.nama_situs?.toLowerCase().includes(lokasi_acara?.toLowerCase())
 		);
 	}
 	let dataUndangan = $state();
 	let dataPanit = $state();
 	function filterUser(searchTerm: string) {
-		return data.users.filter((item) => item.nama_lengkap.toLowerCase().includes(searchTerm.toLowerCase()));
+		return data.users.filter((item) =>
+			item.nama_lengkap.toLowerCase().includes(searchTerm.toLowerCase())
+		);
 	}
 	function isKetuaDipilih(currentId: number) {
 		return invitations2.some((inv) => inv.id !== currentId && namajabatan[inv.id] === 'ketua');
 	}
 	function bindId(item: any) {
 		if (lokasi_acara) {
-			id_alamat = item.nama_situs;
+			id_alamat = item?.nama_situs;
 			lokasi = item.alamat;
 			isLocationSelected = true;
 		}
@@ -91,7 +105,7 @@
 	function handleLocationInput() {
 		showDropdown = true;
 		// If user manually types, allow alamat editing
-		if (isLocationSelected && !resData.includes((item: any) => item.nama_situs === lokasi_acara)) {
+		if (isLocationSelected && !resData.includes((item: any) => item?.nama_situs === lokasi_acara)) {
 			isLocationSelected = false;
 		}
 	}
@@ -129,8 +143,8 @@
 	}
 	$effect(() => {
 		if (data?.dataUndangan && data.dataUndangan.length > 0) {
-			dataUndangan = data.dataUndangan.map((und : any) => {
-				const user = data.users.find((u : any) => u.id_user == und.id_penerima);
+			dataUndangan = data.dataUndangan.map((und: any) => {
+				const user = data.users.find((u: any) => u.id_user == und.id_penerima);
 				return {
 					id: und.id_undangan,
 					jenis_kelamin: user.jenis_kelamin || '', // jika ada field panggilan di dataUndangan
@@ -141,8 +155,8 @@
 			});
 		}
 		if (data?.dataPanit && data.dataPanit.length > 0) {
-			dataPanit = data.dataPanit.map((und : any) => {
-				const user = data.users.find((u : any) => u.id_user == und.id_user);
+			dataPanit = data.dataPanit.map((und: any) => {
+				const user = data.users.find((u: any) => u.id_user == und.id_user);
 				return {
 					id: und.id_panitia,
 					nama: user ? user.nama_lengkap : '',
@@ -202,7 +216,7 @@
 		data?.situs.find((item) => item.id_situs == data?.data.Acara.id_lokasi) || null
 	);
 	function select(item: any) {
-		lokasi_acara = item.nama_situs;
+		lokasi_acara = item?.nama_situs;
 		lokasi = item.alamat;
 		selectedLokasi = item;
 		isLocationSelected = true;
@@ -390,7 +404,7 @@
 						<ul
 							class="dropdown absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border bg-white"
 						>
-							{#if resData.length > 0}
+							{#if resData?.length > 0}
 								{#each resData as item}
 									<!-- svelte-ignore a11y_click_events_have_key_events -->
 									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
@@ -398,7 +412,7 @@
 										onclick={() => select(item)}
 										class="cursor-pointer px-3 py-2 hover:bg-gray-100"
 									>
-										{item.nama_situs}
+										{item?.nama_situs}
 									</li>
 								{/each}
 							{:else}
@@ -457,7 +471,9 @@
 				<div class=" flex">
 					<div class="grid w-full grid-cols-1 lg:grid-cols-2">
 						<div class="flex flex-col">
-							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Kapasitas Acara <span class="text-red-500">*</span></p>
+							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">
+								Kapasitas Acara <span class="text-red-500">*</span>
+							</p>
 							<input
 								name="kapasitasacara"
 								type="text"
@@ -467,7 +483,9 @@
 							/>
 						</div>
 						<div class="mr-10 w-full items-center text-center">
-							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">Jenis Acara <span class="text-red-500">*</span></p>
+							<p class="mb-3 mt-3 lg:mb-0 lg:mt-0">
+								Jenis Acara <span class="text-red-500">*</span>
+							</p>
 							<div class="mt-2 flex items-center justify-center self-center">
 								<div class="mx-2 flex items-center justify-center">
 									<input
@@ -521,8 +539,16 @@
 							}}
 							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
 						/>
-						<input type="hidden" name="penanggungjawab" value={selectedPenanggungjawab?.nama_lengkap} />
-						<input type="hidden" name="penanggungjawab_id" value={selectedPenanggungjawab?.id_user} />
+						<input
+							type="hidden"
+							name="penanggungjawab"
+							value={selectedPenanggungjawab?.nama_lengkap}
+						/>
+						<input
+							type="hidden"
+							name="penanggungjawab_id"
+							value={selectedPenanggungjawab?.id_user}
+						/>
 
 						{#if showPenanggungjawabDropdown && data.anggota.length > 0}
 							<div class="absolute z-10 mt-1 w-full rounded-lg border bg-white shadow-lg">

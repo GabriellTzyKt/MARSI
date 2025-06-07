@@ -33,7 +33,7 @@ export const load: PageServerLoad = async ({ fetch, params,cookies }) => {
 
     const situsData = await situsRes.json();
     const filteredSitus = Array.isArray(situsData)
-        ? situsData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
+        ? situsData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
         : situsData;
 
     const komunitasData = await komunitasRes.json();
@@ -189,19 +189,20 @@ export const actions: Actions = {
             
           
             // Siapkan formData baru untuk dikirim ke API eksternal
-            const formData = new FormData();
-            formData.append("id_pemohon", token.id_admin);
-            formData.append("penanggung_jawab", form.penanggungjawab);
-            formData.append("lokasi_acara", form.lokasiacara);
-            formData.append("nama_acara", form.namaacara);
-            formData.append("deskripsi_acara", form.deskripsiacara);
-            formData.append("tujuan_acara", form.tujuanacara);
-            formData.append("alamat_acara", form.alamatacara);
-            formData.append("waktu_mulai", `${form.tanggalmulai} ${form.waktumulai}:00`)
-            formData.append("waktu_selesai", `${form.tanggalselesai} ${form.waktuselesai}:00`);
-            formData.append("jenis_acara", form.inputradio);
-            formData.append("kapasitas_acara", form.kapasitasacara);
-            formData.append("status", "diajukan");
+            let formData = new FormData();
+            formData.append("id_pemohon", token.id_admin as string);
+            formData.append("penanggung_jawab", form.penanggungjawab as string);
+            formData.append("id_lpj", data.get("id_lpj") as string||"1")
+            formData.append("lokasi_acara", form.lokasiacara as string);
+            formData.append("nama_acara", form.namaacara as string);
+            formData.append("deskripsi_acara", form.deskripsiacara as string);
+            formData.append("tujuan_acara", form.tujuanacara as string);
+            formData.append("alamat_acara", form.alamatacara as string);
+            formData.append("waktu_mulai", `${form.tanggalmulai} ${form.waktumulai}:00` as string);
+            formData.append("waktu_selesai", `${form.tanggalselesai} ${form.waktuselesai}:00` as string);
+            formData.append("jenis_acara", form.inputradio as string);
+            formData.append("kapasitas_acara", form.kapasitasacara as string);
+            formData.append("status", "Diajukan");
            
             console.log("Payload", formData)
             //    let formsend = new FormData()

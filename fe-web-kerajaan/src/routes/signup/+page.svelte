@@ -263,7 +263,8 @@
 									}}>Lanjut</button
 								>
 								<p class="mt-3 pb-3 text-center">
-									Sudah punya akun? <span class="cursor-pointer text-blue-500 underline">Masuk</span
+									Sudah punya akun? <a href="/login"
+										><span class="cursor-pointer text-blue-500 underline">Masuk</span></a
 									>
 								</p>
 							</div>
