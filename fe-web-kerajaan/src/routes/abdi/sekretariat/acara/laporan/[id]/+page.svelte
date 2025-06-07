@@ -573,7 +573,7 @@
 				{/each}
 				{#if data?.undangan?.length === 0}
 					<div class="col-span-full items-center justify-center py-2">
-						<p>No Panitia Yet</p>
+						<p>No Undangan Yet</p>
 					</div>
 				{/if}
 			</div>
@@ -589,8 +589,10 @@
 					<div class="col-span-4 w-full rounded-lg border px-2 py-1">{panit.nama_panit}</div>
 					<div class="col-span-3 w-full rounded-lg border px-2 py-1">{panit.jabatan}</div>
 				{/each}
-				{#if data?.panit?.length == 0}
-					<p>No Panitia</p>
+				{#if data?.panit?.length === 0}
+					<div class="col-span-full items-center justify-center py-2">
+						<p>No Panitia Yet</p>
+					</div>
 				{/if}
 			</div>
 
@@ -604,7 +606,7 @@
 				<div class="grid grid-cols-1 gap-2 lg:grid-cols-3">
 					<div class="col-span-1 mt-5 h-full w-full rounded-lg border-2 border-gray-500">
 						<p class="ml-5 mt-5 text-xl font-bold text-blue-700">Peserta</p>
-						<p class="ml-5 mt-5">Jumlah Orang Hadir <span class="text-red-500">*</span></p>
+						<p class="ml-5 mt-5">Jumlah Orang Hadir<span class="text-red-500">*</span></p>
 						<input
 							type="number"
 							placeholder="Masukkan Jumlah"
@@ -616,9 +618,7 @@
 						{#if error?.jumlah_peserta}
 							<p class="ml-3 text-xs text-red-500">{error.jumlah_peserta[0]}</p>
 						{/if}
-						<p class="ml-5 mt-5">
-							Perkiraan Jumlah Orang Hadir <span class="text-red-500">*</span>
-						</p>
+						<p class="ml-5 mt-5">Perkiraan Jumlah Orang Hadir<span class="text-red-500">*</span></p>
 						<input
 							type="number"
 							placeholder="Masukkan Jumlah"
@@ -630,7 +630,7 @@
 						{#if error?.perkiraan_jumlah_peserta}
 							<p class="ml-3 text-xs text-red-500">{error.perkiraan_jumlah_peserta[0]}</p>
 						{/if}
-						<p class="ml-5 mt-5">Bukti Foto</p>
+						<p class="ml-5 mt-5">Bukti Foto<span class="text-red-500">*</span></p>
 						<div class="relative ml-3 w-[90%]">
 							<!-- <input
 							type="text"

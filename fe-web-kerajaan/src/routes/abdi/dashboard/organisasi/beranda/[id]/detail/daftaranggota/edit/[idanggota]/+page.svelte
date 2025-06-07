@@ -402,6 +402,7 @@
 							type="text"
 							placeholder="Masukkan Nama"
 							value={user?.email}
+							readonly={user?.email ? true : false}
 							name="email"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 						/>
