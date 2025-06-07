@@ -67,7 +67,7 @@
 					clearTimeout(timer);
 					timer = setTimeout(() => {
 						open = false;
-						goto(`/abdi/dashboard/organisasi/beranda/${data?.id_organsiasi}/detail/daftaranggota`);
+						goto(`/abdi/dashboard/organisasi/beranda/${data?.id_komunitas}/detail/daftaranggota`);
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
@@ -402,6 +402,7 @@
 							type="text"
 							placeholder="Masukkan Nama"
 							value={user?.email}
+							readonly={user?.email ? true : false}
 							name="email"
 							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
 						/>

@@ -58,7 +58,7 @@
 				let anggotaList = await anggotaResponse.json();
 
 				anggotaList = anggotaList
-					// .filter((item) => item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at)
+					.filter((item) => item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at)
 					.map((item: any) => {
 						return {
 							...item,
