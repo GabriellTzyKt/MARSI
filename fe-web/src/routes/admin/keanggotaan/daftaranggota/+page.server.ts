@@ -332,5 +332,34 @@ export const actions: Actions = {
                 success: false
             });
         }
+    },
+    hapusKerajaan: async ({ request }) => {
+        const data = await request.formData();
+        const id_kerajaan = Number(data.get("id_kerajaan"));
+
+        console.log("Menghapus kerajaan dengan ID:", id_kerajaan);
+
+
+        if (!id_kerajaan) {
+            return fail(400, {
+                errors: { api: ["ID kerajaan tidak ditemukan"] },
+                success: false
+            });
+        }
+        try {
+            let response = await fetch(`${env.PUB_PORT}/kerajaan/${id_kerajaan}`, {
+                method: "DELETE",
+              
+            })
+            if (!response.ok) {
+                return fail(response.status, {
+                    errors: { api: [`Error: ${response.status} - ${response.statusText}`] },
+                    success: false
+                })
+            }
+            return { success: true, message: "Kerajaan berhasil dihapus" };
+        } catch (error) {
+            
+        }
     }
 };

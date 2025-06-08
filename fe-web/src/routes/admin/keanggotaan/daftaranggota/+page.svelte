@@ -35,17 +35,21 @@
 	let tambah = $state(false);
 	let selectedKerajaanId = $state(null);
 	let loading = $state(false);
-	let selectedID = $state()
+	let selectedID = $state();
+	let deleteModal = $state(false);
 
 	$effect(() => {
 		if (!edit || !tambah) {
 			errors = null;
 		}
-		const urlParams = new URLSearchParams(page.url.search)
-		const deletedId = urlParams.get('delete')
 
-		if (deletedId){
-			selectedID = deletedId
+		const urlParams = new URLSearchParams(page.url.search);
+		const deletedId = urlParams.get('delete');
+
+		if (deletedId) {
+			deleteModal = true;
+			console.log('deletedId', deletedId);
+			selectedID = deletedId;
 		}
 	});
 
@@ -143,16 +147,14 @@
 		isdrop={true}
 	>
 		{#snippet children({ header, data, index })}
-		{console.log(data)}
+			{console.log(data)}
 			{#if header === 'Aksi'}
 				<DropDown
 					text="apakah yakin ingin mengarsip anggota {data.nama} ini?"
 					successText={`Anggota ${data.nama} berhasil diarsipkan!`}
 					link="/admin/keanggotaan/daftaranggota"
 					{index}
-					items={[
-						['children', 'Arsipkan', `/admin/keanggotaan?delete=${data.id_kerajaan}`]
-					]}
+					items={[['Arsipkan', `/admin/keanggotaan/daftaranggota?delete=${data.id_kerajaan}`]]}
 					tipe="anggota"
 					id={`id-anggota-${index}`}
 					{data}
@@ -222,41 +224,39 @@
 	></Pagination>
 </div>
 
-{#if selectedID}
+{#if deleteModal}
 	<form
-		action="?/delete"
+		action="?/hapusKerajaan"
 		method="post"
 		use:enhance={() => {
 			const idToDelete = selectedID;
-			console.log("Form submitted with ID from URL:", idToDelete);
-			
+			console.log('Form submitted with ID from URL:', idToDelete);
+			loading = true;
 			return async ({ result }) => {
+				loading = false;
 				if (result.type === 'success') {
-					console.log("Success deleting ID:", idToDelete);
+					console.log('Success deleting ID:', idToDelete);
 					success = true;
 					// Remove the delete parameter from URL
-					goto('/admin/tambahanggota', { replaceState: true });
+					goto('/admin/keanggotaan/daftaranggota', { replaceState: true });
 					setTimeout(() => {
 						success = false;
-						invalidateAll();
+						deleteModal = false;
 					}, 3000);
 				} else {
-					console.error("Failed to delete ID:", idToDelete, result);
+					console.error('Failed to delete ID:', idToDelete, result);
 				}
 			};
 		}}
 	>
-		<input type="hidden" name="id_kerajaan" value={selectedID}>
-		
+		<input type="hidden" name="id_kerajaan" value={selectedID} />
+
 		<DeleteModal
-			text="Apakah yakin ingin menghapus dokumen ini?"
-			successText="Dokumen berhasil dihapus!"
-			choose="delete"
-			bind:value={deleteD}
-			name="id_arsip"
-			data={selectedItemId}
-			on:close={handleCloseDeleteModal}
-		/>
+			bind:value={selectedID}
+			successText="Berhasil Diarsip"
+			text="Apakah yakin ingin diarsip?"
+			choose="arsip"
+		></DeleteModal>
 	</form>
 {/if}
 
