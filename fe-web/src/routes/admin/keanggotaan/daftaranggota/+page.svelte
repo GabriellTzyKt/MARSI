@@ -235,7 +235,7 @@
 					console.log("Success deleting ID:", idToDelete);
 					success = true;
 					// Remove the delete parameter from URL
-					goto('/admin/suratDokumen', { replaceState: true });
+					goto('/admin/tambahanggota', { replaceState: true });
 					setTimeout(() => {
 						success = false;
 						invalidateAll();
