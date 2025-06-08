@@ -205,7 +205,7 @@
 			{/if}
 
 			<div class="flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nama">Nama Dokumen</label>
+				<label class="text-md self-start text-left" for="nama">Nama Dokumen <span class="text-red-500">*</span></label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"
@@ -223,7 +223,7 @@
 			</div>
 
 			<div class="text-md mt-2 text-start">
-				<label for="keterkaitan">Keterkaitan</label>
+				<label for="keterkaitan">Keterkaitan <span class="text-red-500">*</span></label>
 				<div class="relative flex flex-col gap-1">
 					<input
 						class="input-field rounded-lg border p-2 pr-10"
@@ -258,7 +258,7 @@
 			<input type="hidden" name="id_kerajaan" value={selectedId} />
 
 			<div class="mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="jenisDokumen">Jenis Dokumen</label>
+				<label class="text-md self-start text-left" for="jenisDokumen">Jenis Dokumen <span class="text-red-500">*</span></label>
 				<select
 					bind:value={jenisDokumen}
 					name="jenisDokumen"
@@ -278,7 +278,7 @@
 			</div>
 
 			<div class="mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="kategori">Kategori</label>
+				<label class="text-md self-start text-left" for="kategori">Kategori <span class="text-red-500">*</span></label>
 				<select
 					bind:value={kategori}
 					name="kategori"

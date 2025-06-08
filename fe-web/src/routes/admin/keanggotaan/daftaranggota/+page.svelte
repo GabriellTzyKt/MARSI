@@ -11,7 +11,7 @@
 	import { enhance } from '$app/forms';
 	import SModal from '$lib/popup/SModal.svelte';
 	import { goto, invalidate, invalidateAll } from '$app/navigation';
-	import { navigating } from '$app/state';
+	import { navigating, page } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
 	import { easeBack } from 'd3';
 
@@ -35,10 +35,17 @@
 	let tambah = $state(false);
 	let selectedKerajaanId = $state(null);
 	let loading = $state(false);
+	let selectedID = $state()
 
 	$effect(() => {
 		if (!edit || !tambah) {
 			errors = null;
+		}
+		const urlParams = new URLSearchParams(page.url.search)
+		const deletedId = urlParams.get('delete')
+
+		if (deletedId){
+			selectedID = deletedId
 		}
 	});
 
@@ -136,6 +143,7 @@
 		isdrop={true}
 	>
 		{#snippet children({ header, data, index })}
+		{console.log(data)}
 			{#if header === 'Aksi'}
 				<DropDown
 					text="apakah yakin ingin mengarsip anggota {data.nama} ini?"
@@ -143,7 +151,7 @@
 					link="/admin/keanggotaan/daftaranggota"
 					{index}
 					items={[
-						['children', 'Arsipkan']
+						['children', 'Arsipkan', `/admin/keanggotaan?delete=${data.id_kerajaan}`]
 					]}
 					tipe="anggota"
 					id={`id-anggota-${index}`}
@@ -213,6 +221,45 @@
 	<Pagination bind:currPage bind:entries totalItems={filterData(data.dataKerajaan).length}
 	></Pagination>
 </div>
+
+{#if selectedID}
+	<form
+		action="?/delete"
+		method="post"
+		use:enhance={() => {
+			const idToDelete = selectedID;
+			console.log("Form submitted with ID from URL:", idToDelete);
+			
+			return async ({ result }) => {
+				if (result.type === 'success') {
+					console.log("Success deleting ID:", idToDelete);
+					success = true;
+					// Remove the delete parameter from URL
+					goto('/admin/suratDokumen', { replaceState: true });
+					setTimeout(() => {
+						success = false;
+						invalidateAll();
+					}, 3000);
+				} else {
+					console.error("Failed to delete ID:", idToDelete, result);
+				}
+			};
+		}}
+	>
+		<input type="hidden" name="id_kerajaan" value={selectedID}>
+		
+		<DeleteModal
+			text="Apakah yakin ingin menghapus dokumen ini?"
+			successText="Dokumen berhasil dihapus!"
+			choose="delete"
+			bind:value={deleteD}
+			name="id_arsip"
+			data={selectedItemId}
+			on:close={handleCloseDeleteModal}
+		/>
+	</form>
+{/if}
+
 {#if del}
 	<DeleteModal
 		bind:value={del}

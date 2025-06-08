@@ -88,7 +88,7 @@
 		<div class="mb-4 me-4 ms-4 flex flex-col gap-3">
 			<div class="flex w-full flex-col gap-1">
 				<div>
-					<p>Nama Lengkap Anggota</p>
+					<p>Nama Lengkap Anggota <span class="text-red-500">*</span></p>
 				</div>
 				<div class=" w-full">
 					<input
@@ -107,7 +107,7 @@
 			</div>
 			<div class="flex w-full flex-col gap-1">
 				<div>
-					<p>Gelar Anggota</p>
+					<p>Gelar Anggota <span class="text-red-500">*</span></p>
 				</div>
 				<div class="w-full">
 					<select
@@ -135,7 +135,7 @@
 			
 			<div class=" w-full flex-col gap-1">
 				<div>
-					<p>Posisi Anggota</p>
+					<p>Posisi Anggota <span class="text-red-500">*</span></p>
 				</div>
 				<div class=" w-full">
 					<input

@@ -107,7 +107,7 @@
 			}}
 		>
 			<div class=" flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nama">Nama Kerajaan</label>
+				<label class="text-md self-start text-left" for="nama">Nama Kerajaan <span class="text-red-500">*</span></label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"
@@ -122,7 +122,7 @@
 				{/if}
 			</div>
 			<div class="relative mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="alamat_kerajaan">Alamat Kerajaan</label>
+				<label class="text-md self-start text-left" for="alamat_kerajaan">Alamat Kerajaan <span class="text-red-500">*</span></label>
 				<input
 					class="input-field rounded-lg border p-2"
 					type="text"
@@ -152,7 +152,7 @@
 
 			<div class=" mt-2 grid grid-cols-1 gap-4 md:grid-cols-3">
 				<div class="flex flex-col">
-					<p class="text-md mb-1 self-start text-left">Tanggal Berdiri</p>
+					<p class="text-md mb-1 self-start text-left">Tanggal Berdiri <span class="text-red-500">*</span></p>
 					<input
 						class="input-field rounded-lg border p-2"
 						type="date"
@@ -167,7 +167,7 @@
 					{/if}
 				</div>
 				<div class="flex flex-col">
-					<p class="text-md mb-1 self-start text-left">Era Kerajaan</p>
+					<p class="text-md mb-1 self-start text-left">Era Kerajaan <span class="text-red-500">*</span></p>
 					<select
 						class="input-field rounded-lg border p-2"
 						id="era_kerajaan"
@@ -185,7 +185,7 @@
 					{/if}
 				</div>
 				<div class="flex flex-col">
-					<p class="text-md mb-1 self-start text-left">Rumpun Kerajaan</p>
+					<p class="text-md mb-1 self-start text-left">Rumpun Kerajaan <span class="text-red-500">*</span></p>
 					<select
 						class="input-field rounded-lg border p-2"
 						id="rumpun_kerajaan"
@@ -203,7 +203,7 @@
 					{/if}
 				</div>
 				<div class="flex flex-col">
-					<p class="text-md mb-1 self-start text-left">Jenis Kerajaan</p>
+					<p class="text-md mb-1 self-start text-left">Jenis Kerajaan <span class="text-red-500">*</span></p>
 					<select
 						class="input-field rounded-lg border p-2"
 						id="jenis_kerajaan"
@@ -222,7 +222,7 @@
 				</div>
 
 				<div class="flex flex-col md:col-span-2">
-					<p class="text-md mb-1 self-start text-left">Nama Raja Sekarang</p>
+					<p class="text-md mb-1 self-start text-left">Nama Raja Sekarang <span class="text-red-500">*</span></p>
 					<input
 						class="input-field rounded-lg border p-2"
 						type="text"
@@ -239,7 +239,7 @@
 			</div>
 
 			<div class=" mt-2 flex flex-col gap-1">
-				<label class="text-md self-start text-left" for="nama">Deskripsi Kerajaan</label>
+				<label class="text-md self-start text-left" for="nama">Deskripsi Kerajaan <span class="text-red-500">*</span></label>
 				<textarea
 					class="input-field rounded-lg border p-2"
 					id="nama"

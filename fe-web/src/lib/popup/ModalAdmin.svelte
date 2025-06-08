@@ -264,7 +264,7 @@
 			<!-- Nama Lengkap -->
 			<div class="flex flex-col md:col-span-full">
 				<div class="">
-					<p>Nama Lengkap</p>
+					<p>Nama Lengkap <span class="text-red-500">*</span></p>
 				</div>
 				<div>
 					<input
@@ -284,7 +284,7 @@
 			<!-- Username -->
 			<div class="flex flex-col md:col-span-3">
 				<div class="">
-					<p>Username</p>
+					<p>Username <span class="text-red-500">*</span></p>
 				</div>
 				<div>
 					<input
@@ -307,7 +307,7 @@
 			<!-- Email -->
 			<div class="flex flex-col md:col-span-3">
 				<div class="">
-					<p>Email</p>
+					<p>Email <span class="text-red-500">*</span></p>
 				</div>
 				<div>
 					<input
@@ -328,7 +328,7 @@
 			{#if textM !== 'Ubah' && textM !== 'ubah'}
 				<div class="flex flex-col md:col-span-full">
 					<div>
-						<p>Password</p>
+					<p> Password <span class="text-red-500">*</span></p>
 					</div>
 					<div class="relative">
 						<input
@@ -399,7 +399,7 @@
 			<!-- No Telp -->
 			<div class="flex flex-col md:col-span-full">
 				<div class="">
-					<p>No Telp</p>
+					<p>No Telp <span class="text-red-500">*</span></p>
 				</div>
 				<div>
 					<input
@@ -420,7 +420,7 @@
 			<!-- Tanggal Lahir -->
 			<div class="flex flex-col md:col-span-2">
 				<div class="">
-					<p>Tanggal Lahir</p>
+					<p>Tanggal Lahir <span class="text-red-500">*</span></p>
 				</div>
 				<div>
 					<input
@@ -442,7 +442,7 @@
 			<!-- kota Kelahiran -->
 			<div class="flex flex-col md:col-span-4">
 				<div class="">
-					<p>Kota Kelahiran</p>
+					<p>Kota Kelahiran <span class="text-red-500">*</span></p>
 				</div>
 				<div>
 					<input
@@ -463,7 +463,7 @@
 			</div>
 			<div class="flex flex-col md:col-span-full">
 				<div class="">
-					<p>Jenis Kelamin</p>
+					<p>Jenis Kelamin <span class="text-red-500">*</span></p>
 				</div>
 				<div>
 					<select
@@ -483,7 +483,7 @@
 			</div>
 			<div class="flex flex-col md:col-span-full">
 				<div class="">
-					<p>Afiliasi</p>
+					<p>Afiliasi<span class="text-red-500">*</span></p>
 				</div>
 				<div>
 					<select
@@ -517,7 +517,7 @@
 			<!-- Role Admin -->
 			<div class="flex flex-col md:col-span-full">
 				<div class="flex flex-col md:flex-row md:justify-between">
-					<p>Role Admin</p>
+					<p>Role Admin <span class="text-red-500">*</span></p>
 					{#if (newafiliasi !== ' ' ? newafiliasi : formValues.afiliasi) !== 'marsi' || ((newafiliasi !== ' ' ? newafiliasi : formValues.afiliasi) === 'marsi' && (newroleadmin !== ' ' ? newroleadmin : formValues.admin_role) === 'admin kerajaan')}
 						<div class="flex items-center gap-2">
 							<p>Buat Menjadi Super Admin Kerajaan juga?</p>
