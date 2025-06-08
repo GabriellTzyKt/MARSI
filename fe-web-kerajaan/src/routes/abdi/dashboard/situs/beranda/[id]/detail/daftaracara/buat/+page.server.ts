@@ -202,7 +202,7 @@ export const actions: Actions = {
             formData.append("waktu_selesai", `${form.tanggalselesai} ${form.waktuselesai}:00` as string);
             formData.append("jenis_acara", form.inputradio as string);
             formData.append("kapasitas_acara", form.kapasitasacara as string);
-            formData.append("status", "Diajukan");
+            // formData.append("status", "Diajukan");
            
             console.log("Payload", formData)
             //    let formsend = new FormData()
