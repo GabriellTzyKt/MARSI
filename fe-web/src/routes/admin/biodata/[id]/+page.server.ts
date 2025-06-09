@@ -293,7 +293,26 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         }
 
         const eraList = await eraRes.json();
+        console.log(
+            "Era :", eraList
+        )
+
+        const filteredEra = eraList.filter((era: any) =>
+            era.deleted_at == null || era.deleted_at === '0001-01-01T00:00:00Z'
+        );
+
+        console.log("filtered : ", filteredEra)
+        
         const rumpunList = await rumpunRes.json();
+        console.log(
+            "Rumpun :", rumpunList
+        )
+
+        const filteredRumpun = rumpunList.filter((rumpun: any) =>
+            rumpun.deleted_at == null || rumpun.deleted_at === '0001-01-01T00:00:00Z'
+        );
+
+        console.log("filtered : ", filteredRumpun)
 
 
         return {
@@ -301,8 +320,8 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
             jenisKerajaan: filteredJenisKerajaan,
             historyRaja: historyRajaWithImages,
             gelar: filteredGelarKerajaan,
-            eraList,
-            rumpunList
+            eraList : filteredEra,
+            rumpunList : filteredRumpun
 
         };
     } catch (error) {
