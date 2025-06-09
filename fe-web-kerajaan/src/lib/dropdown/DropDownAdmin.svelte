@@ -90,7 +90,7 @@
 		<div class="flex items-center">
 			<img
 				src={data?.urlProfile || gambardefault}
-				class="h-auto max-w-[55px] rounded-full"
+				class="h-15 w-15 rounded-full object-cover"
 				alt=""
 			/>
 		</div>
