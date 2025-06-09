@@ -39,19 +39,20 @@ export const load: PageServerLoad = async ({ params, fetch, cookies }) => {
         } else {
             console.error(`Failed to fetch users: ${allUsersRes.statusText}`);
         }
-
+        console.log("Profile Data", data.profile);
         if (data.profile && data) {
             try {
                 // Only fetch profile picture if it exists
-                if (data.profile.profile_pict) {
-                    const resProfilepict = await fetch(`${env.URL_KERAJAAN}/doc/${data.profile.profile_pict}`);
+                if (data.profile) {
+                    const resProfilepict = await fetch(`${env.PUB_PORT}/doc/${data.profile}`);
                     if (resProfilepict.ok) {
                         const profilepict = await resProfilepict.json();
+                        console.log(profilepict)
                         return { 
                             akun: {
                                 ...data,
                                 tanggal_lahir_UI: formatDatetoUI(data.tanggal_lahir || ''),
-                                profilepict: `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(profilepict.file_dokumentasi)}`
+                                profilepict: `${env.PUB_PORT}/file?file_path=${encodeURIComponent(profilepict.file_dokumentasi)}`
                             },
                             allUsers 
                         };
@@ -94,9 +95,15 @@ export const load: PageServerLoad = async ({ params, fetch, cookies }) => {
                     tanggal_lahir_UI: formatDatetoUI(data.tanggal_lahir || '')
                 };
                 
-            return { data: formattedData, allUsers };
+                console.log("Formatted Data ", formattedData)
+            return {   akun: {
+                                ...data,
+                                tanggal_lahir_UI: formatDatetoUI(data.tanggal_lahir || ''),
+                                profilepict: ""
+                            },
+                            allUsers 
+                        };
         }
-        
         return { data: null, error: "No data returned from API" };
     }
     catch (error) {
@@ -111,7 +118,7 @@ export const actions: Actions = {
         console.log("Form data received:", data);
         
         // Handle profile picture upload
-        const profilePicture = data.get("profile_picture");
+        const profilePicture = data.get("profile_picture") as File;
         let profilePictId = null;
         
         if (profilePicture instanceof File && profilePicture.size > 0) {
@@ -120,11 +127,11 @@ export const actions: Actions = {
                 
                 // Create a new FormData for the file upload
                 const fileFormData = new FormData();
-                fileFormData.append("profile_picture", profilePicture);
-                fileFormData.append("user_id", params.id);
+                fileFormData.append("id_user", params.id);
+                fileFormData.append("profile", profilePicture);
                 
                 // Upload the profile picture
-                const uploadResponse = await fetch(`${env.URL_KERAJAAN}/file/profile`, {
+                const uploadResponse = await fetch(`${env.PUB_PORT}/file/user`, {
                     method: 'POST',
                     body: fileFormData
                 });
@@ -144,6 +151,9 @@ export const actions: Actions = {
             } catch (uploadError) {
                 console.error("Error uploading profile picture:", uploadError);
             }
+        }
+        else {
+            profilePictId = data.get("profile")
         }
         
         // Continue with form validation
@@ -258,7 +268,7 @@ export const actions: Actions = {
         
         // Add profile picture ID if available
         if (profilePictId) {
-            updateData.profile_pict = profilePictId;
+            updateData.profile = profilePictId;
         }
         console.log("SendData: ", updateData);
         try {

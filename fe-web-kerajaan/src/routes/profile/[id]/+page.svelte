@@ -9,6 +9,7 @@
 	import { goto } from '$app/navigation';
 	import DropDownRunes from '$lib/dropdown/dropdownrunes.svelte';
 	import { onMount } from 'svelte';
+	import gambardefault from '$lib/asset/kerajaan/default.jpg';
 	import { enhance } from '$app/forms';
 	import Loader from '$lib/loader/Loader.svelte';
 	import Bracode from '$lib/popup/Bracode.svelte';
@@ -20,17 +21,18 @@
 	onMount(() => {});
 	let open = $state(false);
 	let timer: number;
+	let userData = data?.akun || [];
 	let ayahAbdi = $state('ayah_no');
 	let ibuAbdi = $state('ibu_no');
 	let errMsgA = $state('');
 	let errMsgB = $state('');
 	let err = form?.errors;
 	let user = data?.allUsers;
-	let ayahkeyword = $state(data?.data?.nama_ayah || '');
+	let ayahkeyword = $state(userData?.nama_ayah || '');
 	let dropDownAyah = $state(false);
 	let filterAyah = $derived(filterAbdi(ayahkeyword));
 
-	let ibuKeyword = $state(data?.data?.nama_ibu || '');
+	let ibuKeyword = $state(userData?.nama_ibu || '');
 	let dropDownIbu = $state(false);
 
 	let dropAyah = $state(false);
@@ -41,7 +43,7 @@
 
 	let ibukeyword = $state('');
 	// Profile picture handling
-	let pictUrl = $state(data.data.profileUrl || jd);
+	let pictUrl = $state(data?.akun?.profilepict || gambardefault);
 	let pictUrlFiles = $state(null);
 	function selectAyah(data) {
 		ayahkeyword = data.name;
@@ -73,7 +75,7 @@
 	// Clean up object URLs when component is destroyed
 	onMount(() => {
 		return () => {
-			if (pictUrl && pictUrl !== jd && pictUrl !== data.data.profileUrl) {
+			if (pictUrl && pictUrl !== jd && pictUrl !== userData?.profileUrl) {
 				URL.revokeObjectURL(pictUrl);
 			}
 		};
@@ -95,7 +97,7 @@
 	// Fungsi untuk menampilkan barcode
 	function openBarcode() {
 		// Gunakan ID pengguna atau data lain yang relevan
-		barcodeData = data?.data?.id_user?.toString() || 'User ID';
+		barcodeData = userData?.id_user?.toString() || 'User ID';
 		showBarcode = true;
 	}
 	$inspect(filterAyah);
@@ -131,7 +133,7 @@
 		};
 	}}
 >
-	<input type="text" name="id_user" hidden value={data?.data?.id_user} id="" />
+	<input type="text" name="id_user" hidden value={userData?.id_user} id="" />
 	<div class=" mt-18 flex justify-center">
 		<p class=" text-2xl font-[500]">Ubah Profil</p>
 	</div>
@@ -166,7 +168,7 @@
 		<div class="relative">
 			<img
 				src={pictUrl}
-				class="h-24 w-24 rounded-full sm:h-28 sm:w-28 md:h-36 md:w-36"
+				class="h-24 w-24 rounded-full object-cover sm:h-28 sm:w-28 md:h-36 md:w-36"
 				alt="Profile"
 			/>
 			<!-- Tombol Edit Foto -->
@@ -192,7 +194,7 @@
 				<input type="file" hidden name="profile_picture" accept="image/*" onchange={handleFiles} />
 			</label>
 		</div>
-
+		<input type="text" hidden name="profile" value={data?.akun?.profile} id="" />
 		<!-- Tombol Simpan Data -->
 		<div class="w-full md:w-auto">
 			<button
@@ -250,7 +252,7 @@
 				<p class="text-xl">Nama Lengkap</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="nama_lengkap" value={data.data.nama_lengkap || '-'}></Input>
+				<Input type="text" name="nama_lengkap" value={userData?.nama_lengkap || '-'}></Input>
 				{#if errors}
 					{#each errors.nama_lengkap as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -264,7 +266,7 @@
 				<p class="text-xl">Tempat Lahir</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="tempat_lahir" value={data.data.nama_lengkap || '-'}></Input>
+				<Input type="text" name="tempat_lahir" value={userData?.tempat_lahir || '-'}></Input>
 				{#if errors}
 					{#each errors.tempat_lahir as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -283,7 +285,7 @@
 					name="tanggal_lahir"
 					class="w-full rounded-lg border border-gray-500 bg-white py-2 ps-2 text-gray-500 focus:outline-none"
 					id="tanggal_lahir"
-					value={formatDate(data.data.tanggal_lahir) || '-'}
+					value={formatDate(userData?.tanggal_lahir) || '-'}
 				/>
 				{#if errors}
 					{#each errors.tanggal_lahir as e}
@@ -301,7 +303,7 @@
 				<select
 					name="jenis_kelamin"
 					class="w-full rounded-lg border border-gray-500 py-2 pe-2 ps-2"
-					value={data.data.jenis_kelamin || '-'}
+					value={userData?.jenis_kelamin || '-'}
 					id=""
 				>
 					<option value="Perempuan">Perempuan</option>
@@ -320,7 +322,7 @@
 				<p class="text-xl">Alamat</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="alamat" value={data.data.alamat || '-'}></Input>
+				<Input type="text" name="alamat" value={userData?.alamat || '-'}></Input>
 				{#if errors}
 					{#each errors.alamat as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -334,7 +336,7 @@
 				<p class="text-xl">No Telpon</p>
 			</div>
 			<div class="mt-2">
-				<Input type="phone" name="no_telp" value={data.data.no_telp || '-'}></Input>
+				<Input type="phone" name="no_telp" value={userData?.no_telp || '-'}></Input>
 				{#if errors}
 					{#each errors.no_telp as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -349,7 +351,7 @@
 				<p class="text-xl">Pekerjaan</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="pekerjaan" value={data.data.pekerjaan || '-'}></Input>
+				<Input type="text" name="pekerjaan" value={userData?.pekerjaan || '-'}></Input>
 				{#if errors}
 					{#each errors.pekerjaan as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -363,7 +365,7 @@
 				<p class="text-xl">Wongso</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="wongso" value={data.data.wongso || '-'}></Input>
+				<Input type="text" name="wongso" value={userData?.wongso || '-'}></Input>
 				{#if errors}
 					{#each errors.wongso as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -378,7 +380,7 @@
 				<p class="text-xl">Email</p>
 			</div>
 			<div class="mt-2">
-				<Input type="email" name="email" value={data.data.email || '-'}></Input>
+				<Input type="email" name="email" value={userData?.email || '-'}></Input>
 				{#if errors}
 					{#each errors.email as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -392,7 +394,7 @@
 				<p class="text-xl">Hobi</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="hobi" value={data.data.hobi || '-'}></Input>
+				<Input type="text" name="hobi" value={userData?.hobi || '-'}></Input>
 				{#if errors}
 					{#each errors.hobi as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -410,7 +412,7 @@
 				<select
 					name="agama"
 					class="w-full rounded-lg border border-gray-500 bg-white py-2 ps-2 text-gray-500 focus:outline-none"
-					value={data.data.agama || '-'}
+					value={userData?.agama || '-'}
 					id=""
 				>
 					<option value="Islam">Islam</option>
@@ -436,7 +438,7 @@
 				<p class="text-xl">Asma Dalem</p>
 			</div>
 			<div class="mt-2">
-				<Input type="text" name="asma_dalem" value={data.data.panggilan || '-'}></Input>
+				<Input type="text" name="asma_dalem" value={userData?.panggilan || '-'}></Input>
 				{#if errors}
 					{#each errors.asma_dalem as e}
 						<p class="text-left text-red-500">- {e}</p>
@@ -488,14 +490,14 @@
 							<div
 								class="cursor-pointer rounded-lg p-2 hover:bg-gray-200"
 								onclick={() => {
-									ayahkeyword = data.name;
+									ayahkeyword = data?.name;
 									setTimeout(() => {
 										dropDownAyah = false;
 									}, 200);
 								}}
 							>
-								<p class="text-sm">{data.name}</p>
-								<p class="text-sm text-gray-500">{data.email}</p>
+								<p class="text-sm">{data?.name}</p>
+								<p class="text-sm text-gray-500">{data?.email}</p>
 							</div>
 						{/each}
 					</div>
@@ -555,14 +557,14 @@
 							<div
 								class="cursor-pointer rounded-lg p-2 hover:bg-gray-200"
 								onclick={() => {
-									ibuKeyword = data.name;
+									ibuKeyword = data?.name;
 									setTimeout(() => {
 										dropDownIbu = false;
 									}, 200);
 								}}
 							>
-								<p class="text-sm">{data.name}</p>
-								<p class="text-sm text-gray-500">{data.email}</p>
+								<p class="text-sm">{data?.name}</p>
+								<p class="text-sm text-gray-500">{data?.email}</p>
 							</div>
 						{/each}
 					</div>

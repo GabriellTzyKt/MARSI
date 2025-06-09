@@ -28,11 +28,17 @@ export const load: PageServerLoad = async ({locals, cookies}) => {
         });
         
         const data = await res.json();
+        console.log("Profile",data.profile)
         if (res.ok) {
-           
-            
+             const res = await fetch(`${env.PUB_PORT}/doc/${data.profile}`);
+            const dataPath = await res.json();
+            console.log(dataPath)
+             const foto_profile = dataPath.file_dokumentasi 
+                ? `${env.PUB_PORT}/file?file_path=${encodeURIComponent(dataPath.file_dokumentasi)}`
+                : ''; // ganti dengan path default image kamu
             const resData = {
                 ...data,
+                foto_profile,
                 tanggal_lahir: formatDate(data.tanggal_lahir)
             };
             

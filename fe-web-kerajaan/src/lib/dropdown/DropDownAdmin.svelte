@@ -8,6 +8,7 @@
 	import TambahAdminSekre from '$lib/popup/TambahAdminSekre.svelte';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { formatDatetoUI } from '$lib';
+	import gambardefault from '$lib/asset/kerajaan/default.jpg';
 	import Loader from '$lib/loader/Loader.svelte';
 
 	let open = $state(false);
@@ -68,7 +69,7 @@
 			isAktif = true;
 		}
 	}
-
+	let success = $state(false);
 	function toggle() {
 		if (!open) open = true;
 		else open = false;
@@ -87,7 +88,11 @@
 		onclick={() => toggle()}
 	>
 		<div class="flex items-center">
-			<img src={jd} class="h-auto max-w-[55px] rounded-full" alt="" />
+			<img
+				src={data?.urlProfile || gambardefault}
+				class="h-auto max-w-[55px] rounded-full"
+				alt=""
+			/>
 		</div>
 		<div class="flex grow flex-col justify-center gap-4">
 			<div>
@@ -107,8 +112,10 @@
 						return async ({ result }) => {
 							loading = false;
 							if (result.type === 'success') {
+								success = true;
 								await invalidateAll().then(() => {
 									setTimeout(() => {
+										success = false;
 										console.log('Success', isAktif);
 									}, 3000);
 								});
@@ -324,6 +331,9 @@
 </div>
 {#if loading}
 	<Loader></Loader>
+{/if}
+{#if success}
+	<SuccessModal text="Sukses!"></SuccessModal>
 {/if}
 
 <style>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
 	import '../../app.css';
+	import gambardefault from '$lib/asset/kerajaan/default.jpg';
 	import image from '$lib/asset/kerajaan/sidebaricon.png';
 	import imageprofile from '$lib/asset/kerajaan/gambar_temp.jpg';
 	import { navigating, page } from '$app/state';
@@ -590,7 +591,7 @@
 		>
 			<span class="ml-5 text-black">{data?.username}</span>
 			<img
-				src={imageprofile}
+				src={data?.profilePicture || gambardefault}
 				alt="profile"
 				class="ml-5 mr-5 h-10 w-10 cursor-pointer rounded-full border-2 border-blue-400"
 				onclick={() => (showLogout = !showLogout)}

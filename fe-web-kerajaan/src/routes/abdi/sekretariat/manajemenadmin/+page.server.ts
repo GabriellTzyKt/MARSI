@@ -41,7 +41,24 @@ export const load: PageServerLoad = async ({cookies}) => {
         let data = await adminRes.json();
         data = data.filter(item => item.deleted_at === "0001-01-01T00:00:00Z");
         data = await Promise.all(data.map(async (item) => {
+            let url = '';
             try {
+                let userRes = await fetch(`${env.PUB_PORT}/user/${item.id_user}`, {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `Bearer ${token.token}`
+                    }
+                });
+                let dataUser = await userRes.json();
+                if (dataUser.profile !== "") {
+                    const docRes = await fetch(`${env.PUB_PORT}/doc/${dataUser.profile}`);
+                if (docRes.ok) {
+                    const docData = await docRes.json();
+                    if (docData.file_dokumentasi) {
+                        url = `${env.PUB_PORT}/file?file_path=${encodeURIComponent(docData.file_dokumentasi)}`;
+                    }
+                }
+                }
                 let afiliasiData = null;
         if (item.jenis_admin.toLowerCase() === 'admin komunitas') {
             // Fetch komunitas
@@ -58,9 +75,9 @@ export const load: PageServerLoad = async ({cookies}) => {
         } else if (item.jenis_admin.toLowerCase() === 'super admin') {
             afiliasiData = item.afiliasi; // Super admin tidak punya afiliasi khusus
             }
-                
                 return {
-            ...item,
+                    ...item,
+                    urlProfile: url,
             afiliasi_data: afiliasiData.nama_organisasi||afiliasiData.nama_situs||afiliasiData.nama_komunitas||item.afiliasi
                 };
                 

@@ -57,8 +57,9 @@
 
 	// Check for delete parameter in URL
 	function nonAktifkan(data: any) {
+		console.log('data delete', data);
 		deleteD = true;
-		itemDelete;
+		itemDelete = data;
 	}
 </script>
 
@@ -158,7 +159,7 @@
 
 							{
 								label: 'Non Aktifkan',
-								action: () => nonAktifkan(data.id_aset)
+								action: () => nonAktifkan(data)
 							}
 						]}
 						id={`id-${index}`}
@@ -204,7 +205,7 @@
 			};
 		}}
 	>
-		<input type="hidden" name="id_aset" value={selectedItem.id_aset} />
+		<input type="hidden" name="id_aset" value={itemDelete.id_aset} />
 
 		<DeleteModal
 			bind:value={deleteD}
