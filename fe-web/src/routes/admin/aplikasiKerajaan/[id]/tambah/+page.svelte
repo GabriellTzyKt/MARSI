@@ -78,7 +78,7 @@
 
 	$effect(() => {
 		// Handle parent-child relationships
-		
+
 		// Situs dependencies
 		if (fiturSitus === 'tidak') {
 			fiturSitusKerajaan = 'tidak';
@@ -87,14 +87,14 @@
 			// Enable child options when parent is enabled
 			if (fiturSitusKerajaan === '') fiturSitusKerajaan = '';
 		}
-		
+
 		// SitusKerajaan dependencies
 		if (fiturSitusKerajaan === 'tidak') {
 			fiturCheckin = 'tidak';
 		} else if (fiturSitusKerajaan === 'ya') {
 			if (fiturCheckin === '') fiturCheckin = '';
 		}
-		
+
 		// Acara dependencies
 		if (fiturAcara === 'tidak') {
 			fiturAcaraKerajaan = 'tidak';
@@ -104,7 +104,7 @@
 			// Only enable TugasAcara if TugasWeb is also enabled
 			if (fiturTugasWeb === 'ya' && fiturTugasAcara === '') fiturTugasAcara = '';
 		}
-		
+
 		// TugasWeb dependencies
 		if (fiturTugasWeb === 'tidak') {
 			fiturTugasMobile = 'tidak';
@@ -114,7 +114,7 @@
 			// Only enable TugasAcara if Acara is also enabled
 			if (fiturAcara === 'ya' && fiturTugasAcara === '') fiturTugasAcara = '';
 		}
-		
+
 		// Mobile dependencies
 		if (fiturMobile === 'tidak') {
 			fiturPenanggalan1 = 'tidak';
@@ -134,21 +134,21 @@
 			fiturSitusKerajaan = 'tidak';
 			fiturCheckin = 'tidak';
 		}
-		
+
 		if (fiturSitusKerajaan === 'tidak') {
 			fiturCheckin = 'tidak';
 		}
-		
+
 		if (fiturAcara === 'tidak') {
 			fiturAcaraKerajaan = 'tidak';
 			fiturTugasAcara = 'tidak';
 		}
-		
+
 		if (fiturTugasWeb === 'tidak') {
 			fiturTugasMobile = 'tidak';
 			fiturTugasAcara = 'tidak';
 		}
-		
+
 		if (fiturMobile === 'tidak') {
 			fiturPenanggalan1 = 'tidak';
 			fiturTugasMobile = 'tidak';
@@ -195,7 +195,7 @@
 	}
 
 	let { data } = $props();
-	console.log("Data  : ", data.id_kerajaan)
+	console.log('Data  : ', data.id_kerajaan);
 
 	let loading = $state(false);
 	let success = $state(false);
@@ -231,7 +231,7 @@
 	}
 
 	// Function to handle radio button clicks with proper dependency management
-	function handleRadioChange(feature : any, value : any) {
+	function handleRadioChange(feature: any, value: any) {
 		// Set the value for the clicked feature
 		if (feature === 'fiturSitus') fiturSitus = value;
 		else if (feature === 'fiturAcara') fiturAcara = value;
@@ -360,7 +360,7 @@
 			<div class="mb-6">
 				<p class="text-md font-semibold">
 					1. Apakah anda ingin memiliki fitur <span class="font-[750]"> Situs </span> di website kerajaan
-					anda?
+					anda? <span class="text-red-500">*</span>
 				</p>
 				<p class="mb-2 text-sm text-gray-500">
 					**Fitur ini sudah mencakup manajemen situs kerajaan, profil situs, acara situs (jika
@@ -404,7 +404,7 @@
 			<div class="mb-6">
 				<p class="text-md font-semibold">
 					2. Apakah anda ingin memiliki fitur <span class="font-[750]"> Acara </span> di website kerajaan
-					anda?
+					anda? <span class="text-red-500">*</span>
 				</p>
 				<p class="mb-2 text-sm text-gray-500">
 					**Fitur ini sudah mencakup manajemen acara kerajaan, detail acara, RSVP acara, acara
@@ -445,7 +445,7 @@
 			<div class="mb-6">
 				<p class="text-md font-semibold">
 					3. Apakah anda ingin memiliki fitur <span class="font-[750]"> Aset </span> di website kerajaan
-					anda?
+					anda? <span class="text-red-500">*</span>
 				</p>
 				<p class="mb-2 text-sm text-gray-500">
 					**Fitur ini sudah mencakup manajemen aset kerajaan, detail aset kerajaan, dan dokumentasi
@@ -486,7 +486,7 @@
 			<div class="mb-6">
 				<p class="text-md font-semibold">
 					4. Apakah anda ingin memiliki fitur <span class="font-[750]"> Komunitas </span> di website
-					kerajaan anda?
+					kerajaan anda? <span class="text-red-500">*</span>
 				</p>
 				<p class="mb-2 text-sm text-gray-500">
 					**Fitur ini sudah mencakup manajemen komunitas, detail komunitas, daftar anggota
@@ -528,7 +528,7 @@
 			<div class="mb-6">
 				<p class="text-md font-semibold">
 					5. Apakah anda ingin memiliki fitur <span class="font-[750]"> Organisasi </span> di website
-					kerajaan anda?
+					kerajaan anda? <span class="text-red-500">*</span>
 				</p>
 				<p class="mb-2 text-sm text-gray-500">
 					**Fitur ini sudah mencakup manajemen organisasi, detail organisasi, daftar anggota
@@ -572,7 +572,7 @@
 			<div class="mb-6">
 				<p class="text-md font-semibold">
 					6. Apakah anda ingin memiliki fitur <span class="font-[750]"> Tugas </span> di website kerajaan
-					anda?
+					anda? <span class="text-red-500">*</span>
 				</p>
 				<p class="mb-2 text-sm text-gray-500">
 					**Fitur ini sudah mencakup manajemen tugas, detail tugas, laporan tugas.
@@ -613,7 +613,7 @@
 
 			<!-- Color selection section -->
 			<div class="mb-6 mt-8">
-				<p class="text-md font-semibold">7. Tentukan warna untuk website kerajaan anda!</p>
+				<p class="text-md font-semibold">7. Tentukan warna untuk website kerajaan anda! <span class="text-red-500">*</span></p>
 				<p class="mb-4 text-sm text-gray-500">
 					Warna utama paling banyak digunakan, lalu warna sekunder, dan warna aksen untuk
 					aksen-aksen dan tombol di website kerajaan.
@@ -700,7 +700,7 @@
 
 			<!-- Upload Logo section -->
 			<div class="mb-6">
-				<p class="text-md font-semibold">8. Silahkan mengupload logo kerajaan anda!</p>
+				<p class="text-md font-semibold">8. Silahkan mengupload logo kerajaan anda! <span class="text-red-500">*</span></p>
 				<div class="mt-3 flex items-center">
 					<label
 						for="logo-upload"
@@ -804,7 +804,7 @@
 				<div class="mb-6">
 					<p class="text-md font-semibold">
 						1. Apakah anda ingin memiliki fitur <span class="font-[750]"> Penanggalan </span> di aplikasi
-						mobile kerajaan anda?
+						mobile kerajaan anda? <span class="text-red-500">*</span>
 					</p>
 					<p class="mb-2 text-sm text-gray-500">
 						**Fitur ini sudah mencakup manajemen situs kerajaan, profil situs, acara situs (jika
@@ -849,7 +849,7 @@
 					<div class="mb-6 ml-5">
 						<p class="text-md font-semibold">
 							1.1 Jenis <span class="font-[750]"> Penanggalan </span> apa yang anda inginkan di aplikasi
-							mobile kerajaan anda ?
+							mobile kerajaan anda ? <span class="text-red-500">*</span>
 						</p>
 						<p class="mb-2 text-sm text-gray-500">
 							**Fitur ini sudah mencakup penanggalan jawa,hindu,bali, Hijriah
@@ -925,7 +925,7 @@
 				<div class="mb-6">
 					<p class="text-md font-semibold">
 						2. Apakah anda ingin memiliki fitur <span class="font-[750]"> Tugas pribadi </span> di aplikasi
-						mobile kerajaan anda?
+						mobile kerajaan anda? <span class="text-red-500">*</span>
 					</p>
 					<p class="mb-2 text-sm text-gray-500">
 						**Fitur ini akan memungkinkan pengguna untuk melihat dan melaporkan bukti tugas pribadi
@@ -957,9 +957,17 @@
 								disabled={fiturTugasWeb === 'tidak'}
 								onclick={() => handleRadioChange('fiturTugasMobile', 'tidak')}
 							/>
-							<label for="tugas-mobile-tidak" class="ml-2 text-sm font-medium text-gray-900">Tidak</label>
+							<label for="tugas-mobile-tidak" class="ml-2 text-sm font-medium text-gray-900"
+								>Tidak</label
+							>
 						</div>
 					</div>
+
+					{#if fiturTugasWeb === 'tidak'}
+						<p class="text-red-500">
+							Ini langsung terpilih karena pertanyaan nomer 6 pada fitur website bernilai tidak
+						</p>
+					{/if}
 
 					{#if error}
 						{#each error.fitur_tugas_mobile as e}
@@ -972,7 +980,7 @@
 				<div class="mb-6">
 					<p class="text-md font-semibold">
 						3. Apakah anda ingin memiliki fitur <span class="font-[750]"> Tugas Acara </span> di aplikasi
-						mobile kerajaan anda?
+						mobile kerajaan anda? <span class="text-red-500">*</span>
 					</p>
 					<p class="mb-2 text-sm text-gray-500">
 						**Fitur ini akan memungkinkan pengguna untuk melihat dan melaporkan bukti tugas acara
@@ -986,7 +994,7 @@
 								type="radio"
 								value="ya"
 								bind:group={fiturTugasAcara}
-								disabled={fiturAcara === 'tidak' || fiturTugasWeb === "tidak"}
+								disabled={fiturAcara === 'tidak' || fiturTugasWeb === 'tidak'}
 								name="fitur-tugasacara"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 								onclick={() => handleRadioChange('fiturTugasAcara', 'ya')}
@@ -999,14 +1007,30 @@
 								type="radio"
 								value="tidak"
 								bind:group={fiturTugasAcara}
-								disabled={fiturAcara === 'tidak' || fiturTugasWeb === "tidak"}
+								disabled={fiturAcara === 'tidak' || fiturTugasWeb === 'tidak'}
 								name="fitur-tugasacara"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 								onclick={() => handleRadioChange('fiturTugasAcara', 'tidak')}
 							/>
-							<label for="tugasAcara-tidak" class="ml-2 text-sm font-medium text-gray-900">Tidak</label>
+							<label for="tugasAcara-tidak" class="ml-2 text-sm font-medium text-gray-900"
+								>Tidak</label
+							>
 						</div>
 					</div>
+
+					{#if fiturTugasWeb === 'tidak'}
+						<p class="text-red-500">
+							Ini langsung terpilih karena pertanyaan nomer 6 pada fitur website bernilai tidak
+						</p>
+					{:else if fiturAcara === 'tidak'}
+						<p class="text-red-500">
+							Ini langsung terpilih karena pertanyaan nomer 2 pada fitur website bernilai tidak
+						</p>
+					{:else if fiturTugasWeb === 'tidak' &&  fiturAcara === 'tidak'}
+						<p class="text-red-500">
+							Ini langsung terpilih karena pertanyaan nomer 6 pada fitur website dan nomer 2 pada fitur website bernilai tidak
+						</p>
+					{/if}
 					{#if error}
 						{#each error.fitur_tugasacara as e}
 							<p class="text-left text-red-500">{e}</p>
@@ -1018,7 +1042,7 @@
 				<div class="mb-6">
 					<p class="text-md font-semibold">
 						4. Apakah anda ingin memiliki fitur <span class="font-[750]"> Situs Kerajaan </span> di aplikasi
-						mobile kerajaan anda?
+						mobile kerajaan anda? <span class="text-red-500">*</span>
 					</p>
 					<p class="mb-2 text-sm text-gray-500">
 						**Fitur ini akan memungkinkan pengguna untuk melihat daftar situs kerajaan yang ada
@@ -1036,7 +1060,8 @@
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 								onclick={() => handleRadioChange('fiturSitusKerajaan', 'ya')}
 							/>
-							<label for="situsKerajaan-ya" class="ml-2 text-sm font-medium text-gray-900">Ya</label>
+							<label for="situsKerajaan-ya" class="ml-2 text-sm font-medium text-gray-900">Ya</label
+							>
 						</div>
 						<div class="flex items-center">
 							<input
@@ -1049,9 +1074,18 @@
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 								onclick={() => handleRadioChange('fiturSitusKerajaan', 'tidak')}
 							/>
-							<label for="situsKerajaan-tidak" class="ml-2 text-sm font-medium text-gray-900">Tidak</label>
+							<label for="situsKerajaan-tidak" class="ml-2 text-sm font-medium text-gray-900"
+								>Tidak</label
+							>
 						</div>
 					</div>
+
+					{#if fiturSitus === 'tidak'}
+						<p class="text-red-500">
+							Ini langsung terpilih karena pertanyaan nomer 6 pada fitur website bernilai tidak
+						</p>
+					{/if}
+
 					{#if error}
 						{#each error.fitur_situskerajaan as e}
 							<p class="text-left text-red-500">{e}</p>
@@ -1063,7 +1097,7 @@
 				<div class="mb-6">
 					<p class="text-md font-semibold">
 						5. Apakah anda ingin memiliki fitur <span class="font-[750]"> Check-In Situs </span> di aplikasi
-						mobile kerajaan anda?
+						mobile kerajaan anda? <span class="text-red-500">*</span>
 					</p>
 					<p class="mb-2 text-sm text-gray-500">
 						**Fitur ini akan memungkinkan pengguna untuk melakukan check-in di buku tamu suatu situs
@@ -1076,7 +1110,7 @@
 								type="radio"
 								value="ya"
 								bind:group={fiturCheckin}
-								disabled={fiturSitus === 'tidak' || fiturSitusKerajaan === "tidak"}
+								disabled={fiturSitus === 'tidak' || fiturSitusKerajaan === 'tidak'}
 								name="fitur-checkin"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 								onclick={() => handleRadioChange('fiturCheckin', 'ya')}
@@ -1089,14 +1123,30 @@
 								type="radio"
 								value="tidak"
 								bind:group={fiturCheckin}
-								disabled={fiturSitus === 'tidak' || fiturSitusKerajaan === "tidak"}
+								disabled={fiturSitus === 'tidak' || fiturSitusKerajaan === 'tidak'}
 								name="fitur-checkin"
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 								onclick={() => handleRadioChange('fiturCheckin', 'tidak')}
 							/>
-							<label for="checkin-tidak" class="ml-2 text-sm font-medium text-gray-900">Tidak</label>
+							<label for="checkin-tidak" class="ml-2 text-sm font-medium text-gray-900">Tidak</label
+							>
 						</div>
 					</div>
+
+					{#if fiturSitus === 'tidak'}
+						<p class="text-red-500">
+							Ini langsung terpilih karena pertanyaan nomer 1 pada fitur website bernilai tidak
+						</p>
+					{:else if fiturSitusKerajaan === 'tidak'}
+						<p class="text-red-500">
+							Ini langsung terpilih karena pertanyaan nomer 4 pada fitur mobile bernilai tidak
+						</p>
+					{:else if fiturSitusKerajaan === 'tidak' && fiturSitus === 'tidak'}
+						<p class="text-red-500">
+							Ini langsung terpilih karena pertanyaan nomer 1 pada fitur website dan 4 pada fitur mobile bernilai tidak
+						</p>
+					{/if}
+
 					{#if error}
 						{#each error.fitur_checkin as e}
 							<p class="text-left text-red-500">{e}</p>
@@ -1108,7 +1158,7 @@
 				<div class="mb-6">
 					<p class="text-md font-semibold">
 						6. Apakah anda ingin memiliki fitur <span class="font-[750]"> Acara Kerajaan </span> di aplikasi
-						mobile kerajaan anda?
+						mobile kerajaan anda? <span class="text-red-500">*</span>
 					</p>
 					<p class="mb-2 text-sm text-gray-500">
 						**Fitur ini akan memungkinkan pengguna untuk melihat daftar acara dan melakukan RSVP di
@@ -1127,7 +1177,8 @@
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 								onclick={() => handleRadioChange('fiturAcaraKerajaan', 'ya')}
 							/>
-							<label for="acaraKerajaan-ya" class="ml-2 text-sm font-medium text-gray-900">Ya</label>
+							<label for="acaraKerajaan-ya" class="ml-2 text-sm font-medium text-gray-900">Ya</label
+							>
 						</div>
 						<div class="flex items-center">
 							<input
@@ -1140,9 +1191,18 @@
 								class="h-4 w-4 border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500"
 								onclick={() => handleRadioChange('fiturAcaraKerajaan', 'tidak')}
 							/>
-							<label for="acaraKerajaan-tidak" class="ml-2 text-sm font-medium text-gray-900">Tidak</label>
+							<label for="acaraKerajaan-tidak" class="ml-2 text-sm font-medium text-gray-900"
+								>Tidak</label
+							>
 						</div>
 					</div>
+
+					{#if fiturAcara === 'tidak'}
+						<p class="text-red-500">
+							Ini langsung terpilih karena pertanyaan nomer 2 pada fitur website bernilai tidak
+						</p>
+					{/if}
+
 					{#if error}
 						{#each error.fitur_acarakerajaan as e}
 							<p class="text-left text-red-500">{e}</p>
@@ -1154,7 +1214,7 @@
 				<div class="mb-6">
 					<p class="text-md font-semibold">
 						7. Apakah anda ingin memiliki fitur <span class="font-[750]"> Group Chat </span> di aplikasi
-						mobile kerajaan anda?
+						mobile kerajaan anda? <span class="text-red-500">*</span>
 					</p>
 					<p class="mb-2 text-sm text-gray-500">
 						**Fitur ini akan memungkinkan pengguna untuk berkomunikasi dalam suatu grup yang dapat
@@ -1198,7 +1258,7 @@
 				<div class="mb-6">
 					<p class="text-md font-semibold">
 						8. Apakah anda ingin memiliki fitur <span class="font-[750]"> Forum </span> di aplikasi mobile
-						kerajaan anda?
+						kerajaan anda? <span class="text-red-500">*</span>
 					</p>
 					<p class="mb-2 text-sm text-gray-500">
 						**Fitur ini akan memungkinkan pengguna untuk membaca dan berkomentar dalam suatu topik
@@ -1238,7 +1298,9 @@
 
 				<!-- Tambahkan bagian pemilihan warna untuk mobile -->
 				<div class="mb-6 mt-8">
-					<p class="text-md font-semibold">9. Tentukan warna untuk aplikasi mobile kerajaan anda!</p>
+					<p class="text-md font-semibold">
+						9. Tentukan warna untuk aplikasi mobile kerajaan anda! <span class="text-red-500">*</span>
+					</p>
 					<p class="mb-4 text-sm text-gray-500">
 						Warna utama paling banyak digunakan, lalu warna sekunder, dan warna aksen untuk
 						aksen-aksen dan tombol di aplikasi mobile kerajaan.
@@ -1259,7 +1321,6 @@
 								class="w-24 rounded border px-2 py-1 text-sm uppercase"
 								value={warnaMobileUtama}
 								readonly
-								
 							/>
 							<span class="text-sm font-medium">Warna Utama Mobile</span>
 						</div>

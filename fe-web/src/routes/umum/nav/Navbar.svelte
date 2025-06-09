@@ -34,7 +34,6 @@
 		</div>
 
 		<div class="hidden items-center gap-6 lg:flex">
-			<SearchNav />
 			<div class="flex">
 				<a href="/umum/beranda" class="nav-link whitespace-nowrap">Beranda</a>
 				<a href="/umum/daftarkerajaan" class="nav-link whitespace-nowrap">Daftar Kerajaan</a>

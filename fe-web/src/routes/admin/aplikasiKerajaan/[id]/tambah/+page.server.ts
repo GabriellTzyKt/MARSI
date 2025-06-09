@@ -234,7 +234,7 @@ export const actions: Actions = {
 
         let permohonan = 0
 
-        if (data.get("fitur-acara") === "ya" || data.get("fitur-tugas-mobile") === "ya" || data.get("fitur-tugasacara") === "ya") {
+        if (data.get("fitur-acara") === "ya" || data.get("fitur-situs") === "ya" || data.get("fitur-organisasi") === "ya" || data.get("fitur-komunitas") === "ya") {
             permohonan = 1
         }
 

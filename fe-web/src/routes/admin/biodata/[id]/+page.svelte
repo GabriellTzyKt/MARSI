@@ -318,9 +318,9 @@
 
 	function toggleSort() {
 		sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
-		console.log(sortOrder)
+		console.log(sortOrder);
 		arrowDirection = sortOrder === 'asc' ? 'mingcute--arrow-up-fill' : 'mingcute--arrow-down-fill';
-		console.log(arrowDirection)
+		console.log(arrowDirection);
 		updateFilteredData();
 	}
 
@@ -882,7 +882,9 @@
 		<p class="text-2xl font-semibold">Biodata {dataubah.nama_kerajaan}</p>
 
 		<div class="flex flex-col gap-1">
-			<label class="text-md mt-5 self-start text-left" for="nama">Nama Kerajaan</label>
+			<label class="text-md mt-5 self-start text-left" for="nama"
+				>Nama Kerajaan <span class="text-red-500">*</span></label
+			>
 			<input
 				class="input-field rounded-lg border p-2 pr-8"
 				type="text"
@@ -898,7 +900,9 @@
 
 			<div class="flex flex-grow flex-col gap-4 lg:flex-row">
 				<div class="relative w-full flex-col">
-					<label class="text-md mt-5 self-start text-left" for="nama">Alamat Kerajaan</label>
+					<label class="text-md mt-5 self-start text-left" for="nama"
+						>Alamat Kerajaan <span class="text-red-500">*</span></label
+					>
 					<input
 						class="input-field w-full rounded-lg border p-2 pr-8"
 						type="text"
@@ -930,7 +934,9 @@
 				</div>
 
 				<div class="w-full flex-col lg:w-1/4">
-					<label class="text-md self-start text-left" for="rumpun">Jenis Kerajaan</label>
+					<label class="text-md self-start text-left" for="rumpun"
+						>Jenis Kerajaan <span class="text-red-500">*</span></label
+					>
 					<select
 						bind:value={dataubah.jenis_kerajaan}
 						id="jenis"
@@ -989,7 +995,9 @@
 				</div>
 
 				<div class="w-full flex-col">
-					<label class="text-md self-start text-left" for="era">Era Kerajaan</label>
+					<label class="text-md self-start text-left" for="era"
+						>Era Kerajaan <span class="text-red-500">*</span></label
+					>
 					<select
 						bind:value={dataubah.era}
 						id="era"
@@ -1007,7 +1015,9 @@
 				</div>
 
 				<div class="w-full flex-col">
-					<label class="text-md self-start text-left" for="rumpun">Rumpun Kerajaan</label>
+					<label class="text-md self-start text-left" for="rumpun"
+						>Rumpun Kerajaan <span class="text-red-500">*</span></label
+					>
 					<select
 						bind:value={dataubah.rumpun}
 						id="rumpun"
@@ -1025,7 +1035,9 @@
 				</div>
 			</div>
 
-			<label class="text-md mt-5 self-start text-left" for="nama">Deskripsi Kerajaan : </label>
+			<label class="text-md mt-5 self-start text-left" for="nama"
+				>Deskripsi Kerajaan : <span class="text-red-500">*</span></label
+			>
 			<textarea
 				class="input-field h-[100px] rounded-lg border p-2 pr-8"
 				id="deskripsi"
@@ -1490,7 +1502,9 @@
 				</div>
 
 				<div class="flex flex-col gap-1">
-					<label class="text-md mt-2 self-start text-left" for="nama">Nama Lengkap Raja</label>
+					<label class="text-md mt-2 self-start text-left" for="nama"
+						>Nama Lengkap Raja <span class="text-red-500">*</span></label
+					>
 					<input
 						class="input-field rounded-lg border p-2 pr-8"
 						type="text"
@@ -1504,7 +1518,9 @@
 						{/each}
 					{/if}
 
-					<label class="text-md mt-2 self-start text-left" for="nama">Gelar Raja</label>
+					<label class="text-md mt-2 self-start text-left" for="nama"
+						>Gelar Raja <span class="text-red-500">*</span></label
+					>
 					<div class="relative">
 						<select
 							class="input-field w-full rounded-lg border p-2 pr-8"
@@ -1527,7 +1543,7 @@
 					<div class="flex flex-grow gap-4">
 						<div class="flex w-2/4 flex-col">
 							<label class="text-md mt-2 w-full self-start text-left" for="tanggalLahir">
-								Tanggal Lahir:
+								Tanggal Lahir: <span class="text-red-500">*</span>
 							</label>
 							<input
 								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
@@ -1564,7 +1580,7 @@
 
 					<div class="flex w-full flex-col">
 						<label class="text-md mt-2 self-start text-left" for="kotaLahir">
-							Kota Kelahiran:
+							Kota Kelahiran: <span class="text-red-500">*</span>
 						</label>
 						<input
 							class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
@@ -1582,13 +1598,22 @@
 
 					<div class="flex flex-grow gap-4">
 						<div class="w-full flex-col">
-							<label class="text-md mt-2 w-full self-start text-left" for="nama"> Agama : </label>
-							<input
+							<label class="text-md mt-2 w-full self-start text-left" for="agama">
+								Agama : <span class="text-red-500">*</span>
+							</label>
+							<select
 								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
-								type="text"
-								id="nama"
+								id="agama"
 								name="agama"
-							/>
+							>
+								<option value="" disabled>-- Pilih Agama --</option>
+								<option value="Islam">Islam</option>
+								<option value="Kristen">Kristen</option>
+								<option value="Katolik">Katolik</option>
+								<option value="Hindu">Hindu</option>
+								<option value="Buddha">Buddha</option>
+								<option value="Konghucu">Konghucu</option>
+							</select>
 							{#if error}
 								{#each error.agama as a}
 									<p class="text-left text-red-500">{a}</p>
@@ -1597,7 +1622,9 @@
 						</div>
 
 						<div class="w-full flex-col">
-							<label class="text-md mt-2 self-start text-left" for="nama"> Wangsa : </label>
+							<label class="text-md mt-2 self-start text-left" for="nama">
+								Wangsa : <span class="text-red-500">*</span>
+							</label>
 							<input
 								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
 								type="text"
@@ -1613,7 +1640,9 @@
 						</div>
 					</div>
 
-					<label class="text-md mt-2 self-start text-left" for="nama">Nama Ayah</label>
+					<label class="text-md mt-2 self-start text-left" for="nama"
+						>Nama Ayah <span class="text-red-500">*</span></label
+					>
 					<input
 						class="input-field mt-2 rounded-lg border p-2 pr-8"
 						type="text"
@@ -1627,7 +1656,9 @@
 						{/each}
 					{/if}
 
-					<label class="text-md mt-2 self-start text-left" for="nama">Nama Ibu</label>
+					<label class="text-md mt-2 self-start text-left" for="nama"
+						>Nama Ibu <span class="text-red-500">*</span></label
+					>
 					<input
 						class="input-field mt-2 rounded-lg border p-2 pr-8"
 						type="text"
@@ -1644,7 +1675,7 @@
 					<div class="flex flex-grow gap-4">
 						<div class="mt-2 w-full flex-col">
 							<label class="text-md mt-4 w-full self-start text-left" for="nama">
-								Tanggal Awal Berkuasa :
+								Tanggal Awal Berkuasa : <span class="text-red-500">*</span>
 							</label>
 							<input
 								class="input-field mt-2 w-full rounded-lg border p-2 pr-8"
@@ -1724,7 +1755,7 @@
 						loading = false;
 						console.log('Form submission result:', result);
 						if (result.type === 'success') {
-							success = true
+							success = true;
 							// Reset form dan tutup modal
 							showModal2 = false;
 							selectedRaja = null;
