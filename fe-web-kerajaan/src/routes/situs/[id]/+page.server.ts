@@ -1,10 +1,22 @@
 import { env } from "$env/dynamic/private";
 import type { PageServerLoad } from "./$types";
 import { formatTime } from "$lib";
+import { redirect } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async ({ params, cookies }) => {
     const id = params.id;
-    let cookie = JSON.parse(cookies.get("userSession") as string)
+   const sessionRaw = cookies.get("userSession");
+    if (!sessionRaw) {
+        // Jika tidak ada cookie, redirect ke beranda
+        throw redirect(302, '/beranda');
+    }
+    let cookie: any;
+    try {
+        cookie = JSON.parse(sessionRaw);
+    } catch {
+        // Jika cookie corrupt, redirect ke beranda
+        throw redirect(302, '/beranda');
+    }
     try {
         const res = await fetch(`${env.URL_KERAJAAN}/situs/${id}`);
         if (!res.ok) {

@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ params }) => {
             throw error(acaraRes.status, `Failed to fetch Acara: ${acaraRes.statusText}`);
         }
         const acaraData = await acaraRes.json();
-        console.log(acaraData)
+        console.log("Data",acaraData)
         // Process acara data to include images
         const processedAcara = await Promise.all(acaraData.map(async (acara: any) => {
             const processedItem = {

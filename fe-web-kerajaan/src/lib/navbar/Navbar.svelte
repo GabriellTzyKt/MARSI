@@ -1,10 +1,11 @@
 <script lang="ts">
 	import gambar2 from '$lib/asset/kerajaan/temp_login.png';
 	import gambarprofile from '$lib/asset/kerajaan/gambar_temp.jpg';
+	import gambardefault from '$lib/asset/kerajaan/default.jpg';
 	import { navigating, page } from '$app/state';
 	import { slide } from 'svelte/transition';
 	import Loader from '$lib/loader/Loader.svelte';
-
+	let { gambar = '' } = $props();
 	let id = Number();
 	let isOpen = $state(false);
 	$inspect(page);
@@ -28,7 +29,7 @@
 
 		<div class="flex items-center space-x-4">
 			<a href="/profile"
-				><img src={gambarprofile} alt="" class="ml-5 mr-5 h-10 w-10 rounded-full" />
+				><img src={gambar || gambardefault} alt="" class="ml-5 mr-5 h-10 w-10 rounded-full" />
 			</a>
 			<button
 				class="text-white md:hidden"
