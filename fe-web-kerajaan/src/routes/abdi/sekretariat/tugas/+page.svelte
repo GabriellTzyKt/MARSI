@@ -19,6 +19,8 @@
 	console.log('data : ', data);
 	let dataAmbil = $derived(data.data);
 	let situsData = $state(data.situs);
+	let isLaporan = $state(false);
+	let laporanData = $state();
 	console.log(dataAmbil);
 	let open = $state(false);
 	let success = $state(false);
@@ -32,6 +34,12 @@
 	let detailData = $state();
 	let modalDetail = $state(false);
 	let editModal = $state(false);
+	let modalLaporan = $state(false);
+	function setLaporan(data: any) {
+		laporanData = data;
+		modalLaporan = true;
+		isLaporan = true;
+	}
 	function filterD(data: any[]) {
 		return data.filter(
 			(item) =>
@@ -166,6 +174,10 @@
 						text={`Apakah yakin ingin mengarsipkan ${data.nama_tugas}?`}
 						items={[
 							{
+								label: 'Laporan',
+								action: () => setLaporan(data)
+							},
+							{
 								label: 'Detail',
 								action: () => detailID(data)
 							},
@@ -262,7 +274,12 @@
 	<SuccessModal text="Berhasil"></SuccessModal>
 {/if}
 {#if modalDetail}
-	<BuktiLaporan bind:value={modalDetail} data={detailData} text="Detail Tugas"></BuktiLaporan>
+	<BuktiLaporan bind:value={modalDetail} data={detailData} bind:isLaporan text="Detail Tugas"
+	></BuktiLaporan>
+{/if}
+{#if modalLaporan}
+	<BuktiLaporan bind:value={modalLaporan} data={laporanData} bind:isLaporan text="Detail Tugas"
+	></BuktiLaporan>
 {/if}
 {#if editModal}
 	<form

@@ -4,13 +4,87 @@
 	import { fade } from 'svelte/transition';
 	import jd from '$lib/asset/profile/jdpp.jpg';
 	import { onMount } from 'svelte';
-	let { value = $bindable(), text = '', data = null } = $props();
+	import { env } from '$env/dynamic/public';
+	let { value = $bindable(), text = '', data = null, isLaporan = $bindable() } = $props();
+	let dataLaporan = $state();
+	async function fetchLaporan(data: any) {
+		try {
+			let res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/tugas/laporan/${data?.id_penerima_tugas}`, {
+				method: 'GET'
+			});
+			if (!res.ok) {
+				return (dataLaporan = {});
+			} else {
+				let msg = await res.json();
+				msg.map((item: any) => {
+					item.id_tugas = item.Tugas.id_tugas;
+				});
+				console.log('Recieved Laporan', msg);
+				msg = msg.find(
+					(item: any) => item.id_tugas == data?.id_tugas || item.id_tugas == data?.id_tugas
+				);
+				console.log('Recieved Laporan', msg);
+
+				let urls: any = [];
+				if (msg.bukti_laporan !== undefined && msg.bukti_laporan) {
+					let ress = await fetch(`${env.PUBLIC_URL_KERAJAAN}/doc/${msg?.bukti_laporan || '0'}`, {
+						method: 'GET'
+					});
+					if (!ress.ok) {
+						// console.error(`Failed to fetch doc/${id}: ${response.status}`);
+						return (dataLaporan = msg);
+					} else {
+						// Step 2: Extract file_dokumentasi path
+						const docData = await res.json();
+						const filePaths = docData.file_dokumentasi || docData;
+						console.log(filePaths);
+						// Handle both array and string responses
+						let pathsArray = Array.isArray(filePaths) ? filePaths : [filePaths];
+
+						// Step 3: Convert each path to a full URL with the /file endpoint
+						pathsArray = pathsArray.map((path) => {
+							if (typeof path === 'string') {
+								const url = `${env.PUBLIC_URL_KERAJAAN || ''}/file?file_path=${encodeURIComponent(path)}`;
+								// Determine file type based on extension
+
+								urls.push(url);
+							}
+							return null;
+						});
+						let bukti_pelaksanaan = pathsArray;
+						console.log('bukti_pelaksanaan: ', bukti_pelaksanaan);
+					}
+				}
+				dataLaporan = {
+					...msg,
+					urls: urls || ''
+				};
+				console.log('data laporan: ', dataLaporan);
+			}
+		} catch (error) {
+			console.error(error);
+			return (dataLaporan = {});
+		}
+	}
+
 	onMount(() => {
+		if (isLaporan) {
+			try {
+				console.log(
+					'fetching data tugas',
+					data?.id_tugas,
+					'with penerima ',
+					data?.id_penerima_tugas
+				);
+				fetchLaporan(data);
+			} catch (error) {}
+		}
 		console.log('data: ', data);
 	});
 	let total = $state(8);
 	let open = $state(false);
 	let timer: number;
+
 	function setTimer() {
 		open = true;
 		if (timer) {
@@ -38,6 +112,7 @@
 			class="absolute right-0 top-0 me-4 mt-7 cursor-pointer p-2"
 			onclick={() => {
 				value = false;
+				isLaporan = false;
 			}}
 		>
 			<svg
@@ -198,29 +273,62 @@
 			</div>
 		</div>
 		<div class="mt-2 flex w-full flex-col">
-			<!-- <div>
-				<p class="text-sm">Foto Bukti</p>
+			<div>
+				<p class="text-sm">Catatan:</p>
 			</div>
 			<!-- nama Tugas -->
-			<!-- <div class="mt-1 w-full overflow-x-auto rounded-lg bg-white p-2">
-				<div class="flex min-w-max gap-4">
-					<div class="h-auto min-w-[200px] rounded-xl">
-						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
-					</div>
-					<div class="h-auto min-w-[200px] rounded-xl">
-						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
-					</div>
-					<div class="h-auto min-w-[200px] rounded-xl">
-						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
-					</div>
-					<div class="h-auto min-w-[200px] rounded-xl">
-						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
-					</div>
-					<div class="h-auto min-w-[200px] rounded-xl">
-						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
-					</div>
+			<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
+				<div class="grow">
+					<textarea
+						name=""
+						readonly
+						value={dataLaporan?.keterangan || '-'}
+						class="w-full pe-2 ps-2 pt-2 focus:outline-none"
+						placeholder="Deskripsi"
+						id=""
+						rows="5"
+					></textarea>
 				</div>
-			</div> -->
+			</div>
+		</div>
+		<div class="mt-2 flex w-full flex-col">
+			<div>
+				<p class="text-sm">Foto Bukti</p>
+			</div>
+
+			<div class="mt-1 w-full overflow-x-auto rounded-lg bg-white p-2">
+				<div class="flex min-w-max gap-4">
+					{#if dataLaporan?.urls.length > 0}
+						{#each dataLaporan.urls as u, i}
+							<div class="h-auto min-w-[200px] rounded-xl">
+								<img src={u} class="h-36 w-full rounded-xl object-cover" alt="" />
+							</div>
+						{/each}
+					{:else}
+						<div class="flex items-center justify-center">
+							<div class="flex items-center justify-center">
+								<p>No Foto Available</p>
+							</div>
+						</div>
+					{/if}
+
+					<!-- <div class="h-auto min-w-[200px] rounded-xl">
+						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
+					</div>
+					<div class="h-auto min-w-[200px] rounded-xl">
+						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
+					</div>
+					<div class="h-auto min-w-[200px] rounded-xl">
+						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
+					</div>
+					<div class="h-auto min-w-[200px] rounded-xl">
+						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
+					</div>
+					<div class="h-auto min-w-[200px] rounded-xl">
+						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
+					</div> -->
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
