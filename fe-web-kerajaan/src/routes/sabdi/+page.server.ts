@@ -4,7 +4,7 @@ import { env } from '$env/dynamic/private';
 export const load: PageServerLoad = async ({cookies}) => {
     const token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
     try {
-        let res = await fetch(`${env.URL_KERAJAAN}/anggota`,{
+        let res = await fetch(`${env.URL_KERAJAAN}/anggota?limit=1000`,{
            
         })
         if (!res.ok) {
