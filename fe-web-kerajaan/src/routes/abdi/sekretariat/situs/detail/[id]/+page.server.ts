@@ -15,15 +15,18 @@ export const load: PageServerLoad = async ({params, cookies}) => {
             throw new Error(`HTTP Error! Status: ${resW.status}`);
         }
         let situsData = await res.json();
+        console.log("situsss", situsData)
         let wisataData = await resW.json();
-        let wisata = wisataData.filter((item: any) => {
-            return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
-        })
-        wisata = wisata.find((item)=> item.id_wisata === situsData.id_wisata).nama_wisata;
-        let imageUrls = [];
-        let profileUrl: any
+       let wisataObj = wisataData.filter((item: any) => {
+                 return item.deleted_at == '0001-01-01T00:00:00Z' || !item.deleted_at;
+            }  ).find((item) => item.id_wisata === situsData.id_wisata);
+
+        let wisata = wisataObj ? wisataObj.nama_wisata : "-";
+     
+        console.log("wisataaa", wisata)
+        let profileUrl: any = ""
        
-        if ((situsData.profile)) {
+        if (situsData.profile !== "") {
             try {
                
 
@@ -46,45 +49,22 @@ export const load: PageServerLoad = async ({params, cookies}) => {
                 console.error("Error processing image URLs:", error);
             }
         }
-        if (situsData.foto_situs && situsData.foto_situs.trim() !== '') {
-            try {
-                const docIds = situsData.foto_situs.split(',').map(id => id.trim());
-                console.log("Document IDs:", docIds);
-                
-                for (const docId of docIds) {
-                    if (!docId) continue;
-                    
-                    console.log(`Fetching document with ID: ${docId}`);
-                    const docRes = await fetch(`${env.URL_KERAJAAN}/doc/${docId}`);
-                    
-                    if (docRes.ok) {
-                        const docData = await docRes.json();
-                        console.log("Document data:", docData);
-                        
-                        if (docData.file_dokumentasi) {
-                            const imageUrl = `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(docData.file_dokumentasi)}`;
-                            imageUrls.push(imageUrl);
-                        }
-                    } else {
-                        console.error(`Failed to fetch document ${docId}: ${docRes.statusText}`);
-                    }
-                }
-            } catch (error) {
-                console.error("Error processing image URLs:", error);
-            }
-        }
+       
         let [resjk, respl, respb] = await Promise.all([
             fetch(`${env.PUB_PORT}/user/${situsData.juru_kunci}`),
             fetch(`${env.PUB_PORT}/user/${situsData.pelindung}`),
             fetch(`${env.PUB_PORT}/user/${situsData.pembina}`),
       ])
-      let jk = await resjk.json()
-      let pl = await respl.json()
-      let pb = await respb.json()
+        let jk = await resjk.json()
+        console.log("jk", jk)
+        let pl = await respl.json()
+        console.log("pl", pl)
+        let pb = await respb.json()
+        console.log("pb", pb)
         let final = {
             ...situsData,
             wisata,
-            imageUrls,
+           
             profileUrl,
             juru_kunci_nama: jk.nama_lengkap||"-",
             pelindung_nama: pl.nama_lengkap||"-",

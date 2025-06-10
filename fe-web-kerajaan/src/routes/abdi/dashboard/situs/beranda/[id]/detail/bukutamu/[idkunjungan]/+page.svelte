@@ -101,18 +101,7 @@
 			class="mt-4 flex flex-col items-center justify-center gap-2 md:flex-row xl:mt-0 xl:justify-start"
 		>
 			<!-- select -->
-			<select
-				name="Organisasi"
-				id=""
-				value="Organisasi"
-				placeholder="cari organisasi"
-				class="rounded-md border px-3 py-2 focus:outline-none"
-			>
-				<option value="organisasi">Organisasi</option>
-				<option value="Komunitas">Komunitas</option>
-				<option value="Abdi">Abdi</option>
-				<option value="organisasi">Organisasi</option>
-			</select>
+
 			<!-- cari -->
 			<div class="flex items-center rounded-lg border px-2">
 				<input
@@ -163,7 +152,7 @@
 				['no_telp', 'Nomer Telepon'],
 				['kota_asal', 'Kota Asal'],
 				['keterangan', 'Keterangan'],
-				['children', 'Status'],
+				['tujuan', 'Tujuan Kunjungan'],
 				['children', 'Aksi']
 			]}
 			table_data={dataambil}
@@ -233,7 +222,8 @@
 
 				{#each Array(count) as _, i}
 					<div class="relative flex h-full flex-col justify-between lg:h-fit">
-						<TambahPengunjung id={i + 1} errors={error} {data2}></TambahPengunjung>
+						<TambahPengunjung id={i + 1} errors={error} {data2} userData={data?.user}
+						></TambahPengunjung>
 						{#if i > 0}
 							<div class="mx-auto mb-5 flex h-full items-center">
 								<!-- svelte-ignore a11y_consider_explicit_label -->

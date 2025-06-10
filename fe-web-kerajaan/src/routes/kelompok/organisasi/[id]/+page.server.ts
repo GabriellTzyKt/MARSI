@@ -105,7 +105,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         let lokasi = null;
         if (organisasi.lokasi && organisasi.lokasi !== '0') {
             try {
-                const lokasiRes = await fetch(`${env.URL_KERAJAAN}/lokasi/${organisasi.lokasi}`);
+                const lokasiRes = await fetch(`${env.URL_KERAJAAN}/situs/${organisasi.lokasi}`);
                 if (lokasiRes.ok) {
                     lokasi = await lokasiRes.json();
                 }

@@ -109,7 +109,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         let lokasi = null;
         if (komunitas.lokasi && komunitas.lokasi !== '0') {
             try {
-                const lokasiRes = await fetch(`${env.URL_KERAJAAN}/lokasi/${komunitas.lokasi}`);
+                const lokasiRes = await fetch(`${env.URL_KERAJAAN}/situs/${komunitas.lokasi}`);
                 if (lokasiRes.ok) {
                     lokasi = await lokasiRes.json();
                 }

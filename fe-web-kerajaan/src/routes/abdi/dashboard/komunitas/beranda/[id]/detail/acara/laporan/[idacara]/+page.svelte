@@ -225,7 +225,7 @@
 				if (result.type === 'success') {
 					setTimeout(() => {
 						success = false;
-						goto('/abdi/komunitas/beranda');
+						goto('/abdi/dashboard/komunitas/beranda');
 					}, 3000);
 				} else {
 					let parsed = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;
@@ -757,7 +757,7 @@
 										class="col-span-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
 										type="text"
 										placeholder="Keterangan"
-										bind:value={rabList[i].keterangan}
+										bind:value={rab.keterangan}
 										name={`rab_keterangan_${i}`}
 									/>
 									{#if error?.['rab'] && error.rab[i]?.keterangan}
@@ -767,7 +767,7 @@
 										class="col-span-1 mb-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
 										type="number"
 										placeholder="Jumlah Uang"
-										bind:value={rabList[i].jumlah}
+										bind:value={rab.jumlah}
 										name={`rab_jumlah_${i}`}
 									/>
 									{#if error?.['rab'] && error.rab[i]?.jumlah}

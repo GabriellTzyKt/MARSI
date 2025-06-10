@@ -103,6 +103,8 @@ export const actions: Actions = {
         console.log( "Deskripsi : " , form.deskripsi, "Jabatan : ", form.jabatan)
 
         try {
+             const today = new Date();
+            const tanggal_bergabung = today.toISOString().split('T')[0];
             const response = await fetch(`${env.URL_KERAJAAN}/organisasi/anggota`, {
                 method: 'POST',
                 headers: {
@@ -113,7 +115,7 @@ export const actions: Actions = {
                     id_user : Number(idUser),
                     deskripsi_tugas: String(form.deskripsi),
                     jabatan_anggota: String(form.jabatan),
-                    tanggal_bergabung : "2025-05-08"
+                    tanggal_bergabung : tanggal_bergabung
                 })
             });
 

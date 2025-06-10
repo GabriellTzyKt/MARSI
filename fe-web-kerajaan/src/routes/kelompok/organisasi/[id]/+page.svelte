@@ -77,7 +77,7 @@
 					<div class="mt-5 flex items-center">
 						<span class="solar--calendar-linear flex-shrink-0"></span>
 						<p class="text-md ml-4 text-start">
-							Lokasi: {data?.lokasi?.nama_lokasi || 'Lokasi tidak tersedia'}
+							Lokasi: {data?.lokasi?.nama_situs || 'Lokasi tidak tersedia'}
 						</p>
 					</div>
 					<div class="mt-5 flex items-center">

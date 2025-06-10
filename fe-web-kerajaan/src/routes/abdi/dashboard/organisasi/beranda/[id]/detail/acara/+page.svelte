@@ -13,11 +13,13 @@
 	import { enhance } from '$app/forms';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
+	import { formatDatetoUI } from '$lib';
 
 	let { data } = $props();
 	let dataambil = data.acaraList;
 	let dataacara = dataambil.map((item: any) => ({
 		...item.Acara,
+		tanggal_mulai: formatDatetoUI(item.Acara.waktu_mulai),
 		id_organisasi: item.id_organisasi,
 		organisasi_nama: item.organisasi_nama,
 		nama_penanggung_jawab: item.nama_penanggung_jawab
@@ -168,7 +170,7 @@
 		<Table
 			table_header={[
 				['nama_acara', 'Nama Acara'],
-				['waktu_mulai', 'Tanggal'],
+				['tanggal_mulai', 'Tanggal'],
 				['alamat_acara', 'Lokasi'],
 				['nama_penanggung_jawab', 'Penanggung Jawab'],
 				['jenis_acara', 'Jenis Acara'],
@@ -242,12 +244,13 @@
 						loading = false;
 						if (result.type === 'success') {
 							success = true;
-							invalidateAll();
-							setTimeout(() => {
-								success = false;
-								deleteModal = false;
-								goto(`/abdi/dashboard/organisasi/beranda/${id_org}/detail/acara`);
-							}, 3000);
+							await invalidateAll().then(() => {
+								setTimeout(() => {
+									success = false;
+									deleteModal = false;
+									goto(`/abdi/dashboard/organisasi/beranda/${id_org}/detail/acara`);
+								}, 3000);
+							});
 						}
 						if (result.type === 'failure') {
 							errors = result.data?.errors;

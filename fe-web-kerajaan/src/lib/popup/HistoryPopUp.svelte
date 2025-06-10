@@ -248,7 +248,7 @@
 			<p class="text-2xl font-[500]">{title}</p>
 		</div>
 		<div class="mb-6 mt-6 flex flex-col items-center justify-center gap-3 md:mx-6 md:flex-row">
-			<div>
+			<!-- <div>
 				<select
 					name="Keterangan"
 					class="rounded-lg border border-gray-700 px-8 py-2 focus:outline-none"
@@ -311,8 +311,8 @@
 						/>
 					</svg>
 				</div>
-			</div>
-			<div class="flex flex-row items-center gap-3">
+			</div> -->
+			<!-- <div class="flex flex-row items-center gap-3">
 				<div>
 					<p>Show</p>
 				</div>
@@ -328,7 +328,7 @@
 				<div>
 					<p>Entries</p>
 				</div>
-			</div>
+			</div> -->
 		</div>
 		<div class="  overflow-x-auto md:mx-6">
 			<Table table_header={header} table_data={finalData}>

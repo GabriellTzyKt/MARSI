@@ -1,15 +1,25 @@
 import { fail, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
-import type { PageServerLoad } from "../$types";
+
 import { env } from "$env/dynamic/private";
 import { formatDatetoUI } from "$lib";
+import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ params, cookies }) => {
+    let token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
     try {
-        let res = await fetch(`${env.URL_KERAJAAN}/situs/kunjungan`);
+        let res = await fetch(`${env.URL_KERAJAAN}/situs/kunjungan/${params.id}`);
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`)
         }
+        let userRes = await fetch(`${env.PUB_PORT}/users`, {
+            method: "GET",
+            headers: {
+                'Authorization': `Bearer ${token.token}`
+            }
+        })
+        let user = await userRes.json();
+        user = user.filter((user: any) => user.deleted_at == '0001-01-01T00:00:00Z' || user.deleted_at == null);
         let kunjungan = await res.json();
         kunjungan = kunjungan.filter((kunjungan: any) => {
             return kunjungan.deleted_at == '0001-01-01T00:00:00Z' && kunjungan.deleted_at !== null;
@@ -17,7 +27,7 @@ export const load: PageServerLoad = async () => {
             ...kunjungan,
             tanggal_kunjungan: kunjungan.tanggal_kunjungan.split("T")[0]
         }));
-        return { kunjungan };
+        return { kunjungan, user: user };
     } catch (error) {
         console.error("Error fetching kunjungan:", error);
         return { kunjungan: [] };
@@ -25,7 +35,7 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-    tambah: async ({ request }) => {
+    tambah: async ({ request,params }) => {
         const data = await request.formData();
         console.log("data entries : ", data);
         
@@ -40,11 +50,14 @@ export const actions: Actions = {
         
         // Create form object and validation errors
         let form = {
-            id_user: {} as Record<string, string>,
+            id_situs: {} as Record<string, string>,
+            id_user_ditemui: {} as Record<string, string>,
+            nama_user: {} as Record<string, string>,
             nama_pengunjung: {} as Record<string, string>,
             tanggal_kunjungan: {} as Record<string, string>,
             no_telp: {} as Record<string, string>,
             kota_asal: {} as Record<string, string>,
+            tujuan_kunjungan: {} as Record<string, string>,
             keterangan: {} as Record<string, string>,
         };
         
@@ -52,8 +65,8 @@ export const actions: Actions = {
         
         // Define validation schema for a single entry
         const entrySchema = z.object({
-            id_user: z.number().int().positive(),
-            nama_pengunjung: z.string().min(1, "Masukkan nama pengunjung!"),
+            id_user_ditemui: z.number().int().positive(),
+            nama_user: z.string().min(1, "Masukkan nama user!"),
             tanggal_kunjungan: z.string().min(1, "Tanggal kunjungan harus diisi!"),
             no_telp: z.string()
                 .min(1, "Nomor telepon harus diisi!")
@@ -61,25 +74,32 @@ export const actions: Actions = {
                 .refine(val => val.length >= 10, "Nomor telepon minimal 10 digit!"),
             kota_asal: z.string().min(1, "Kota asal harus diisi!"),
             keterangan: z.string().optional(),
+            tujuan_kunjungan: z.string().optional(),
         });
         
         // Process each entry with individual validation
         const entryPromises = Array.from(entryIds).map(async id => {
-            const id_user = parseInt(data.get(`id_user-${id}`)?.toString() || '3'); // Default to 3 as specified
-            const nama_pengunjung = data.get(`nama_pengunjung-${id}`)?.toString() || '';
+            const id_situs = parseInt(params.id)
+            const id_user_ditemui = parseInt(data.get(`id_user_ditemui-${id}`)?.toString() || '3'); // Default to 3 as specified
+            const nama_user = (data.get(`nama_user-${id}`)?.toString() || '3'); // Default to 3 as specified
+        
             const tanggal_kunjungan = data.get(`tanggal_kunjungan-${id}`)?.toString() || '';
+            const tujuan_kunjungan = data.get(`tujuan_kunjungan-${id}`)?.toString() || '';
             const no_telp = data.get(`no_telp-${id}`)?.toString() || '';
             const kota_asal = data.get(`kota_asal-${id}`)?.toString() || '';
             const keterangan = data.get(`keterangan-${id}`)?.toString() || '';
             
             // Skip empty entries (except the first one)
-            if (id !== '1' && !nama_pengunjung && !tanggal_kunjungan && !no_telp && !kota_asal) {
+            if (id !== '1' && !nama_user && !tanggal_kunjungan && !no_telp && !kota_asal) {
                 return null;
             }
             
             // Add to form object
-            form.id_user[id] = id_user.toString();
-            form.nama_pengunjung[id] = nama_pengunjung;
+            form.id_situs[id] = id_situs.toString();
+            form.id_user_ditemui[id] = id_user_ditemui.toString();
+            form.tujuan_kunjungan[id] = tujuan_kunjungan.toString();
+            form.nama_user[id] = nama_user.toString();
+          
             form.tanggal_kunjungan[id] = tanggal_kunjungan;
             form.no_telp[id] = no_telp;
             form.kota_asal[id] = kota_asal;
@@ -87,8 +107,10 @@ export const actions: Actions = {
             
             // Validate this entry
             const validation = entrySchema.safeParse({
-                id_user,
-                nama_pengunjung,
+                
+                id_user_ditemui,
+                tujuan_kunjungan,
+                nama_user,
                 tanggal_kunjungan,
                 no_telp,
                 kota_asal,
@@ -111,9 +133,11 @@ export const actions: Actions = {
             
             // Return the validated and formatted entry
             return {
-                id_user,
-                nama_pengunjung,
+                id_situs,
+                id_user_ditemui,
+                nama_pengunjung: nama_user,
                 tanggal_kunjungan: formattedDate,
+                tujuan_kunjungan,
                 no_telp,
                 kota_asal,
                 keterangan
@@ -141,7 +165,7 @@ export const actions: Actions = {
             // Upload each entry individually
             const uploadPromises = processedEntries.map(async entry => {
                 if (!entry) return null;
-                
+                console.log(entry)
                 try {
                     console.log(entry)
                     const response = await fetch(`${env.URL_KERAJAAN}/situs/kunjungan`, {

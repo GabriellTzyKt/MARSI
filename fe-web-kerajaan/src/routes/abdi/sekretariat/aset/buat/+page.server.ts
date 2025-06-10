@@ -5,13 +5,14 @@ import { fail } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async () => {
     try {
-        const res = await fetch(`${env.URL_KERAJAAN}/aset/jenis`)
+        const res = await fetch(`${env.URL_KERAJAAN}/aset/jenis?limit=1000`)
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`)
         }
         const data = await res.json()
+        let finalData = data.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at || item.deleted_at === null).map((item: any) => ({...item, nama: item.jenis_aset}));
         console.log(data)
-        return {data}
+        return {data: finalData}
     }
     catch (error) {
         console.log(error)

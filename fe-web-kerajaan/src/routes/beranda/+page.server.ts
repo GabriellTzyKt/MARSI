@@ -77,21 +77,21 @@ export const load: PageServerLoad = async () => {
 
          // Filter out soft-deleted items
          const filteredSitus = situsArray.filter(item => 
-            item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
+            item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at|| item.deleted_at === null
         ).slice(0,5);
         
         // Lanjutkan proses seperti sebelumnya, ganti acaraArray jadi acaraGabungan
         const acaraArray = Array.isArray(acaraGabungan) ? acaraGabungan : [acaraGabungan];
         const filteredAcara = acaraArray.filter(item =>
-            item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
+            item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at || item.deleted_at === null
         ).slice(0, 5);
         
         const filteredOrganisasi = organisasiArray.filter(item => 
-            item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
+            item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at|| item.deleted_at === null
         ).slice(0,5);
         
         const filteredKomunitas = komunitasArray.filter(item => 
-            item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
+            item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at|| item.deleted_at === null
         ).slice(0,5);
         console.log("Filtered data counts:", {
             situs: filteredSitus.length,
@@ -102,11 +102,11 @@ export const load: PageServerLoad = async () => {
         console.log("Filtered Acara", filteredAcara)
         // Process situs data with photos
         const processedSitus = await Promise.all(filteredSitus.map(async (item) => {
-            const processedItem = { ...item, imageUrls: [] };
+            const processedItem = { ...item, profileURL: "" };
             
-            if (item.foto_situs && item.foto_situs.trim() !== '') {
+            if (item.profile && item.profile.trim() !== '') {
                 try {
-                    const docIds = item.foto_situs.split(',').map(id => id.trim());
+                    const docIds = item.profile.split(',').map(id => id.trim());
                     
                     for (const id of docIds) {
                         if (!id) continue;
@@ -118,9 +118,9 @@ export const load: PageServerLoad = async () => {
                             const filePath = docData.file_dokumentasi || docData;
                             
                             if (typeof filePath === 'string') {
-                                processedItem.imageUrls.push(
+                                processedItem.profileURL =
                                     `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`
-                                );
+                              
                             } else if (Array.isArray(filePath)) {
                                 filePath.forEach(path => {
                                     if (typeof path === 'string') {
@@ -190,12 +190,12 @@ export const load: PageServerLoad = async () => {
             const processedItem = {
                 ...item,
                 tanggal_berdiri: item.tanggal_berdiri ? formatDatetoUI(item.tanggal_berdiri) : '',
-                imageUrls: []
+                profileURL:""
             };
             
-            if (item.foto_organisasi && item.foto_organisasi.trim() !== '') {
+            if (item.profile && item.profile.trim() !== '') {
                 try {
-                    const docIds = item.foto_organisasi.split(',').map(id => id.trim());
+                    const docIds = item.profile.split(',').map(id => id.trim());
                     
                     for (const id of docIds) {
                         if (!id) continue;
@@ -207,18 +207,10 @@ export const load: PageServerLoad = async () => {
                             const filePath = docData.file_dokumentasi || docData;
                             
                             if (typeof filePath === 'string') {
-                                processedItem.imageUrls.push(
+                                processedItem.profileURL =
                                     `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`
-                                );
-                            } else if (Array.isArray(filePath)) {
-                                filePath.forEach(path => {
-                                    if (typeof path === 'string') {
-                                        processedItem.imageUrls.push(
-                                            `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(path)}`
-                                        );
-                                    }
-                                });
-                            }
+                                ;
+                            } 
                         }
                     }
                 } catch (error) {
@@ -234,12 +226,12 @@ export const load: PageServerLoad = async () => {
             const processedItem = {
                 ...item,
                 tanggal_berdiri: item.tanggal_berdiri ? formatDatetoUI(item.tanggal_berdiri) : '',
-                imageUrls: []
+                profileURL : ""
             };
             
-            if (item.foto_komunitas && item.foto_komunitas.trim() !== '') {
+            if (item.profile && item.profile.trim() !== '') {
                 try {
-                    const docIds = item.foto_komunitas.split(',').map(id => id.trim());
+                    const docIds = item.profile.split(',').map(id => id.trim());
                     
                     for (const id of docIds) {
                         if (!id) continue;
@@ -251,17 +243,9 @@ export const load: PageServerLoad = async () => {
                             const filePath = docData.file_dokumentasi || docData;
                             
                             if (typeof filePath === 'string') {
-                                processedItem.imageUrls.push(
+                                processedItem.profileURL = 
                                     `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(filePath)}`
-                                );
-                            } else if (Array.isArray(filePath)) {
-                                filePath.forEach(path => {
-                                    if (typeof path === 'string') {
-                                        processedItem.imageUrls.push(
-                                            `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(path)}`
-                                        );
-                                    }
-                                });
+                                
                             }
                         }
                     }

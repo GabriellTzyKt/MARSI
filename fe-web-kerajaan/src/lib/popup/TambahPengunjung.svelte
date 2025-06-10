@@ -1,16 +1,24 @@
 <script lang="ts">
 	import { page } from '$app/state';
 
-	let { id = 0, errors = null, data2 } = $props();
+	let { id = 0, errors = null, data2, userData = null } = $props();
 	let nama_pengunjung = $state(data2 ? data2.nama_pengunjung : '');
 	let tanggal_kunjungan = $state(data2 ? data2.tanggal_kunjungan : '');
 	let no_telp = $state(data2 ? data2.no_telp : '');
 	let kota_asal = $state(data2 ? data2.kota_asal : '');
 	let keterangan = $state(data2 ? data2.keterangan : '');
-
+	let keyword = $state('');
+	let nomor_telepon = $state('');
 	console.log('ini data2 : ', data2);
 	console.log('ini error : ', errors);
+	let selectedUsername = $state();
 	let idAktif = $state(page.params.id);
+	function selectUser() {
+		let find = userData.find((user) => user.id_user == keyword);
+		selectedUsername = find.nama_lengkap;
+		nomor_telepon = find.no_telp;
+		kota_asal = find.tempat_lahir;
+	}
 	$effect(() => {
 		idAktif = page.params.id;
 		console.log('ID kunjungan  : ', id);
@@ -26,14 +34,28 @@
 			<input type="hidden" name={`id_user-${id}`} value="3" />
 			<span class="text-red-500">*</span>
 			<div class="relative flex items-center">
-				<input
+				<select
+					name={`id_user_ditemui-${id}`}
+					class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
+					placeholder="Nama Pengunjung"
+					bind:value={keyword}
+					id=""
+					onchange={() => selectUser()}
+				>
+					<option value="" selected>Silahkan Pilih</option>
+					{#each userData as user}
+						<option value={user.id_user}>{user.nama_lengkap}</option>
+					{/each}
+				</select>
+				<input type="text" name={`nama_user-${id}`} value={selectedUsername} hidden id="" />
+				<!-- <input
 					type="text"
 					name={`nama_pengunjung-${id}`}
 					bind:value={nama_pengunjung}
 					class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
 					placeholder="Nama Pengunjung"
-				/>
-				<span class="line-md--pencil absolute right-2"></span>
+				/> -->
+				<!-- <span class="line-md--pencil absolute right-2"></span> -->
 			</div>
 			{#if errors && errors[`nama_pengunjung.${id}`]}
 				<p class="ml-5 text-left text-red-500">{errors[`nama_pengunjung.${id}`]}</p>
@@ -66,7 +88,7 @@
 							type="text"
 							class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
 							placeholder="No Telepon"
-							bind:value={no_telp}
+							bind:value={nomor_telepon}
 							name={`no_telp-${id}`}
 							pattern="[0-9]*"
 							minlength="10"
@@ -87,7 +109,7 @@
 						class="h-10 w-full rounded-lg border-2 border-gray-200 px-2 pr-7"
 						placeholder="Kota asal"
 					/>
-					<span class="line-md--pencil absolute right-2 top-2.5"></span>
+					<span class="line-md--pencil absolute right-2 top-1/2"></span>
 					{#if errors && errors[`kota_asal.${id}`]}
 						<p class="ml-5 text-left text-red-500">{errors[`kota_asal.${id}`]}</p>
 					{/if}
@@ -96,17 +118,25 @@
 
 			<div class="relative mt-5 flex items-center">
 				<textarea
-					name={`keterangan-${id}`}
-					bind:value={keterangan}
+					name={`tujuan_kunjungan-${id}`}
 					class="h-20 w-full rounded-lg border-2 border-gray-200 px-2 py-2 pr-7"
-					placeholder="Keterangan (opsional)"
+					placeholder="Tujuan Kunjungan"
 				></textarea>
 				<span class="line-md--pencil absolute right-2 top-2"></span>
 			</div>
-			{#if errors && errors[`keterangan.${id}`]}
-				<p class="ml-5 text-left text-red-500">{errors[`keterangan.${id}`]}</p>
-			{/if}
 		</div>
+		<div class="relative mt-5 flex items-center">
+			<textarea
+				name={`keterangan-${id}`}
+				bind:value={keterangan}
+				class="h-20 w-full rounded-lg border-2 border-gray-200 px-2 py-2 pr-7"
+				placeholder="Keterangan (opsional)"
+			></textarea>
+			<span class="line-md--pencil absolute right-2 top-2"></span>
+		</div>
+		{#if errors && errors[`keterangan.${id}`]}
+			<p class="ml-5 text-left text-red-500">{errors[`keterangan.${id}`]}</p>
+		{/if}
 	</div>
 </div>
 

@@ -337,7 +337,10 @@
 		} else if (
 			page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/acara/detail/[idacara]'
 		) {
-			return 'Detail Acara Komunitas';
+		} else if (
+			page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail/bukutamu/[idkunjungan]'
+		) {
+			return 'Buku Tamu Situs';
 		}
 	});
 
@@ -733,10 +736,10 @@
 								isRouteActive(pageAktif, idAktif)}
 						/>
 						<SidebarMenu
-							href="/abdi/dashboard/situs/beranda/{idAktif}/detail/bukutamu"
+							href="/abdi/dashboard/situs/beranda/{idAktif}/detail/bukutamu/{idAktif}"
 							icon="mdi:book"
 							anchor="Buku Tamu"
-							active={`/abdi/dashboard/situs/beranda/${idAktif}/detail/bukutamu` ==
+							active={`/abdi/dashboard/situs/beranda/${idAktif}/detail/bukutamu/${idAktif}` ==
 								isRouteActive(pageAktif, idAktif)}
 						/>
 						<SidebarMenu

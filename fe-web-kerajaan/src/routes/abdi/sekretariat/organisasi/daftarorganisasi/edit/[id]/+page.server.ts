@@ -239,7 +239,7 @@ export const actions: Actions = {
                 pembina: formData.pembina_id,
                 pelindung: formData.pelindung_id,
                 tanggal_berdiri: formData.tanggal_berdiri,
-                foto_organisai : data.get("foto_organisasi"),
+                foto_organisasi : data.get("foto_organisasi"),
                 profile: orgpp ? orgpp : null,
                 
             }

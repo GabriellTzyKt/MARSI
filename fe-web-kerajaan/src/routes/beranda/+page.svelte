@@ -105,7 +105,7 @@
 			{#each situs as s}
 				<div class="h-auto">
 					<Card2
-						situs={s.imageUrls[0] || ''}
+						situs={s.profileURL || ''}
 						header={s.nama_situs}
 						isi={s.deskripsi_situs || 'No Description'}
 						icon=""
@@ -331,7 +331,7 @@
 				{#each organisasi as o}
 					<div class="h-auto">
 						<Card2
-							situs={o.imageUrls[0] || ''}
+							situs={o.profileURL || ''}
 							header={o.nama_organisasi}
 							isi={o.deskripsi_organisasi || 'No Description'}
 							icon=""
@@ -372,7 +372,7 @@
 			{#each komunitas as k}
 				<div class="h-auto">
 					<Card2
-						situs={k.imageUrls[0] || ''}
+						situs={k.profileURL || ''}
 						header={k.nama_komunitas}
 						isi={k.deskripsi_komunitas || 'No Description'}
 						icon=""

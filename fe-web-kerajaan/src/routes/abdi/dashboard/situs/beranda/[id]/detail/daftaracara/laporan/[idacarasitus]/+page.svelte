@@ -339,6 +339,25 @@
 	let rab = $state(data?.rabData);
 	async function hapusRABAPI(rab: any) {
 		console.log('Rab ini dihapus', rab);
+		console.log('Rab ini dihapus', rab);
+		console.log('Rab ini dihapus', rab);
+		try {
+			loading = true;
+			const res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/lpj/rab/${rab.id_rab}`, {
+				method: 'DELETE'
+			});
+			let msg = await res.json();
+			loading = false;
+			if (res.ok) {
+				console.log('Rab berhasil dihapus', msg);
+				success = true;
+				await invalidateAll().then(() => {
+					setTimeout(() => {
+						success = false;
+					}, 1000);
+				});
+			}
+		} catch (error) {}
 	}
 	async function simpanEditRABAPI(i) {
 		const edited = rab[i]; // Sudah berisi value terbaru dari input!
@@ -722,7 +741,7 @@
 									<button
 										type="button"
 										class="rounded-lg bg-red-500 text-white"
-										onclick={() => hapusRAB(rab)}
+										onclick={() => hapusRABAPI(rab)}
 									>
 										Hapus
 									</button>
@@ -744,7 +763,7 @@
 										class="col-span-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
 										type="text"
 										placeholder="Keterangan"
-										bind:value={rabList[i].keterangan}
+										bind:value={rab.keterangan}
 										name={`rab_keterangan_${i}`}
 									/>
 									{#if error?.['rab'] && error.rab[i]?.keterangan}
@@ -754,7 +773,7 @@
 										class="col-span-1 mb-2 mt-2 h-5 w-full rounded-lg border-2 border-black px-3 py-4"
 										type="number"
 										placeholder="Jumlah Uang"
-										bind:value={rabList[i].jumlah}
+										bind:value={rab.jumlah}
 										name={`rab_jumlah_${i}`}
 									/>
 									{#if error?.['rab'] && error.rab[i]?.jumlah}

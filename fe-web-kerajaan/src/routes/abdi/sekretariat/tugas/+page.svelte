@@ -68,6 +68,7 @@
 		console.log(' Data to detail : ', data);
 		detailData = data;
 		modalDetail = true;
+		isLaporan = false;
 	}
 	function pagination(data: any[]) {
 		let d = filterD(data);

@@ -272,63 +272,65 @@
 				</div>
 			</div>
 		</div>
-		<div class="mt-2 flex w-full flex-col">
-			<div>
-				<p class="text-sm">Catatan:</p>
-			</div>
-			<!-- nama Tugas -->
-			<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
-				<div class="grow">
-					<textarea
-						name=""
-						readonly
-						value={dataLaporan?.keterangan || '-'}
-						class="w-full pe-2 ps-2 pt-2 focus:outline-none"
-						placeholder="Deskripsi"
-						id=""
-						rows="5"
-					></textarea>
+		{#if isLaporan}
+			<div class="mt-2 flex w-full flex-col">
+				<div>
+					<p class="text-sm">Catatan:</p>
+				</div>
+				<!-- nama Tugas -->
+				<div class="mt-1 flex justify-between rounded-lg border border-gray-700 bg-white">
+					<div class="grow">
+						<textarea
+							name=""
+							readonly
+							value={dataLaporan?.keterangan || '-'}
+							class="w-full pe-2 ps-2 pt-2 focus:outline-none"
+							placeholder="Deskripsi"
+							id=""
+							rows="5"
+						></textarea>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="mt-2 flex w-full flex-col">
-			<div>
-				<p class="text-sm">Foto Bukti</p>
-			</div>
+			<div class="mt-2 flex w-full flex-col">
+				<div>
+					<p class="text-sm">Foto Bukti</p>
+				</div>
 
-			<div class="mt-1 w-full overflow-x-auto rounded-lg bg-white p-2">
-				<div class="flex min-w-max gap-4">
-					{#if dataLaporan?.urls.length > 0}
-						{#each dataLaporan.urls as u, i}
-							<div class="h-auto min-w-[200px] rounded-xl">
-								<img src={u} class="h-36 w-full rounded-xl object-cover" alt="" />
-							</div>
-						{/each}
-					{:else}
-						<div class="flex items-center justify-center">
+				<div class="mt-1 w-full overflow-x-auto rounded-lg bg-white p-2">
+					<div class="flex min-w-max gap-4">
+						{#if dataLaporan?.urls.length > 0}
+							{#each dataLaporan.urls as u, i}
+								<div class="h-auto min-w-[200px] rounded-xl">
+									<img src={u} class="h-36 w-full rounded-xl object-cover" alt="" />
+								</div>
+							{/each}
+						{:else}
 							<div class="flex items-center justify-center">
-								<p>No Foto Available</p>
+								<div class="flex items-center justify-center">
+									<p>No Foto Available</p>
+								</div>
 							</div>
-						</div>
-					{/if}
-
-					<!-- <div class="h-auto min-w-[200px] rounded-xl">
-						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
+						{/if}
 					</div>
-					<div class="h-auto min-w-[200px] rounded-xl">
-						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
-					</div>
-					<div class="h-auto min-w-[200px] rounded-xl">
-						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
-					</div>
-					<div class="h-auto min-w-[200px] rounded-xl">
-						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
-					</div>
-					<div class="h-auto min-w-[200px] rounded-xl">
-						<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
-					</div> -->
 				</div>
 			</div>
-		</div>
+		{/if}
 	</div>
 </div>
+
+<!-- <div class="h-auto min-w-[200px] rounded-xl">
+	<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
+</div>
+<div class="h-auto min-w-[200px] rounded-xl">
+	<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
+</div>
+<div class="h-auto min-w-[200px] rounded-xl">
+	<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
+</div>
+<div class="h-auto min-w-[200px] rounded-xl">
+	<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
+</div>
+<div class="h-auto min-w-[200px] rounded-xl">
+	<img src={jd} class="h-36 w-full rounded-xl object-cover" alt="" />
+</div> -->
