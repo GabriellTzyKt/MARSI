@@ -270,7 +270,7 @@
 				<SimpleLoader></SimpleLoader>
 			</div>
 		{/if}
-		<Pagination bind:currPage bind:entries totalItems={filterD(dummyAnggota).length}></Pagination>
+		<Pagination bind:currPage bind:entries totalItems={filterD(resData).length}></Pagination>
 	</div>
 </div>
 
