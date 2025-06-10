@@ -225,7 +225,7 @@
 				if (result.type === 'success') {
 					setTimeout(() => {
 						success = false;
-						// goto('/abdi/sekretariat/acara');
+						goto('/abdi/dashboard/organisasi/beranda');
 					}, 3000);
 				} else {
 					let parsed = typeof result.data === 'string' ? JSON.parse(result.data) : result.data;

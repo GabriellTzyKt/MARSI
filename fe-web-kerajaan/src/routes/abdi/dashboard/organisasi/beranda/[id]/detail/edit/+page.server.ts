@@ -33,7 +33,7 @@ export const load = async ({ params, fetch }) => {
         }
 
         // Fetch users for dropdown selections
-        const usersResponse = await fetch(`${env.PUB_PORT}/users?limit=200`);
+        const usersResponse = await fetch(`${env.URL_KERAJAAN}/anggota?limit=200`);
         let usersList = [];
         if (usersResponse.ok) {
             usersList = await usersResponse.json();
@@ -41,7 +41,7 @@ export const load = async ({ params, fetch }) => {
             usersList = usersList.filter((item: any) =>
                 item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at
             ).map((item: any) => ({
-                id: item.id_user,
+                id: item.id_anggota,
                 nama_lengkap: item.nama_lengkap || 'Unnamed',
                 email: item.email || ''
             }));

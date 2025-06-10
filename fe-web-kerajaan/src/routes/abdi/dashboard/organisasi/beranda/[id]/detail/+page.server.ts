@@ -23,10 +23,8 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         // Fetch penanggung_jawab data
         if (organisasiData.penanggung_jawab && organisasiData.penanggung_jawab !== '0') {
             try {
-                const userRes = await fetch(`${env.PUB_PORT}/user/${organisasiData.penanggung_jawab}`, {
-                    headers: {
-                        "Authorization": `Bearer ${token?.token}`
-                    }
+                const userRes = await fetch(`${env.URL_KERAJAAN}/anggota/${organisasiData.penanggung_jawab}`, {
+
                 });
                 if (userRes.ok) {
                     penanggungJawab = await userRes.json();
@@ -39,10 +37,8 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         // Fetch pembina data
         if (organisasiData.pembina && organisasiData.pembina !== '0') {
             try {
-                const userRes = await fetch(`${env.PUB_PORT}/user/${organisasiData.pembina}`, {
-                    headers: {
-                        "Authorization": `Bearer ${token?.token}`
-                    }
+                const userRes = await fetch(`${env.URL_KERAJAAN}/anggota/${organisasiData.pembina}`, {
+                   
                 });
                 if (userRes.ok) {
                     pembina = await userRes.json();
@@ -55,10 +51,8 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         // Fetch pelindung data
         if (organisasiData.pelindung && organisasiData.pelindung !== '0') {
             try {
-                const userRes = await fetch(`${env.PUB_PORT}/user/${organisasiData.pelindung}`, {
-                    headers: {
-                        "Authorization": `Bearer ${token?.token}`
-                    }
+                const userRes = await fetch(`${env.URL_KERAJAAN}/anggota/${organisasiData.pelindung}`, {
+                    
                 });
                 if (userRes.ok) {
                     pelindung = await userRes.json();
