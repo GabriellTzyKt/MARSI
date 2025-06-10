@@ -36,7 +36,7 @@
 				{#each datasitus as item}
 					<div class="h-auto">
 						<Card2
-							situs={item.imageUrls[0] || ''}
+							situs={item.profileImg || ''}
 							header={item.nama_situs}
 							isi={item.deskripsi_situs || 'No Description'}
 							icon={item.jenis_situs}

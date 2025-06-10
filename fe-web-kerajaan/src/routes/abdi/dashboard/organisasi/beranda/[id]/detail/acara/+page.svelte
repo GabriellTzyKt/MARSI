@@ -103,10 +103,8 @@
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
 		<button
 			class="bg-badran-bt cursor-pointer rounded-lg px-3 py-2 text-white"
-			onclick={() =>
-				goto(
-					`/abdi/dashboard/organisasi/beranda/${dataambil[0].id_organisasi}/detail/acara/tambah`
-				)}>+Tambah Data</button
+			onclick={() => goto(`/abdi/dashboard/organisasi/beranda/${data?.id_org}/detail/acara/tambah`)}
+			>+Tambah Data</button
 		>
 		<div
 			class="mt-4 flex flex-col items-center justify-center gap-2 md:flex-row xl:mt-0 xl:justify-start"

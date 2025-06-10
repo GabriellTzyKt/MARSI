@@ -264,7 +264,7 @@ export const actions: Actions = {
                 id_komunitas: parseInt(String(data.get("id_komunitas"))),
                 penanggung_jawab: parseInt(formData.penanggungjawab_id),
                 // id_pengajuan: parseInt(String(data.get("id_pengajuan"))),
-                foto_komunitas: pp ? pp : null,
+                foto_komunitas: data.get("foto_komunitas"),
                 profile: pp ? pp  : null,
                 lokasi: formData.situs_id,
                 nama_komunitas: formData.nama_situs,

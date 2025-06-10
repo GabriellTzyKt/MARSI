@@ -161,11 +161,7 @@ export const actions: Actions = {
                     const date = new Date(dateStr);
                     return !isNaN(date.getTime()) && dateStr === date.toISOString().split("T")[0];
                 }, { message: "Tanggal tidak valid" })
-                .refine((dateStr) => {
-                    const date = new Date(dateStr);
-                    const today = new Date();
-                    return date >= today;
-                }, { message: "Tanggal tidak boleh kurang dari hari ini" }),
+               ,
             id_situs: z.string().min(1,"Harus Select")
 
         });

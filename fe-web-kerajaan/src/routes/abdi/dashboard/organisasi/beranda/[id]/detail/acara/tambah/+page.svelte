@@ -31,7 +31,7 @@
 	let namalengkapbawah = $state([]);
 	let namajabatan = $state([]);
 	let notelpbawah: any = $state([]);
-
+	let namaacaraaa = $state('');
 	let { form, data } = $props();
 	console.log('Data : ', data);
 	console.log('form data', form);
@@ -52,6 +52,7 @@
 			lokasiacara = Number(found.Acara.id_lokasi);
 			penanggungjawab = Number(found.Acara.id_penanggung_jawab);
 			alamatacara = found.Acara.alamat_acara;
+			namaacaraaa = found.Acara.nama_acara;
 			kapasitasacara = found.Acara.kapasitas_acara;
 			penyelenggaraacara = found.id_organisasi;
 			deskripsiacara = found.Acara.deskripsi_acara;
@@ -338,7 +339,6 @@
 						<p>Nama Acara: <span class="text-red-500">*</span></p>
 						{#if activeTab === 'completed'}
 							<select
-								name="namaacara"
 								bind:value={namaacara}
 								onchange={handleNamaAcaraChange}
 								class="w-full rounded-lg border px-2 py-1"
@@ -348,6 +348,7 @@
 									<option value={acara.Acara?.id_acara}>{acara.Acara?.nama_acara}</option>
 								{/each}
 							</select>
+							<input type="text" name="namaacara" hidden value={namaacaraaa} id="" />
 						{:else}
 							<input
 								type="text"
@@ -386,8 +387,12 @@
 						{/if}
 					</div>
 
-					<div class="w-full mt-2" style="position:relative">
-						<p>Alamat acara: (Silahkan pilih lokasi terlebih dahulu) <span class="text-red-500">*</span></p>
+					<div class="mt-2 w-full" style="position:relative">
+						<p>
+							Alamat acara: (Silahkan pilih lokasi terlebih dahulu) <span class="text-red-500"
+								>*</span
+							>
+						</p>
 						<input
 							type="text"
 							name="alamatacara"
@@ -403,7 +408,7 @@
 						{/if}
 					</div>
 
-					<div class="w-full mt-2">
+					<div class="mt-2 w-full">
 						<p>Deskripsi Acara: <span class="text-red-500">*</span></p>
 						<textarea
 							name="deskripsiacara"

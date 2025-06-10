@@ -27,8 +27,8 @@ export const load: PageServerLoad = async ({params, cookies}) => {
         let formatDate = (isoString) => {
                 if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
                 let date = new Date(isoString);
-                let day = String(date.getDate()).padStart(2, '0');
-                let month = String(date.getMonth() + 1).padStart(2, '0');
+                let day = String(date.getUTCDate()).padStart(2, '0');
+                let month = String(date.getUTCMonth() + 1).padStart(2, '0');
             let year = date.getFullYear();
             return `${year}-${month}-${day}`;
             };
@@ -44,6 +44,13 @@ export const load: PageServerLoad = async ({params, cookies}) => {
             // throw error(404, "Lokasi not found");
         }
         let locDataFromSitus = await resLocFromSitus.json();
+        function formatTimeToHHMM_UTC(isoString: string): string {
+            if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
+            const date = new Date(isoString);
+            const hours = String(date.getUTCHours()).padStart(2, '0');
+            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
         // console.log("Found Lokasi : ", locDataFromSitus)
         let formattedData = {
                     ...data,
@@ -51,8 +58,8 @@ export const load: PageServerLoad = async ({params, cookies}) => {
                     alamat_lokasi: locDataFromSitus.alamat,
                     tanggal_mulai: formatDate(data.waktu_mulai),
                     tanggal_selesai: formatDate(data.waktu_selesai),
-                    waktu_mulai: formatTime(data.waktu_mulai),
-                    waktu_selesai: formatTime(data.waktu_selesai),
+                    waktu_mulai: formatTimeToHHMM_UTC(data.waktu_mulai),
+                    waktu_selesai: formatTimeToHHMM_UTC(data.waktu_selesai),
                     waktu_mulai_original: data.waktu_mulai,
                     waktu_selesai_original: data.waktu_selesai
         };
@@ -291,7 +298,7 @@ export const actions: Actions = {
                 penanggung_jawab: Number(data.get("penanggungjawab_id")),
                 jenis_acara: data.get("jenisacara"),
                 kapasitas_acara: Number(data.get("kapasitasacara")),
-                // foto_acara: "1",
+                foto_acara: msd.foto_acara,
                 status: msd.status === "Diajukan"? "Diajukan" : msd.status,
             }
             console.log("PayLoad", payload)

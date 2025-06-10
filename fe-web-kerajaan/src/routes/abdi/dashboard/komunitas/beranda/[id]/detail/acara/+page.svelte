@@ -13,11 +13,13 @@
 	import { enhance } from '$app/forms';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
+	import { formatDatetoUI } from '$lib';
 
 	let { data } = $props();
 	let dataambil = data.acaraList;
 	let dataacara = dataambil.map((item: any) => ({
 		...item.Acara,
+		tanggal_mulai: formatDatetoUI(item.Acara.waktu_mulai),
 		id_organisasi: item.id_organisasi,
 		organisasi_nama: item.organisasi_nama,
 		nama_penanggung_jawab: item.nama_penanggung_jawab
@@ -103,8 +105,7 @@
 	<div class=" flex flex-col xl:flex-row xl:justify-between">
 		<button
 			class="bg-badran-bt cursor-pointer rounded-lg px-3 py-2 text-white"
-			onclick={() =>
-				goto(`/abdi/dashboard/komunitas/beranda/${dataambil[0].id_komunitas}/detail/acara/buat`)}
+			onclick={() => goto(`/abdi/dashboard/komunitas/beranda/${data?.id_org}/detail/acara/buat`)}
 			>+Tambah Data</button
 		>
 		<div
@@ -169,7 +170,7 @@
 		<Table
 			table_header={[
 				['nama_acara', 'Nama Acara'],
-				['waktu_mulai', 'Tanggal'],
+				['tanggal_mulai', 'Tanggal'],
 				['alamat_acara', 'Lokasi'],
 				['nama_penanggung_jawab', 'Penanggung Jawab'],
 				['jenis_acara', 'Jenis Acara'],

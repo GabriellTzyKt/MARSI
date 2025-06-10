@@ -256,6 +256,7 @@
 			};
 		}}
 	>
+		<input type="text" name="foto_situs" hidden value={situs.foto_situs} id="" />
 		<input type="text" hidden name="id_situs" id="" value={situs.id_situs} />
 		<div class="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
 			<!-- 1 -->
@@ -750,21 +751,6 @@
 							/>
 							{#if errors}
 								{#each errors.jam_tutup as e}
-									<p class="text-left text-red-500">- {e}</p>
-								{/each}
-							{/if}
-						</div>
-						<div class="w-full">
-							<p>Jumlah Anggota :</p>
-							<input
-								type="number"
-								name="jumlah_anggota"
-								value={situs.jumlah_anggota || '0'}
-								placeholder="Masukkan Jumlah anggota"
-								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-							/>
-							{#if errors}
-								{#each errors.jumlah_anggota as e}
 									<p class="text-left text-red-500">- {e}</p>
 								{/each}
 							{/if}

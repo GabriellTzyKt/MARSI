@@ -20,7 +20,7 @@
 	let input_radio = $state(data?.data?.Acara.jenis_acara || '');
 	let res = $state();
 	let isLocationSelected = $state(data?.data?.id_lokasi ? true : false);
-
+	let rilnama = $state('');
 	let penanggungjawabSearchTerm = $state(
 		data?.users?.find((user) => user?.id_user == data?.data?.Acara.id_penanggung_jawab)
 			?.nama_lengkap || ''

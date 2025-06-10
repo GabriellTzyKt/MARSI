@@ -25,22 +25,6 @@
 	);
 	let selectedStatus = $state('');
 
-	// Check for delete parameter in URL
-	$effect(() => {
-		const deleteId = page.url.searchParams.get('delete');
-		if (deleteId) {
-			// Find the item with this ID
-			const itemToDelete = data.data.find((item) => item.id_acara.toString() === deleteId);
-			if (itemToDelete) {
-				selectedItem = itemToDelete;
-				deleteD = true;
-				// console.log('Found item to delete from URL:', selectedItem);
-			}
-		} else {
-			// console.error('Item with ID', deleteId, 'not found');
-		}
-	});
-
 	function filterD(data: any[]) {
 		return data?.filter(
 			(item) =>
@@ -69,7 +53,11 @@
 			entries = 0;
 		}
 	});
-
+	function deleteAcara(id: any) {
+		console.log('Anda Menghapus acara : ', id);
+		deleteD = true;
+		selectedItem = id;
+	}
 	let resData = $derived(pagination(data?.data));
 	// Add this derived value to track the total filtered items
 	let filteredTotal = $derived(filterD(data?.data).length);
@@ -179,7 +167,7 @@
 							},
 							{
 								label: 'Non Aktifkan',
-								action: () => goto(`/abdi/sekretariat/acara?delete=${data.id_acara}`)
+								action: () => deleteAcara(data.id_acara)
 							}
 						]}
 						id={`id-${index}`}
@@ -202,9 +190,9 @@
 		</div>
 	{/if}
 </div>
-{#if deleteD && selectedItem}
+{#if deleteD}
 	<form
-		action="?/delete"
+		action="?/deleteAcara"
 		method="post"
 		use:enhance={() => {
 			loading = true;
@@ -215,11 +203,14 @@
 					success = true;
 					deleteD = false;
 					// Clear the URL parameter after successful deletion
-					goto('/abdi/sekretariat/acara', { replaceState: true });
-					setTimeout(() => {
-						success = false;
-						invalidateAll();
-					}, 3000);
+
+					await invalidateAll().then(() => {
+						deleteD = false;
+						setTimeout(() => {
+							success = false;
+							invalidateAll();
+						}, 3000);
+					});
 				}
 				if (result.type === 'failure') {
 					console.log(result.data?.errors);
@@ -228,7 +219,7 @@
 			};
 		}}
 	>
-		<input type="hidden" name="id_acara" value={selectedItem.id_acara} />
+		<input type="hidden" name="id_acara" value={selectedItem} />
 
 		<DeleteModal
 			bind:value={deleteD}

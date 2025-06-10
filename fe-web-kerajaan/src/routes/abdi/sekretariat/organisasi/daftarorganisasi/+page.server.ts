@@ -6,7 +6,7 @@ import { formatDatetoUI } from "$lib";
 export const load: PageServerLoad = async ({fetch, cookies}) => {
     const token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
     try {
-        let organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi?limit=500`);
+        let organisasiResponse = await fetch(`${env.URL_KERAJAAN}/organisasi?limit=800`);
         if (!organisasiResponse.ok) {
             throw error(organisasiResponse.status, `Failed to fetch Organisasi: ${organisasiResponse.statusText}`);
         }
@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
         console.log("Organisasi : ", organisasiList);   
         
         organisasiList = organisasiList.filter((doc: any) => {
-            return doc.deleted_at == '0001-01-01T00:00:00Z' && doc.deleted_at !== null;
+            return doc.deleted_at == '0001-01-01T00:00:00Z' || doc.deleted_at == null;
         });
         let finalwithuser = await Promise.all(organisasiList.map(async (item: any) => { 
            
@@ -42,7 +42,17 @@ export const load: PageServerLoad = async ({fetch, cookies}) => {
                                 penanggung_jawab_nama: userData.nama_lengkap || `User ${item.penanggung_jawab}`
                             };
                         }
-                    }
+                       
+                      
+                }
+                return {
+                    ...item,
+                    pembina_nama: `User ${item.pembina}`,
+                    tanggal_berdiri: formatDatetoUI(item.tanggal_berdiri),
+                    pelindung_nama: `User ${item.pelindung}`,
+                    penanggung_jawab_nama:  `User ${item.penanggung_jawab}`
+                };
+                    
         
                 } catch (userError) {
 

@@ -58,11 +58,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         let penanggungJawab = null;
         if (organisasi.penanggung_jawab && organisasi.penanggung_jawab !== '0') {
             try {
-                const userRes = await fetch(`${env.PUB_PORT}/user/${organisasi.penanggung_jawab}`, {
-                    headers: {
-                        "Authorization": `Bearer ${cookie?.token}`
-                    }
-                });
+                const userRes = await fetch(`${env.URL_KERAJAAN}/anggota/${organisasi.penanggung_jawab}`);
                 if (userRes.ok) {
                     penanggungJawab = await userRes.json();
                 }

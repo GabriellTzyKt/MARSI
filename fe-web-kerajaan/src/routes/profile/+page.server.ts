@@ -3,7 +3,18 @@ import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
 import { date } from "zod";
 import { formatDate, formatDatetoUI } from "$lib";
-
+function formatDateToUI(isoString: string): string {
+    if (!isoString) return '-';
+    const date = new Date(isoString);
+    const day = date.getDate();
+    const monthNames = [
+        "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+        "Jul", "Agu", "Sep", "Okt", "Nov", "Des"
+    ];
+    const month = monthNames[date.getMonth()];
+    const year = date.getFullYear();
+    return `${day} ${month} ${year}`;
+}
 
 export const load: PageServerLoad = async ({locals, cookies}) => {
     try {
@@ -30,6 +41,38 @@ export const load: PageServerLoad = async ({locals, cookies}) => {
         const data = await res.json();
         console.log("Profile",data.profile)
         if (res.ok) {
+            let resAcara = await fetch(`${env.URL_KERAJAAN}/acara/user/terdaftar/${data.id_user}`)
+            let acaraData = await resAcara.json();
+            if (!Array.isArray(acaraData)) {
+                acaraData = acaraData ? [acaraData] : [];
+            }
+            acaraData = acaraData.filter((item: any) => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
+            // Ambil data penanggung jawab untuk setiap acara
+    acaraData = await Promise.all(acaraData.map(async (item: any) => {
+        let penanggungjawab_nama = '';
+        if (item.id_penanggung_jawab) {
+            try {
+                const resUser = await fetch(`${env.PUB_PORT}/user/${item.id_penanggung_jawab}`, {
+                    headers: {
+                        "Authorization": `Bearer ${session.token}`
+                    }
+                });
+                if (resUser.ok) {
+                    const userData = await resUser.json();
+                    penanggungjawab_nama = userData?.nama_lengkap || '';
+                }
+            } catch (e) {
+                console.error("Error fetching penanggung jawab:", e);
+            }
+        }
+        return {
+            ...item,
+            penanggungjawab_nama,
+            tanggal_mulai: formatDateToUI(item.waktu_mulai)
+        };
+    }));
+
+
              const res = await fetch(`${env.PUB_PORT}/doc/${data.profile}`);
             const dataPath = await res.json();
             console.log(dataPath)
@@ -43,7 +86,7 @@ export const load: PageServerLoad = async ({locals, cookies}) => {
             };
             
             console.log(data);
-            return {data: resData};
+            return {data: resData, historyAcara: acaraData};
         }
         
         console.log(data);

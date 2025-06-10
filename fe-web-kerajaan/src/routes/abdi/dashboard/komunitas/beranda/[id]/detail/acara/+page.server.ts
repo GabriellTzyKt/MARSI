@@ -3,11 +3,12 @@ import { z } from "zod";
 import type { PageServerLoad } from "./$types";
 import { env } from "$env/dynamic/private";
 import { error } from "@sveltejs/kit";
+import { formatDatetoUI } from "$lib";
 
-export const load: PageServerLoad = async ({ fetch, params, depends }) => {
+export const load: PageServerLoad = async ({ fetch, params, depends, cookies }) => {
     // Add a dependency that can be invalidated
     depends('organisasi:acara');
-
+    let token = cookies.get("userSession")? JSON.parse(cookies.get("userSession") as string): ''
     try {
         // Get the current organization ID from params
         const currentOrgId = params.id;
@@ -44,26 +45,30 @@ export const load: PageServerLoad = async ({ fetch, params, depends }) => {
             )
             : [];
 
-        const usersResponse = await fetch(`${env.BASE_URL_8008}/anggota?limit=2000`, {
-            cache: 'no-store'
+        const usersResponse = await fetch(`${env.PUB_PORT}/users`, {
+            headers: {
+                "Authorization": `Bearer ${token?.token}`
+            }
         });
-        let users = [];
+        
+        let  users = await usersResponse.json();
         if (usersResponse.ok) {
-            users = await usersResponse.json();
         }
 
-        console.log("user : ", users)
+        console.log("user yang ada : ", users)
 
-
+        
         // Add organization info to each acara without processing photos
-        const processedAcara = acaraData.map((acara: any) => {
+        const processedAcara = filteredAcara.map((acara: any) => {
             // Cari user dengan id sama
             const user = users.find((u: any) => u.id_user == acara.Acara.id_penanggung_jawab);
+            
             return {
                 ...acara,
                 organisasi_id: currentOrgId,
                 organisasi_nama: currentOrganisasi.nama_komunitas || 'Unknown Organization',
-                nama_penanggung_jawab: user ? user.nama_lengkap : 'Tidak diketahui'
+                nama_penanggung_jawab: user ? user.nama_lengkap : 'Tidak diketahui',
+                tanggal_mulai : formatDatetoUI(acara.Acara.waktu_mulai)
             };
         });
 
@@ -81,7 +86,7 @@ export const load: PageServerLoad = async ({ fetch, params, depends }) => {
 
         return {
             organisasi: currentOrganisasi,
-            acaraList: acaraData,
+            acaraList: processedAcara,
             organisasiList: organisasiList,
             id_org: params.id
         };

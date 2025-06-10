@@ -340,6 +340,24 @@
 	let rab = $state(data?.rabData);
 	async function hapusRABAPI(rab: any) {
 		console.log('Rab ini dihapus', rab);
+		console.log('Rab ini dihapus', rab);
+		try {
+			loading = true;
+			const res = await fetch(`${env.PUBLIC_URL_KERAJAAN}/lpj/rab/${rab.id_rab}`, {
+				method: 'DELETE'
+			});
+			let msg = await res.json();
+			loading = false;
+			if (res.ok) {
+				console.log('Rab berhasil dihapus', msg);
+				success = true;
+				await invalidateAll().then(() => {
+					setTimeout(() => {
+						success = false;
+					}, 1000);
+				});
+			}
+		} catch (error) {}
 	}
 	async function simpanEditRABAPI(i) {
 		const edited = rab[i]; // Sudah berisi value terbaru dari input!
@@ -718,7 +736,7 @@
 									<button
 										type="button"
 										class="rounded-lg bg-red-500 text-white"
-										onclick={() => hapusRAB(rab)}
+										onclick={() => hapusRABAPI(rab)}
 									>
 										Hapus
 									</button>

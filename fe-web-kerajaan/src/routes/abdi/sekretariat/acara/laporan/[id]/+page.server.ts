@@ -58,8 +58,8 @@ export const load: PageServerLoad = async ({params, cookies}) => {
             let formatDate = (isoString) => {
                 if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
                 let date = new Date(isoString);
-                let day = String(date.getDate()).padStart(2, '0');
-                let month = String(date.getMonth() + 1).padStart(2, '0');
+                let day = String(date.getUTCDate()).padStart(2, '0');
+                let month = String(date.getUTCMonth() + 1).padStart(2, '0');
             let year = date.getFullYear();
             return `${day}-${month}-${year}`;
             };
@@ -70,13 +70,19 @@ export const load: PageServerLoad = async ({params, cookies}) => {
                 let minutes = String(date.getMinutes()).padStart(2, '0');
                 return `${hours}:${minutes}`;
             };
-
+            function formatTimeToHHMM_UTC(isoString: string): string {
+                if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
+                const date = new Date(isoString);
+                const hours = String(date.getUTCHours()).padStart(2, '0');
+                const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                return `${hours}:${minutes}`;
+            }
             let formattedData = {
                     ...data,
                     tanggal_mulai: formatDate(data.waktu_mulai),
                     tanggal_selesai: formatDate(data.waktu_selesai),
-                    waktu_mulai: formatTime(data.waktu_mulai),
-                    waktu_selesai: formatTime(data.waktu_selesai),
+                    waktu_mulai: formatTimeToHHMM_UTC(data.waktu_mulai),
+                    waktu_selesai: formatTimeToHHMM_UTC(data.waktu_selesai),
                     waktu_mulai_original: data.waktu_mulai,
                 waktu_selesai_original: data.waktu_selesai,
                     nama_penanggungjawab : user.nama_lengkap

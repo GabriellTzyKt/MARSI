@@ -266,6 +266,10 @@
 			return 'Edit Organisasi';
 		} else if (page.route.id === '/abdi/dashboard/situs/beranda/[id]/detail/ubah') {
 			return 'Edit Situs';
+		} else if (
+			page.route.id === '/abdi/dashboard/komunitas/beranda/[id]/detail/acara/laporan/[idacara]'
+		) {
+			return 'Laporan Acara Komunitas';
 		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/daftaranggota') {
 			return 'Daftar Anggota';
 		} else if (page.route.id === '/abdi/dashboard/organisasi/beranda/[id]/detail/acara') {

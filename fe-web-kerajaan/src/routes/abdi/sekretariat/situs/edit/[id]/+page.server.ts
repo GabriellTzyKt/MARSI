@@ -246,13 +246,6 @@ export let actions: Actions = {
             jam_tutup:
                 z.string({ message: "Field Jam Tutup harus diisi" })
                     .nonempty("Field Ini tidak boleh kosong"),
-            
-            jumlah_anggota:
-                z.string({ message: "Field Jumlah Anggota harus diisi" })
-                    .nonempty("Field Ini tidak boleh kosong")
-                    .regex(/^\d+$/, "Input Harus Berupa Angka / Digit")
-                    .transform(val => Number(val))
-                    .pipe(z.number().min(1, "minimal 1 anggota")),
                     
             wisata:
                 z.string({ message: "Field Wisata harus diisi" })
@@ -303,7 +296,7 @@ export let actions: Actions = {
             jenis_situs: String(data.get("jenis_situs")),
             jam_buka: String(data.get("jam_buka")),
             jam_tutup: String(data.get("jam_tutup")),
-            jumlah_anggota: String(data.get("jumlah_anggota")),
+            // jumlah_anggota: String(data.get("jumlah_anggota")),
             wisata: String(data.get("wisata")),
             wisata_id: String(data.get("id_wisata"))
         }
@@ -350,7 +343,7 @@ export let actions: Actions = {
                  id_wisata:parseInt( String(data.get("id_wisata"))),    
                  profile: profile !== "" ? String(profile): data.get("profile"),
                  id_jenis_situs: parseInt(String(data.get("jenis_situs"))),
-                foto_situs: profile !== "" ? String(profile): data.get("profile"),
+                foto_situs: data.get("foto_situs"),
                 nama_situs: String(data.get("nama_situs")),
                 deskripsi_situs: String(data.get("deskripsi_situs")),
                 alamat: String(data.get("alamat")),

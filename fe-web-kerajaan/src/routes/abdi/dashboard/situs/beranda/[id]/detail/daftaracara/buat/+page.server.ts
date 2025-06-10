@@ -48,9 +48,9 @@ export const load: PageServerLoad = async ({ fetch, params,cookies }) => {
 
     const acaraData = await acaraRes.json();
     const filteredAcara = Array.isArray(acaraData)
-        ? acaraData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z")
+        ? acaraData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at === null)
         : acaraData;
-
+    console.log("Acara datata", filteredAcara)
     return {
         users: filteredUsers,
         situs: filteredSitus,
@@ -241,7 +241,7 @@ export const actions: Actions = {
                           return fail(400, { errors: { server: 'Something went wrong on the server.' } });
                       }
 
-            console.log("Rawr")
+            console.log("Berhassil!")
 
             return {
                 success: true,

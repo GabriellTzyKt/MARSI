@@ -34,9 +34,19 @@ export const load = async ({ params, fetch, cookies }) => {
         ? situsData.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at == null)
         : situsData;
 
-  
-    const acaraData = await acaraRes.json();
-
+        function formatTimeToHHMM_UTC(isoString: string): string {
+            if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
+            const date = new Date(isoString);
+            const hours = String(date.getUTCHours()).padStart(2, '0');
+            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+    let acaraData = await acaraRes.json();
+     acaraData = {
+         ...acaraData,
+         waktu_selesai_time : formatTimeToHHMM_UTC(acaraData.waktu_selesai),
+         waktu_mulai_time : formatTimeToHHMM_UTC(acaraData.waktu_mulai),
+        }
      let [resUndangan, resPanit] = await Promise.all([
             fetch(`${env.URL_KERAJAAN}/undangan/${id_acarasitus}?limit=500`, {
                 method:"GET",
@@ -249,6 +259,7 @@ export const actions: Actions = {
                 jenis_acara: data.get("default-radio"),
                 kapasitas_acara: Number(data.get("kapasitasacara")),
                 // foto_acara: "1",
+                foto_acara: msd.foto_acara,
                 status: msd.status === "Diajukan"? "Diajukan" : msd.status,
             }
             console.log("PayLoad", payload)

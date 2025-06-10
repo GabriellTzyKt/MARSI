@@ -57,16 +57,16 @@ export const load: PageServerLoad = async ({params, cookies}) => {
             let formatDate = (isoString) => {
                 if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
                 let date = new Date(isoString);
-                let day = String(date.getDate()).padStart(2, '0');
-                let month = String(date.getMonth() + 1).padStart(2, '0');
+                let day = String(date.getUTCDate()).padStart(2, '0');
+                let month = String(date.getUTCMonth() + 1).padStart(2, '0');
             let year = date.getFullYear();
             return `${day}-${month}-${year}`;
             };
             let formatTime = (isoString) => {
                 if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
                 let date = new Date(isoString);
-                let hours = String(date.getHours()).padStart(2, '0');
-                let minutes = String(date.getMinutes()).padStart(2, '0');
+                let hours = String(date.getUTCHours()).padStart(2, '0');
+                let minutes = String(date.getUTCMinutes()).padStart(2, '0');
                 return `${hours}:${minutes}`;
             };
 

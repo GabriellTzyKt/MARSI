@@ -507,7 +507,7 @@
 									type="date"
 									name="tanggalselesai"
 									placeholder="Masukkan Nama"
-									value={formatDate(data?.acara.waktu_selesai)}
+									value={data?.acara.waktu_selesai}
 									class="w-full rounded-lg border px-2 py-1"
 								/>
 								{#if error}
@@ -524,7 +524,7 @@
 							<input
 								type="time"
 								name="waktumulai"
-								value={formatTime(data?.acara?.waktu_mulai)}
+								value={data?.acara?.waktu_mulai}
 								class="w-full rounded-lg border px-2 py-1"
 							/>
 							{#if error}

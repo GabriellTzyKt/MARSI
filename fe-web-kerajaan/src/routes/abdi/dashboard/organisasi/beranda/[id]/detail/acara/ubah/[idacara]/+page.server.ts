@@ -118,7 +118,8 @@ export const actions: Actions = {
         console.log("id a : ", id_acara)
         const data = await request.formData();
         let token = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : ''
-
+        let res = await fetch(`${env.URL_KERAJAAN}/acara/detail/${params.idacara}`);
+        let msd = await res.json()
         const ids = data.getAll("id").map(String); // undangan
         const ids2 = data.getAll("id2").map(String); //panit
 
@@ -298,7 +299,8 @@ export const actions: Actions = {
                 jenis_acara: data.get("jenisacara"),
                 kapasitas_acara: Number(data.get("kapasitasacara")),
                 // foto_acara: "1",
-                status: "Diajukan",
+                foto_acara: msd.foto_acara,
+                status: msd.status === "Diajukan"? "Diajukan" : msd.status,
             }
             console.log("PayLoad", payload)
             let res = await fetch(`${env.URL_KERAJAAN}/acara`, {

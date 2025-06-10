@@ -3,7 +3,13 @@ import { filterArsip,formatDatetoUI, formatDateTime,formatDate,formatTime } from
 import { detail_acara } from "$lib/dummy";
 import type { PageServerLoad } from "./$types";
 
-
+function formatTimeToHHMM(isoString: string): string {
+    if (!isoString) return '-';
+    const date = new Date(isoString);
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+}
 export const load: PageServerLoad = async ({ params, cookies }) => {
     let cookie = cookies.get("userSession") ? JSON.parse(cookies.get("userSession") as string) : '';
     try {
@@ -16,7 +22,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         }
         
         const detil_acara = await acara.json();
-        // console.log("Raw API response:", detil_acara);
+        console.log("Raw API response:", detil_acara);
         
         // Pastikan detil_acara adalah array
         const acaraArray = Array.isArray(detil_acara) ? detil_acara : [detil_acara];
@@ -80,13 +86,20 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
         let user = await userData.json();
         // console.log(`user : ${detil_acara.id_penanggung_jawab} adalah ${user.nama_lengkap}`)
         // console.log("Final processed data:", processedData[0]);
+        function formatTimeToHHMM_UTC(isoString: string): string {
+            if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
+            const date = new Date(isoString);
+            const hours = String(date.getUTCHours()).padStart(2, '0');
+            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
         const final = {
             ...processedData[0],
             tanggal_mulai: formatDate(processedData[0].waktu_mulai),
             nama_penanggung_jawab: user.nama_lengkap,
             tanggal_selesai: formatDatetoUI(processedData[0].waktu_selesai),
-            waktu_mulai: formatTime(processedData[0].waktu_mulai),  
-            waktu_selesai: formatTime(processedData[0].waktu_selesai),  
+            waktu_mulai: formatTimeToHHMM_UTC(processedData[0].waktu_mulai),  
+            waktu_selesai: formatTimeToHHMM_UTC(processedData[0].waktu_selesai),  
             waktu_mulai_full: formatDateTime(processedData[0].waktu_mulai),  
             waktu_selesai_full: formatDateTime(processedData[0].waktu_selesai),  
             tanggal_mulai_format: formatDatetoUI(processedData[0].waktu_mulai),

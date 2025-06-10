@@ -87,7 +87,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
     }
 };
 export let actions: Actions = {
-    delete: async ({ request }) => { 
+    deleteAcara: async ({ request }) => { 
         let data = await request.formData()
         console.log(data)
         let id = data.get("id_acara")

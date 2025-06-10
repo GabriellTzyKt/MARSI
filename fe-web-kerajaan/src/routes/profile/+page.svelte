@@ -41,6 +41,15 @@
 	function showBarcode() {
 		open = true;
 	}
+	let keyword = $state('');
+	let filterAcara = $derived(searchAcara(keyword));
+	function searchAcara(keyword) {
+		return (
+			data?.historyAcara?.filter((e) =>
+				e.nama_acara?.toLowerCase().includes(keyword.toLowerCase())
+			) || []
+		);
+	}
 </script>
 
 <Navbar></Navbar>
@@ -93,7 +102,7 @@
 		<p class="text-xl font-[600]">Profile</p>
 	</div>
 </div>
-<div class="mb-4 me-4 ms-4 grid grid-cols-1 justify-center gap-8 pt-8 xl:mx-10">
+<div class="mb-4 me-4 ms-4 grid grid-cols-2 justify-center gap-8 pt-8 xl:mx-10">
 	<!-- info profile -->
 	<div class="flex w-full flex-col justify-center">
 		<!-- profile pict -->
@@ -299,6 +308,78 @@
 		</div>
 	</div>
 	<!-- Riwayat acara, organisasi, dan komunitas -->
+	<div class=" flex h-full flex-col pb-4">
+		<div class="h-auto max-h-full rounded-md border p-2">
+			<!-- Riwayat Acara -->
+			<div
+				class="border-badran-bt flex h-auto max-h-full w-full flex-col rounded-md border px-4 py-2"
+			>
+				<div class="flex items-center justify-between">
+					<div>
+						<p class="text-badran-bt ms-2 text-xl font-[500]">Riwayat Acara</p>
+					</div>
+					<div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+						<!-- cari -->
+						<div class=" mx-2 flex items-center rounded-lg border px-2">
+							<input
+								type="text"
+								bind:value={keyword}
+								placeholder="Cari.."
+								class=" w-full bg-transparent px-2 py-2 focus:outline-none"
+							/>
+
+							<!-- svelte-ignore a11y_consider_explicit_label -->
+							<button class="text-gray-600 hover:text-gray-800">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									class="size-6"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+									/>
+								</svg>
+							</button>
+						</div>
+						<!-- Dropdown -->
+						<div class="flex w-full items-center rounded-lg border px-3 py-1">
+							<select
+								name="Keterangan"
+								id=""
+								value="Keterangan"
+								class="w-full bg-transparent p-2 focus:outline-none"
+							>
+								<option value="Keterangan">Keterangan</option>
+								<option value="Sekarang">Sekarang</option>
+								<option value="Bulan Lalu">Bulan Lalu</option>
+								<option value="Minggu Ini">Minggu Ini</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class=" mt-4 max-h-full w-auto overflow-y-auto rounded-lg">
+					{#each filterAcara as e}
+						<Items
+							title={e.nama_acara}
+							location={e.alamat_acara}
+							date={e.tanggal_mulai}
+							organizer={e.penanggungjawab_nama}
+						></Items>
+					{/each}
+					{#if filterAcara.length == 0}
+						<div class="flex items-center justify-center">
+							<p class="text-lg font-bold">Tidak ada riwayat acara</p>
+						</div>
+					{/if}
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 <Footer></Footer>
 {#if open}

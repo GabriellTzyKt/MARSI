@@ -1,7 +1,7 @@
 import { env } from "$env/dynamic/private";
 import { fail, error, type Actions } from "@sveltejs/kit";
 import { z } from "zod";
-import { IGCCSVC_DB } from './../../../../../../../../../../../.svelte-kit/ambient.d';
+import type { PageServerLoad } from "./$types";
 
 export const load = async ({ params, fetch, cookies }) => {
 
@@ -114,7 +114,8 @@ export const actions: Actions = {
 
         const ids = data.getAll("id").map(String); // undangan
         const ids2 = data.getAll("id2").map(String); //panit
-
+        let res = await fetch(`${env.URL_KERAJAAN}/acara/detail/${params.idacara}`);
+                let msd = await res.json()
         console.log(data)
         console.log(ids)
         console.log(ids2)
@@ -290,8 +291,8 @@ export const actions: Actions = {
                 penanggung_jawab: Number(data.get("penanggungjawab_id")),
                 jenis_acara: data.get("jenisacara"),
                 kapasitas_acara: Number(data.get("kapasitasacara")),
-                // foto_acara: "1",
-                status: "Diajukan",
+                foto_acara: msd.foto_acara,
+                status: msd.status === "Diajukan"? "Diajukan" : msd.status,
             }
             console.log("PayLoad", payload)
             let res = await fetch(`${env.URL_KERAJAAN}/acara`, {

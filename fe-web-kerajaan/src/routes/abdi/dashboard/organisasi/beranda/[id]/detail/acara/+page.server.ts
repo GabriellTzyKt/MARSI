@@ -56,7 +56,7 @@ export const load: PageServerLoad = async ({ fetch, params, depends }) => {
 
 
         // Add organization info to each acara without processing photos
-        const processedAcara = acaraData.map((acara: any) => {
+        const processedAcara = filteredAcara.map((acara: any) => {
             // Cari user dengan id sama
             const user = users.find((u: any) => u.id_user == acara.Acara.id_penanggung_jawab);
             return {

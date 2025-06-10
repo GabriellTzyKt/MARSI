@@ -8,6 +8,8 @@
 	import { fade } from 'svelte/transition';
 	import { number } from 'zod';
 	import { writable } from 'svelte/store';
+	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	let { data } = $props();
 
 	let input_radio = $state('');
 	let namaacara = $state('');
@@ -34,23 +36,33 @@
 	let namajabatan = $state([]);
 	let notelpbawah: any = $state([]);
 
-	let { form, data } = $props();
 	console.log('Data : ', data);
-	console.log('form data', form);
+	// console.log('form data', form);
 
 	let selectedAcara: any = $state(null);
-
-	$effect(() => {
+	let nama = $state('');
+	function handleChange() {
 		if (activeTab === 'completed' && namaacara) {
 			selectedAcara = data.acara.find((a: any) => a.nama_acara === namaacara) ?? null;
 			lokasiacara = Number(selectedAcara.id_lokasi);
 			penanggungjawab = Number(selectedAcara.id_penanggung_jawab);
 			// alamatacara = selectedAcara.alamat_acara;
+			waktumulai =
+				selectedAcara.waktu_mulai.split('T')[1].split(':')[0] +
+				':' +
+				selectedAcara.waktu_mulai.split('T')[1].split(':')[1];
+			waktuselesai =
+				selectedAcara.waktu_selesai.split('T')[1].split(':')[0] +
+				':' +
+				selectedAcara.waktu_selesai.split('T')[1].split(':')[1];
+			tanggalmulai = selectedAcara.waktu_mulai.split('T')[0].split(':')[0];
+			tanggalselesai = selectedAcara.waktu_selesai.split('T')[0].split(':')[0];
 			kapasitasacara = selectedAcara.kapasitas_acara;
 			deskripsiacara = selectedAcara.deskripsi_acara;
 			tujuanacara = selectedAcara.tujuan_acara;
 			input_radio = selectedAcara.jenis_acara;
 			console.log('Selected : ', selectedAcara);
+			nama = selectedAcara.nama_acara;
 		} else {
 			selectedAcara = null;
 			namaacara = '';
@@ -62,21 +74,6 @@
 			tujuanacara = '';
 			input_radio = '';
 		}
-	});
-
-	if (form?.formData) {
-		buttonselect = form.formData.buttonselect;
-		input_radio = form.formData.inputradio;
-		namaacara = form.formData.namaacara;
-		lokasiacara = form.formData.lokasiacara;
-		tujuanacara = form.formData.tujuanacara;
-		kapasitasacara = form.formData.kapasitascara;
-		deskripsiacara = form.formData.deskripsiacara;
-		penanggungjawab = form.formData.penanggungjawab;
-		tanggalmulai = form.formData.tanggalmulai;
-		tanggalselesai = form.formData.tanggalselesai;
-		waktumulai = form.formData.waktumulai;
-		waktuselesai = form.formData.waktuselesai;
 	}
 
 	let activeTab = $state('upcoming');
@@ -225,14 +222,15 @@
 		use:enhance={() => {
 			loading = true;
 			return async ({ result }) => {
-				console.log(result);
-				console.log(input_radio);
 				loading = false;
+				console.log('loading state', loading);
 				if (result.type === 'success' || result.status == 200) {
 					open = true;
 					clearTimeout(timer);
+					console.log('loading state', loading);
 					timer = setTimeout(() => {
 						open = false;
+						goto(`/abdi/dashboard/situs/beranda`);
 					}, 3000);
 				} else if (result.type === 'failure') {
 					error = result?.data?.errors;
@@ -306,15 +304,17 @@
 						<p>Nama Acara<span class="text-red-500">*</span></p>
 						{#if activeTab === 'completed'}
 							<select
-								name="namaacara"
 								bind:value={namaacara}
+								onchange={handleChange}
 								class="w-full rounded-lg border px-2 py-1"
 							>
 								<option value="" disabled selected>Pilih Acara Lama</option>
 								{#each data.acara as acara}
+									{console.log('acara liat : ', acara)}
 									<option value={acara.nama_acara}>{acara.nama_acara}</option>
 								{/each}
 							</select>
+							<input type="text" hidden name="namaacara" value={nama} id="" />
 						{:else}
 							<input
 								type="text"
@@ -730,12 +730,7 @@
 {#if open}
 	{console.log('Oiiii anjeeee')}
 	<div in:fade={{ duration: 100 }} out:fade={{ duration: 300 }}>
-		<SucessModal
-			{open}
-			text="Tamu Berhasil Di Undang!"
-			to="/abdi/dashboard/situs/beranda"
-			on:close={toggle}
-		></SucessModal>
+		<SuccessModal text="Sukses"></SuccessModal>
 	</div>
 {/if}
 

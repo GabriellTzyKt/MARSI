@@ -13,7 +13,7 @@
 	import Status from '$lib/table/Status.svelte';
 	import Table from '$lib/table/Table.svelte';
 	let { data } = $props();
-	let dataevent = data.events;
+	let dataevent = $state(data.events);
 	let loading = $state(false);
 	let dataID = data.locationIds;
 	let datatotal = data.situsCount;
@@ -41,13 +41,13 @@
 		console.log('Data Delete : ', dataDelete);
 		Dmodal = true;
 	}
-	function reloadPage() {
-		const thisPage = window.location.pathname;
+	// function reloadPage() {
+	// 	const thisPage = window.location.pathname;
 
-		console.log('goto ' + thisPage);
+	// 	console.log('goto ' + thisPage);
 
-		goto('/').then(() => goto(thisPage));
-	}
+	// 	goto('/').then(() => goto(thisPage));
+	// }
 	function filterD(data: any[]) {
 		return data.filter(
 			(item) =>
@@ -152,14 +152,14 @@
 			table_header={[
 				['nama_acara', 'Nama Acara'],
 				['tanggal_mulai', 'Tanggal'],
-				['situs_alamat', 'Lokasi'],
+				['alamat_acara', 'Lokasi'],
 				['penanggung_jawab_nama', 'Penanggung Jawab'],
 				['jenis_acara', 'Jenis Acara'],
 				['kapasitas_acara', 'Kapasitas'],
 				['children', 'Status'],
 				['children', 'Aksi']
 			]}
-			table_data={dataevent}
+			table_data={dataambil}
 		>
 			{#snippet children({ header, data, index })}
 				{#if header === 'Aksi'}
@@ -203,7 +203,7 @@
 		{#if dataevent.length === 0}
 			<p class="flex items-center justify-center text-center">No data available</p>
 		{/if}
-		<Pagination bind:currPage bind:entries totalItems={filterD(dummyAcara).length}></Pagination>
+		<Pagination bind:currPage bind:entries totalItems={filterD(dataevent).length}></Pagination>
 	</div>
 </div>
 {#if Dmodal}
@@ -221,11 +221,12 @@
 						// goto(`/abdi/dashboard/situs/beranda/${idAktif}/detail/daftaracara`, {
 						// 	replaceState: true
 						// });
-						setTimeout(() => {
-							Dmodal = false;
-							success = false;
-							reloadPage();
-						}, 3000);
+						await invalidateAll().then(() => {
+							setTimeout(() => {
+								Dmodal = false;
+								success = false;
+							}, 3000);
+						});
 					} catch (error) {}
 				}
 				if (result.type === 'failure') {

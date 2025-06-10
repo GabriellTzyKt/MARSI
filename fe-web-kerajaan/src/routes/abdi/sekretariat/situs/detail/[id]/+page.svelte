@@ -148,17 +148,6 @@
 							value={situs.jam_tutup || '-'}
 						/>
 					</div>
-					<div
-						class="mt-3 flex h-fit w-[100%] flex-col rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-sm lg:mt-0 lg:w-[32.7%]"
-					>
-						<p>Jumlah Anggota:</p>
-						<input
-							type="text"
-							placeholder="Masukkan Nama"
-							disabled
-							value={situs.jumlah_anggota || '-'}
-						/>
-					</div>
 				</div>
 
 				<div class="mt-5 flex w-full flex-col gap-3 lg:flex-row">

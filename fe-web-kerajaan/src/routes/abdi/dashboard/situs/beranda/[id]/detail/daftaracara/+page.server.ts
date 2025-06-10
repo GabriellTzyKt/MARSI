@@ -8,6 +8,7 @@ function extractRegion(alamat: string) {
     const lower = alamat.toLowerCase();
 
     if (lower.includes('jawa')) return 'Jawa';
+    if (lower.includes('java')) return 'Jawa';
     if (lower.includes('kalimantan')) return 'Kalimantan';
     if (lower.includes('sumatera')) return 'Sumatera';
     if (lower.includes('sulawesi')) return 'Sulawesi';
@@ -32,7 +33,7 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
         // Fetch all data in parallel using Promise.all
         const [situsResponse, eventsResponse, usersResponse] = await Promise.all([
             fetch(`${env.URL_KERAJAAN}/situs/${situsId}`),
-            fetch(`${env.URL_KERAJAAN}/acara/situs/${situsId}`),
+            fetch(`${env.URL_KERAJAAN}/acara/situs/${situsId}?limit=1000`),
             fetch(`${env.PUB_PORT}/users`, {
                 headers: {
                     "Authorization": `Bearer ${token?.token}`

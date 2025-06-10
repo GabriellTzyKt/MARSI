@@ -9,6 +9,7 @@
 	import DropDownNew from '$lib/dropdown/DropDownNew.svelte';
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import SuccessModal from '$lib/modal/SuccessModal.svelte';
+	import { navigating } from '$app/state';
 
 	let { data } = $props();
 	let openModal = $state(false);
@@ -314,6 +315,9 @@
 	}
 </script>
 
+{#if navigating.to}
+	<Loader></Loader>
+{/if}
 <div class="container mx-auto p-4">
 	<div class="mb-6 flex flex-wrap gap-2">
 		{#each button as btn}

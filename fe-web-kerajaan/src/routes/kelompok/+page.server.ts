@@ -9,7 +9,7 @@ export const load: PageServerLoad = async () => {
             throw new Error(`HTTP Error! Status: ${resKom.status}`);
         }
         const data = await resKom.json();
-        const filterKomunitas = data.filter((item: any) => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
+        const filterKomunitas = data.filter((item: any) => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at || item.deleted_at == null);
         console.log("komunitas", filterKomunitas);
 
         // organisasi
@@ -18,7 +18,7 @@ export const load: PageServerLoad = async () => {
             throw new Error(`HTTP Error! Status: ${resOrg.status}`);
         }
         const dataOrg = await resOrg.json();
-        const filterOrganisasi = dataOrg.filter((item: any) => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
+        const filterOrganisasi = dataOrg.filter((item: any) => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at || item.deleted_at === null);
         console.log("organisais", filterOrganisasi);
 
         async function fetchProfileImages(item: any, idField: string) {
@@ -50,7 +50,7 @@ export const load: PageServerLoad = async () => {
 
             return {
                 ...item,
-                profileUrls // array of all profile image URLs
+                profileUrls:  Array.isArray(profileUrls) ? profileUrls : [] // array of all profile image URLs
             };
         }
         
@@ -62,6 +62,7 @@ export const load: PageServerLoad = async () => {
             return await fetchProfileImages(item, 'id_organisasi');
         }));
         console.log(finalKomunitas)
+        console.log("Final Org",finalOrganisasi)
         return {
             komunitas: finalKomunitas,
             organisasi: finalOrganisasi

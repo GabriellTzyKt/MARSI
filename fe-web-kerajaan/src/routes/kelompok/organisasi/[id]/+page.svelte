@@ -12,7 +12,7 @@
 		console.log('ID : ', idAktif);
 	});
 	let organisasi = data.organisasi;
-	let penanggung_jawab = data.penanggungJawab.nama_lengkap;
+	let penanggung_jawab = data?.penanggungJawab?.nama_lengkap;
 
 	// Check if data exists and has the expected structure    const organisasi = data?.organisasi || {}; // Access organisasi data
 	const nama_organisasi = organisasi?.nama_organisasi || 'Nama Organisasi Tidak Tersedia';

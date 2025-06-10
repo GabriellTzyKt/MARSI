@@ -13,9 +13,29 @@ export const load: PageServerLoad = async () => {
         const formattedData = await Promise.all(data.map(async (item: any) => {
             const formattedItem = {
                 ...item,
-                imageUrls: []
+                imageUrls: [],
+                profileImg: ""
             };
-    
+            if (item.profile) {
+                const docIds = item.profile.split(',').map(id => id.trim());
+                for (const docId of docIds) {
+                    const res = await fetch(`${env.URL_KERAJAAN}/doc/${docId}`);
+                    if (!res.ok) {
+                        console.error(`Failed to fetch doc/${docId}: ${res.status}`);
+                        continue;
+                    }
+                    const docData = await res.json();
+                    const filePaths = docData.file_dokumentasi || docData;
+                    const pathsArray = Array.isArray(filePaths) ? filePaths : [filePaths];
+                    for (const path of pathsArray) {
+                        if (typeof path === 'string') {
+                            formattedItem.profileImg= 
+                                `${env.URL_KERAJAAN}/file?file_path=${encodeURIComponent(path)}`
+                        
+                        }
+                    }
+                }
+            }
             try {
                 if (item.foto_situs) {
                     // Handle both string and array formats
