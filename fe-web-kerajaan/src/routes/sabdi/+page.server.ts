@@ -7,6 +7,7 @@ export const load: PageServerLoad = async ({cookies}) => {
         let res = await fetch(`${env.URL_KERAJAAN}/anggota?limit=1000`,{
            
         })
+
         if (!res.ok) {
             throw new Error(`HTTP Error! Status: ${res.status}`);
         }
@@ -14,7 +15,38 @@ export const load: PageServerLoad = async ({cookies}) => {
         data = data.filter((item: any) => {
             return item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at;
         });
+data = await Promise.all(data.map(async (item: any) => {
+    // Fetch user detail by id_user
+    let userDetail = {};
+    let foto_profile = '';
+    try {
+        const userRes = await fetch(`${env.PUB_PORT}/user/${item.id_user}`, {
+       
+        });
+        if (userRes.ok) {
+            userDetail = await userRes.json();
+            // Jika ada field profile, fetch dokumennya
+            if (userDetail.profile) {
+                const docRes = await fetch(`${env.PUB_PORT}/doc/${userDetail.profile}`);
+                if (docRes.ok) {
+                    const docData = await docRes.json();
+                    if (docData.file_dokumentasi) {
+                        foto_profile = `${env.PUB_PORT}/file?file_path=${encodeURIComponent(docData.file_dokumentasi)}`;
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        // Biarkan kosong jika error
+    }
 
+    // Gabungkan data anggota, user, dan foto_profile
+    return {
+        ...item,
+        ...userDetail,
+        foto_profile
+    };
+}));
 
         let resgelar = await fetch(`${env.URL_KERAJAAN}/gelar?limit=500`)
 

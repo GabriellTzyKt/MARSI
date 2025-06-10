@@ -3,6 +3,7 @@
 	import jd from '$lib/asset/profile/jdpp.jpg';
 	import { accounts, dummyOrganisasi } from '$lib/dummy';
 	import Footer from '$lib/footer/Footer.svelte';
+	import gambardefault from '$lib/asset/kerajaan/default.jpg';
 	import ListOrganisasi from '$lib/input/ListOrganisasi.svelte';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
@@ -84,7 +85,11 @@
 			{#each result.slice(pointer, pointer + 3) as abdi}
 				<div class="flex w-full flex-col gap-y-4 rounded-xl bg-white py-4">
 					<div class="my-8 flex items-center justify-center">
-						<img src={jd} class="h-24 w-auto rounded-full" alt="" />
+						<img
+							src={abdi?.foto_profile || gambardefault}
+							class="h-24 w-auto rounded-full"
+							alt=""
+						/>
 					</div>
 					<div class="ms-6 flex flex-col">
 						<p class="font-[450] text-gray-400">Nama</p>
