@@ -60,7 +60,7 @@
 			class="mt-4 flex flex-col items-center justify-center gap-2 lg:mt-0 lg:flex-row lg:justify-start"
 		>
 			<!-- select -->
-			<select
+			<!-- <select
 				name="Organisasi"
 				id=""
 				value="Organisasi"
@@ -71,7 +71,7 @@
 				<option value="Komunitas">Komunitas</option>
 				<option value="Abdi">Abdi</option>
 				<option value="organisasi">Organisasi</option>
-			</select>
+			</select> -->
 			<!-- cari -->
 			<div class="flex items-center rounded-lg border px-2">
 				<input
@@ -120,7 +120,7 @@
 				['nama_komunitas', 'Nama Komunitas'],
 				['tanggal_berdiri', 'Tanggal Berdiri'],
 				['no_telp', 'No Telepon'],
-				['penanggungjawab', 'Penanggung Jawab'],
+				['penanggung_jawab', 'Penanggung Jawab'],
 				['pelindung', 'Pelindung'],
 				['pembina', 'Pembina'],
 

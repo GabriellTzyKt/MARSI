@@ -68,7 +68,7 @@ export const load: PageServerLoad = async ({cookies}) => {
         //             }
         //     }
         // }))
-        console.log(formattedData)
+        // console.log(formattedData)
         return { data: formattedData };
     }
     catch (error) {

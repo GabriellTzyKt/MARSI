@@ -112,7 +112,7 @@
 			class="mt-4 flex flex-col items-center justify-center gap-2 md:flex-row xl:mt-0 xl:justify-start"
 		>
 			<!-- select -->
-			<select
+			<!-- <select
 				name="Organisasi"
 				id=""
 				value="Organisasi"
@@ -123,7 +123,7 @@
 				<option value="Komunitas">Komunitas</option>
 				<option value="Abdi">Abdi</option>
 				<option value="organisasi">Organisasi</option>
-			</select>
+			</select> -->
 			<!-- cari -->
 			<div class="flex items-center rounded-lg border px-2">
 				<input

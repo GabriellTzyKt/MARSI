@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
     try {
         // Fetch acara details using the ID
         const id = params.id;
-        const response = await fetch(`${env.URL_KERAJAAN}/acara/${id}`);
+        const response = await fetch(`${env.URL_KERAJAAN}/acara/detail/${id}`);
 
         if (!response.ok) {
             console.error(`Failed to fetch acara with ID ${id}: ${response.status}`);

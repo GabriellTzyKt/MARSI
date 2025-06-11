@@ -307,7 +307,7 @@
 					id=""
 				>
 					<option value="Perempuan">Perempuan</option>
-					<option value="Laki_Laki">Laki - Laki</option>
+					<option value="Laki-Laki">Laki - Laki</option>
 				</select>
 				{#if errors}
 					{#each errors.jenis_kelamin as e}

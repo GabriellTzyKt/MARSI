@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
         }
         let data = await res.json();
         // console.log("acara",data)
-     data = data.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at);
+     data = data.filter(item => item.deleted_at === '0001-01-01T00:00:00Z' || !item.deleted_at || item.deleted_at === null)
         let formatDateTime = (isoString) => {
     if (!isoString || isoString === '0001-01-01T00:00:00Z') return '-';
     let date = new Date(isoString);

@@ -458,55 +458,20 @@
 						</div>
 					</div>
 				{/if}
-
-				<div class="flexcoba mt-5 flex gap-6">
-					<div class="w-full">
-						<p>No telepon :</p>
-						<input
-							type="text"
-							name="phone"
-							value={situs.no_telp || '-'}
-							placeholder="Masukkan Nomer Telepon"
-							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-						/>
-						{#if errors}
-							{#each errors.phone as e}
-								<p class="text-left text-red-500">- {e}</p>
-							{/each}
-						{/if}
-					</div>
-					<div class="w-full">
-						<p>Kepemilikan :</p>
-						<input
-							type="text"
-							name="kepemilikan"
-							value={situs.pemilik_situs || '-'}
-							placeholder="Masukkan Kepemilikan"
-							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-						/>
-						{#if errors}
-							{#each errors.kepemilikan as e}
-								<p class="text-left text-red-500">- {e}</p>
-							{/each}
-						{/if}
-					</div>
-				</div>
-
 				<div>
-					<p class="mt-5">Deskripsi Situs:</p>
-					<div class="relative w-full">
-						<textarea
-							placeholder="Masukkan Deskripsi Situs"
-							name="deskripsi_situs"
-							value={situs.deskripsi_situs || '-'}
-							class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg"
-						></textarea>
-						<div class="h-full">
-							<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
-						</div>
+					<p>Email:</p>
+					<div class="relative">
+						<input
+							type="email"
+							name="email"
+							value={situs.email || '-'}
+							placeholder="Masukkan Email"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
+						/>
+						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
 					</div>
 					{#if errors}
-						{#each errors.deskripsi_situs as e}
+						{#each errors.email as e}
 							<p class="text-left text-red-500">- {e}</p>
 						{/each}
 					{/if}
@@ -575,21 +540,6 @@
 							{/each}
 						{/if}
 					</div>
-					<div class="w-full">
-						<p>Tahun Berdiri :</p>
-						<input
-							value={situs.tahun_berdiri || '-'}
-							type="text"
-							placeholder="Masukkan Tahun"
-							name="tahun_berdiri"
-							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-						/>
-						{#if errors}
-							{#each errors.tahun_berdiri as e}
-								<p class="text-left text-red-500">- {e}</p>
-							{/each}
-						{/if}
-					</div>
 				</div>
 
 				<div class="mt-5 flex w-full gap-6">
@@ -635,199 +585,247 @@
 							{/each}
 						{/if}
 					</div>
+				</div>
+				<div class="mt-5 w-full">
+					<p>Pelindung :</p>
+					<input
+						type="text"
+						placeholder="Cari pelindung..."
+						bind:value={pelindungSearchTerm}
+						onfocus={() => (showPelindungDropdown = true)}
+						onblur={() => {
+							// Delay hiding dropdown to allow for click
+							setTimeout(() => {
+								showPelindungDropdown = false;
+							}, 200);
+						}}
+						class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
+					/>
+					<input type="hidden" name="pelindung" value={selectedPelindung?.id || ''} />
+
+					{#if showPelindungDropdown && filteredPelindungUsers.length > 0}
+						<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+							<ul class="max-h-60 overflow-y-auto">
+								{#each filteredPelindungUsers as user}
+									<!-- svelte-ignore a11y_click_events_have_key_events -->
+									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+									<li
+										class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+										onclick={() => selectPelindung(user)}
+									>
+										<div class="flex flex-col">
+											<span class="font-medium">{user.name}</span>
+											<span class="text-sm text-gray-500">{user.email}</span>
+										</div>
+									</li>
+								{/each}
+							</ul>
+						</div>
+					{/if}
+					{#if errors}
+						{#each errors.pelindung as e}
+							<p class="text-left text-red-500">- {e}</p>
+						{/each}
+					{/if}
+				</div>
+				<div class="flexcoba mt-5 flex gap-6">
 					<div class="w-full">
-						<p>Pelindung :</p>
+						<p>No telepon :</p>
 						<input
 							type="text"
-							placeholder="Cari pelindung..."
-							bind:value={pelindungSearchTerm}
-							onfocus={() => (showPelindungDropdown = true)}
-							onblur={() => {
-								// Delay hiding dropdown to allow for click
-								setTimeout(() => {
-									showPelindungDropdown = false;
-								}, 200);
-							}}
-							class="mt-2 w-full rounded-lg border-2 px-2 py-2 text-start"
+							name="phone"
+							value={situs.no_telp || '-'}
+							placeholder="Masukkan Nomer Telepon"
+							class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
 						/>
-						<input type="hidden" name="pelindung" value={selectedPelindung?.id || ''} />
-
-						{#if showPelindungDropdown && filteredPelindungUsers.length > 0}
-							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
-								<ul class="max-h-60 overflow-y-auto">
-									{#each filteredPelindungUsers as user}
-										<!-- svelte-ignore a11y_click_events_have_key_events -->
-										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-										<li
-											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
-											onclick={() => selectPelindung(user)}
-										>
-											<div class="flex flex-col">
-												<span class="font-medium">{user.name}</span>
-												<span class="text-sm text-gray-500">{user.email}</span>
-											</div>
-										</li>
-									{/each}
-								</ul>
-							</div>
-						{/if}
 						{#if errors}
-							{#each errors.pelindung as e}
+							{#each errors.phone as e}
 								<p class="text-left text-red-500">- {e}</p>
 							{/each}
 						{/if}
 					</div>
 				</div>
-				<div class="mt-5 grid w-full grid-cols-1 flex-col gap-4 lg:grid-cols-2">
-					<div class="relative col-span-full w-full">
-						<p>Jenis Situs:</p>
-						<input
-							type="text"
-							placeholder="Masukkan Jenis Situs"
-							bind:value={situsSearchTerm}
-							class="mt-2 flex w-full rounded-lg border-2 px-2 py-2 text-start"
-							onfocus={() => (showSitusDropdown = true)}
-							onblur={() => {
-								// Delay hiding dropdown to allow for click
-								setTimeout(() => {
-									showSitusDropdown = false;
-								}, 200);
-							}}
-						/>
-
-						<input type="hidden" name="jenis_situs" value={selectedSitus?.id || ''} />
-						{#if showSitusDropdown && filteredSitus.length > 0}
-							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
-								<ul class="max-h-60 overflow-y-auto">
-									{#each filteredSitus as situs}
-										<!-- svelte-ignore a11y_click_events_have_key_events -->
-										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-										<li
-											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
-											onclick={() => selectSitus(situs)}
-										>
-											<div class="flex flex-col">
-												<span class="font-medium">{situs.name}</span>
-												<span class="text-sm text-gray-500">{situs.email}</span>
-											</div>
-										</li>
-									{/each}
-								</ul>
-							</div>
-						{/if}
-
-						{#if errors}
-							{#each errors.jenis_situs as e}
-								<p class="text-left text-red-500">- {e}</p>
-							{/each}
-						{/if}
-					</div>
-				</div>
+				<div class="mt-5 grid w-full grid-cols-1 flex-col gap-4 lg:grid-cols-2"></div>
 				<div class="mt-5">
-					<div class="flexcoba mt-5 flex gap-6">
-						<div class="w-full">
-							<p>Jam Buka :</p>
-							<input
-								type="time"
-								name="jam_buka"
-								value={situs.jam_buka || '-'}
-								placeholder=""
-								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-							/>
-							{#if errors}
-								{#each errors.jam_buka as e}
-									<p class="text-left text-red-500">- {e}</p>
-								{/each}
-							{/if}
-						</div>
-						<div class="w-full">
-							<p>Jam Tutup :</p>
-							<input
-								type="time"
-								name="jam_tutup"
-								placeholder=""
-								value={situs.jam_tutup || '-'}
-								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-							/>
-							{#if errors}
-								{#each errors.jam_tutup as e}
-									<p class="text-left text-red-500">- {e}</p>
-								{/each}
-							{/if}
-						</div>
-					</div>
-
-					<div>
-						<p>Email:</p>
-						<div class="relative">
-							<input
-								type="email"
-								name="email"
-								value={situs.email || '-'}
-								placeholder="Masukkan Email"
-								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2"
-							/>
-							<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
-						</div>
-						{#if errors}
-							{#each errors.email as e}
-								<p class="text-left text-red-500">- {e}</p>
-							{/each}
-						{/if}
-					</div>
-					<div class="mt-3">
-						<p>Wisata:</p>
-						<div class="relative">
-							<input
-								type="text"
-								name="wisata"
-								bind:value={wisataSearchTerm}
-								onfocus={() => (showWisataDropdown = true)}
-								onblur={() => {
-									// Delay hiding dropdown to allow for click
-									setTimeout(() => {
-										showWisataDropdown = false;
-									}, 200);
-								}}
-								placeholder="Masukkan Pembina"
-								class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
-							/>
-						</div>
-						<input type="text" hidden name="id_wisata" value={selectedWisata?.id || ''} />
-						{#if showWisataDropdown && filteredWisata.length > 0}
-							<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
-								<ul class="max-h-60 overflow-y-auto">
-									{#each filteredWisata as wisataItem}
-										<!-- svelte-ignore a11y_click_events_have_key_events -->
-										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-										<li
-											class="cursor-pointer px-3 py-2 hover:bg-gray-100"
-											onclick={() => selectWisata(wisataItem)}
-										>
-											<div class="flex flex-col">
-												<span class="font-medium">{wisataItem.name}</span>
-												<span class="text-sm text-gray-500">{wisataItem.email}</span>
-											</div>
-										</li>
-									{/each}
-								</ul>
-							</div>
-						{/if}
-						{#if errors}
-							{#each errors.wisata as e}
-								<p class="text-left text-red-500">- {e}</p>
-							{/each}
-						{/if}
-					</div>
+					<div class="flexcoba mt-5 flex gap-6"></div>
 				</div>
 			</div>
-
-			<div class="relative flex w-full justify-center lg:justify-end">
-				<button
-					class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
-					type="submit">Simpan Data</button
-				>
+		</div>
+		<div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
+			<div class="w-full">
+				<p>Tahun Berdiri :</p>
+				<input
+					value={situs.tahun_berdiri || '-'}
+					type="text"
+					placeholder="Masukkan Tahun"
+					name="tahun_berdiri"
+					class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+				/>
+				{#if errors}
+					{#each errors.tahun_berdiri as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+				{/if}
 			</div>
+			<div class="w-full">
+				<p>Jam Buka :</p>
+				<input
+					type="time"
+					name="jam_buka"
+					value={situs.jam_buka || '-'}
+					placeholder=""
+					class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+				/>
+				{#if errors}
+					{#each errors.jam_buka as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+				{/if}
+			</div>
+			<div class="w-full">
+				<p>Jam Tutup :</p>
+				<input
+					type="time"
+					name="jam_tutup"
+					placeholder=""
+					value={situs.jam_tutup || '-'}
+					class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+				/>
+				{#if errors}
+					{#each errors.jam_tutup as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+				{/if}
+			</div>
+		</div>
+		<div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+			<div class="relative w-full">
+				<p>Jenis Situs:</p>
+				<input
+					type="text"
+					placeholder="Masukkan Jenis Situs"
+					bind:value={situsSearchTerm}
+					class="mt-2 flex w-full rounded-lg border-2 px-2 py-2 text-start"
+					onfocus={() => (showSitusDropdown = true)}
+					onblur={() => {
+						// Delay hiding dropdown to allow for click
+						setTimeout(() => {
+							showSitusDropdown = false;
+						}, 200);
+					}}
+				/>
+
+				<input type="hidden" name="jenis_situs" value={selectedSitus?.id || ''} />
+				{#if showSitusDropdown && filteredSitus.length > 0}
+					<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+						<ul class="max-h-60 overflow-y-auto">
+							{#each filteredSitus as situs}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								<li
+									class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+									onclick={() => selectSitus(situs)}
+								>
+									<div class="flex flex-col">
+										<span class="font-medium">{situs.name}</span>
+										<span class="text-sm text-gray-500">{situs.email}</span>
+									</div>
+								</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
+
+				{#if errors}
+					{#each errors.jenis_situs as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+				{/if}
+			</div>
+			<div class="">
+				<p>Wisata:</p>
+				<div class="relative">
+					<input
+						type="text"
+						name="wisata"
+						bind:value={wisataSearchTerm}
+						onfocus={() => (showWisataDropdown = true)}
+						onblur={() => {
+							// Delay hiding dropdown to allow for click
+							setTimeout(() => {
+								showWisataDropdown = false;
+							}, 200);
+						}}
+						placeholder="Masukkan Pembina"
+						class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+					/>
+				</div>
+				<input type="text" hidden name="id_wisata" value={selectedWisata?.id || ''} />
+				{#if showWisataDropdown && filteredWisata.length > 0}
+					<div class="absolute z-10 mt-1 rounded-lg border bg-white shadow-lg">
+						<ul class="max-h-60 overflow-y-auto">
+							{#each filteredWisata as wisataItem}
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								<li
+									class="cursor-pointer px-3 py-2 hover:bg-gray-100"
+									onclick={() => selectWisata(wisataItem)}
+								>
+									<div class="flex flex-col">
+										<span class="font-medium">{wisataItem.name}</span>
+										<span class="text-sm text-gray-500">{wisataItem.email}</span>
+									</div>
+								</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
+				{#if errors}
+					{#each errors.wisata as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+				{/if}
+			</div>
+			<div>
+				<p class="">Deskripsi Situs:</p>
+				<div class="relative w-full">
+					<textarea
+						placeholder="Masukkan Deskripsi Situs"
+						name="deskripsi_situs"
+						value={situs.deskripsi_situs || '-'}
+						class="mt-2 h-32 w-full resize-none rounded-md border-2 px-3 py-3 text-lg"
+					></textarea>
+					<div class="h-full">
+						<span class="raphael--edit absolute right-2 top-1 mt-2.5 opacity-45"></span>
+					</div>
+				</div>
+				{#if errors}
+					{#each errors.deskripsi_situs as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+				{/if}
+			</div>
+			<div class="w-full">
+				<p>Kepemilikan :</p>
+				<input
+					type="text"
+					name="kepemilikan"
+					value={situs.pemilik_situs || '-'}
+					placeholder="Masukkan Kepemilikan"
+					class="mt-2 w-full rounded-lg border-2 border-black px-2 py-2 text-start"
+				/>
+				{#if errors}
+					{#each errors.kepemilikan as e}
+						<p class="text-left text-red-500">- {e}</p>
+					{/each}
+				{/if}
+			</div>
+		</div>
+		<div class="relative flex w-full justify-center lg:justify-end">
+			<button
+				class="w-50 t-0 mt-10 rounded-lg border-2 border-black bg-green-500 px-2 py-2 text-white"
+				type="submit">Simpan Data</button
+			>
 		</div>
 	</form>
 </div>

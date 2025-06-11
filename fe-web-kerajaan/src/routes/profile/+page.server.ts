@@ -41,7 +41,7 @@ export const load: PageServerLoad = async ({locals, cookies}) => {
         const data = await res.json();
         console.log("Profile",data.profile)
         if (res.ok) {
-            let resAcara = await fetch(`${env.URL_KERAJAAN}/acara/user/terdaftar/${data.id_user}`)
+            let resAcara = await fetch(`${env.URL_KERAJAAN}/acara/user/riwayat/${data.id_user}`)
             let acaraData = await resAcara.json();
             if (!Array.isArray(acaraData)) {
                 acaraData = acaraData ? [acaraData] : [];

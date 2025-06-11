@@ -146,7 +146,7 @@
 		}}
 	>
 		<p class="mx-auto mt-10 items-center justify-center text-center text-xl font-semibold">
-			Nama Acara
+			{data?.acara?.nama_acara}
 		</p>
 		<div class="grid grid-cols-1 gap-8 px-10 py-10 md:grid-cols-2">
 			<div>
@@ -162,8 +162,8 @@
 						>
 							<option value="" disabled selected>Jenis Kelamin</option>
 							<option
-								value="Laki-laki"
-								selected={jenis_kelamin === 'Laki-laki' || jenis_kelamin === 'laki-laki'}
+								value="Laki-Laki"
+								selected={jenis_kelamin === 'Laki-Laki' || jenis_kelamin === 'laki-laki'}
 								>Laki-Laki</option
 							>
 							<option
