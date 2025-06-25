@@ -91,7 +91,7 @@
 			return 'Detail Situs';
 		} else if (page.route.id === '/abdi/dashboard/situs/detail/ubah') {
 			return 'Ubah Situs';
-		} else if (page.route.id === '/abdi/dashboard/organisasi/daftarorganisasi') {
+		} else if (page.route.id === '/abdi/dashboard/organisasi/daftarOrganisasi') {
 			return 'Daftar Organisasi';
 		} else if (page.route.id === '/abdi/dashboard/organisasi/acara') {
 			return 'Acara Organisasi';
@@ -105,15 +105,15 @@
 			return 'Tambah Abdi';
 		} else if (page.route.id === '/abdi/sekretariat/anggota/daftaranggota/ubah') {
 			return 'Edit Abdi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/buat') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/buat') {
 			return 'Tambah Organisasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi') {
 			return 'Daftar Organisasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/edit') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit') {
 			return 'Edit Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/komunitas/daftarkomunitas/buat') {
 			return 'Tambah Komunitas';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/edit') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit') {
 			return 'Edit Komunitas';
 		} else if (page.route.id === '/abdi/sekretariat/acara/detail/[id]') {
 			return 'Detail Acara';
@@ -153,7 +153,7 @@
 			return 'Ubah Acara Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftaranggota') {
 			return 'Daftar Anggota Organisasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi') {
 			return 'Daftar Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/acara/laporan') {
 			return 'Laporan';
@@ -167,11 +167,11 @@
 			return 'Master Data';
 		} else if (page.route.id === '/abdi/sekretariat/situs/edit') {
 			return 'Edit Situs';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/edit') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit') {
 			return 'Edit Organisasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/buat') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/buat') {
 			return 'Tambah Organisasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi') {
 			return 'Daftar Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/komunitas/daftarkomunitas/edit') {
 			return 'Edit Komunitas';
@@ -179,9 +179,9 @@
 			return 'Edit Anggota';
 		} else if (page.route.id === '/abdi/sekretariat/landingpage/aset') {
 			return 'Tambah Aset';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi') {
 			return 'Daftar Organisasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/buat') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/buat') {
 			return 'Tambah Organisasi';
 		} else if (page.route.id === '/abdi/dashboard/situs/daftaracara/edit') {
 			return 'Edit Acara Situs';
@@ -234,15 +234,15 @@
 			return 'Tambah Aset';
 		} else if (page.route.id === '/abdi/sekretariat/aset/ubah/[id]') {
 			return 'Ubah Aset';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/edit') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit') {
 			return 'Edit Organisasi';
 		} else if (page.route.id === '/abdi/sekretariat/manajemenadmin') {
 			return 'Manajemen Role Administrasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi') {
 			return 'Daftar Organisasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/edit') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/edit') {
 			return 'Ubah Organisasi';
-		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarorganisasi/buat') {
+		} else if (page.route.id === '/abdi/sekretariat/organisasi/daftarOrganisasi/buat') {
 			return 'Buat Organisasi';
 		} else if (page.route.id?.startsWith('/abdi/sekretariat/komunitas/daftarkomunitas/edit')) {
 			return 'Edit Komunitas';
@@ -526,10 +526,10 @@
 					</SidebarMenu>
 					<SidebarMenu href="" icon="mdi:people" anchor="Organisasi" hasChildren={true}>
 						<SidebarMenu
-							href="/abdi/sekretariat/organisasi/daftarorganisasi"
+							href="/abdi/sekretariat/organisasi/daftarOrganisasi"
 							icon="mdi:book"
 							anchor="Daftar Organisasi"
-							active={page.route.id?.startsWith('/abdi/sekretariat/anggota/daftarorganisasi')}
+							active={page.route.id?.startsWith('/abdi/sekretariat/anggota/daftarOrganisasi')}
 						/>
 						<SidebarMenu
 							href="/abdi/sekretariat/organisasi/daftaranggota"

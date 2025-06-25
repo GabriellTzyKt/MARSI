@@ -14,6 +14,7 @@
 	let errors = $state();
 	let loading = $state(false);
 	let success = $state(false);
+	let usererror = $state();
 	let cek = $derived(() => {
 		temp = [];
 		// if (username.length < 8) {
@@ -68,6 +69,7 @@
 							if (result.type === 'failure') {
 								errors = result.data?.errors;
 								apierror = result?.data?.apierror;
+								usererror = result?.data?.user_error;
 								console.log(apierror);
 							}
 						};
@@ -114,6 +116,9 @@
 			</div>
 			{#if apierror}
 				<p class="block text-left text-xl text-red-500">{apierror}</p>
+			{/if}
+			{#if usererror}
+				<p class="block text-left text-xl text-red-500">{usererror}</p>
 			{/if}
 			<div class="flex items-center justify-center">
 				<p class="me-2">Belum punya akun?</p>

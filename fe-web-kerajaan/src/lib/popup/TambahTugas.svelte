@@ -63,13 +63,13 @@
 	let selectedAcara = $state(
 		dataEdit?.id_acara ? dataAcara.find((acara) => acara.id == dataEdit.id_acara)?.name : ''
 	);
-	// console.log('selectedAcara', selectedAcara);
+	console.log('Acra', selectedAcara);
 	let filteredAcara = $derived(filterAcara(selectedAcara));
 	let dropDownAcara = $state(false);
 	let selectedAcaraData = $state(
 		dataEdit?.id_acara ? dataAcara.find((acara) => acara.id == dataEdit.id_acara) : null
 	);
-
+	console.log('Acra', selectedAcaraData);
 	function filterAcara(acara: any) {
 		return dataAcara?.filter((item: any) =>
 			item?.name?.toLowerCase()?.includes(acara?.toLowerCase())

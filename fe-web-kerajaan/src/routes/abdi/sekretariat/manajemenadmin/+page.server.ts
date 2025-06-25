@@ -39,17 +39,15 @@ export const load: PageServerLoad = async ({cookies}) => {
         }
         );
         let data = await adminRes.json();
-        data = data.filter(item => item.deleted_at === "0001-01-01T00:00:00Z");
+        data = data.filter(item => item.deleted_at === "0001-01-01T00:00:00Z" || item.deleted_at == null);
         data = await Promise.all(data.map(async (item) => {
             let url = '';
             try {
                 let userRes = await fetch(`${env.PUB_PORT}/user/${item.id_user}`, {
-                    method: "GET",
-                    headers: {
-                        'Authorization': `Bearer ${token.token}`
-                    }
+                  
                 });
                 let dataUser = await userRes.json();
+                console.log("data Userg", dataUser)
                 if (dataUser.profile !== "") {
                     const docRes = await fetch(`${env.PUB_PORT}/doc/${dataUser.profile}`);
                 if (docRes.ok) {
@@ -82,7 +80,11 @@ export const load: PageServerLoad = async ({cookies}) => {
                 };
                 
             } catch (error) {
-                
+                return {
+                    ...item,
+                    urlProfile: '',
+                    afiliasi_data: item.afiliasi
+                };
             }
         }))
         // console.log("User Data:", userData);

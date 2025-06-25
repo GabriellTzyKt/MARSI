@@ -316,9 +316,9 @@
 			>
 				<div class="flex items-center justify-between">
 					<div>
-						<p class="text-badran-bt ms-2 text-xl font-[500]">Riwayat Acara</p>
+						<p class="text-badran-bt ms-2 text-xl font-[500]">Acara Terdaftar</p>
 					</div>
-					<div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+					<div class="grid grid-cols-1 gap-3">
 						<!-- cari -->
 						<div class=" mx-2 flex items-center rounded-lg border px-2">
 							<input
@@ -347,7 +347,7 @@
 							</button>
 						</div>
 						<!-- Dropdown -->
-						<div class="flex w-full items-center rounded-lg border px-3 py-1">
+						<!-- <div class="flex w-full items-center rounded-lg border px-3 py-1">
 							<select
 								name="Keterangan"
 								id=""
@@ -359,7 +359,7 @@
 								<option value="Bulan Lalu">Bulan Lalu</option>
 								<option value="Minggu Ini">Minggu Ini</option>
 							</select>
-						</div>
+						</div> -->
 					</div>
 				</div>
 				<div class=" mt-4 max-h-full w-auto overflow-y-auto rounded-lg">

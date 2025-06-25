@@ -41,7 +41,10 @@ export const actions: Actions = {
                     const decode = jwtDecode(data.jwt_token);
                     console.log("Login response data:", data);
                     console.log("Decoded token:", decode);
-                    let dataAdminuser = dataAdmin.filter((item)=> item.deleted_at === "0001-01-01T00:00:00Z" || !item.deleted_at).find((item) => item.id_user === decode?.id_user)
+                    let dataAdminuser = dataAdmin.filter((item) => item.deleted_at === "0001-01-01T00:00:00Z" || !item.deleted_at || item.deleted_at === null).find((item) => item.id_user === decode?.id_user)
+                    // if(!dataAdminuser){
+                    //     return fail(400,{user_error: "User tidak ditemukan / Dihapus"})
+                    // }
                     let userCookie = {
                          username: data.username, 
                         user_data: decode, 

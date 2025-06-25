@@ -315,7 +315,7 @@
 									}}
 								>
 									<p class="text-sm font-semibold">
-										{user.nama_lengkap || user.username || user.email}
+										{user.name || user.username || user.email}
 									</p>
 									<p class="text-xs text-gray-500">
 										{user.email || 'Tidak ada email'}

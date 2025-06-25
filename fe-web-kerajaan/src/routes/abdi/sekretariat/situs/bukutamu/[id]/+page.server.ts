@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
             return kunjungan.deleted_at == '0001-01-01T00:00:00Z' && kunjungan.deleted_at !== null;
         }).map((kunjungan: any) => ({
             ...kunjungan,
-            tanggal_kunjungan: kunjungan.tanggal_kunjungan.split("T")[0]
+            tanggal_kunjungan: formatDatetoUI(kunjungan.tanggal_kunjungan)
         }));
         return { kunjungan, user: user };
     } catch (error) {
@@ -57,7 +57,7 @@ export const actions: Actions = {
             tanggal_kunjungan: {} as Record<string, string>,
             no_telp: {} as Record<string, string>,
             kota_asal: {} as Record<string, string>,
-            tujuan_kunjungan: {} as Record<string, string>,
+            tujuan: {} as Record<string, string>,
             keterangan: {} as Record<string, string>,
         };
         
@@ -84,7 +84,7 @@ export const actions: Actions = {
             const nama_user = (data.get(`nama_user-${id}`)?.toString() || '3'); // Default to 3 as specified
         
             const tanggal_kunjungan = data.get(`tanggal_kunjungan-${id}`)?.toString() || '';
-            const tujuan_kunjungan = data.get(`tujuan_kunjungan-${id}`)?.toString() || '';
+            const tujuan = data.get(`tujuan_kunjungan-${id}`)?.toString() || '';
             const no_telp = data.get(`no_telp-${id}`)?.toString() || '';
             const kota_asal = data.get(`kota_asal-${id}`)?.toString() || '';
             const keterangan = data.get(`keterangan-${id}`)?.toString() || '';
@@ -97,7 +97,7 @@ export const actions: Actions = {
             // Add to form object
             form.id_situs[id] = id_situs.toString();
             form.id_user_ditemui[id] = id_user_ditemui.toString();
-            form.tujuan_kunjungan[id] = tujuan_kunjungan.toString();
+            form.tujuan[id] = tujuan.toString();
             form.nama_user[id] = nama_user.toString();
           
             form.tanggal_kunjungan[id] = tanggal_kunjungan;
@@ -109,7 +109,7 @@ export const actions: Actions = {
             const validation = entrySchema.safeParse({
                 
                 id_user_ditemui,
-                tujuan_kunjungan,
+                tujuan,
                 nama_user,
                 tanggal_kunjungan,
                 no_telp,
@@ -137,7 +137,7 @@ export const actions: Actions = {
                 id_user_ditemui,
                 nama_pengunjung: nama_user,
                 tanggal_kunjungan: formattedDate,
-                tujuan_kunjungan,
+                tujuan,
                 no_telp,
                 kota_asal,
                 keterangan

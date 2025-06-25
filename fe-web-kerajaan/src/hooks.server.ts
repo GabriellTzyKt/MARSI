@@ -7,7 +7,9 @@ export const handle = async ({ event, resolve}) => {
     // Set up public routes that don't require authentication
     const publicRoutes = ['/login', '/signup','/kelompok', '/beranda',"/acara","/situs","/aset", "/sabdi"];
     const isPublicRoute = publicRoutes.some(route => event.url.pathname.startsWith(route));
-    
+    if (event.url.pathname === "/") {
+        throw redirect(302, '/beranda');
+    }
     // Handle authentication
     if (auth) {
         // User is authenticated
