@@ -97,10 +97,10 @@
 	<div class="relative h-screen w-full overflow-hidden">
 		<img src={gambar} alt="" class="absolute inset-0 h-full w-full object-cover" />
 		<div class="absolute inset-0 flex items-center justify-center">
-			<p class="absolute left-10 top-[15%] z-10">
+			<p class="absolute left-10 top-[15%] z-10 border-2 bg-red-400 border-red-400 px-2 rounded-lg">
 				<a href="/umum/daftarkerajaan" class="flex items-center text-black">
-					<span class="ph--arrow-bend-up-left-bold mt-3"></span>
-					Kembali Ke Daftar Kerajaan
+					<span class="ph--arrow-bend-up-left-bold"></span>
+					-Kembali Ke Daftar Kerajaan
 				</a>
 			</p>
 			<p
@@ -318,19 +318,7 @@
 				<div></div>
 			</div>
 		</div>
-		<div>
-			<p class="mb-5 mt-12 text-center text-2xl font-semibold text-black lg:text-start">
-				Acara Sorotan Kerajaan
-			</p>
-		</div>
-
-		<div
-			class="mx-auto mr-5 flex flex-col items-center gap-2 pl-6 lg:ml-8 lg:mr-0 lg:grid lg:grid-cols-3 xl:grid xl:grid-cols-3"
-		>
-			{#each selectedFlip as item}
-				<Flipcard2 gambar={item.gambar} kerajaan={item.kerajaan} lokasi={item.lokasi} />
-			{/each}
-		</div>
+		
 		<p class="text-md mt-10 text-start text-gray-300">Last Updated : {formattedDate}</p>
 	</div>
 </section>

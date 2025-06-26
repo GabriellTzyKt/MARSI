@@ -45,15 +45,17 @@ export const load: PageServerLoad = async ({fetch}) => {
             }
             
             // Process foto_situs to get image URLs if available
-            if (situs.profile && situs.profile.trim() !== '') {
+            if ((situs.foto_situs && situs.foto_situs.trim() !== '') || situs.profile) {
                 try {
                     // Handle both string and array formats
                     const docIds = typeof situs.profile === 'string' 
-                        ? situs.profile.split(',').map((id: string) => id.trim())
-                        : situs.profile;
+                        ? situs.foto_situs.split(',').map((id: string) => id.trim())
+                        : situs.foto_situs;
                     
-                    if (docIds && docIds.length > 0) {
-                        for (const docId of docIds) {
+                    const combined = [...docIds, situs.profile]
+                    
+                    if (combined && combined.length > 0) {
+                        for (const docId of combined) {
                             if (!docId) continue;
                             
                             const res = await fetch(`${env.BASE_URL_8008}/doc/${docId}`);

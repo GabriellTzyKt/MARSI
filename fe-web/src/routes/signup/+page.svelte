@@ -1,14 +1,16 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import image from '../../asset/Logo_MARSI_login.png';
-	let email = $state('Masukkan Email Anda');
+	let email = $state('');
 	let tipe = $state('password');
-	let password = $state('password');
+	let password = $state('');
 
 	let notelp = $state('08963333333333');
 
 	let tipelogin = $state('email');
 	let txtlogin = $state('Email');
 	let trans = $state(false);
+
 </script>
 
 <div class="bg-login flex items-center justify-center">
@@ -31,6 +33,7 @@
 								name=""
 								id=""
 								class="bg-input border-none py-2"
+								placeholder="Masukkan email anda"
 								bind:value={email}
 								onfocus={() => {
 									if (email === 'Masukkan Email Anda' && tipelogin === 'email') {
@@ -75,6 +78,7 @@
 									id=""
 									bind:value={password}
 									class="bg-input w-full border-none focus:outline-none"
+									placeholder="Inputkan password"
 									onfocus={() => {
 										if (password === 'password') {
 											password = '';

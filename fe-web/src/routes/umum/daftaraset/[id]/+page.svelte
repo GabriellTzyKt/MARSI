@@ -14,7 +14,7 @@
 	let aset = anggota.kategori_aset;
 	let vidio = anggota.videoUrls;
 	let isi = anggota.isi;
-	let kepemilikan = anggota.kepemilikan || "Kasunanan";
+	let kepemilikan = anggota.kepemilikan || 'Kasunanan';
 	let gambar1 = anggota.gambar1;
 	let gambar2 = anggota.gambar2;
 	let gambar3 = anggota.gambar3;
@@ -104,9 +104,9 @@
 	<div class="relative h-screen w-full overflow-hidden">
 		<img src={gambar} alt="" class="object-coverr absolute inset-0 h-full w-full" />
 		<div class="absolute inset-0 flex items-center justify-center">
-			<p class="absolute left-10 top-[15%]">
+			<p class="absolute left-10 top-[15%] rounded-lg border-2 border-red-400 bg-red-400 px-2">
 				<a href="/umum/daftaraset">
-					<span class="ph--arrow-bend-up-left-bold mt-3"></span>
+					<span class="ph--arrow-bend-up-left-bold mt-1"></span>
 					Kembali Ke Daftar Aset
 				</a>
 			</p>
@@ -125,48 +125,17 @@
 		<div class="form-container absolute mx-auto px-4 lg:mb-20">
 			<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
 				<div>
-					{#if lagu.length !== 0}
+					{#if lagu.length !== 0 && vidio.length !== 0}
+						<!-- Tampilkan gambar lagu dan video -->
 						<img src={gambar} class="h-auto w-full rounded-lg object-cover" alt="" />
 
-						<div class="mt-4 flex justify-center gap-1 lg:gap-4">
-							<!-- svelte-ignore a11y_click_events_have_key_events -->
-							<!-- svelte-ignore a11y_no_static_element_interactions -->
-							<span
-								class="material-symbols--arrow-circle-left-rounded cursor-pointer self-center"
-								onclick={prevImages}
-								class:opacity-50={currentImageIndex === 0}
-							></span>
-
-							<div class="flex gap-1 overflow-hidden lg:gap-4">
-								{#each anggota.imageUrls.slice(currentImageIndex, currentImageIndex + 3) as imageUrl}
-									<img
-										src={imageUrl}
-										class="h-16 w-[200px] rounded-lg object-cover lg:h-24"
-										alt=""
-									/>
-								{/each}
-							</div>
-
-							<!-- svelte-ignore a11y_click_events_have_key_events -->
-							<!-- svelte-ignore a11y_no_static_element_interactions -->
-							<span
-								class="material-symbols--arrow-circle-right cursor-pointer self-center"
-								onclick={nextImages}
-								class:opacity-50={currentImageIndex >= anggota.imageUrls.length - 3}
-							></span>
-						</div>
-					{/if}
-
-					{#if vidio.length !== 0}
-						<div class="relative">
-							<!-- Video -->
-							<!-- svelte-ignore a11y_media_has_caption -->
+						<div class="relative mt-4">
 							<video bind:this={videoRef} src={vidio} class="h-auto w-full rounded-lg object-cover"
 							></video>
 						</div>
+
+						<!-- Navigasi gambar -->
 						<div class="mt-4 flex justify-center gap-1 lg:gap-4">
-							<!-- svelte-ignore a11y_click_events_have_key_events -->
-							<!-- svelte-ignore a11y_no_static_element_interactions -->
 							<span
 								class="material-symbols--arrow-circle-left-rounded cursor-pointer self-center"
 								onclick={prevImages}
@@ -183,22 +152,17 @@
 								{/each}
 							</div>
 
-							<!-- svelte-ignore a11y_click_events_have_key_events -->
-							<!-- svelte-ignore a11y_no_static_element_interactions -->
 							<span
 								class="material-symbols--arrow-circle-right cursor-pointer self-center"
 								onclick={nextImages}
 								class:opacity-50={currentImageIndex >= anggota.imageUrls.length - 3}
 							></span>
 						</div>
-					{/if}
+					{:else if lagu.length !== 0}
+						<img src={gambar} class="h-auto w-full rounded-lg object-cover" alt="" />
 
-					{#if vidio.length === 0 && lagu.length === 0}
-						<img src={gambar} class="mt-10 h-[400px] w-full rounded-lg object-cover" alt="" />
-
+						<!-- Navigasi gambar -->
 						<div class="mt-4 flex justify-center gap-1 lg:gap-4">
-							<!-- svelte-ignore a11y_click_events_have_key_events -->
-							<!-- svelte-ignore a11y_no_static_element_interactions -->
 							<span
 								class="material-symbols--arrow-circle-left-rounded cursor-pointer self-center"
 								onclick={prevImages}
@@ -215,8 +179,63 @@
 								{/each}
 							</div>
 
-							<!-- svelte-ignore a11y_click_events_have_key_events -->
-							<!-- svelte-ignore a11y_no_static_element_interactions -->
+							<span
+								class="material-symbols--arrow-circle-right cursor-pointer self-center"
+								onclick={nextImages}
+								class:opacity-50={currentImageIndex >= anggota.imageUrls.length - 3}
+							></span>
+						</div>
+					{:else if vidio.length !== 0}
+						<div class="relative">
+							<video bind:this={videoRef} src={vidio} class="h-auto w-full rounded-lg object-cover"
+							></video>
+						</div>
+
+						<!-- Navigasi gambar -->
+						<div class="mt-4 flex justify-center gap-1 lg:gap-4">
+							<span
+								class="material-symbols--arrow-circle-left-rounded cursor-pointer self-center"
+								onclick={prevImages}
+								class:opacity-50={currentImageIndex === 0}
+							></span>
+
+							<div class="flex gap-1 overflow-hidden lg:gap-4">
+								{#each anggota.imageUrls.slice(currentImageIndex, currentImageIndex + 3) as imageUrl}
+									<img
+										src={imageUrl}
+										class="h-16 w-[200px] rounded-lg object-cover lg:h-24"
+										alt=""
+									/>
+								{/each}
+							</div>
+
+							<span
+								class="material-symbols--arrow-circle-right cursor-pointer self-center"
+								onclick={nextImages}
+								class:opacity-50={currentImageIndex >= anggota.imageUrls.length - 3}
+							></span>
+						</div>
+					{:else}
+						<img src={gambar} class="mt-10 h-[400px] w-full rounded-lg object-cover" alt="" />
+
+						<!-- Navigasi gambar -->
+						<div class="mt-4 flex justify-center gap-1 lg:gap-4">
+							<span
+								class="material-symbols--arrow-circle-left-rounded cursor-pointer self-center"
+								onclick={prevImages}
+								class:opacity-50={currentImageIndex === 0}
+							></span>
+
+							<div class="flex gap-1 overflow-hidden lg:gap-4">
+								{#each anggota.imageUrls.slice(currentImageIndex, currentImageIndex + 3) as imageUrl}
+									<img
+										src={imageUrl}
+										class="h-16 w-[200px] rounded-lg object-cover lg:h-24"
+										alt=""
+									/>
+								{/each}
+							</div>
+
 							<span
 								class="material-symbols--arrow-circle-right cursor-pointer self-center"
 								onclick={nextImages}

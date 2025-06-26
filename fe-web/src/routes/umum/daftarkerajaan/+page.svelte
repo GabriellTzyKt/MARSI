@@ -5,6 +5,7 @@
 	import Cardshow from '../Cardshow.svelte';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
+	import gambarDefault from '../../../asset/noimage.jpeg';
 
 	let value = $state<number>(6);
 	let selectedDaerah = $state<string>('');
@@ -303,6 +304,7 @@
 				<option value="kekaisaran">Kekaisaran</option>
 				<option value="kesultanan">Kesultanan</option>
 				<option value="kadipaten">Kadipaten</option>
+				<option value="kasunanan">Kasunanan</option>
 				<option value="keprabuan">Keprabuan</option>
 				<option value="keratuan">Keratuan</option>
 				<option value="dinasti">Dinasti</option>
@@ -316,10 +318,10 @@
 					class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
 					<option value="">None</option>
-					<option value="surakarta">Surakarta</option>
-					<option value="yogyakarta">Yogyakarta</option>
-					<option value="Surabaya">Surabaya</option>
-					<option value="trowulan">Trowulan</option>
+					{#each Array.from(new Set(dataGet.map((item) => item.region))) as region}
+						<option value={region}>{region}</option>
+					{/each}
+					<option value="surabaya">Surabaya</option>
 				</select>
 			{:else if userLocation !== ' '}
 				<select
@@ -342,7 +344,7 @@
 			<Cardshow
 				judul={situs.nama_kerajaan}
 				lokasi={situs.region}
-				gambar={situs.imageUrl}
+				gambar={situs.imageUrl && situs.imageUrl.length > 0 ? situs.imageUrl : [gambarDefault]}
 				id={situs.id_kerajaan}
 				tahun={situs.tanggal_berdiri ? new Date(situs.tanggal_berdiri).getFullYear() : ''}
 			/>

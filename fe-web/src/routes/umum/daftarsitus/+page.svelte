@@ -6,6 +6,7 @@
 	import { sort } from 'd3';
 	import Loader from '$lib/loader/Loader.svelte';
 	import { navigating } from '$app/state';
+	import gambarDefault from '../../../asset/noimage.jpeg'
 
 	let value = $state(6);
 	let displayedCount = $state(6);
@@ -301,7 +302,7 @@
 			<p>Entries</p>
 		</div>
 		<!-- Belom Nyoba Di Filter, masih nunggu datanya apa aja biar pasti -->
-		<div class="relative flex items-center gap-x-2">
+		<!-- <div class="relative flex items-center gap-x-2">
 			<p>Kategori :</p>
 			<select
 				id="sortSelect"
@@ -313,10 +314,10 @@
 				<option value="kerajaan">Kerajaan</option>
 				<option value="kekaisaran">Kekaisaran</option>
 			</select>
-		</div>
+		</div> -->
 		<!--  -->
 		<!-- Belom Nyoba Di Filter, masih nunggu datanya apa aja biar pasti -->
-		<div class="relative flex items-center gap-x-2">
+		<!-- <div class="relative flex items-center gap-x-2">
 			<p>Kepemilikan :</p>
 			<select
 				id="sortSelect"
@@ -325,14 +326,13 @@
 				class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 			>
 				<option value="">None</option>
-				<!-- Extract unique pemilik_situs values from the array -->
 				{#if Array.isArray(dataGet) && dataGet.length > 0}
 					{#each [...new Set(dataGet.map((item) => item.pemilik_situs).filter(Boolean))] as pemilik}
 						<option value={pemilik}>{pemilik}</option>
 					{/each}
 				{/if}
 			</select>
-		</div>
+		</div> -->
 		<!--  -->
 		<div class="relative mr-11 flex items-center gap-x-2">
 			<p>Daerah :</p>
@@ -371,7 +371,7 @@
 			<Cardshow
 				judul={situs.nama_situs}
 				lokasi={situs.region}
-				gambar={situs.imageUrls}
+  				gambar={(situs.imageUrls && situs.imageUrls.length > 0) ? situs.imageUrls : [gambarDefault]}
 				id={situs.id_situs}
 				tahun={situs.tahun_berdiri}
 			/>

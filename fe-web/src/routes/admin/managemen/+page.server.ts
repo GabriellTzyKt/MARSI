@@ -462,7 +462,8 @@ export const actions: Actions = {
             if (id_user_val) {
                 if (superadmin === "tidak") {
                     // Cek terlebih dahulu di BASE_URL_8008, apakah admin dengan id_user sama sudah ada
-                    const admin8008Get = await fetch(`${env.BASE_URL_8008}/admin?limit=200`, {
+                    console.log("hi22")
+                    const admin8008Get = await fetch(`${env.BASE_URL_8008}/admin?limit=1000`, {
                         method: "GET",
                         headers: { "Accept": "application/json" }
                     });

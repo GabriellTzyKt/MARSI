@@ -31,43 +31,41 @@
 	console.log('data dari belakang', data.dataKerajaan);
 	console.log('data : ', data);
 	let resultBaru: any = $state([]);
+	let formElement: HTMLFormElement;
 
-	let section1 = null;
+	onMount(() => {
+		formElement?.requestSubmit();
+	});
+
+	let section1 =  $state(null);
 	if (data && data.dataBeranda && Array.isArray(data.dataBeranda)) {
 		section1 = data.dataBeranda.find((item: any) => item.id_section === 1);
 	}
 
-	let section2 = null;
+	let section2 = $state(null);
 	if (data && data.dataBeranda && Array.isArray(data.dataBeranda)) {
 		section2 = data.dataBeranda.find((item: any) => item.id_section === 2);
 	}
 
-	let section3 = null;
+	let section3 =  $state(null);
 	if (data && data.dataBeranda && Array.isArray(data.dataBeranda)) {
 		section3 = data.dataBeranda.find((item: any) => item.id_section === 3);
 	}
 
-	let section4 = null;
+	let section4 = $state(null);
 	if (data && data.dataBeranda && Array.isArray(data.dataBeranda)) {
 		section4 = data.dataBeranda.find((item: any) => item.id_section === 4);
 	}
 
-	let section5 = null;
+	let section5 = $state(null);
 	if (data && data.dataBeranda && Array.isArray(data.dataBeranda)) {
 		section5 = data.dataBeranda.find((item: any) => item.id_section === 5);
 	}
 
-	let section6 = null;
+	let section6 = $state(null);
 	if (data && data.dataBeranda && Array.isArray(data.dataBeranda)) {
 		section6 = data.dataBeranda.find((item: any) => item.id_section === 6);
 	}
-
-	console.log('section 1 : ', section1);
-	console.log('section 2 : ', section2);
-	console.log('section 3 : ', section3);
-	console.log('section 4 : ', section4);
-	console.log('section 5 : ', section5);
-	console.log('section 6 : ', section6);
 
 	let isMarker = $state(false);
 
@@ -236,8 +234,8 @@
 	<div class=" grid grid-cols-1 items-center justify-center md:grid-cols-2">
 		<div class="mb-10 ml-10 mt-10 grid grid-cols-3 grid-rows-[auto_auto_1fr] gap-1">
 			<img src={section2.dokumentasi_files[0].url} alt="dor" class="col-span-1 row-span-2 h-full object-cover" />
-			<img src={section2.dokumentasi_files[1].url} class="col-span-2 row-span-1 h-[205px] object-cover" alt="dor" />
-			<img src={section2.dokumentasi_files[2].url} class="col-span-2 row-span-1 h-[172px] object-cover" alt="dor" />
+			<img src={section2.dokumentasi_files[1].url} class="col-span-2 row-span-1 h-[205px] w-[62%] object-cover" alt="dor" />
+			<img src={section2.dokumentasi_files[2].url} class="col-span-2 row-span-1 h-[172px] w-[62%] object-cover" alt="dor" />
 			<img
 				src={section2.dokumentasi_files[3].url}
 				class="col-span-3 h-auto max-h-60 w-[50%] object-cover lg:w-[75%]"
@@ -281,7 +279,7 @@
 				</p>
 				<div class="flex w-full justify-center lg:justify-start">
 					<a
-						href="/"
+						href="/umum/daftarkerajaan"
 						class="group relative my-2 flex items-center gap-2 overflow-hidden rounded-full px-5 py-3 text-orange-500"
 					>
 						<span class="relative z-10 pr-5 transition-colors duration-500 group-hover:text-black">
@@ -309,10 +307,12 @@
 						return async ({ result }) => {
 							if (result.type === 'success') {
 								resultBaru = result.data?.selectedFlip;
-								console.log(resultBaru);
+								console.log("result : ", resultBaru);
 							}
 						};
 					}}
+					bind:this={formElement}
+
 				>
 					<!-- svelte-ignore a11y_consider_explicit_label -->
 					<button
@@ -327,11 +327,12 @@
 				{#if resultBaru}
 					{#each resultBaru as item, i}
 						<Flipcard
-							gambar={item.gambar}
-							kerajaan={item.kerajaan}
-							judul={item.kerajaan}
-							lokasi={item.lokasi}
-							isi={item.isi}
+							gambar={item.image_url}
+							kerajaan={item.nama_kerajaan}
+							judul={item.nama_kerajaan}
+							lokasi={item.place_name}
+							isi={item.deskripsi_kerajaan}
+							data={item}
 						/>
 					{/each}
 				{/if}
@@ -351,7 +352,7 @@
 				</p>
 				<div class="flex w-full justify-center lg:justify-end">
 					<a
-						href="/"
+						href="/umum/daftarsitus"
 						class="group relative my-2 flex items-center gap-2 overflow-hidden rounded-full px-5 py-3 text-orange-500"
 					>
 						<span class="relative z-10 pr-5 transition-colors duration-500 group-hover:text-black">
@@ -405,7 +406,7 @@
 			<!-- Tombol Animasi 1 -->
 			<div class="flex w-full justify-center lg:justify-end">
 				<a
-					href="/"
+					href="/umum/daftaraset"
 					class="group relative my-2 flex items-center gap-2 overflow-hidden rounded-full px-5 py-3 text-orange-500"
 				>
 					<span class="relative z-10 pr-5 transition-colors duration-500 group-hover:text-black">
@@ -425,7 +426,7 @@
 </section>
 
 <!-- Section 7  -->
-<div class="mb-10 mt-20" id="acara">
+<!-- <div class="mb-10 mt-20" id="acara">
 	<section class="relative">
 		<section class="relative bg-white pb-10">
 			<div class="grid grid-cols-1 items-center justify-center md:grid-cols-2">
@@ -450,7 +451,7 @@
 			</div>
 		</section>
 	</section>
-</div>
+</div> -->
 
 <!-- Footer -->
 <section class="h-full w-full overflow-hidden">

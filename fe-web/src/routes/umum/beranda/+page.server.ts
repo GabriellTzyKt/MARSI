@@ -7,18 +7,58 @@ import type { PageServerLoad } from "./$types";
 
 export const ssr = false;
 
-function getRandomIDs(count: number, max: number): number[] {
-    let ids = new Set<number>();
-    while (ids.size < count) {
-        ids.add(Math.floor(Math.random() * max) + 1);
+// function getRandomIDs(count: number, max: number): number[] {
+//     let ids = new Set<number>();
+//     while (ids.size < count) {
+//         ids.add(Math.floor(Math.random() * max) + 1);
+//     }
+//     return Array.from(ids);
+// }
+
+function getRandomIndexes(count: number, max: number): number[] {
+    let indexes = new Set<number>();
+    while (indexes.size < count && indexes.size < max) {
+        indexes.add(Math.floor(Math.random() * max));
     }
-    return Array.from(ids);
+    return Array.from(indexes);
+}
+
+async function getImageUrlFromFotoUmum(fotoUmum: string) {
+    const firstId = fotoUmum.split(',')[0]?.trim();
+
+    try {
+        const res = await fetch(`${env.PUB_PORT}/doc/${firstId}`, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        });
+
+        const docData = await res.json();
+        return `${env.PUB_PORT}/file?file_path=${docData.file_dokumentasi}`;
+    } catch (err) {
+        console.error("Gagal mengambil file_dokumentasi untuk id:", firstId, err);
+        return null;
+    }
+}
+
+function extractPlaceName(address: string) {
+	const regions = ['sulawesi', 'bali', 'sumatera', 'papua', 'jawa', 'kalimantan',
+		'maluku', 'nusa tenggara', 'jakarta', 'yogyakarta'];
+
+	const addressLower = address.toLowerCase();
+	for (const region of regions) {
+		if (addressLower.includes(region)) {
+			return region.charAt(0).toUpperCase() + region.slice(1);
+		}
+	}
+	return address;
 }
 
 export const load: PageServerLoad = async () => {
     try {
         // First fetch to get all kerajaan data
-        const request = await fetch(`${env.PUB_PORT}/kerajaan?limit=200`, {
+        const request = await fetch(`${env.PUB_PORT}/kerajaan?limit=2000`, {
             method: "GET",
             headers: {
                 "Accept": "application/json"
@@ -149,17 +189,35 @@ export const load: PageServerLoad = async () => {
 
 
 export const actions: Actions = {
-    refresh: async ({ request }) => {
+	refresh: async ({ request }) => {
+		const response = await fetch(`${env.PUB_PORT}/kerajaan?limit=2000`, {
+			method: "GET",
+			headers: {
+				"Accept": "application/json"
+			}
+		});
 
-        console.log("Data flipcard:", data_flipcard);
+		const data = await response.json();
+		const data_flipcard = data.filter((item: any) => item.deleted_at === "0001-01-01T00:00:00Z");
 
-        let randomIDs = getRandomIDs(3, data_flipcard.length);
+		const randomIndexes = getRandomIndexes(3, data_flipcard.length);
+		const selectedFlip = await Promise.all(
+			randomIndexes.map(async (index) => {
+				const item = data_flipcard[index];
+				const imageUrl = await getImageUrlFromFotoUmum(item.foto_umum);
+				const place_name = extractPlaceName(item.alamat_kerajaan || '');
 
-        console.log("ID : ", randomIDs)
+				return {
+					...item,
+					image_url: imageUrl,
+					place_name
+				};
+			})
+		);
 
-        let selectedFlip = data_flipcard.filter(item => randomIDs.includes(item.id));
+		console.log("Selected flip : ", selectedFlip)
 
-        console.log("Final Data yang Dikirim:", { selectedFlip });
-        return { selectedFlip };
-    },
+		return { selectedFlip };
+	}
 }
+

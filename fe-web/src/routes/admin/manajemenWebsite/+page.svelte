@@ -6,9 +6,10 @@
 	import DeleteModal from '$lib/popup/DeleteModal.svelte';
 	import { enhance } from '$app/forms';
 	import { goto, invalidateAll } from '$app/navigation';
-	import { page } from '$app/state';
+	import { navigating, page } from '$app/state';
 	import SModal from '$lib/popup/SModal.svelte';
 	import SucessModal from '$lib/popup/SucessModal.svelte';
+	import Loader from '$lib/loader/Loader.svelte';
 
 	let currPage = $state(1);
 	let entries = $state(10);
@@ -68,6 +69,8 @@
 	let selectedItemId = $state<string | null>(null);
 	let selectedItem = $state<any>(null);
 
+	let loading = $state(false);
+
 	let videoName: string | null = $state('Silahkan Upload!');
 
 	function handleFileChange(event: Event, type: string) {
@@ -82,6 +85,13 @@
 		}
 	}
 </script>
+
+{#if navigating.to}
+	<Loader text="Navigating..."></Loader>
+{/if}
+{#if loading}
+	<Loader text="Processing..."></Loader>
+{/if}
 
 <div class="mt-5 flex w-full flex-col xl:mt-0">
 	<div class="test flex flex-col justify-center xl:mt-0 xl:flex-row xl:justify-between">
@@ -649,7 +659,9 @@
 						action="?/processRequest2"
 						method="post"
 						use:enhance={() => {
+							loading = true;
 							return async ({ result }) => {
+								loading = false;
 								if (result.type === 'success') {
 									// Tampilkan pesan sukses
 									success = true;
@@ -659,7 +671,7 @@
 									setTimeout(() => {
 										success = false;
 										invalidateAll();
-										sedangDiprosesOpen2 = false
+										sedangDiprosesOpen2 = false;
 									}, 1500);
 								} else if (result.type === 'failure') {
 									// Tampilkan pesan error
@@ -1003,7 +1015,9 @@
 										action="?/processRequest"
 										method="post"
 										use:enhance={() => {
+											loading = true
 											return async ({ result }) => {
+												loading = false
 												if (result.type === 'success') {
 													// Tampilkan pesan sukses
 													success = true;

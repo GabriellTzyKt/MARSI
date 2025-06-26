@@ -5,6 +5,7 @@
 	import Cardshow from '../Cardshow.svelte';
 	import { navigating } from '$app/state';
 	import Loader from '$lib/loader/Loader.svelte';
+	import gambarDefault from '../../../asset/ilustrasi-festival-musik_169.jpeg'
 
 	let value = $state<number>(6);
 	let selectedDaerah = $state<string>('');
@@ -170,12 +171,12 @@
 		</div>
 		<!-- Belom Nyoba Di Filter, masih nunggu datanya apa aja biar pasti -->
 		<div class="relative flex items-center gap-x-2">
-			<p>Kategori :</p>
+			<p class="invisible">Kategori :</p>
 			<select
 				id="sortSelect"
 				disabled
 				bind:value={selectKategori}
-				class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+				class=" invisible h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 			>
 				<option value="">None</option>
 				<option value="kerajaan">Kerajaan</option>
@@ -185,12 +186,12 @@
 		<!--  -->
 		<!-- Belom Nyoba Di Filter, masih nunggu datanya apa aja biar pasti -->
 		<div class="relative flex items-center gap-x-2 mx-12">
-			<p>Kepemilikan :</p>
+			<p class="invisible">Kepemilikan :</p>
 			<select
 				id="sortSelect"
 				disabled
 				bind:value={selectKepemilikan}
-				class="h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+				class="invisible h-[40px] w-fit rounded border border-gray-300 bg-white py-2 text-left text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
 			>
 				<option value="">None</option>
 				<option value="kerajaan">Kerajaan</option>
@@ -205,7 +206,7 @@
 			<Cardshow
 				judul={situs.nama_aset}
 				lokasi={situs.kepemilikan}
-				gambar={situs.imageUrls}
+  				gambar={(situs.imageUrls && situs.imageUrls.length > 0) ? situs.imageUrls : [gambarDefault]}
 				id={situs.id_aset}
 				tahun={situs.tahun}
 			/>

@@ -154,7 +154,7 @@
 					existingPreviews = {existingPreviewsS5_5}
 				></DropDownLandingS2>
 			</div>
-			<div class="my-2">
+			<!-- <div class="my-2">
 				<DropDownLandingS2
 					name_header="judulpage_section6"
 					name_deskripsi="isipage_section6"
@@ -165,7 +165,7 @@
 					dataambil = {section6}
 					existingPreviews = {existingPreviewsS6_6}
 				></DropDownLandingS2>
-			</div>
+			</div> -->
 		</div>
 		<div class="mt-4 flex justify-end">
 			<button type="submit" class="rounded-lg bg-orange-500 px-6 py-2 text-white"

@@ -56,12 +56,12 @@
 	// const {data} = $props()
 	// console.log(data.tabel)
 	function filterData(data: any[]) {
-		return data.filter(
+		return data?.sort((a, b) => a.id_kerajaan - b.id_kerajaan).filter(
 			(item) =>
 				item?.nama_kerajaan?.toLowerCase().includes(keyword.toLowerCase()) ||
 				item?.alamat_kerajaan?.toLowerCase().includes(keyword.toLowerCase()) ||
 				item?.tanggal_berdiri?.toLowerCase().includes(keyword.toLowerCase()) ||
-				item?.era?.toLowerCase().includes(keyword.toLowerCase()) ||
+				item?.nama_era?.toLowerCase().includes(keyword.toLowerCase()) ||
 				item?.tanggal_berdiri?.toLowerCase().includes(keyword.toLowerCase()) ||
 				item?.raja_sekarang?.toLowerCase().includes(keyword.toLowerCase())
 		);
@@ -70,11 +70,12 @@
 		const filter = filterData(data);
 		const start = (currPage - 1) * entries;
 		const end = start + entries;
-		return filter.slice(start, end);
+		return filter?.slice(start, end);
 	}
 	let resData = $derived(pagination(data.dataKerajaan));
+	let sortedKerajaan = resData.sort((a, b) => a.id_kerajaan - b.id_kerajaan);
 	let total_pages = $derived(Math.ceil(filterData(data.dataKerajaan).length / entries));
-
+	$inspect(resData	)
 	// Reset to first page when entries or keyword changes
 	$effect(() => {
 		if (keyword || entries) {
